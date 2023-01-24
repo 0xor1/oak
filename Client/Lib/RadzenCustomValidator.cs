@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Components.Rendering;
 using Radzen;
 using Radzen.Blazor;
 
-namespace Dnsk.Client.Lib;
+namespace Oak.Client.Lib;
 
 public class RadzenCustomValidator: ValidatorBase
 {

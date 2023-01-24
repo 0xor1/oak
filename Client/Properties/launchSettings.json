@@ -8,7 +8,7 @@
     }
   },
   "profiles": {
-    "Dnsk": {
+    "Oak": {
       "commandName": "Project",
       "dotnetRunMessages": true,
       "launchBrowser": true,

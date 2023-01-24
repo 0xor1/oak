@@ -1,6 +1,6 @@
 ﻿using Grpc.Core;
 
-namespace Dnsk.Client.Lib;
+namespace Oak.Client.Lib;
 
 public class ApiException : Exception
 {

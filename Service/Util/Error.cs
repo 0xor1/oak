@@ -3,7 +3,7 @@ using Grpc.Core;
 using Grpc.Core.Interceptors;
 using Microsoft.Extensions.Logging;
 
-namespace Dnsk.Service.Util;
+namespace Oak.Service.Util;
 
 public static class Error
 {

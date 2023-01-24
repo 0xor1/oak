@@ -5,7 +5,7 @@ using Grpc.Core;
 using MessagePack;
 using Microsoft.AspNetCore.Http;
 
-namespace Dnsk.Service.Util;
+namespace Oak.Service.Util;
 
 
 public interface ISessionManager
@@ -36,7 +36,7 @@ public record Session
 
 public class SessionManager: ISessionManager
 {
-    private const string SessionName = "dnsk";
+    private const string SessionName = "Oak";
     private static readonly byte[][] SignatureKeys;
 
     static SessionManager()

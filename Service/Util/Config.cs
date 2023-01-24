@@ -3,7 +3,7 @@ using Common;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
-namespace Dnsk.Service.Util;
+namespace Oak.Service.Util;
 
 public enum Env
 {

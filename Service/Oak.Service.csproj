@@ -12,22 +12,22 @@
 
   <ItemGroup>
     <PackageReference Include="0xor1.Common" Version="1.0.0" />
-    <PackageReference Include="Amazon.S3" Version="0.27.0" />
-    <PackageReference Include="Amazon.Ses" Version="0.24.0" />
-    <PackageReference Include="AWSSDK.SimpleEmail" Version="3.7.100.44" />
-    <PackageReference Include="Google.Protobuf" Version="3.21.7" />
-    <PackageReference Include="Grpc.AspNetCore.Server" Version="2.49.0" />
-    <PackageReference Include="Grpc.Tools" Version="2.49.1">
+    <PackageReference Include="Amazon.S3" Version="0.27.2" />
+    <PackageReference Include="Amazon.Ses" Version="0.28.0" />
+    <PackageReference Include="AWSSDK.SimpleEmail" Version="3.7.100.59" />
+    <PackageReference Include="Google.Protobuf" Version="3.21.12" />
+    <PackageReference Include="Grpc.AspNetCore.Server" Version="2.51.0" />
+    <PackageReference Include="Grpc.Tools" Version="2.51.0">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="Humanizer.Core" Version="2.14.1" />
-    <PackageReference Include="MessagePack" Version="2.4.35" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="MessagePack" Version="2.4.59" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Db\Dnsk.Db.csproj" />
+    <ProjectReference Include="..\Db\Oak.Db.csproj" />
   </ItemGroup>
   
 </Project>

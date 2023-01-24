@@ -4,7 +4,7 @@
     "listen": "https://localhost:9500"
   },
   "db": {
-    "connection": "Server=localhost;Database=Dnsk;Uid=Dnsk;Pwd=C0-Mm-0n-Dnsk"
+    "connection": "Server=localhost;Database=Oak;Uid=Oak;Pwd=C0-Mm-0n-Oak"
   },
   "session": {
     "signatureKeys": [

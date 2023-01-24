@@ -2,7 +2,7 @@
 using Common;
 using Radzen;
 
-namespace Dnsk.Client.Lib;
+namespace Oak.Client.Lib;
 
 public static class AuthValidator
 {

@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-option csharp_namespace = "Dnsk.Proto";
+option csharp_namespace = "Oak.Proto";
 
 package api;
 

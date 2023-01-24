@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
-using Dnsk.Client;
-using Dnsk.Client.Lib;
-using Dnsk.Proto;
+using Oak.Client;
+using Oak.Client.Lib;
+using Oak.Proto;
 using Grpc.Core.Interceptors;
 using Grpc.Net.Client;
 using Grpc.Net.Client.Web;

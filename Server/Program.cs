@@ -1,5 +1,5 @@
-using Dnsk.Service.Services;
-using Dnsk.Service.Util;
+using Oak.Service.Services;
+using Oak.Service.Util;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddApiServices();

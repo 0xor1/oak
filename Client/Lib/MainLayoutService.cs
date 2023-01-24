@@ -1,4 +1,4 @@
-﻿namespace Dnsk.Client.Lib;
+﻿namespace Oak.Client.Lib;
 
 public interface IMainLayout
 {

@@ -1,10 +1,10 @@
 using Common;
 using Microsoft.EntityFrameworkCore;
 
-namespace Dnsk.Db;
-public class DnskDb : DbContext
+namespace Oak.Db;
+public class OakDb : DbContext
 {
-    public DnskDb(DbContextOptions<DnskDb> opts) : base(opts) { }
+    public OakDb(DbContextOptions<OakDb> opts) : base(opts) { }
 
     public DbSet<Auth> Auths { get; set; } = null!;
     

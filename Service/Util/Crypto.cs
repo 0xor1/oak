@@ -1,9 +1,9 @@
 ﻿using System.Security.Cryptography;
 using Common;
-using Dnsk.Db;
+using Oak.Db;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 
-namespace Dnsk.Service.Util;
+namespace Oak.Service.Util;
 
 public static class Crypto
 {

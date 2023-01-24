@@ -1,12 +1,12 @@
 ﻿using Amazon;
 using Amazon.Runtime;
 using Amazon.SimpleEmail;
-using Dnsk.Db;
+using Oak.Db;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using MySqlConnector;
 
-namespace Dnsk.Service.Util;
+namespace Oak.Service.Util;
 
 public static class ServiceExts
 {
@@ -27,7 +27,7 @@ public static class ServiceExts
                 new AmazonSimpleEmailServiceClient(new BasicAWSCredentials(Config.Email.Key, Config.Email.Secret), Config.Email.GetRegionEndpoint()));
             services.AddScoped<IEmailClient, SesEmailClient>();
         }
-        services.AddDbContext<DnskDb>(
+        services.AddDbContext<OakDb>(
             dbContextOptions =>
             {
                 var cnnStrBldr = new MySqlConnectionStringBuilder(Config.Db.Connection);

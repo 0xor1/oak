@@ -2,7 +2,7 @@
 using Amazon.SimpleEmail.Model;
 using Microsoft.Extensions.Logging;
 
-namespace Dnsk.Service.Util;
+namespace Oak.Service.Util;
 
 public interface IEmailClient
 {

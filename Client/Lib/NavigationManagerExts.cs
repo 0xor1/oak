@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.WebUtilities;
 
-namespace Dnsk.Client.Lib;
+namespace Oak.Client.Lib;
 
 public static class NavigationManagerExts
 {

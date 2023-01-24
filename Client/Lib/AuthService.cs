@@ -1,7 +1,7 @@
 ﻿using Common;
-using Dnsk.Proto;
+using Oak.Proto;
 
-namespace Dnsk.Client.Lib;
+namespace Oak.Client.Lib;
 
 public record Session(string Id, bool IsAuthed)
 {

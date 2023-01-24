@@ -1,10 +1,10 @@
-﻿using Dnsk.Proto;
+﻿using Oak.Proto;
 using Grpc.Core;
 using Grpc.Core.Interceptors;
 using Humanizer;
 using Radzen;
 
-namespace Dnsk.Client.Lib;
+namespace Oak.Client.Lib;
 
 public class ErrorInterceptor : Interceptor
 {

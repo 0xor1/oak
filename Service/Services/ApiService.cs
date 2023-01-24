@@ -1,19 +1,19 @@
 ﻿using Common;
-using Dnsk.Db;
-using Dnsk.Proto;
-using Dnsk.Service.Util;
+using Oak.Db;
+using Oak.Proto;
+using Oak.Service.Util;
 using Grpc.Core;
 using Microsoft.EntityFrameworkCore;
 
-namespace Dnsk.Service.Services;
+namespace Oak.Service.Services;
 
 public class ApiService : Api.ApiBase
 {
-    private readonly DnskDb _db;
+    private readonly OakDb _db;
     private readonly ISessionManager _session;
     private readonly IEmailClient _emailClient;
     
-    public ApiService(DnskDb db, ISessionManager session, IEmailClient emailClient)
+    public ApiService(OakDb db, ISessionManager session, IEmailClient emailClient)
     {
         _db = db;
         _session = session;

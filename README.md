@@ -1,14 +1,6 @@
-Dnsk - dotnet starter kit
-=========================
+Oak
+===
 
-This project is the basic starting point for my dotnet based projects, 
-revolving around the primary technologies:
-
-* Client - Blazor WASM
-* Server - Aspnet core Grpc
-* DB - Ef core
-
-```bash
-./bin/pre
-```
-to start docker containers
+A CRM based centrally on making custom forms with workflows between 
+them and automated actions, to help mass on board clients users into
+their data set. With automated payment controls to and from client users.
