@@ -31,6 +31,7 @@ public record EmailConfig
     public string Region { get; init; }
     public string Key { get; init; }
     public string Secret { get; init; }
+    public string NoReplyAddress { get; init; }
 
     public RegionEndpoint GetRegionEndpoint()
     {

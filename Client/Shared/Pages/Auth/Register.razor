@@ -1,42 +1,43 @@
 ﻿@using Oak.Client.Lib
 @using System.Text.RegularExpressions
 @using Common
+@using Oak.I18n
 @using AuthValidator = Oak.Client.Lib.AuthValidator
 <div class="root jc-c ai-c">
     <RadzenCard class="p-3 w-25">
         <RadzenText TextStyle="TextStyle.H4" TagName="TagName.H2" class="m-t-0">
-            Register
+            @L.S(S.Register)
         </RadzenText>
         @if (_success)
         {
             <RadzenText TextStyle="TextStyle.Body1" TagName="TagName.P" class="m-b-1 f-b rz-color-success-light">
-                Please check your emails for a confirmation link to complete registration.
+                @L.S(S.RegisterSuccess)
             </RadzenText>
         }
         else
         {
             <RadzenTemplateForm
-                TItem="RegisterModel"
+                TItem="Model"
                 Data="_model"
-                Submit="Submit"
+                Submit="Do"
                 class="flx col ai-stretch g-1">
                 <div class="flx col ai-stretch">
-                    <RadzenLabel class="m-b-0q" Component="Email" Text="Email"/>
-                    <RadzenTextBox Name="Email" @bind-Value="@_model.Email" Disabled="!CanRegister"/>
-                    <RadzenCustomValidator Validator="EmailValidator" Component="Email" Popup="true" Text="Invalid email"></RadzenCustomValidator>
+                    <RadzenLabel class="m-b-0q" Component="Email" Text="@L.S(S.Email)"/>
+                    <RadzenTextBox Name="Email" @bind-Value="@_model.Email" Disabled="!CanDo"/>
+                    <RadzenCustomValidator Validator="EmailValidator" Component="Email" Popup="true"></RadzenCustomValidator>
                 </div>
                 <div class="flx col ai-stretch">
-                    <RadzenLabel class="m-b-0q" Component="Password" Text="Password"/>
-                    <RadzenPassword Name="Password" @bind-Value="@_model.Pwd" Disabled="!CanRegister"/>
-                    <RadzenCustomValidator Validator="PwdValidator" Component="Password" Popup="true" Text="Invalid password"></RadzenCustomValidator>
+                    <RadzenLabel class="m-b-0q" Component="Password" Text="@L.S(S.Pwd)"/>
+                    <RadzenPassword Name="Password" @bind-Value="@_model.Pwd" Disabled="!CanDo"/>
+                    <RadzenCustomValidator Validator="PwdValidator" Component="Password" Popup="true"></RadzenCustomValidator>
                 </div>
                 <div class="flx col ai-stretch">
-                    <RadzenLabel class="m-b-0q" Component="ConfirmPassword" Text="Confirm Password"/>
-                    <RadzenPassword Name="ConfirmPassword" @bind-Value="@_model.ConfirmPwd" Disabled="!CanRegister"/>
-                    <RadzenCustomValidator Validator="ConfirmPasswordValidator" Component="ConfirmPassword" Popup="true" Text="Passwords don't match"></RadzenCustomValidator>
+                    <RadzenLabel class="m-b-0q" Component="ConfirmPassword" Text="@L.S(S.ConfirmPwd)"/>
+                    <RadzenPassword Name="ConfirmPassword" @bind-Value="@_model.ConfirmPwd" Disabled="!CanDo"/>
+                    <RadzenCustomValidator Validator="ConfirmPasswordValidator" Component="ConfirmPassword" Popup="true"></RadzenCustomValidator>
                 </div>
-                <RadzenButton ButtonType="ButtonType.Submit" BusyText="Registering" IsBusy="_registering" Text="Register" Disabled="!CanRegister"/>
-                <RadzenLink Path="sign_in" Text="Sign In"></RadzenLink>
+                <RadzenButton ButtonType="ButtonType.Submit" BusyText="@L.S(S.Registering)" IsBusy="_doing" Text="@L.S(S.Register)" Disabled="!CanDo"/>
+                <RadzenLink Path="sign_in" Text="@L.S(S.SignIn)"></RadzenLink>
             </RadzenTemplateForm>
         }
     </RadzenCard>
@@ -45,18 +46,18 @@
 @inject IAuthService Auth;
 @code{
 
-    class RegisterModel
+    class Model
     {
         public string Email { get; set; } = "";
         public string Pwd { get; set; } = "";
         public string ConfirmPwd { get; set; } = "";
     }
 
-    private bool CanRegister => _session.IsAnon && !_registering && !_success;
+    private bool CanDo => _session.IsAnon && !_doing && !_success;
 
-    private Session _session = new ("", false); 
-    private RegisterModel _model = new (); 
-    private bool _registering = false;
+    private Session _session = new (); 
+    private Model _model = new (); 
+    private bool _doing = false;
     private bool _success = false;
 
     protected override async Task OnInitializedAsync()
@@ -64,9 +65,9 @@
         _session = await Auth.GetSession();
     }
 
-    private async Task Submit()
+    private async Task Do()
     {
-        _registering = true;
+        _doing = true;
         try
         {
             await Auth.Register(_model.Email, _model.Pwd);
@@ -77,7 +78,7 @@
             // use empty catch to avoid having to
             // call StatHasChanged on errors
         }
-        _registering = false;
+        _doing = false;
         
     }
 
@@ -90,6 +91,7 @@
     private ValidationResult ConfirmPasswordValidator(IRadzenFormComponent component)
         => new ()
         {
-            Valid = (component.GetValue() as string ?? "") == _model.Pwd
+            Valid = (component.GetValue() as string ?? "") == _model.Pwd,
+            Message = new (S.PwdsDontMatch)
         };
 }

@@ -16,7 +16,6 @@ public static class ServiceExts
         {
             opts.Interceptors.Add<ErrorInterceptor>();
         });
-        services.AddScoped<ISessionManager, SessionManager>();
         if (Config.Env == Env.LCL)
         {
             services.AddScoped<IEmailClient, LogEmailClient>();

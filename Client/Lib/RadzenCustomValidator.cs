@@ -1,4 +1,5 @@
 ﻿using Common;
+using Oak.I18n;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
 using Radzen;
@@ -8,9 +9,10 @@ namespace Oak.Client.Lib;
 
 public class RadzenCustomValidator: ValidatorBase
 {
-    public override string Text { get; set; } = "Invalid";
+    public override string Text { get; set; } = S.Invalid;
+    public Message Message { get; set; } = new (S.Invalid);
 
-    private List<string> SubMessages { get; set; } = new();
+    private List<Message> SubMessages { get; set; } = new();
 
     [Parameter]
     [EditorRequired]
@@ -19,7 +21,7 @@ public class RadzenCustomValidator: ValidatorBase
     protected override bool Validate(IRadzenFormComponent component)
     {
         var res = Validator(component);
-        Text = res.Message;
+        Message = res.Message;
         SubMessages = res.SubMessages;
         return res.Valid;
     }
@@ -35,7 +37,7 @@ public class RadzenCustomValidator: ValidatorBase
         builder.AddMultipleAttributes(3, Attributes);
         if (!Text.IsNullOrWhiteSpace())
         {
-            builder.AddContent(4, Text);
+            builder.AddContent(4, L.S(Message.Key, Message.Model));
         }
         if (SubMessages.Any())
         {
@@ -44,7 +46,7 @@ public class RadzenCustomValidator: ValidatorBase
             foreach (var subRule in SubMessages)
             {
                 builder.OpenElement(7, "li");
-                builder.AddContent(8, subRule);
+                builder.AddContent(8, L.S(subRule.Key, subRule.Model));
                 builder.CloseElement();
             }
             builder.CloseElement();

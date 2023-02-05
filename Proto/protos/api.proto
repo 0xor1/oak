@@ -14,11 +14,15 @@ service Api {
   rpc Auth_ResetPwd (Auth_ResetPwdReq) returns (Nothing);
   rpc Auth_SignIn (Auth_SignInReq) returns (Auth_Session);
   rpc Auth_SignOut (Nothing) returns (Auth_Session);
+  rpc Auth_SetL10n (Auth_SetL10nReq) returns (Auth_Session);
 }
 
 message Auth_Session {
     string id = 1;
     bool isAuthed = 2;
+    string lang = 3;
+    string dateFmt = 4;
+    string timeFmt = 5;
 }
 
 message Auth_RegisterReq {
@@ -45,5 +49,11 @@ message Auth_SignInReq {
     string email = 1;
     string pwd = 2;
     bool rememberMe = 3;
+}
+
+message Auth_SetL10nReq {
+    string lang = 1;
+    string dateFmt = 2;
+    string timeFmt = 3;
 }
 

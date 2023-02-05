@@ -1,0 +1,90 @@
+﻿@using Oak.Client.Lib
+@using System.Text.RegularExpressions
+@using Common
+@using Oak.I18n
+@using AuthValidator = Oak.Client.Lib.AuthValidator
+<div class="root col g-1 p-1">
+    <RadzenText TextStyle="TextStyle.H4" TagName="TagName.H2" class="m-t-0">
+        @L.S(S.L10n)
+    </RadzenText>
+    <RadzenTemplateForm
+        TItem="Model"
+        Data="_model"
+        Submit="Do"
+        class="flx col g-1 ai-s">
+        <div class="flx col ai-s">
+            <RadzenLabel class="m-b-0q" Component="Lang" Text="@L.S(S.Language)"/>
+            <RadzenDropDown Name="Lang" AllowClear="false" TValue="string" 
+                            Data="S.SupportedLangs" 
+                            TextProperty="NativeName" ValueProperty="Code"
+                            @bind-Value="_model.Lang" />
+        </div>
+        <div class="flx col ai-s">
+            <RadzenLabel class="m-b-0q" Component="Date" Text="@L.S(S.DateFmt)"/>
+            <RadzenDropDown Name="Date" AllowClear="false" TValue="string" 
+                            Data="S.SupportedDateFmts" 
+                            ValueProperty="Value"
+                            @bind-Value="_model.DateFmt" />
+        </div>
+        <div class="flx col ai-s">
+            <RadzenLabel class="m-b-0q" Component="Time" Text="@L.S(S.TimeFmt)"/>
+            <RadzenDropDown Name="Time" AllowClear=false TValue=string 
+                            Data="S.SupportedTimeFmts" 
+                            ValueProperty="Value"
+                            @bind-Value="@_model.TimeFmt" />
+        </div>
+        <RadzenButton ButtonType="ButtonType.Submit" BusyText="@L.S(S.Updating)" IsBusy="_doing" Text="@L.S(S.Update)" Disabled="!CanDo"/>
+    </RadzenTemplateForm>
+</div>
+
+@inject IAuthService Auth;
+@code{
+
+    record Model
+    {
+        public string Lang { get; set; } = S.DefaultLang;
+        public string DateFmt { get; set; } = S.DefaultDateFmt;
+        public string TimeFmt { get; set; } = S.DefaultTimeFmt;
+    }
+
+    private bool CanDo => _model != _initialValues && !_doing;
+
+    private Session _session = new (); 
+    private Model _model = new (); 
+    private Model _initialValues = new (); 
+    private bool _doing = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _session = await Auth.GetSession();
+        _model.Lang = _session.Lang;
+        _model.DateFmt = _session.DateFmt;
+        _model.TimeFmt = _session.TimeFmt;
+        _initialValues.Lang = _session.Lang;
+        _initialValues.DateFmt = _session.DateFmt;
+        _initialValues.TimeFmt = _session.TimeFmt;
+    }
+
+    private async Task Do()
+    {
+        _doing = true;
+        try
+        {
+            var ses = await Auth.SetL10n(_model.Lang, _model.DateFmt, _model.TimeFmt);
+            _initialValues.Lang = ses.Lang;
+            _initialValues.DateFmt = ses.DateFmt;
+            _initialValues.TimeFmt = ses.TimeFmt;
+        }
+        catch
+        {
+            // use empty catch to avoid having to
+            // call StatHasChanged on errors
+        }
+        _doing = false;
+    }
+
+    private void LangSelected(object val)
+    {
+        _model.Lang = ((Lang)val).Code;
+    }
+}

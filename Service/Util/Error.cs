@@ -1,29 +1,19 @@
 ﻿using Common;
+using Oak.I18n;
 using Grpc.Core;
 using Grpc.Core.Interceptors;
 using Microsoft.Extensions.Logging;
 
 namespace Oak.Service.Util;
 
-public static class Error
-{
-    public static void If(bool condition, string message, StatusCode code = StatusCode.Internal, bool @public = false, bool log = true)
-        => Throw.If(condition, () => new ApiException(code, message, @public, log));
-    public static void FromValidationResult(ValidationResult res, StatusCode code = StatusCode.Internal, bool @public = true, bool log = false)
-        => If(!res.Valid, $"{res.Message}{(res.SubMessages.Any() ? $":\n{String.Join("\n",res.SubMessages)}": "")}", code, @public, log);
-}
-
 public class ApiException : Exception
 {
     public StatusCode Code { get; }
-    public bool Public { get; }
-    public bool Log { get; }
 
-    public ApiException(StatusCode code, string message, bool @public = false, bool log = false): base(message)
+    public ApiException(string message, StatusCode code = StatusCode.Internal): base(message)
     {
         Code = code;
-        Public = @public;
-        Log = log;
+        
     }
 }
 
@@ -100,22 +90,19 @@ public class ErrorInterceptor : Interceptor
     {
         var log = true;
         var code = StatusCode.Internal;
-        var msg = "An unexpected error occurred";
+        var msg = S.UnexpectedError;
             
         if (ex.GetType() == typeof(ApiException))
         {
             var apiEx = (ApiException)ex;
-            log = apiEx.Log;
-            if (apiEx.Public)
-            {
-                code = apiEx.Code;
-                msg = apiEx.Message;
-            }
+            log = false;
+            code = apiEx.Code;
+            msg = apiEx.Message;
         }
 
         if (log)
         {
-            _log.LogError(ex, $"Error thrown by {context.Method}.");
+            _log.LogError(ex, "Error thrown by {ContextMethod}", context.Method);
         }
             
         throw new RpcException(new Status(code, msg));

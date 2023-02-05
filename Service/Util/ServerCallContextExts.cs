@@ -1,19 +1,14 @@
 ﻿using System.Security;
 using System.Security.Cryptography;
 using Common;
+using Oak.I18n;
+using Oak.Proto;
+using Google.Protobuf.Collections;
 using Grpc.Core;
 using MessagePack;
 using Microsoft.AspNetCore.Http;
 
 namespace Oak.Service.Util;
-
-
-public interface ISessionManager
-{
-    public Session Get(ServerCallContext stx);
-    public Session SignIn(ServerCallContext stx, string userId, bool rememberMe);
-    public Session SignOut(ServerCallContext stx);
-}
 
 [MessagePackObject]
 public record Session
@@ -32,14 +27,30 @@ public record Session
 
     [IgnoreMember]
     public bool IsAnon => !IsAuthed;
+
+    [Key(4)]
+    public string Lang { get; init; } = S.DefaultLang;
+
+    [Key(5)]
+    public string DateFmt { get; init; } = S.DefaultDateFmt;
+
+    [Key(6)]
+    public string TimeFmt { get; init; } = S.DefaultTimeFmt;
+
+    public Auth_Session ToAuth() => new ()
+    {
+        Id = Id,
+        IsAuthed = IsAuthed,
+        
+    };
 }
 
-public class SessionManager: ISessionManager
+public static class ServerCallContextExts
 {
-    private const string SessionName = "Oak";
+    private const string SessionName = "oak";
     private static readonly byte[][] SignatureKeys;
 
-    static SessionManager()
+    static ServerCallContextExts()
     {
         SignatureKeys = Config.Session.SignatureKeys.Select(x => Base64.UrlDecode(x)).ToArray();
         if (SignatureKeys.Count(x => x.Length != 64) > 0)
@@ -52,49 +63,50 @@ public class SessionManager: ISessionManager
             throw new InvalidDataException("config: there must be at least 1 session signature key");
         }
     }
-    
-    private Session? _cache { get; set; }
 
-    public Session Get(ServerCallContext stx)
+    public static Session GetSession(this ServerCallContext stx)
     {
-        if (_cache.IsNull())
+        Session ses;
+        if (!stx.UserState.ContainsKey(SessionName))
         {
-            _cache = GetCookie(stx);
+            ses = GetCookie(stx);
+            stx.UserState[SessionName] = ses;
         }
-        return _cache;
+        else
+        {
+            ses = (Session)stx.UserState[SessionName];
+        }
+        return ses;
     }
 
-    public Session SignIn(ServerCallContext stx, string userId, bool rememberMe)
+    public static Session CreateSession(this ServerCallContext stx, string userId, bool isAuthed, bool rememberMe, string lang = S.DefaultLang, string dateFmt = S.DefaultDateFmt, string timeFmt = S.DefaultTimeFmt)
     {
         var ses = new Session()
         {
             Id = userId,
             StartedOn = DateTime.UtcNow,
-            IsAuthed = true,
-            RememberMe = rememberMe
+            IsAuthed = isAuthed,
+            RememberMe = rememberMe,
+            Lang = lang,
+            DateFmt = dateFmt,
+            TimeFmt = timeFmt
         };
-        _cache = ses;
+        stx.UserState[SessionName] = ses;
         SetCookie(stx, ses);
         return ses;
     }
 
-    public Session SignOut(ServerCallContext stx)
+    public static Session ClearSession(this ServerCallContext stx)
     {
-        _cache = _SignOut(stx);
-        return _cache;
+        var ses = _ClearSession(stx);
+        stx.UserState[SessionName] = ses;
+        return ses;
     }
 
-    private static Session _SignOut(ServerCallContext stx)
+    private static Session _ClearSession(ServerCallContext stx)
     {
-        var ses = new Session()
-        {
-            Id = Id.New(),
-            StartedOn = DateTime.UtcNow,
-            IsAuthed = false,
-            RememberMe = false
-        };
-        SetCookie(stx, ses);
-        return ses;
+        return stx.CreateSession(Id.New(), false, false,
+            S.BestLang(stx.GetHttpContext().Request.Headers.AcceptLanguage.ToArray().FirstOrDefault() ?? ""));
     }
     
     private static Session GetCookie(ServerCallContext stx)
@@ -105,8 +117,9 @@ public class SessionManager: ISessionManager
         {
             // there is no session set so use sign out to create a
             // new anon session
-            return _SignOut(stx);
+            return _ClearSession(stx);
         }
+
         // there is a session so lets get it from the cookie
         var signedSessionBytes = Base64.UrlDecode(c);
         var signedSes = MessagePackSerializer.Deserialize<SignedSession>(signedSessionBytes);
@@ -161,10 +174,6 @@ public class SessionManager: ISessionManager
             SameSite = SameSiteMode.Strict
         });
     }
-    private static void DeleteCookie(ServerCallContext stx)
-    {
-        stx.GetHttpContext().Response.Cookies.Delete(SessionName);
-    }
 
     [MessagePackObject]
     public record SignedSession
@@ -174,4 +183,14 @@ public class SessionManager: ISessionManager
         [Key(1)] 
         public byte[] Signature { get; init; }
     }
+    
+    // error throwing
+    public static void ErrorIf(this ServerCallContext stx, bool condition, string key, object? model = null, StatusCode code = StatusCode.Internal)
+        => Throw.If(condition, () => new ApiException(stx.String(key, model), code));
+    public static void ErrorFromValidationResult(this ServerCallContext stx, ValidationResult res, StatusCode code = StatusCode.Internal)
+        => Throw.If(!res.Valid, () => new ApiException($"{stx.String(res.Message.Key, res.Message.Model)}{(res.SubMessages.Any() ? $":\n{string.Join("\n",res.SubMessages.Select(x => stx.String(x.Key, x.Model)))}": "")}", code));
+
+    // i18n string handling
+
+    public static string String(this ServerCallContext stx, string key, object? model = null) => S.Get(stx.GetSession().Lang, key, model);
 }

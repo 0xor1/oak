@@ -15,6 +15,7 @@
   "email": {
     "region": "eu-west-1",
     "key": "abc",
-    "secret": "123"
-  } 
+    "secret": "123",
+    "noReplyAddress": "noreply@yolo.solo"
+  }
 }

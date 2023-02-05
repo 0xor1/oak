@@ -1,6 +1,8 @@
 ﻿@page "/verify_email"
 @using Oak.Client.Lib
-<PageTitle>Sign In</PageTitle>
+@using Oak.I18n
+@using Oak.Client.Lib
+<PageTitle>@L.S(S.VerifyEmail)</PageTitle>
 <VerifyEmail
     Email="@(_nav.QueryValue<string>("email"))"
     Code="@(_nav.QueryValue<string>("code"))"/>

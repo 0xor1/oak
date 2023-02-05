@@ -1,4 +1,5 @@
 using Common;
+using Oak.I18n;
 using Microsoft.EntityFrameworkCore;
 
 namespace Oak.Db;
@@ -25,6 +26,9 @@ public class Auth: Pwd
     public DateTime LoginCodeCreatedOn { get; set; } = DateTimeExts.Zero();
     public string LoginCode { get; set; } = "";
     public bool Use2FA { get; set; } = false;
+    public string Lang { get; set; } = S.DefaultLang;
+    public string DateFmt { get; set; } = S.DefaultDateFmt;
+    public string TimeFmt { get; set; } = S.DefaultTimeFmt;
 }
 public class Pwd
 {

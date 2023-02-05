@@ -1,4 +1,5 @@
-﻿using Oak.Proto;
+﻿using Oak.I18n;
+using Oak.Proto;
 using Grpc.Core;
 using Grpc.Core.Interceptors;
 using Humanizer;
@@ -34,20 +35,20 @@ public class ErrorInterceptor : Interceptor
         {
             var code = StatusCode.Internal;
             var level = NotificationSeverity.Error;
-            var message = "an unexpected error happened";
+            var message = S.UnexpectedError;
             if (ex.GetType() == typeof(RpcException))
             {
                 var rpc = (RpcException)ex;
                 code = rpc.Status.StatusCode;
                 message = rpc.Status.Detail;
-                Console.WriteLine($"{DateTime.UtcNow.ToString("s")} {code} - {message}");
+                Console.WriteLine($"{DateTime.UtcNow.ToString("s")} {code} - {L.S(message)}");
             }
             else
             {
                 Console.WriteLine($"{DateTime.UtcNow.ToString("s")} {ex.Message}");
             }
 
-            NotificationService.Notify(level, "Api Error", message, duration: 10000D);
+            NotificationService.Notify(level, "Api Error", L.S(message), duration: 10000D);
             // rethrow in case any other specific components need to handle it too.
             throw new ApiException(code, message);
         }

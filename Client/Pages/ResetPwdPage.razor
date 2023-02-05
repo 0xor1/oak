@@ -1,6 +1,8 @@
 ﻿@page "/reset_pwd"
 @using Oak.Client.Lib
-<PageTitle>Reset Password</PageTitle>
+@using Oak.Client.Lib
+@using Oak.I18n
+<PageTitle>@L.S(S.ResetPwd)</PageTitle>
 
 <ResetPwd
     Email="@(_nav.QueryValue<string>("email"))"
