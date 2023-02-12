@@ -1,0 +1,57 @@
+﻿<div class="root">
+    <RadzenLayout class="rz-shadow-3 fill">
+        <RadzenHeader class="flx jc-sb">
+            <RadzenSidebarToggle class="sq-4t" Click="@(() => LeftExpanded = !LeftExpanded)" />
+            <RadzenProfileMenu class="m-t-0t">
+                <Template>
+                    <RadzenIcon Icon="account_circle" IconStyle="@(session.IsAuthed? IconStyle.Success: IconStyle.Danger)"></RadzenIcon>
+                </Template>
+                <ChildContent>
+                    @if (session.IsAuthed)
+                    {
+                        <RadzenProfileMenuItem Text="@L.S(S.SignOut)" Path="sign_out" Icon="account_circle"></RadzenProfileMenuItem>
+                    }
+                    else
+                    {
+                        <RadzenProfileMenuItem Text="@L.S(S.SignIn)" Path="sign_in" Icon="account_circle"></RadzenProfileMenuItem>
+                    }
+                    <RadzenProfileMenuItem Text="@L.S(S.L10n)" Path="l10n" Icon="translate"></RadzenProfileMenuItem>
+                </ChildContent>
+            </RadzenProfileMenu>
+        </RadzenHeader>
+        <RadzenSidebar @bind-Expanded="@LeftExpanded">
+            <RadzenPanelMenu>
+                <RadzenPanelMenuItem Text="@L.S(S.Home)" Icon="home" Path="/"/>
+            </RadzenPanelMenu>
+        </RadzenSidebar>
+        <RadzenBody class="root rz-background-color-base-100">
+            <CascadingValue Value="@session">
+                @Body
+            </CascadingValue>
+        </RadzenBody>
+        <RadzenNotification/>
+    </RadzenLayout>
+</div>
+
+@using Oak.Client.Lib
+@using Oak.I18n
+@inherits LayoutComponentBase
+@inject IAuthService _auth;
+@code{
+
+    private bool LeftExpanded = false;
+    private Session session = new ();
+
+    protected override async Task OnInitializedAsync()
+    {
+        _auth.RegisterRefreshUI(AuthStateChanged);
+        AuthStateChanged(await _auth.GetSession());
+    }
+
+    private void AuthStateChanged(Session s)
+    {
+        session = s;
+        StateHasChanged();
+    }
+
+}

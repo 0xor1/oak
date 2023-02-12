@@ -1,0 +1,14 @@
+﻿@using Oak.Client.Lib
+@using Oak.I18n
+<div class="root jc-c ai-c">
+    <RadzenCard class="p-3 w-25">
+        @(new MarkupString(L.S(S.Oak)))
+    </RadzenCard>
+</div>
+
+@code{
+
+    [CascadingParameter]
+    public Session? Session { get; set; }
+
+}

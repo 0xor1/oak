@@ -1,0 +1,100 @@
+﻿@using Oak.Client.Lib
+@using System.Text.RegularExpressions
+@using Common
+@using Oak.I18n
+@using Oak.Proto
+@using AuthValidator = Oak.Client.Lib.AuthValidator
+<div class="root jc-c ai-c">
+    <RadzenCard class="p-3 w-25">
+            <RadzenText TextStyle="TextStyle.H4" TagName="TagName.H2" class="m-t-0">
+                @L.S(S.ResetPwd)
+            </RadzenText>
+            @if (_success)
+            {
+                <div class="flx col ai-stretch">
+                    <RadzenText TextStyle="TextStyle.Body1" TagName="TagName.P" class="m-b-1 f-b rz-color-success-light">
+                        @L.S(S.ResetPwdSuccess)
+                    </RadzenText>
+                    <RadzenButton ButtonType="ButtonType.Button"Text="@L.S(S.SignIn)" Click="SignIn"/>
+                </div>
+            }
+            else
+            {
+                <RadzenTemplateForm
+                    TItem="Model"
+                    Data="_model"
+                    Submit="Do"
+                    class="flx col ai-stretch g-1">
+                    <div class="flx col ai-stretch">
+                        <RadzenLabel class="m-b-0q" Component="Password" Text="@L.S(S.Pwd)"/>
+                        <RadzenPassword Name="Password" @bind-Value="@_model.NewPwd" Disabled="!CanDo"/>
+                        <RadzenCustomValidator Validator="PwdValidator" Component="Password" Popup="true"></RadzenCustomValidator>
+                    </div>
+                    <div class="flx col ai-stretch">
+                        <RadzenLabel class="m-b-0q" Component="ConfirmPassword" Text="@L.S(S.ConfirmPwd)"/>
+                        <RadzenPassword Name="ConfirmPassword" @bind-Value="@_model.ConfirmNewPwd" Disabled="!CanDo"/>
+                        <RadzenCustomValidator Validator="ConfirmPasswordValidator" Component="ConfirmPassword" Popup="true"></RadzenCustomValidator>
+                    </div>
+                    <RadzenButton ButtonType="ButtonType.Submit" BusyText="@L.S(S.Resetting)" IsBusy="_doing" Text="@L.S(S.ResetPwd)" Disabled="!CanDo"/>
+                </RadzenTemplateForm>
+            }
+        </RadzenCard>
+</div>
+
+@inject Api.ApiClient Api;
+@inject NavigationManager Nav;
+@code{
+
+    [Parameter]
+    public string Email { get; set; } = "";
+
+    [Parameter]
+    public string Code { get; set; } = "";
+
+    class Model
+    {
+        public string NewPwd { get; set; } = "";
+        public string ConfirmNewPwd { get; set; } = "";
+    }
+
+    private Model _model = new();
+    private bool CanDo => !_doing && !_success;
+    private bool _doing = false;
+    private bool _success = false;
+
+    private async Task Do()
+    {
+        _doing = true;
+        try
+        {
+            await Api.Auth_ResetPwdAsync(new Auth_ResetPwdReq()
+            {
+                Email = Email,
+                Code = Code,
+                NewPwd = _model.NewPwd
+            });
+            _success = true;
+        }
+        catch
+        {
+            // use empty catch to avoid having to
+            // call StatHasChanged on errors
+        }
+        _doing = false;
+    }
+
+    private void SignIn()
+    {
+        Nav.NavigateTo("sign_in");
+    }
+    
+    private ValidationResult PwdValidator(IRadzenFormComponent component)
+        => AuthValidator.PwdValidator(component);
+
+    private ValidationResult ConfirmPasswordValidator(IRadzenFormComponent component)
+        => new ()
+        {
+            Valid = (component.GetValue() as string ?? "") == _model.NewPwd,
+            Message = new(L.S(S.PwdsDontMatch))
+        };
+}
