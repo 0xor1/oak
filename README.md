@@ -1,5 +1,5 @@
-Oak - dotnet starter kit
-=========================
+Oak
+===
 
 This project is the basic starting point for my dotnet based projects, 
 revolving around the primary technologies:
