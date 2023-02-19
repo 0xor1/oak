@@ -16,7 +16,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Oak.Scratch", "Oak.Scratch\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Oak.I18n", "Oak.I18n\Oak.I18n.csproj", "{423174B0-5806-4F43-8000-D8AF8E1996EC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Oak.JFlow", "Oak.JFlow\Oak.JFlow.csproj", "{815D1D2B-6EEC-4FCC-AE1A-90F2C6964BCB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Oak.Flow", "Oak.Flow\Oak.Flow.csproj", "{815D1D2B-6EEC-4FCC-AE1A-90F2C6964BCB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
