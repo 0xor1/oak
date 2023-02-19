@@ -4,7 +4,7 @@
   },
   "strings": {
     "en": {
-      "control_a": "how old are you",
+      "control_a_label": "how old are you",
       "control_a_invalid": "please enter your age",
       "opt_a": "option a",
       "opt_b": "option b",
@@ -27,7 +27,6 @@
       "controls": [
         {
           "key": "control_a",
-          "invalid": "control_a_invalid",
           "type": "int",
           "required": [{
             "then": true
@@ -40,6 +39,11 @@
           "key": "control_b",
           "invalid": "control_b_invalid",
           "type": "select",
+          "set": [{
+            "then": {
+              "key": "my_set"
+            }
+          }],
           "required": [{
             "then": true
           }]
@@ -50,7 +54,7 @@
   "autos": [
     
   ],
-  "flow": [
+  "links": [
     
   ]
 }

@@ -1,11 +1,12 @@
-﻿using Fluid;
+﻿using Common.I18n;
 
 namespace Oak.I18n;
 
+
 public static partial class S
 {
-    private static readonly IReadOnlyDictionary<string, IReadOnlyDictionary<string, IFluidTemplate>> Library =
-        new Dictionary<string, IReadOnlyDictionary<string, IFluidTemplate>>()
+    private static readonly IReadOnlyDictionary<string, IReadOnlyDictionary<string, TemplatableString>> Library =
+        new Dictionary<string, IReadOnlyDictionary<string, TemplatableString>>()
         {
             {
                 EN, 
