@@ -12,13 +12,3 @@ public record Flow
     public IReadOnlyList<Set> Sets { get; init; }
     public IReadOnlyList<ActionUnit> ActionUnits { get; init; }
 }
-
-public record IntControl : InputControl
-{
-    public BoolType DisplayAs { get; init; } = BoolTypes.Checkbox;
-}
-
-public record StringControl : InputControl
-{
-    public BoolType DisplayAs { get; init; } = BoolTypes.Checkbox;
-}

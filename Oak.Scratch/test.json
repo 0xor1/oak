@@ -1,7 +1,4 @@
 ﻿{
-  "branding": {
-    
-  },
   "strings": {
     "en": {
       "control_a_label": "how old are you",
@@ -21,9 +18,10 @@
       ]
     }
   ],
-  "forms": [
+  "actions": [
     {
       "key": "my_form",
+      "type": "form",
       "controls": [
         {
           "key": "control_a",
@@ -50,11 +48,5 @@
         }
       ]
     }    
-  ],
-  "autos": [
-    
-  ],
-  "links": [
-    
   ]
 }

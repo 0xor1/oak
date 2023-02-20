@@ -1,6 +1,6 @@
 ﻿using Common;
 
-namespace Oak.Flow;
+namespace Oak.Flow.Controls;
 
 public record BoolControl : InputControl
 {
@@ -18,4 +18,14 @@ public static class BoolTypes
         YesNo,
         Checkbox
     }.ToDictionary(x => x.Key);
+}
+
+public record IntControl : InputControl
+{
+    public BoolType DisplayAs { get; init; } = BoolTypes.Checkbox;
+}
+
+public record StringControl : InputControl
+{
+    public BoolType DisplayAs { get; init; } = BoolTypes.Checkbox;
 }
