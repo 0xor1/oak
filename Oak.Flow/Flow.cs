@@ -10,5 +10,5 @@ public record Flow
     public Key Key { get; init; }
     public IReadOnlyDictionary<string, IReadOnlyDictionary<Key, string>> Strings { get; init; }
     public IReadOnlyList<Set> Sets { get; init; }
-    public IReadOnlyList<ActionUnit> ActionUnits { get; init; }
+    public IReadOnlyList<Action> Actions { get; init; }
 }

@@ -1,7 +1,7 @@
 ﻿{
   "strings": {
     "en": {
-      "control_a_label": "how old are you",
+      "control_a": "how old are you",
       "control_a_invalid": "please enter your age",
       "opt_a": "option a",
       "opt_b": "option b",
@@ -39,7 +39,9 @@
           "type": "select",
           "set": [{
             "then": {
-              "key": "my_set"
+              "key": "my_set",
+              "exclude": [],
+              "include": []
             }
           }],
           "required": [{
