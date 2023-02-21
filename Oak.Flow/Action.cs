@@ -1,5 +1,8 @@
-﻿using Common;
+﻿using System.Runtime.Serialization;
+using Common;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using Newtonsoft.Json.Linq;
 
 namespace Oak.Flow;
 
@@ -7,48 +10,55 @@ public record Action
 {
     public Key Key { get; init; }
     public ActionType Type { get; init; }
-    public IReadOnlyList<Cond<Key>>? Next { get; init; }
+    public IReadOnlyList<Conditional<Key>>? Next { get; init; }
 }
 
-[JsonConverter(typeof(ActionTypeConverter))]
-public record ActionType(Key Key);
-public static class ActionTypes
+[JsonConverter(typeof(StringEnumConverter))]
+public enum ActionType
 {
-    public static readonly ActionType Form = new (new("form"));
-    public static readonly ActionType Auto = new (new ("auto"));
-
-    public static readonly IReadOnlyDictionary<Key, ActionType> Types = new List<ActionType>()
+    [EnumMember(Value="form")]
+    Form,
+    [EnumMember(Value="auto")]
+    Auto
+}
+internal static class ActionTypesMap
+{
+    public static readonly IReadOnlyDictionary<ActionType, Type> Types = new Dictionary<ActionType, Type>()
     {
-        Form,
-        Auto
-    }.ToDictionary(x => x.Key);
+        {ActionType.Form, typeof(Form)},
+        {ActionType.Auto, typeof(Auto)}
+    };
 }
 
-public class ActionTypeConverter : JsonConverter
+public class ActionConverter : JsonConverter
 {
-    public static readonly ActionTypeConverter Singleton = new();
-
-    private ActionTypeConverter()
-    {
-    }
-    
     public override bool CanConvert(Type objectType)
     {
-        return objectType == typeof(ActionType);
+        return objectType == typeof(Action);
     }
 
     public override object? ReadJson(JsonReader reader, Type objectType, object? existingValue, JsonSerializer serializer)
     {
-        var s = serializer.Deserialize<string>(reader);
-        if (s == null || !Key.IsValid(s) || !ActionTypes.Types.TryGetValue(new (s), out var ct))
+        var o = serializer.Deserialize<JObject>(reader);
+        
+        if (o == null)
         {
-            throw new InvalidDataException("json action type must be a valid key string value that maps to a supported action type");
+            throw new InvalidDataException("json action object can not be null");
         }
-        return ct;
+        
+        if (!o.TryGetValue("type", out var t))
+        {
+            throw new InvalidDataException("json action object missing type property");
+        }
+        
+        var enumType = Enum.Parse<ActionType>(t.Value<string>() ?? throw new InvalidDataException("action type property missing"), true);
+        var type = ActionTypesMap.Types[enumType];
+        
+        return o.ToObject(type, serializer);
     }
     
     public override void WriteJson(JsonWriter writer, object? value, JsonSerializer serializer)
     {
-        serializer.Serialize(writer, ((ActionType)value.NotNull()).Key);
+        serializer.Serialize(writer, value);
     }
 }

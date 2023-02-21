@@ -1,31 +1,30 @@
-﻿using Common;
+﻿using System.Runtime.Serialization;
+using Common;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace Oak.Flow.Controls;
 
 public record BoolControl : InputControl
 {
-    public BoolType DisplayAs { get; init; } = BoolTypes.Checkbox;
+    public BoolType DisplayAs { get; init; } = BoolType.Checkbox;
 }
 
-public record BoolType(Key Key);
-public static class BoolTypes
+[JsonConverter(typeof(StringEnumConverter))]
+public enum BoolType
 {
-    public static readonly BoolType YesNo = new (new("yes_no"));
-    public static readonly BoolType Checkbox = new (new ("checkbox"));
-
-    public static readonly IReadOnlyDictionary<Key, BoolType> Types = new List<BoolType>()
-    {
-        YesNo,
-        Checkbox
-    }.ToDictionary(x => x.Key);
+    [EnumMember(Value="yes_no")]
+    YesNo,
+    [EnumMember(Value="checkbox")]
+    Checkbox
 }
 
 public record IntControl : InputControl
 {
-    public BoolType DisplayAs { get; init; } = BoolTypes.Checkbox;
+    public BoolType DisplayAs { get; init; } = BoolType.Checkbox;
 }
 
 public record StringControl : InputControl
 {
-    public BoolType DisplayAs { get; init; } = BoolTypes.Checkbox;
+    public BoolType DisplayAs { get; init; } = BoolType.Checkbox;
 }

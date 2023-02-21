@@ -1,0 +1,55 @@
+﻿{
+  "key": "yolo",
+  "strings": {
+    "en": {
+      "control_a": "how old are you",
+      "control_a_invalid": "please enter your age",
+      "opt_a": "option a",
+      "opt_b": "option b",
+      "opt_c": "option c"
+    }
+  },
+  "sets": [
+    {
+      "key": "my_set",
+      "options": [
+        "opt_a",
+        "opt_b",
+        "opt_c"
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "key": "my_form",
+      "type": "form",
+      "controls": [
+        {
+          "key": "control_a",
+          "type": "int",
+          "required": [{
+            "then": true
+          }],
+          "next": [{
+            "then": "control_b"
+          }]
+        },
+        {
+          "key": "control_b",
+          "invalid": "control_b_invalid",
+          "type": "select",
+          "set": [{
+            "then": {
+              "key": "my_set",
+              "exclude": [],
+              "include": []
+            }
+          }],
+          "required": [{
+            "then": true
+          }]
+        }
+      ]
+    }
+  ]
+}

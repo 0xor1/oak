@@ -1,52 +1,58 @@
-﻿using Common;
+﻿using System.Dynamic;
+using System.Runtime.Serialization;
+using Common;
+using Humanizer;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
 using Oak.Flow.Controls;
 
 namespace Oak.Flow;
 
-[JsonConverter(typeof(ControlConverter))]
 public record Control
 {
     public Key Key { get; init; }
     public ControlType Type { get; init; }
-    public IReadOnlyList<Cond<Key>>? Next { get; init; }
+    public IReadOnlyList<Conditional<Key>>? Next { get; init; }
 }
 
 public abstract record InputControl : Control
 {
-    public IReadOnlyList<Cond<bool>>? Required { get; init; }
+    public IReadOnlyList<Conditional<bool>>? Required { get; init; }
 }
 
-
-[JsonConverter(typeof(ControlTypeConverter))]
-public record ControlType(Key Key, Type Control);
-public static class ControlTypes
+[JsonConverter(typeof(StringEnumConverter))]
+public enum ControlType
 {
-    public static readonly ControlType Static = new (new("static"), typeof(Control));
-    public static readonly ControlType Bool = new (new ("bool"), typeof(BoolControl));
-    public static readonly ControlType Int = new (new ("int"), typeof(IntControl));
-    public static readonly ControlType Decimal = new (new ("decimal"), typeof(IntControl));
-    public static readonly ControlType String = new (new ("string"), typeof(StringControl));
+    [EnumMember(Value= "static")]
+    Static,
+    [EnumMember(Value= "bool")]
+    Bool,
+    [EnumMember(Value= "int")]
+    Int,
+    [EnumMember(Value= "decimal")]
+    Decimal,
+    [EnumMember(Value= "string")]
+    String,
+    [EnumMember(Value= "select")]
+    Select
+}
 
-    public static readonly IReadOnlyDictionary<Key, ControlType> Types = new List<ControlType>()
+public static class ControlTypesMap
+{
+    public static readonly IReadOnlyDictionary<ControlType, Type> Types = new Dictionary<ControlType, Type>()
     {
-        Static,
-        Bool,
-        Int,
-        Decimal,
-        String
-    }.ToDictionary(x => x.Key);
+        {ControlType.Static, typeof(Control)},
+        {ControlType.Bool, typeof(BoolControl)},
+        {ControlType.Int, typeof(IntControl)},
+        {ControlType.Decimal, typeof(IntControl)},
+        {ControlType.String, typeof(IntControl)},
+        {ControlType.Select, typeof(IntControl)}
+    };
 }
 
 public class ControlConverter : JsonConverter
 {
-    public static readonly ControlConverter Singleton = new();
-
-    private ControlConverter()
-    {
-    }
-    
     public override bool CanConvert(Type objectType)
     {
         return objectType == typeof(Control);
@@ -55,53 +61,26 @@ public class ControlConverter : JsonConverter
     public override object? ReadJson(JsonReader reader, Type objectType, object? existingValue, JsonSerializer serializer)
     {
         var o = serializer.Deserialize<JObject>(reader);
+        
         if (o == null)
         {
             throw new InvalidDataException("json control object can not be null");
         }
+        
         if (!o.TryGetValue("type", out var t))
         {
-            throw new InvalidDataException("json control object missing type propertry");
+            throw new InvalidDataException("json control object missing type property");
         }
-        var kStr = t.Value<string>();
-        if (kStr == null || !Key.IsValid(kStr) || !ControlTypes.Types.TryGetValue(new (kStr), out var ct))
-        {
-            throw new InvalidDataException($"unknown control type \"{kStr}\" json control object must contain type property with valid key string value that maps to a supported control type");
-        }
-        return o.ToObject(ct.Control, serializer);
+        
+        
+        var enumType = Enum.Parse<ControlType>(t.Value<string>() ?? throw new InvalidDataException("control type property missing"), true);
+        var type = ControlTypesMap.Types[enumType];
+        
+        return o.ToObject(type, serializer);
     }
     
     public override void WriteJson(JsonWriter writer, object? value, JsonSerializer serializer)
     {
         serializer.Serialize(writer, value);
-    }
-}
-
-public class ControlTypeConverter : JsonConverter
-{
-    public static readonly ControlTypeConverter Singleton = new();
-
-    private ControlTypeConverter()
-    {
-    }
-    
-    public override bool CanConvert(Type objectType)
-    {
-        return objectType == typeof(ControlType);
-    }
-
-    public override object? ReadJson(JsonReader reader, Type objectType, object? existingValue, JsonSerializer serializer)
-    {
-        var s = serializer.Deserialize<string>(reader);
-        if (s == null || !Key.IsValid(s) || !ControlTypes.Types.TryGetValue(new (s), out var ct))
-        {
-            throw new InvalidDataException("json control type must be a valid key string value that maps to a supported control type");
-        }
-        return ct;
-    }
-    
-    public override void WriteJson(JsonWriter writer, object? value, JsonSerializer serializer)
-    {
-        serializer.Serialize(writer, ((ControlType)value.NotNull()).Key);
     }
 }
