@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Serialization;
 
 namespace Oak.Flow;
 
@@ -12,6 +13,35 @@ public record Flow
         new Dictionary<string, Lang>();
     public IReadOnlyList<Set> Sets { get; init; } = new List<Set>();
     public IReadOnlyList<Action> Actions { get; init; } = new List<Action>();
+
+    private static readonly JsonSerializerSettings _jss =
+        new()
+        {
+            ContractResolver = new DefaultContractResolver
+            {
+                NamingStrategy = new CamelCaseNamingStrategy()
+            },
+            NullValueHandling = NullValueHandling.Ignore,
+            Converters = new List<JsonConverter>()
+            {
+                new ControlConverter(),
+                new ActionConverter(),
+            }
+        };
+
+    public static Flow FromJson(string json)
+    {
+        return JsonConvert.DeserializeObject<Flow>(json, _jss);
+    }
+
+    public string ToJson(bool indent = false)
+    {
+        return JsonConvert.SerializeObject(
+            this,
+            indent ? Formatting.Indented : Formatting.None,
+            _jss
+        );
+    }
 }
 
 public record Lang

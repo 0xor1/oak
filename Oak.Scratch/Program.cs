@@ -6,25 +6,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Serialization;
 
-var flow = JsonConvert.DeserializeObject<Flow>(
-    File.ReadAllText("test.json"),
-    new JsonSerializerSettings()
-    {
-        Converters = new List<JsonConverter>() { new ControlConverter(), new ActionConverter(), }
-    }
-);
-DefaultContractResolver contractResolver = new DefaultContractResolver
-{
-    NamingStrategy = new CamelCaseNamingStrategy()
-};
-var str = JsonConvert.SerializeObject(
-    flow,
-    Formatting.Indented,
-    new JsonSerializerSettings()
-    {
-        NullValueHandling = NullValueHandling.Ignore,
-        ContractResolver = contractResolver
-    }
-);
+var flow = Flow.FromJson(File.ReadAllText("test.json"));
+var str = flow.ToJson(true);
 Console.WriteLine(flow.Actions.First().Key);
 Console.WriteLine(str);
