@@ -12,14 +12,15 @@ public class ApiService : Api.ApiBase
 {
     private readonly OakDb _db;
     private readonly IEmailClient _emailClient;
-    
+
     public ApiService(OakDb db, IEmailClient emailClient)
     {
         _db = db;
         _emailClient = emailClient;
     }
 
-    public override Task<Auth_Session> Auth_GetSession(Nothing _, ServerCallContext stx) => AuthSession(stx.GetSession()).Task();
+    public override Task<Auth_Session> Auth_GetSession(Nothing _, ServerCallContext stx) =>
+        AuthSession(stx.GetSession()).Task();
 
     public override async Task<Nothing> Auth_Register(Auth_RegisterReq req, ServerCallContext stx)
     {
@@ -30,12 +31,14 @@ public class ApiService : Api.ApiBase
         req.Email = req.Email.ToLower();
         stx.ErrorFromValidationResult(AuthValidator.Email(req.Email));
         stx.ErrorFromValidationResult(AuthValidator.Pwd(req.Pwd));
-        
+
         // start db tx
         await using var tx = await _db.Database.BeginTransactionAsync();
         try
         {
-            var existing = await _db.Auths.SingleOrDefaultAsync(x => x.Email.Equals(req.Email) || x.NewEmail.Equals(req.Email));
+            var existing = await _db.Auths.SingleOrDefaultAsync(
+                x => x.Email.Equals(req.Email) || x.NewEmail.Equals(req.Email)
+            );
             var newCreated = existing == null;
             if (existing == null)
             {
@@ -59,10 +62,16 @@ public class ApiService : Api.ApiBase
                 await _db.SaveChangesAsync();
             }
 
-            if (!existing.VerifyEmailCode.IsNullOrEmpty() && 
-                (newCreated || 
-                 (existing.VerifyEmailCodeCreatedOn.MinutesSince() > 10 && 
-                  existing.ActivatedOn.IsZero())))
+            if (
+                !existing.VerifyEmailCode.IsNullOrEmpty()
+                && (
+                    newCreated
+                    || (
+                        existing.VerifyEmailCodeCreatedOn.MinutesSince() > 10
+                        && existing.ActivatedOn.IsZero()
+                    )
+                )
+            )
             {
                 // if there is a verify email code and
                 // we've just registered a new account
@@ -75,11 +84,12 @@ public class ApiService : Api.ApiBase
                     Code = existing.VerifyEmailCode
                 };
                 await _emailClient.SendEmailAsync(
-                    stx.String(S.AuthConfirmEmailSubject), 
-                     stx.String(S.AuthConfirmEmailHtml, model), 
-                    stx.String(S.AuthConfirmEmailText, model), 
-                    Config.Email.NoReplyAddress, 
-                    new List<string>(){req.Email});
+                    stx.String(S.AuthConfirmEmailSubject),
+                    stx.String(S.AuthConfirmEmailHtml, model),
+                    stx.String(S.AuthConfirmEmailText, model),
+                    Config.Email.NoReplyAddress,
+                    new List<string>() { req.Email }
+                );
             }
             await tx.CommitAsync();
         }
@@ -92,17 +102,22 @@ public class ApiService : Api.ApiBase
         return new Nothing();
     }
 
-    public override async Task<Nothing> Auth_VerifyEmail(Auth_VerifyEmailReq req, ServerCallContext stx)
+    public override async Task<Nothing> Auth_VerifyEmail(
+        Auth_VerifyEmailReq req,
+        ServerCallContext stx
+    )
     {
         // !!! ToLower all emails in all Auth_ api endpoints
         req.Email = req.Email.ToLower();
         stx.ErrorFromValidationResult(AuthValidator.Email(req.Email));
-        
+
         // start db tx
         await using var tx = await _db.Database.BeginTransactionAsync();
         try
         {
-            var auth = await _db.Auths.SingleOrDefaultAsync(x => x.Email.Equals(req.Email) || x.NewEmail.Equals(req.Email));
+            var auth = await _db.Auths.SingleOrDefaultAsync(
+                x => x.Email.Equals(req.Email) || x.NewEmail.Equals(req.Email)
+            );
             stx.ErrorIf(auth == null, S.NoMatchingRecord);
             stx.ErrorIf(auth.NotNull().VerifyEmailCode != req.Code, S.InvalidEmailCode);
             if (!auth.NewEmail.IsNullOrEmpty() && auth.NewEmail == req.Email)
@@ -130,16 +145,19 @@ public class ApiService : Api.ApiBase
 
         return new Nothing();
     }
-    
-    public override async Task<Nothing> Auth_SendResetPwdEmail(Auth_SendResetPwdEmailReq req, ServerCallContext stx)
+
+    public override async Task<Nothing> Auth_SendResetPwdEmail(
+        Auth_SendResetPwdEmailReq req,
+        ServerCallContext stx
+    )
     {
         // basic validation
-        var ses = stx.GetSession(); 
+        var ses = stx.GetSession();
         stx.ErrorIf(ses.IsAuthed, S.AlreadyAuthenticated);
         // !!! ToLower all emails in all Auth_ api endpoints
         req.Email = req.Email.ToLower();
         stx.ErrorFromValidationResult(AuthValidator.Email(req.Email));
-        
+
         // start db tx
         await using var tx = await _db.Database.BeginTransactionAsync();
         try
@@ -167,7 +185,7 @@ public class ApiService : Api.ApiBase
                 stx.String(S.AuthResetPwdHtml, model),
                 stx.String(S.AuthResetPwdText, model),
                 Config.Email.NoReplyAddress,
-                new List<string>(){req.Email}
+                new List<string>() { req.Email }
             );
             await tx.CommitAsync();
         }
@@ -186,7 +204,7 @@ public class ApiService : Api.ApiBase
         req.Email = req.Email.ToLower();
         stx.ErrorFromValidationResult(AuthValidator.Email(req.Email));
         stx.ErrorFromValidationResult(AuthValidator.Pwd(req.NewPwd));
-        
+
         // start db tx
         await using var tx = await _db.Database.BeginTransactionAsync();
         try
@@ -221,7 +239,7 @@ public class ApiService : Api.ApiBase
         // !!! ToLower all emails in all Auth_ api endpoints
         req.Email = req.Email.ToLower();
         stx.ErrorFromValidationResult(AuthValidator.Email(req.Email));
-        
+
         // start db tx
         await using var tx = await _db.Database.BeginTransactionAsync();
         var auth = await _db.Auths.SingleOrDefaultAsync(x => x.Email.Equals(req.Email));
@@ -233,7 +251,14 @@ public class ApiService : Api.ApiBase
         if (pwdIsValid)
         {
             auth.LastSignedInOn = DateTime.UtcNow;
-            ses = stx.CreateSession(auth.Id, true, req.RememberMe, auth.Lang, auth.DateFmt, auth.TimeFmt);
+            ses = stx.CreateSession(
+                auth.Id,
+                true,
+                req.RememberMe,
+                auth.Lang,
+                auth.DateFmt,
+                auth.TimeFmt
+            );
         }
         await _db.SaveChangesAsync();
         await tx.CommitAsync();
@@ -252,18 +277,28 @@ public class ApiService : Api.ApiBase
         return AuthSession(ses).Task();
     }
 
-    public override async Task<Auth_Session> Auth_SetL10n(Auth_SetL10nReq req, ServerCallContext stx)
+    public override async Task<Auth_Session> Auth_SetL10n(
+        Auth_SetL10nReq req,
+        ServerCallContext stx
+    )
     {
         var ses = stx.GetSession();
         if (
             (req.Lang.IsNullOrWhiteSpace() || ses.Lang == req.Lang)
             && (req.DateFmt.IsNullOrWhiteSpace() || ses.DateFmt == req.DateFmt)
-            && (req.TimeFmt.IsNullOrWhiteSpace() || ses.TimeFmt == req.TimeFmt))
+            && (req.TimeFmt.IsNullOrWhiteSpace() || ses.TimeFmt == req.TimeFmt)
+        )
         {
             return AuthSession(ses);
         }
-        ses = stx.CreateSession(ses.Id, ses.IsAuthed, ses.RememberMe, S.BestLang(req.Lang ?? ses.Lang), req.DateFmt ?? ses.DateFmt,
-            req.TimeFmt ?? ses.TimeFmt);
+        ses = stx.CreateSession(
+            ses.Id,
+            ses.IsAuthed,
+            ses.RememberMe,
+            S.BestLang(req.Lang ?? ses.Lang),
+            req.DateFmt ?? ses.DateFmt,
+            req.TimeFmt ?? ses.TimeFmt
+        );
         if (ses.IsAuthed)
         {
             await using var tx = await _db.Database.BeginTransactionAsync();
@@ -278,11 +313,15 @@ public class ApiService : Api.ApiBase
         }
         return AuthSession(ses);
     }
-    
+
     private const int AuthAttemptsRateLimit = 5;
+
     private static void RateLimitAuthAttempts(ServerCallContext stx, Auth auth)
     {
-        stx.ErrorIf(auth.LastSignInAttemptOn.SecondsSince() < AuthAttemptsRateLimit, S.AuthAttemptRateLimit);
+        stx.ErrorIf(
+            auth.LastSignInAttemptOn.SecondsSince() < AuthAttemptsRateLimit,
+            S.AuthAttemptRateLimit
+        );
     }
 
     private static Auth_Session AuthSession(Session s)

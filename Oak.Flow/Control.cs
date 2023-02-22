@@ -24,30 +24,38 @@ public abstract record InputControl : Control
 [JsonConverter(typeof(StringEnumConverter))]
 public enum ControlType
 {
-    [EnumMember(Value= "static")]
+    [EnumMember(Value = "static")]
     Static,
-    [EnumMember(Value= "bool")]
+
+    [EnumMember(Value = "bool")]
     Bool,
-    [EnumMember(Value= "int")]
+
+    [EnumMember(Value = "int")]
     Int,
-    [EnumMember(Value= "decimal")]
+
+    [EnumMember(Value = "decimal")]
     Decimal,
-    [EnumMember(Value= "string")]
+
+    [EnumMember(Value = "string")]
     String,
-    [EnumMember(Value= "select")]
+
+    [EnumMember(Value = "select")]
     Select
 }
 
 public static class ControlTypesMap
 {
-    public static readonly IReadOnlyDictionary<ControlType, Type> Types = new Dictionary<ControlType, Type>()
+    public static readonly IReadOnlyDictionary<ControlType, Type> Types = new Dictionary<
+        ControlType,
+        Type
+    >()
     {
-        {ControlType.Static, typeof(Control)},
-        {ControlType.Bool, typeof(BoolControl)},
-        {ControlType.Int, typeof(IntControl)},
-        {ControlType.Decimal, typeof(IntControl)},
-        {ControlType.String, typeof(IntControl)},
-        {ControlType.Select, typeof(IntControl)}
+        { ControlType.Static, typeof(Control) },
+        { ControlType.Bool, typeof(BoolControl) },
+        { ControlType.Int, typeof(IntControl) },
+        { ControlType.Decimal, typeof(IntControl) },
+        { ControlType.String, typeof(IntControl) },
+        { ControlType.Select, typeof(IntControl) }
     };
 }
 
@@ -58,27 +66,34 @@ public class ControlConverter : JsonConverter
         return objectType == typeof(Control);
     }
 
-    public override object? ReadJson(JsonReader reader, Type objectType, object? existingValue, JsonSerializer serializer)
+    public override object? ReadJson(
+        JsonReader reader,
+        Type objectType,
+        object? existingValue,
+        JsonSerializer serializer
+    )
     {
         var o = serializer.Deserialize<JObject>(reader);
-        
+
         if (o == null)
         {
             throw new InvalidDataException("json control object can not be null");
         }
-        
+
         if (!o.TryGetValue("type", out var t))
         {
             throw new InvalidDataException("json control object missing type property");
         }
-        
-        
-        var enumType = Enum.Parse<ControlType>(t.Value<string>() ?? throw new InvalidDataException("control type property missing"), true);
+
+        var enumType = Enum.Parse<ControlType>(
+            t.Value<string>() ?? throw new InvalidDataException("control type property missing"),
+            true
+        );
         var type = ControlTypesMap.Types[enumType];
-        
+
         return o.ToObject(type, serializer);
     }
-    
+
     public override void WriteJson(JsonWriter writer, object? value, JsonSerializer serializer)
     {
         serializer.Serialize(writer, value);

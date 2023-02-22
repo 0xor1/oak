@@ -13,9 +13,10 @@ public record BoolControl : InputControl
 [JsonConverter(typeof(StringEnumConverter))]
 public enum BoolType
 {
-    [EnumMember(Value="yes_no")]
+    [EnumMember(Value = "yes_no")]
     YesNo,
-    [EnumMember(Value="checkbox")]
+
+    [EnumMember(Value = "checkbox")]
     Checkbox
 }
 

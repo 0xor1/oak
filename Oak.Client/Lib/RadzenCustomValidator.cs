@@ -7,10 +7,10 @@ using Radzen.Blazor;
 
 namespace Oak.Client.Lib;
 
-public class RadzenCustomValidator: ValidatorBase
+public class RadzenCustomValidator : ValidatorBase
 {
     public override string Text { get; set; } = S.Invalid;
-    public Message Message { get; set; } = new (S.Invalid);
+    public Message Message { get; set; } = new(S.Invalid);
 
     private List<Message> SubMessages { get; set; } = new();
 
@@ -25,8 +25,7 @@ public class RadzenCustomValidator: ValidatorBase
         SubMessages = res.SubMessages;
         return res.Valid;
     }
-    
-    
+
     protected override void BuildRenderTree(RenderTreeBuilder builder)
     {
         if (!Visible || IsValid)

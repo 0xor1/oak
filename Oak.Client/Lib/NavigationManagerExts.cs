@@ -10,11 +10,11 @@ public static class NavigationManagerExts
         TryQueryValue<T>(navManager, key, out var val);
         return val;
     }
-    
+
     public static bool TryQueryValue<T>(this NavigationManager navManager, string key, out T value)
     {
         var uri = navManager.ToAbsoluteUri(navManager.Uri);
-        
+
         if (QueryHelpers.ParseQuery(uri.Query).TryGetValue(key, out var valueFromQueryString))
         {
             if (typeof(T) == typeof(int) && int.TryParse(valueFromQueryString, out var valueAsInt))
@@ -29,13 +29,19 @@ public static class NavigationManagerExts
                 return true;
             }
 
-            if (typeof(T) == typeof(decimal) && decimal.TryParse(valueFromQueryString, out var valueAsDecimal))
+            if (
+                typeof(T) == typeof(decimal)
+                && decimal.TryParse(valueFromQueryString, out var valueAsDecimal)
+            )
             {
                 value = (T)(object)valueAsDecimal;
                 return true;
             }
 
-            if (typeof(T) == typeof(DateTime) && DateTime.TryParse(valueFromQueryString, out var valueAsDateTime))
+            if (
+                typeof(T) == typeof(DateTime)
+                && DateTime.TryParse(valueFromQueryString, out var valueAsDateTime)
+            )
             {
                 value = (T)(object)valueAsDateTime;
                 return true;

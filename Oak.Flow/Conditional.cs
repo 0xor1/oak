@@ -24,18 +24,25 @@ public enum Is
 {
     [EnumMember(Value = "eq")]
     EQ,
+
     [EnumMember(Value = "neq")]
     NEQ,
+
     [EnumMember(Value = "gt")]
     GT,
+
     [EnumMember(Value = "gte")]
     GTE,
+
     [EnumMember(Value = "lt")]
     LT,
+
     [EnumMember(Value = "lte")]
     LTE,
+
     [EnumMember(Value = "contains")]
     Contains,
+
     [EnumMember(Value = "excludes")]
     Excludes
 }

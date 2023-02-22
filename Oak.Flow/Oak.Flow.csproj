@@ -9,6 +9,10 @@
 
     <ItemGroup>
       <PackageReference Include="0xor1.Common" Version="1.0.5" />
+      <PackageReference Include="CSharpier.MsBuild" Version="0.22.1">
+        <PrivateAssets>all</PrivateAssets>
+        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      </PackageReference>
       <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
     </ItemGroup>
 

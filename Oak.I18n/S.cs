@@ -12,37 +12,55 @@ public static partial class S
     public const string DefaultLang = EN;
     public const string DefaultDateFmt = "yyyy-MM-dd";
     public const string DefaultTimeFmt = "HH:mm";
-    
+
     public static readonly IReadOnlyList<Lang> SupportedLangs = new List<Lang>()
-        { new(EN, "English"), new(ES, "Español"), new(FR, "Français"), new (DE, "Deutsch"), new (IT, "Italiano") };
-    
+    {
+        new(EN, "English"),
+        new(ES, "Español"),
+        new(FR, "Français"),
+        new(DE, "Deutsch"),
+        new(IT, "Italiano")
+    };
+
     public static readonly IReadOnlyList<DateTimeFmt> SupportedDateFmts = new List<DateTimeFmt>()
-        { new(DefaultDateFmt), new("dd-MM-yyyy"), new("MM-dd-yyyy") };
-    
+    {
+        new(DefaultDateFmt),
+        new("dd-MM-yyyy"),
+        new("MM-dd-yyyy")
+    };
+
     public static readonly IReadOnlyList<DateTimeFmt> SupportedTimeFmts = new List<DateTimeFmt>()
-        { new(DefaultTimeFmt), new("h:mmtt") };
+    {
+        new(DefaultTimeFmt),
+        new("h:mmtt")
+    };
 
     private static readonly Common.I18n.S Inst;
 
     static S()
     {
-        Inst = Common.I18n.S.Init(DefaultLang, DefaultDateFmt, DefaultTimeFmt, SupportedLangs, SupportedDateFmts,
-            SupportedTimeFmts, Library);
+        Inst = Common.I18n.S.Init(
+            DefaultLang,
+            DefaultDateFmt,
+            DefaultTimeFmt,
+            SupportedLangs,
+            SupportedDateFmts,
+            SupportedTimeFmts,
+            Library
+        );
     }
-    
-    public static string Get(string lang, string key, object? model = null) 
-        => Inst.Get(lang, key, model);
 
-    public static bool TryGet(string lang, string key, out string res, object? model = null)
-        => Inst.TryGet(lang, key, out res);
+    public static string Get(string lang, string key, object? model = null) =>
+        Inst.Get(lang, key, model);
 
-    public static string GetOr(string lang, string key, string def, object? model = null)
-        => Inst.GetOr(lang, key, def, model);
+    public static bool TryGet(string lang, string key, out string res, object? model = null) =>
+        Inst.TryGet(lang, key, out res);
 
-    public static string GetOrAddress(string lang, string key, object? model = null)
-        => Inst.GetOrAddress(lang, key, model);
+    public static string GetOr(string lang, string key, string def, object? model = null) =>
+        Inst.GetOr(lang, key, def, model);
 
-    public static string BestLang(string acceptLangsHeader)
-        => Inst.BestLang(acceptLangsHeader);
+    public static string GetOrAddress(string lang, string key, object? model = null) =>
+        Inst.GetOrAddress(lang, key, model);
 
+    public static string BestLang(string acceptLangsHeader) => Inst.BestLang(acceptLangsHeader);
 }

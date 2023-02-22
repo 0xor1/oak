@@ -22,20 +22,30 @@ public static class ServiceExts
         }
         else
         {
-            services.AddScoped<AmazonSimpleEmailServiceClient>(sp =>
-                new AmazonSimpleEmailServiceClient(new BasicAWSCredentials(Config.Email.Key, Config.Email.Secret), Config.Email.GetRegionEndpoint()));
+            services.AddScoped<AmazonSimpleEmailServiceClient>(
+                sp =>
+                    new AmazonSimpleEmailServiceClient(
+                        new BasicAWSCredentials(Config.Email.Key, Config.Email.Secret),
+                        Config.Email.GetRegionEndpoint()
+                    )
+            );
             services.AddScoped<IEmailClient, SesEmailClient>();
         }
-        services.AddDbContext<OakDb>(
-            dbContextOptions =>
-            {
-                var cnnStrBldr = new MySqlConnectionStringBuilder(Config.Db.Connection);
-                cnnStrBldr.Pooling = true;
-                cnnStrBldr.MaximumPoolSize = 100;
-                cnnStrBldr.MinimumPoolSize = 1;
-                var version = new MariaDbServerVersion(new Version(10, 8));
-                dbContextOptions
-                    .UseMySql(cnnStrBldr.ToString(), version, opts => { opts.CommandTimeout(1); });
-            });
+        services.AddDbContext<OakDb>(dbContextOptions =>
+        {
+            var cnnStrBldr = new MySqlConnectionStringBuilder(Config.Db.Connection);
+            cnnStrBldr.Pooling = true;
+            cnnStrBldr.MaximumPoolSize = 100;
+            cnnStrBldr.MinimumPoolSize = 1;
+            var version = new MariaDbServerVersion(new Version(10, 8));
+            dbContextOptions.UseMySql(
+                cnnStrBldr.ToString(),
+                version,
+                opts =>
+                {
+                    opts.CommandTimeout(1);
+                }
+            );
+        });
     }
 }

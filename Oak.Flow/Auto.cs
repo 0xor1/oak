@@ -1,6 +1,3 @@
 ﻿namespace Oak.Flow;
 
-public record Auto: Action
-{
-    
-}
+public record Auto : Action { }

@@ -6,8 +6,12 @@ namespace Oak.Client.Lib;
 
 public record Session(string Id, bool IsAuthed, string Lang, string DateFmt, string TimeFmt)
 {
-    public Session() : this(string.Empty, false, S.DefaultLang, S.DefaultDateFmt, S.DefaultTimeFmt) {}
-    public Session(Auth_Session ses): this(ses.Id, ses.IsAuthed, ses.Lang, ses.DateFmt, ses.TimeFmt) {}
+    public Session()
+        : this(string.Empty, false, S.DefaultLang, S.DefaultDateFmt, S.DefaultTimeFmt) { }
+
+    public Session(Auth_Session ses)
+        : this(ses.Id, ses.IsAuthed, ses.Lang, ses.DateFmt, ses.TimeFmt) { }
+
     public bool IsAnon => !IsAuthed;
 }
 
@@ -21,10 +25,12 @@ public interface IAuthService
     Task<Session> SetL10n(string lang, string dateFmt, string timeFmt);
 }
 
-public class AuthService: IAuthService
+public class AuthService : IAuthService
 {
     private Session? _s;
-    private Session? _session { get => _s;
+    private Session? _session
+    {
+        get => _s;
         set
         {
             _s = value;
@@ -34,7 +40,7 @@ public class AuthService: IAuthService
     }
     private readonly Api.ApiClient _api;
     private Action<Session>? _refreshUI;
-    
+
     public AuthService(Api.ApiClient api)
     {
         _api = api;
@@ -59,23 +65,21 @@ public class AuthService: IAuthService
     {
         var ses = await GetSession();
         Throw.OpIf(ses.IsAuthed, "already in authenticated session");
-        await _api.Auth_RegisterAsync(new Auth_RegisterReq()
-        {
-            Email = email,
-            Pwd = pwd
-        });
+        await _api.Auth_RegisterAsync(new Auth_RegisterReq() { Email = email, Pwd = pwd });
     }
 
     public async Task<Session> SignIn(string email, string pwd, bool rememberMe)
     {
         var ses = await GetSession();
         Throw.OpIf(ses.IsAuthed, "already in authenticated session");
-        var newSes = await _api.Auth_SignInAsync(new Auth_SignInReq()
-        {
-            Email = email,
-            Pwd = pwd,
-            RememberMe = rememberMe
-        });
+        var newSes = await _api.Auth_SignInAsync(
+            new Auth_SignInReq()
+            {
+                Email = email,
+                Pwd = pwd,
+                RememberMe = rememberMe
+            }
+        );
         _session = new Session(newSes);
         return _session;
     }
@@ -94,12 +98,14 @@ public class AuthService: IAuthService
 
     public async Task<Session> SetL10n(string lang, string dateFmt, string timeFmt)
     {
-        var newSes = await _api.Auth_SetL10nAsync(new Auth_SetL10nReq()
-        {
-            Lang = lang,
-            DateFmt = dateFmt,
-            TimeFmt = timeFmt
-        });
+        var newSes = await _api.Auth_SetL10nAsync(
+            new Auth_SetL10nReq()
+            {
+                Lang = lang,
+                DateFmt = dateFmt,
+                TimeFmt = timeFmt
+            }
+        );
         _session = new Session(newSes);
         return _session;
     }

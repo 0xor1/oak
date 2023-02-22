@@ -3,15 +3,16 @@ using Oak.I18n;
 using Microsoft.EntityFrameworkCore;
 
 namespace Oak.Db;
+
 public class OakDb : DbContext
 {
-    public OakDb(DbContextOptions<OakDb> opts) : base(opts) { }
+    public OakDb(DbContextOptions<OakDb> opts)
+        : base(opts) { }
 
     public DbSet<Auth> Auths { get; set; } = null!;
-    
 }
 
-public class Auth: Pwd
+public class Auth : Pwd
 {
     public string Id { get; set; }
     public string Email { get; set; }
@@ -30,6 +31,7 @@ public class Auth: Pwd
     public string DateFmt { get; set; } = S.DefaultDateFmt;
     public string TimeFmt { get; set; } = S.DefaultTimeFmt;
 }
+
 public class Pwd
 {
     public int PwdVersion { get; set; }

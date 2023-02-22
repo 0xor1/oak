@@ -15,13 +15,13 @@ public record Session
 {
     [Key(0)]
     public string Id { get; init; }
-    
+
     [Key(1)]
     public DateTime? StartedOn { get; init; }
-    
+
     [Key(2)]
     public bool IsAuthed { get; init; }
-    
+
     [Key(3)]
     public bool RememberMe { get; init; }
 
@@ -37,12 +37,7 @@ public record Session
     [Key(6)]
     public string TimeFmt { get; init; } = S.DefaultTimeFmt;
 
-    public Auth_Session ToAuth() => new ()
-    {
-        Id = Id,
-        IsAuthed = IsAuthed,
-        
-    };
+    public Auth_Session ToAuth() => new() { Id = Id, IsAuthed = IsAuthed, };
 }
 
 public static class ServerCallContextExts
@@ -55,12 +50,16 @@ public static class ServerCallContextExts
         SignatureKeys = Config.Session.SignatureKeys.Select(x => Base64.UrlDecode(x)).ToArray();
         if (SignatureKeys.Count(x => x.Length != 64) > 0)
         {
-            throw new InvalidDataException("config: all session signature keys must be 64 bytes long");
+            throw new InvalidDataException(
+                "config: all session signature keys must be 64 bytes long"
+            );
         }
 
         if (SignatureKeys.Length == 0)
         {
-            throw new InvalidDataException("config: there must be at least 1 session signature key");
+            throw new InvalidDataException(
+                "config: there must be at least 1 session signature key"
+            );
         }
     }
 
@@ -79,7 +78,15 @@ public static class ServerCallContextExts
         return ses;
     }
 
-    public static Session CreateSession(this ServerCallContext stx, string userId, bool isAuthed, bool rememberMe, string lang = S.DefaultLang, string dateFmt = S.DefaultDateFmt, string timeFmt = S.DefaultTimeFmt)
+    public static Session CreateSession(
+        this ServerCallContext stx,
+        string userId,
+        bool isAuthed,
+        bool rememberMe,
+        string lang = S.DefaultLang,
+        string dateFmt = S.DefaultDateFmt,
+        string timeFmt = S.DefaultTimeFmt
+    )
     {
         var ses = new Session()
         {
@@ -105,10 +112,16 @@ public static class ServerCallContextExts
 
     private static Session _ClearSession(ServerCallContext stx)
     {
-        return stx.CreateSession(Id.New(), false, false,
-            S.BestLang(stx.GetHttpContext().Request.Headers.AcceptLanguage.ToArray().FirstOrDefault() ?? ""));
+        return stx.CreateSession(
+            Id.New(),
+            false,
+            false,
+            S.BestLang(
+                stx.GetHttpContext().Request.Headers.AcceptLanguage.ToArray().FirstOrDefault() ?? ""
+            )
+        );
     }
-    
+
     private static Session GetCookie(ServerCallContext stx)
     {
         var htx = stx.GetHttpContext();
@@ -143,9 +156,8 @@ public static class ServerCallContextExts
             }
         }
         throw new SecurityException("Session signature verification failed");
-        
     }
-    
+
     private static void SetCookie(ServerCallContext stx, Session ses)
     {
         // turn session into bytes
@@ -157,40 +169,60 @@ public static class ServerCallContextExts
             sesSig = hmac.ComputeHash(sesBytes);
         }
         // create the cookie value with the session and signature
-        var signedSes = new SignedSession()
-        {
-            Session = sesBytes,
-            Signature = sesSig
-        };
+        var signedSes = new SignedSession() { Session = sesBytes, Signature = sesSig };
         // get final cookie bytes
         var cookieBytes = MessagePackSerializer.Serialize(signedSes);
         // create cookie
-        stx.GetHttpContext().Response.Cookies.Append(SessionName, Base64.UrlEncode(cookieBytes), new CookieOptions()
-        {
-            Secure = true,
-            HttpOnly = true,
-            IsEssential = true,
-            Expires = ses.RememberMe? DateTime.UtcNow.AddDays(7): null,
-            SameSite = SameSiteMode.Strict
-        });
+        stx.GetHttpContext()
+            .Response.Cookies.Append(
+                SessionName,
+                Base64.UrlEncode(cookieBytes),
+                new CookieOptions()
+                {
+                    Secure = true,
+                    HttpOnly = true,
+                    IsEssential = true,
+                    Expires = ses.RememberMe ? DateTime.UtcNow.AddDays(7) : null,
+                    SameSite = SameSiteMode.Strict
+                }
+            );
     }
 
     [MessagePackObject]
     public record SignedSession
     {
-        [Key(0)] 
+        [Key(0)]
         public byte[] Session { get; init; }
-        [Key(1)] 
+
+        [Key(1)]
         public byte[] Signature { get; init; }
     }
-    
+
     // error throwing
-    public static void ErrorIf(this ServerCallContext stx, bool condition, string key, object? model = null, StatusCode code = StatusCode.Internal)
-        => Throw.If(condition, () => new ApiException(stx.String(key, model), code));
-    public static void ErrorFromValidationResult(this ServerCallContext stx, ValidationResult res, StatusCode code = StatusCode.Internal)
-        => Throw.If(!res.Valid, () => new ApiException($"{stx.String(res.Message.Key, res.Message.Model)}{(res.SubMessages.Any() ? $":\n{string.Join("\n",res.SubMessages.Select(x => stx.String(x.Key, x.Model)))}": "")}", code));
+    public static void ErrorIf(
+        this ServerCallContext stx,
+        bool condition,
+        string key,
+        object? model = null,
+        StatusCode code = StatusCode.Internal
+    ) => Throw.If(condition, () => new ApiException(stx.String(key, model), code));
+
+    public static void ErrorFromValidationResult(
+        this ServerCallContext stx,
+        ValidationResult res,
+        StatusCode code = StatusCode.Internal
+    ) =>
+        Throw.If(
+            !res.Valid,
+            () =>
+                new ApiException(
+                    $"{stx.String(res.Message.Key, res.Message.Model)}{(res.SubMessages.Any() ? $":\n{string.Join("\n", res.SubMessages.Select(x => stx.String(x.Key, x.Model)))}" : "")}",
+                    code
+                )
+        );
 
     // i18n string handling
 
-    public static string String(this ServerCallContext stx, string key, object? model = null) => S.Get(stx.GetSession().Lang, key, model);
+    public static string String(this ServerCallContext stx, string key, object? model = null) =>
+        S.Get(stx.GetSession().Lang, key, model);
 }
