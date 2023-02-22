@@ -2,6 +2,7 @@
 using Common;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using Newtonsoft.Json.Linq;
 
 namespace Oak.Flow;
 
@@ -15,7 +16,7 @@ public record Condition
 {
     public string This { get; init; }
     public Is Is { get; init; }
-    public object? To { get; init; }
+    public JValue? To { get; init; }
     public string? ToRef { get; init; }
 }
 

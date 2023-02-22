@@ -2,11 +2,29 @@
   "key": "yolo",
   "strings": {
     "en": {
-      "control_a": "how old are you",
-      "control_a_invalid": "please enter your age",
-      "opt_a": "option a",
-      "opt_b": "option b",
-      "opt_c": "option c"
+      "sets": {
+        "my_set": {
+          "opt_a": "option A",
+          "opt_b": "option B",
+          "opt_c": "option C"
+        }
+      },
+      "actions": {
+        "my_form": {
+          "name": "this is form A",
+          "title": "please tell us about yourself",
+          "controls": {
+            "control_a": {
+              "main": "how old are you?",
+              "invalid": "please enter you age"
+            }
+          }
+        }
+      },
+      "strings": {
+        "yolo": "nolo",
+        "schnolo": "polo"
+      }
     }
   },
   "sets": [
