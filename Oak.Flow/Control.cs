@@ -1,5 +1,5 @@
 ﻿using System.Runtime.Serialization;
-using Common;
+using Common.Shared;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
@@ -38,7 +38,10 @@ public enum ControlType
     String,
 
     [EnumMember(Value = "select")]
-    Select
+    Select,
+
+    [EnumMember(Value = "search")]
+    Search
 }
 
 public static class ControlTypesMap

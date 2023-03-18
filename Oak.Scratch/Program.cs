@@ -3,6 +3,5 @@
 using Oak.Flow;
 
 var flow = Flow.FromJson(File.ReadAllText("test.json"));
-var str = flow.ToJson(true);
 Console.WriteLine(flow.Actions.First().Key);
-Console.WriteLine(str);
+Console.WriteLine(flow.ToJson(true));

@@ -1,6 +1,7 @@
 ﻿{
   "key": "yolo",
-  "strings": {
+  "start": "my_form",
+  "langs": {
     "en": {
       "sets": {
         "my_set": {

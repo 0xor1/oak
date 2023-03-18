@@ -1,4 +1,4 @@
-﻿using Common.I18n;
+﻿using Common.Shared.I18n;
 
 namespace Oak.I18n;
 

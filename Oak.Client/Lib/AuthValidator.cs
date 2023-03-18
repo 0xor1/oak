@@ -1,5 +1,4 @@
-﻿using System.Text.RegularExpressions;
-using Common;
+﻿using Common.Shared;
 using Radzen;
 
 namespace Oak.Client.Lib;
@@ -7,8 +6,8 @@ namespace Oak.Client.Lib;
 public static class AuthValidator
 {
     public static ValidationResult EmailValidator(IRadzenFormComponent component) =>
-        Common.AuthValidator.Email(component.GetValue() as string ?? "");
+        Common.Shared.AuthValidator.Email(component.GetValue() as string ?? "");
 
     public static ValidationResult PwdValidator(IRadzenFormComponent component) =>
-        Common.AuthValidator.Pwd(component.GetValue() as string ?? "");
+        Common.Shared.AuthValidator.Pwd(component.GetValue() as string ?? "");
 }

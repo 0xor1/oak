@@ -1,4 +1,4 @@
-﻿using Common;
+﻿using Common.Shared;
 using Oak.I18n;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;

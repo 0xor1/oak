@@ -1,4 +1,5 @@
-using Common;
+using Common.Shared;
+using Common.Server;
 using Oak.I18n;
 using Microsoft.EntityFrameworkCore;
 
@@ -30,12 +31,4 @@ public class Auth : Pwd
     public string Lang { get; set; } = S.DefaultLang;
     public string DateFmt { get; set; } = S.DefaultDateFmt;
     public string TimeFmt { get; set; } = S.DefaultTimeFmt;
-}
-
-public class Pwd
-{
-    public int PwdVersion { get; set; }
-    public byte[] PwdSalt { get; set; }
-    public byte[] PwdHash { get; set; }
-    public int PwdIters { get; set; }
 }

@@ -1,4 +1,4 @@
-﻿using Common;
+﻿using Common.Shared;
 using Oak.I18n;
 using Oak.Proto;
 

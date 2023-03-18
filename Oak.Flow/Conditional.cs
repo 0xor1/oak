@@ -1,5 +1,5 @@
 ﻿using System.Runtime.Serialization;
-using Common;
+using Common.Shared;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;

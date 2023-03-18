@@ -1,8 +1,10 @@
+using Oak.I18n;
 using Oak.Service.Services;
-using Oak.Service.Util;
+using Common.Server;
+using Oak.Db;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddApiServices();
+builder.Services.AddApiServices<OakDb>(S.UnexpectedError);
 
 var app = builder.Build();
 if (app.Environment.IsDevelopment())

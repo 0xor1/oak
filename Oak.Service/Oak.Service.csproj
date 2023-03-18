@@ -11,10 +11,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="0xor1.Common" Version="1.0.5" />
-    <PackageReference Include="Amazon.S3" Version="0.27.2" />
-    <PackageReference Include="Amazon.Ses" Version="0.28.0" />
-    <PackageReference Include="AWSSDK.SimpleEmail" Version="3.7.100.65" />
+    <PackageReference Include="0xor1.Common.Server" Version="1.0.1" />
+    <PackageReference Include="0xor1.Common.Shared" Version="1.0.1" />
     <PackageReference Include="CSharpier.MsBuild" Version="0.22.1">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
