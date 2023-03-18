@@ -11,7 +11,7 @@ CREATE TABLE Auths (
     LastSignedInOn DATETIME(3) NOT NULL,
     LastSignInAttemptOn DATETIME(3) NOT NULL,
     ActivatedOn DATETIME(3) NOT NULL,
-    NewEmail VARCHAR(250) NOT NULL,
+    NewEmail VARCHAR(250) NULL,
     VerifyEmailCodeCreatedOn DATETIME(3) NOT NULL,
     VerifyEmailCode VARCHAR(50) NOT NULL,
     ResetPwdCodeCreatedOn DATETIME(3) NOT NULL,
