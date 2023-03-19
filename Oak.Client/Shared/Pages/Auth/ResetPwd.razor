@@ -1,9 +1,10 @@
 ﻿@using Oak.Client.Lib
 @using System.Text.RegularExpressions
+@using Common.Client
 @using Common.Shared
 @using Oak.I18n
 @using Oak.Proto
-@using AuthValidator = Oak.Client.Lib.AuthValidator
+@using AuthValidator = Common.Client.AuthValidator
 <div class="root jc-c ai-c">
     <RadzenCard class="p-3 w-25">
             <RadzenText TextStyle="TextStyle.H4" TagName="TagName.H2" class="m-t-0">
@@ -43,6 +44,7 @@
 
 @inject Api.ApiClient Api;
 @inject NavigationManager Nav;
+@inject L L;
 @code{
 
     [Parameter]

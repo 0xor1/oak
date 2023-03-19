@@ -35,20 +35,22 @@
 
 @using Oak.Client.Lib
 @using Oak.I18n
+@using Common.Client
 @inherits LayoutComponentBase
 @inject IAuthService _auth;
+@inject L L;
 @code{
 
     private bool LeftExpanded = false;
-    private Session session = new ();
+    private ISession session = new Session();
 
     protected override async Task OnInitializedAsync()
     {
-        _auth.RegisterRefreshUI(AuthStateChanged);
+        _auth.RegisterRefreshUi(AuthStateChanged);
         AuthStateChanged(await _auth.GetSession());
     }
 
-    private void AuthStateChanged(Session s)
+    private void AuthStateChanged(ISession s)
     {
         session = s;
         StateHasChanged();

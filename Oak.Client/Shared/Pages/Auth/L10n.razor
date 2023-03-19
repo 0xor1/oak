@@ -1,9 +1,9 @@
 ﻿@using Oak.Client.Lib
 @using System.Text.RegularExpressions
-@using Common.Shared
-@using Common.Shared.I18n
-@using AuthValidator = Oak.Client.Lib.AuthValidator
-@using S = Oak.I18n.S
+@using Common.Client
+@using Lang = Common.Shared.I18n.Lang
+@using Oak.I18n
+@using AuthValidator = Common.Client.AuthValidator
 <div class="root col g-1 p-1">
     <RadzenText TextStyle="TextStyle.H4" TagName="TagName.H2" class="m-t-0">
         @L.S(S.L10n)
@@ -39,6 +39,7 @@
 </div>
 
 @inject IAuthService Auth;
+@inject L L;
 @code{
 
     record Model
@@ -50,7 +51,7 @@
 
     private bool CanDo => _model != _initialValues && !_doing;
 
-    private Session _session = new (); 
+    private ISession _session = new Session(); 
     private Model _model = new (); 
     private Model _initialValues = new (); 
     private bool _doing = false;

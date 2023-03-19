@@ -1,11 +1,12 @@
 ﻿@using Oak.Client.Lib
 @using Oak.I18n
+@using Common.Client
 <div class="root jc-c ai-c">
     <RadzenCard class="p-3 w-25">
         @(new MarkupString(L.S(S.Oak)))
     </RadzenCard>
 </div>
-
+@inject L L;
 @code{
 
     [CascadingParameter]
