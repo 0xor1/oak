@@ -13,8 +13,6 @@ public record Session(string Id, bool IsAuthed, string Lang, string DateFmt, str
 
     public Session(Auth_Session ses)
         : this(ses.Id, ses.IsAuthed, ses.Lang, ses.DateFmt, ses.TimeFmt) { }
-
-    public bool IsAnon => !IsAuthed;
 }
 
 public class AuthService : IAuthService
