@@ -18,8 +18,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="0xor1.Common.Client" Version="1.0.9" />
-    <PackageReference Include="0xor1.Common.Shared" Version="1.0.4" />
+    <PackageReference Include="0xor1.Common.Client" Version="1.0.11" />
+    <PackageReference Include="0xor1.Common.Shared" Version="1.0.11" />
     <PackageReference Include="CSharpier.MsBuild" Version="0.22.1">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

@@ -5,14 +5,14 @@ namespace Oak.I18n;
 public static partial class S
 {
     public const string Oak = "oak";
-    public const string Invalid = AuthValidator.Strings.Invalid;
-    public const string InvalidEmail = AuthValidator.Strings.InvalidEmail;
-    public const string InvalidPwd = AuthValidator.Strings.InvalidPwd;
-    public const string LessThan8Chars = AuthValidator.Strings.LessThan8Chars;
-    public const string NoLowerCaseChar = AuthValidator.Strings.NoLowerCaseChar;
-    public const string NoUpperCaseChar = AuthValidator.Strings.NoUpperCaseChar;
-    public const string NoDigit = AuthValidator.Strings.NoDigit;
-    public const string NoSpecialChar = AuthValidator.Strings.NoSpecialChar;
+    public const string Invalid = Common.Shared.I18n.S.Invalid;
+    public const string InvalidEmail = Common.Shared.I18n.S.InvalidEmail;
+    public const string InvalidPwd = Common.Shared.I18n.S.InvalidPwd;
+    public const string LessThan8Chars = Common.Shared.I18n.S.LessThan8Chars;
+    public const string NoLowerCaseChar = Common.Shared.I18n.S.NoLowerCaseChar;
+    public const string NoUpperCaseChar = Common.Shared.I18n.S.NoUpperCaseChar;
+    public const string NoDigit = Common.Shared.I18n.S.NoDigit;
+    public const string NoSpecialChar = Common.Shared.I18n.S.NoSpecialChar;
     public const string UnexpectedError = "unexpected_error";
     public const string AlreadyAuthenticated = "already_authenticated";
     public const string NoMatchingRecord = "no_matching_record";
