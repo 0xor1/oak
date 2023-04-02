@@ -80,6 +80,7 @@ CREATE TABLE Projects(
     IsPublic BOOL NOT NULL,
     Name VARCHAR(250) NOT NULL,
     CreatedOn DATETIME(3) NOT NULL,
+    CurrencySymbol VARCHAR(5) NOT NULL,
     CurrencyCode VARCHAR(5) NOT NULL,
     HoursPerDay TINYINT UNSIGNED NULL,
     DaysPerWeek TINYINT UNSIGNED NULL,

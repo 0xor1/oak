@@ -20,6 +20,8 @@ public class ApiService : Api.ApiBase
         _emailClient = emailClient;
     }
 
+    // auth block
+
     public override Task<Auth_Session> Auth_GetSession(Nothing _, ServerCallContext stx) =>
         AuthSession(stx.GetSession()).Task();
 
@@ -336,4 +338,6 @@ public class ApiService : Api.ApiBase
             TimeFmt = s.TimeFmt
         };
     }
+
+    // org block
 }

@@ -1,5 +1,8 @@
 syntax = "proto3";
 
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/wrappers.proto";
+
 option csharp_namespace = "Oak.Proto";
 
 package api;
@@ -7,6 +10,7 @@ package api;
 message Nothing {}
 
 service Api {
+  // auth block
   rpc Auth_GetSession (Nothing) returns (Auth_Session);
   rpc Auth_Register (Auth_RegisterReq) returns (Nothing);
   rpc Auth_VerifyEmail (Auth_VerifyEmailReq) returns (Nothing);
@@ -15,8 +19,21 @@ service Api {
   rpc Auth_SignIn (Auth_SignInReq) returns (Auth_Session);
   rpc Auth_SignOut (Nothing) returns (Auth_Session);
   rpc Auth_SetL10n (Auth_SetL10nReq) returns (Auth_Session);
+  
+  // org block
+  rpc Org_Create (Org_CreateReq) returns (Org);
+  rpc Org_Delete (Org_DeleteReq) returns (Nothing);
+  
+  // org member block
+  rpc OrgMember_Add (OrgMember_AddReq) returns (OrgMember);
+  rpc OrgMember_Update (OrgMember_AddReq) returns (OrgMember);
+  rpc OrgMember_Remove (OrgMember_RemoveReq) returns (OrgMember);
+  
+  // project block
+  rpc Project_Create (Project_CreateReq) returns (Project);
 }
 
+// auth block
 message Auth_Session {
     string id = 1;
     bool isAuthed = 2;
@@ -57,3 +74,78 @@ message Auth_SetL10nReq {
     string timeFmt = 3;
 }
 
+// org block
+
+message Org{
+    string id = 1;
+    string name = 2;
+}
+
+message Org_CreateReq {
+    string name = 1;
+}
+
+message Org_DeleteReq {
+    string id = 1; 
+}
+
+// org member block
+
+message OrgMember {
+    string org = 1;
+    string member = 2;
+    bool isActive = 3;
+    string name = 4;
+    OrgMemberRole role = 5;
+}
+
+enum OrgMemberRole {
+  Owner = 0;
+  Admin = 1;
+  WriteAllProjects = 2;
+  ReadAllProjects = 3;
+  PerProject = 4;
+}
+
+message OrgMember_AddReq {
+    string org = 1;
+    string member = 2;
+    string name = 3;
+    OrgMemberRole role = 4;
+}
+
+message OrgMember_RemoveReq {
+    string org = 1;
+    string member = 2;
+}
+
+// project block
+
+message Project {
+    string org = 1;
+    string id = 2;
+    bool isArchived = 3;
+    bool isPublic = 4;
+    string name = 5;
+    google.protobuf.Timestamp createdOn = 6;
+    string currencySymbol = 7;
+    string currencyCode = 8;
+    google.protobuf.UInt32Value hoursPerDay = 9;
+    google.protobuf.UInt32Value daysPerWeek = 10;
+    google.protobuf.Timestamp startOn = 11;
+    google.protobuf.Timestamp endOn = 12;
+    uint64 fileLimit = 13;
+}
+
+message Project_CreateReq {
+    string org = 1;
+    bool isPublic = 2;
+    string name = 3;
+    string currencySymbol = 4;
+    string currencyCode = 5;
+    google.protobuf.UInt32Value hoursPerDay = 6;
+    google.protobuf.UInt32Value daysPerWeek = 7;
+    google.protobuf.Timestamp startOn = 8;
+    google.protobuf.Timestamp endOn = 9;
+    uint64 fileLimit = 10;
+}

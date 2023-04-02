@@ -1,3 +1,4 @@
+using Common.Shared;
 using Microsoft.EntityFrameworkCore;
 
 namespace Oak.Db;
@@ -44,20 +45,32 @@ public class OakDb : DbContext
             .HasConversion(v => v.ToString(), v => (VItemType)Enum.Parse(typeof(VItemType), v));
     }
 
-    public List<string> SetAncestralChainAggregateValuesFromTask(
+    public async Task<List<string>> SetAncestralChainAggregateValuesFromTask(
         string org,
         string project,
         string task
     )
     {
-        return Database
+        return await Database
             .SqlQueryRaw<string>(
                 "CALL SetAncestralChainAggregateValuesFromTask({0}, {1}, {2})",
                 org,
                 project,
                 task
             )
-            .ToList();
+            .ToListAsync();
+    }
+
+    public async void LockProject(string org, string project)
+    {
+        var exists = await Database
+            .SqlQueryRaw<bool>(
+                "SELECT COUNT(*)=1 FROM ProjectLocks WHERE Org={0} AND Project={0} FOR UPDATE",
+                org,
+                project
+            )
+            .SingleAsync();
+        Throw.DataIf(!exists, $"project doesnt exists, org: {org}, project: {project}");
     }
 
     public DbSet<Auth> Auths { get; set; } = null!;

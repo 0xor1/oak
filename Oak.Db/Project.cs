@@ -12,9 +12,10 @@ public class Project
     public bool IsPublic { get; set; }
     public string Name { get; set; }
     public DateTime CreatedOn { get; set; }
+    public string CurrencySymbol { get; set; }
     public string CurrencyCode { get; set; }
-    public ushort? HoursPerDay { get; set; }
-    public ushort? DaysPerWeek { get; set; }
+    public uint? HoursPerDay { get; set; }
+    public uint? DaysPerWeek { get; set; }
     public DateTime? StartOn { get; set; }
     public DateTime? EndOn { get; set; }
     public ulong FileLimit { get; set; }
