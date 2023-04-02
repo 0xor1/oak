@@ -58,7 +58,7 @@ CREATE TABLE OrgMembers(
     Member VARCHAR(22) NOT NULL,
     IsActive BOOL NOT NULL DEFAULT 1,
     Name VARCHAR(250) NOT NULL,
-    Role VARCHAR(20) NOT NULL, # 'owner', 'admin', 'write_all_projects', 'read_all_projects', 'per_project'
+    Role VARCHAR(25) NOT NULL, # 'owner', 'admin', 'write_all_projects', 'read_all_projects', 'per_project'
     PRIMARY KEY (Org, Member),
     UNIQUE INDEX (Org, IsActive, Role, Name, Member),
     UNIQUE INDEX (Member, IsActive, Org),
@@ -80,7 +80,7 @@ CREATE TABLE Projects(
     IsPublic BOOL NOT NULL,
     Name VARCHAR(250) NOT NULL,
     CreatedOn DATETIME(3) NOT NULL,
-    CurrencyCode VARCHAR(3) NOT NULL,
+    CurrencyCode VARCHAR(5) NOT NULL,
     HoursPerDay TINYINT UNSIGNED NULL,
     DaysPerWeek TINYINT UNSIGNED NULL,
     StartOn DATETIME(3) NULL,
@@ -100,7 +100,7 @@ CREATE TABLE ProjectMembers(
     Org VARCHAR(22) NOT NULL,
     Project VARCHAR(22) NOT NULL,
     Member VARCHAR(22) NOT NULL,
-    Role VARCHAR(20) NOT NULL, # 'admin', 'writer', 'reader'
+    Role VARCHAR(25) NOT NULL, # 'admin', 'writer', 'reader'
     PRIMARY KEY (Org, Project, Member),
     UNIQUE INDEX (Org, Project, Role, Member),
     UNIQUE INDEX (Member, Org, Project)
@@ -200,8 +200,8 @@ CREATE TABLE Files(
     UNIQUE INDEX(Org, Project, Name, CreatedOn, CreatedBy, Task)
 );
 
-DROP TABLE IF EXISTS Comments;
-CREATE TABLE Comments(
+DROP TABLE IF EXISTS Notes;
+CREATE TABLE Notes(
     Org VARCHAR(22) NOT NULL,
     Project VARCHAR(22) NOT NULL,
     Task VARCHAR(22) NOT NULL,
