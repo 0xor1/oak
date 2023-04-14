@@ -1,4 +1,4 @@
-﻿using Common.Shared.I18n;
+﻿using Common.Shared;
 
 namespace Oak.I18n;
 
@@ -16,20 +16,20 @@ public static partial class S
             )
         },
         { Invalid, new("Inválido") },
-        { InvalidEmail, new("Email inválido") },
-        { InvalidPwd, new("Contraseña invalida") },
+        { AuthInvalidEmail, new("Email inválido") },
+        { AuthInvalidPwd, new("Contraseña invalida") },
         { LessThan8Chars, new("Menos de 8 caracteres") },
         { NoLowerCaseChar, new("Sin carácter en minúsculas") },
         { NoUpperCaseChar, new("Sin carácter en mayúscula") },
         { NoDigit, new("Sin dígito") },
         { NoSpecialChar, new("Sin carácter especial") },
         { UnexpectedError, new("Ocurrió un error inesperado") },
-        { AlreadyAuthenticated, new("Ya en sesión autenticada") },
+        { AuthAlreadyAuthenticated, new("Ya en sesión autenticada") },
         { NoMatchingRecord, new("Sin registro coincidente") },
-        { InvalidEmailCode, new("Código de correo electrónico no válido") },
-        { InvalidResetPwdCode, new("Código de restablecimiento de contraseña no válido") },
+        { AuthInvalidEmailCode, new("Código de correo electrónico no válido") },
+        { AuthInvalidResetPwdCode, new("Código de restablecimiento de contraseña no válido") },
         {
-            AccountNotVerified,
+            AuthAccountNotVerified,
             new(
                 "Cuenta no verificada, revise sus correos electrónicos para ver el enlace de verificación"
             )
@@ -66,6 +66,7 @@ public static partial class S
                 "Haga clic en este enlace para restablecer su contraseña: {{BaseHref}}/reset_pwd?email={{Email}}&code={{Code}}"
             )
         },
+        { ApiError, new("Error de API") },
         { Home, new("Hogar") },
         { L10n, new("Localización") },
         { Language, new("Idioma") },

@@ -1,5 +1,5 @@
-Oak
-===
+Dnsk - dotnet starter kit
+=========================
 
 This project is the basic starting point for my dotnet based projects, 
 revolving around the primary technologies:

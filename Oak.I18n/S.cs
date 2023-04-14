@@ -1,4 +1,4 @@
-﻿using Common.Shared.I18n;
+﻿using Common.Shared;
 
 namespace Oak.I18n;
 
@@ -35,11 +35,11 @@ public static partial class S
         new("h:mmtt")
     };
 
-    public static readonly Common.Shared.I18n.S Inst;
+    public static readonly Common.Shared.S Inst;
 
     static S()
     {
-        Inst = Common.Shared.I18n.S.Init(
+        Inst = Common.Shared.S.Init(
             DefaultLang,
             DefaultDateFmt,
             DefaultTimeFmt,

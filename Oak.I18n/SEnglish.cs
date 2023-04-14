@@ -1,4 +1,4 @@
-﻿using Common.Shared.I18n;
+﻿using Common.Shared;
 
 namespace Oak.I18n;
 
@@ -16,20 +16,20 @@ public static partial class S
             )
         },
         { Invalid, new("Invalid") },
-        { InvalidEmail, new("Invalid email") },
-        { InvalidPwd, new("Invalid password") },
+        { AuthInvalidEmail, new("Invalid email") },
+        { AuthInvalidPwd, new("Invalid password") },
         { LessThan8Chars, new("Less than 8 characters") },
         { NoLowerCaseChar, new("No lowercase character") },
         { NoUpperCaseChar, new("No uppercase character") },
         { NoDigit, new("No digit") },
         { NoSpecialChar, new("No special character") },
         { UnexpectedError, new("An unexpected error occurred") },
-        { AlreadyAuthenticated, new("Already in authenticated session") },
+        { AuthAlreadyAuthenticated, new("Already in authenticated session") },
         { NoMatchingRecord, new("No matching record") },
-        { InvalidEmailCode, new("Invalid email code") },
-        { InvalidResetPwdCode, new("Invalid reset password code") },
+        { AuthInvalidEmailCode, new("Invalid email code") },
+        { AuthInvalidResetPwdCode, new("Invalid reset password code") },
         {
-            AccountNotVerified,
+            AuthAccountNotVerified,
             new("Account not verified, please check your emails for verification link")
         },
         {
@@ -64,6 +64,7 @@ public static partial class S
                 "Please click this link to reset your password: {{BaseHref}}/reset_pwd?email={{Email}}&code={{Code}}"
             )
         },
+        { ApiError, new("Api Error") },
         { Home, new("Home") },
         { L10n, new("Localization") },
         { Language, new("Language") },

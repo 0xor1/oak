@@ -1,4 +1,4 @@
-﻿using Common.Shared.I18n;
+﻿using Common.Shared;
 
 namespace Oak.I18n;
 
@@ -16,20 +16,20 @@ public static partial class S
             )
         },
         { Invalid, new("Ungültig") },
-        { InvalidEmail, new("Ungültige E-Mail") },
-        { InvalidPwd, new("Ungültiges Passwort") },
+        { AuthInvalidEmail, new("Ungültige E-Mail") },
+        { AuthInvalidPwd, new("Ungültiges Passwort") },
         { LessThan8Chars, new("Weniger als 8 Zeichen") },
         { NoLowerCaseChar, new("Kein Kleinbuchstabe") },
         { NoUpperCaseChar, new("Kein Großbuchstabe") },
         { NoDigit, new("Keine Ziffer") },
         { NoSpecialChar, new("Kein Sonderzeichen") },
         { UnexpectedError, new("Ein unerwarteter Fehler ist aufgetreten") },
-        { AlreadyAuthenticated, new("Bereits in authentifizierter Sitzung") },
+        { AuthAlreadyAuthenticated, new("Bereits in authentifizierter Sitzung") },
         { NoMatchingRecord, new("Kein übereinstimmender Datensatz") },
-        { InvalidEmailCode, new("Ungültiger E-Mail-Code") },
-        { InvalidResetPwdCode, new("Ungültiger Passwort-Reset-Code") },
+        { AuthInvalidEmailCode, new("Ungültiger E-Mail-Code") },
+        { AuthInvalidResetPwdCode, new("Ungültiger Passwort-Reset-Code") },
         {
-            AccountNotVerified,
+            AuthAccountNotVerified,
             new("Konto nicht bestätigt, bitte überprüfen Sie Ihre E-Mails auf den Bestätigungslink")
         },
         {
@@ -64,6 +64,7 @@ public static partial class S
                 "Bitte klicken Sie auf diesen Link, um Ihr Passwort zurückzusetzen: {{BaseHref}}/reset_pwd?email={{Email}}&code={{Code}}"
             )
         },
+        { ApiError, new("API-Fehler") },
         { Home, new("Heim") },
         { L10n, new("Lokalisierung") },
         { Language, new("Sprache") },

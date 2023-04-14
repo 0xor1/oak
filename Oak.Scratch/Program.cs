@@ -1,3 +1,1 @@
-﻿// See https://aka.ms/new-console-template for more information
-
-Console.WriteLine("yolo");
+﻿Console.WriteLine(DateTime.UtcNow.ToString("h:mm tt"));

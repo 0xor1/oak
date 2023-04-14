@@ -1,7 +1,7 @@
-﻿@using Oak.Client.Lib
-@using System.Text.RegularExpressions
+﻿@using System.Text.RegularExpressions
 @using Common.Client
-@using Lang = Common.Shared.I18n.Lang
+@using Common.Shared.Auth
+@using Lang = Common.Shared.Lang
 @using Oak.I18n
 @using AuthValidator = Common.Client.AuthValidator
 <div class="root col g-1 p-1">
@@ -51,7 +51,7 @@
 
     private bool CanDo => _model != _initialValues && !_doing;
 
-    private ISession _session = new Session(); 
+    private ISession _session = Session.Default(S.DefaultLang, S.DefaultDateFmt, S.DefaultTimeFmt); 
     private Model _model = new (); 
     private Model _initialValues = new (); 
     private bool _doing = false;

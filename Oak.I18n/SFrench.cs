@@ -1,4 +1,4 @@
-﻿using Common.Shared.I18n;
+﻿using Common.Shared;
 
 namespace Oak.I18n;
 
@@ -12,24 +12,24 @@ public static partial class S
         {
             Oak,
             new(
-                "<h1>Bonjour, Oak!</h1><p>Bienvenue dans votre nouveau kit de démarrage dotnet.</p><p>Vous trouverez :</p><ul><li>Client : une application blazor wasm utilisant bibliothèque radzen ui</li><li>Serveur : aspnet avec grpc api et interface de base de données du cadre d'entité</li></ul>"
+                "<h1>Bonjour, Oak !</h1><p>Bienvenue dans votre nouveau kit de démarrage dotnet.</p><p>Vous trouverez :</p><ul><li>Client : une application blazor wasm utilisant bibliothèque radzen ui</li><li>Serveur : aspnet avec grpc api et interface de base de données du cadre d'entité</li></ul>"
             )
         },
         { Invalid, new("Invalide") },
-        { InvalidEmail, new("Email invalide") },
-        { InvalidPwd, new("Mot de passe incorrect") },
+        { AuthInvalidEmail, new("Email invalide") },
+        { AuthInvalidPwd, new("Mot de passe incorrect") },
         { LessThan8Chars, new("Moins de 8 caractères") },
         { NoLowerCaseChar, new("Pas de caractère minuscule") },
         { NoUpperCaseChar, new("Pas de caractère majuscule") },
         { NoDigit, new("Aucun chiffre") },
         { NoSpecialChar, new("Aucun caractère spécial") },
         { UnexpectedError, new("Une erreur inattendue est apparue") },
-        { AlreadyAuthenticated, new("Déjà en session authentifiée") },
+        { AuthAlreadyAuthenticated, new("Déjà en session authentifiée") },
         { NoMatchingRecord, new("Aucun enregistrement correspondant") },
-        { InvalidEmailCode, new("Code e-mail invalide") },
-        { InvalidResetPwdCode, new("Code de mot de passe de réinitialisation invalide") },
+        { AuthInvalidEmailCode, new("Code e-mail invalide") },
+        { AuthInvalidResetPwdCode, new("Code de mot de passe de réinitialisation invalide") },
         {
-            AccountNotVerified,
+            AuthAccountNotVerified,
             new("Compte non vérifié, veuillez vérifier vos e-mails pour le lien de vérification")
         },
         {
@@ -64,6 +64,7 @@ public static partial class S
                 "Veuillez cliquer sur ce lien pour réinitialiser votre mot de passe: {{BaseHref}}/reset_pwd?email={{Email}}&code={{Code}}"
             )
         },
+        { ApiError, new("Erreur API") },
         { Home, new("Maison") },
         { L10n, new("Localisation") },
         { Language, new("Langue") },

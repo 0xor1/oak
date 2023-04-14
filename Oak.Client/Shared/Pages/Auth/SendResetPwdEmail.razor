@@ -1,9 +1,8 @@
-﻿@using Oak.Client.Lib
-@using System.Text.RegularExpressions
+﻿@using System.Text.RegularExpressions
 @using Common.Client
 @using Common.Shared
-@using Oak.I18n
-@using Oak.Proto
+@using Oak.Api
+@using S = Oak.I18n.S
 @using AuthValidator = Common.Client.AuthValidator
 <div class="root jc-c ai-c">
     <RadzenCard class="p-3 w-25">
@@ -35,8 +34,8 @@
     </RadzenCard>
 </div>
 
-@inject Api.ApiClient Api;
 @inject L L;
+@inject IApi Api;
 @code{
 
     class Model
@@ -58,10 +57,7 @@
         _success = false;
         try
         {
-            await Api.Auth_SendResetPwdEmailAsync(new Auth_SendResetPwdEmailReq()
-            {
-                Email = _model.Email
-            });
+            await Api.Auth.SendResetPwdEmail.Do(new (_model.Email));
             _success = true;
         }
         catch

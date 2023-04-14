@@ -1,9 +1,10 @@
 using Common.Shared;
+using Common.Server.Auth;
 using Microsoft.EntityFrameworkCore;
 
 namespace Oak.Db;
 
-public class OakDb : DbContext
+public class OakDb : DbContext, IAuthDb
 {
     public OakDb(DbContextOptions<OakDb> opts)
         : base(opts) { }

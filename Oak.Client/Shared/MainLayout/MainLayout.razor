@@ -1,13 +1,13 @@
 ﻿<div class="root">
     <RadzenLayout class="rz-shadow-3 fill">
         <RadzenHeader class="flx jc-sb">
-            <RadzenSidebarToggle class="sq-4t" Click="@(() => LeftExpanded = !LeftExpanded)" />
+            <RadzenSidebarToggle class="sq-4t" Click="@(() => _leftExpanded = !_leftExpanded)" />
             <RadzenProfileMenu class="m-t-0t">
                 <Template>
-                    <RadzenIcon Icon="account_circle" IconStyle="@(session.IsAuthed? IconStyle.Success: IconStyle.Danger)"></RadzenIcon>
+                    <RadzenIcon Icon="account_circle" IconStyle="@(_session.IsAuthed? IconStyle.Success: IconStyle.Danger)"></RadzenIcon>
                 </Template>
                 <ChildContent>
-                    @if (session.IsAuthed)
+                    @if (_session.IsAuthed)
                     {
                         <RadzenProfileMenuItem Text="@L.S(S.SignOut)" Path="sign_out" Icon="account_circle"></RadzenProfileMenuItem>
                     }
@@ -19,13 +19,13 @@
                 </ChildContent>
             </RadzenProfileMenu>
         </RadzenHeader>
-        <RadzenSidebar @bind-Expanded="@LeftExpanded">
+        <RadzenSidebar @bind-Expanded="@_leftExpanded">
             <RadzenPanelMenu>
                 <RadzenPanelMenuItem Text="@L.S(S.Home)" Icon="home" Path="/"/>
             </RadzenPanelMenu>
         </RadzenSidebar>
         <RadzenBody class="root rz-background-color-base-100">
-            <CascadingValue Value="@session">
+            <CascadingValue Value="@_session">
                 @Body
             </CascadingValue>
         </RadzenBody>
@@ -33,16 +33,16 @@
     </RadzenLayout>
 </div>
 
-@using Oak.Client.Lib
 @using Oak.I18n
 @using Common.Client
+@using Common.Shared.Auth
 @inherits LayoutComponentBase
 @inject IAuthService _auth;
 @inject L L;
 @code{
 
-    private bool LeftExpanded = false;
-    private ISession session = new Session();
+    private bool _leftExpanded;
+    private ISession _session = Session.Default(S.DefaultLang, S.DefaultDateFmt, S.DefaultTimeFmt);
 
     protected override async Task OnInitializedAsync()
     {
@@ -52,7 +52,7 @@
 
     private void AuthStateChanged(ISession s)
     {
-        session = s;
+        _session = s;
         StateHasChanged();
     }
 

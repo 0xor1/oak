@@ -1,7 +1,7 @@
 using Common.Client;
+using Common.Shared.Auth;
+using Oak.Api;
 using Oak.Client;
-using Oak.Client.Lib;
 using Oak.I18n;
-using Oak.Proto;
 
-await Client.Run<App, Api.ApiClient, AuthService>(args, S.Inst, ci => new Api.ApiClient(ci));
+await Client.Run<App, Oak.Api.IApi>(args, S.Inst, Oak.Api.IApi.Init());

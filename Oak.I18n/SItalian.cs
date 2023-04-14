@@ -1,4 +1,4 @@
-﻿using Common.Shared.I18n;
+﻿using Common.Shared;
 
 namespace Oak.I18n;
 
@@ -16,20 +16,20 @@ public static partial class S
             )
         },
         { Invalid, new("Non valido") },
-        { InvalidEmail, new("E-mail non valido") },
-        { InvalidPwd, new("Password non valida") },
+        { AuthInvalidEmail, new("E-mail non valido") },
+        { AuthInvalidPwd, new("Password non valida") },
         { LessThan8Chars, new("Meno di 8 caratteri") },
         { NoLowerCaseChar, new("Nessun carattere minuscolo") },
         { NoUpperCaseChar, new("Nessun carattere maiuscolo") },
         { NoDigit, new("Nessuna cifra") },
         { NoSpecialChar, new("Nessun carattere speciale") },
         { UnexpectedError, new("Si è verificato un errore imprevisto") },
-        { AlreadyAuthenticated, new("Già in sessione autenticata") },
+        { AuthAlreadyAuthenticated, new("Già in sessione autenticata") },
         { NoMatchingRecord, new("Nessun record corrispondente") },
-        { InvalidEmailCode, new("Codice e-mail non valido") },
-        { InvalidResetPwdCode, new("Codice di reimpostazione della password non valido") },
+        { AuthInvalidEmailCode, new("Codice e-mail non valido") },
+        { AuthInvalidResetPwdCode, new("Codice di reimpostazione della password non valido") },
         {
-            AccountNotVerified,
+            AuthAccountNotVerified,
             new("Account non verificato, controlla le tue e-mail per il link di verifica")
         },
         {
@@ -64,6 +64,7 @@ public static partial class S
                 "Fai clic su questo link per reimpostare la tua password: {{BaseHref}}/reset_pwd?email={{Email}}&code={{Code}}"
             )
         },
+        { ApiError, new("Errore API") },
         { Home, new("Casa") },
         { L10n, new("Localizzazione") },
         { Language, new("Lingua") },

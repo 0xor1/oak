@@ -6,20 +6,23 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
+
   <ItemGroup>
-    <PackageReference Include="0xor1.Common.Server" Version="1.0.11" />
+    <ProjectReference Include="..\Oak.Db\Oak.Db.csproj" />
+    <ProjectReference Include="..\Oak.Eps\Oak.Eps.csproj" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <PackageReference Include="0xor1.Common.Server" Version="2.0.0" />
     <PackageReference Include="CSharpier.MsBuild" Version="0.22.1">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Grpc.AspNetCore" Version="2.51.0" />
-    <PackageReference Include="Grpc.AspNetCore.Web" Version="2.51.0" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="7.0.2" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Oak.Client\Oak.Client.csproj" />
-    <ProjectReference Include="..\Oak.Service\Oak.Service.csproj" />
   </ItemGroup>
 
 </Project>
