@@ -1,5 +1,8 @@
-﻿namespace Oak.Db;
+﻿using Microsoft.EntityFrameworkCore;
 
+namespace Oak.Db;
+
+[PrimaryKey(nameof(Org), nameof(Project), nameof(OccurredOn), nameof(Item), nameof(Member))]
 public class Activity
 {
     public string Org { get; set; }
