@@ -1,25 +1,25 @@
 version: '3.7'
 services:
 
-  dnsk-testall-sql:
-    container_name: dnsk-testall-sql
+  oak-testall-sql:
+    container_name: oak-testall-sql
     build:
       context: ../.
       dockerfile: docker/sql.dockerfile
-    image: dnsk-testall-sql
+    image: oak-testall-sql
     environment:
       MYSQL_ROOT_PASSWORD: root
     ports:
     - "3306:3306"
 
-  dnsk-testall-redis:
-    container_name: dnsk-testall-redis
+  oak-testall-redis:
+    container_name: oak-testall-redis
     image: redis:7.0.4-alpine
     ports:
     - "6379:6379"
 
-  dnsk-testall-minio:
-    container_name: dnsk-testall-minio
+  oak-testall-minio:
+    container_name: oak-testall-minio
     image: minio/minio:RELEASE.2022-09-17T00-09-45Z
     environment:
       MINIO_ACCESS_KEY: localtest

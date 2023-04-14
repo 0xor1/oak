@@ -1,6 +1,6 @@
 ﻿#!/bin/bash
 
-docker ps --format '{{.Names}}' | grep "^dnsk-" | awk '{print $1}' | xargs -I {} docker stop {}
+docker ps --format '{{.Names}}' | grep "^oak-" | awk '{print $1}' | xargs -I {} docker stop {}
 
 if [ "$1" == "nuke" ]; then
     docker-compose -f docker/docker-compose.yml down --rmi all
