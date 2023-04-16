@@ -25,6 +25,7 @@ public static partial class S
         { NoSpecialChar, new("Sin carácter especial") },
         { UnexpectedError, new("Ocurrió un error inesperado") },
         { AuthAlreadyAuthenticated, new("Ya en sesión autenticada") },
+        { AuthNotAuthenticated, new("No en sesión autenticada") },
         { NoMatchingRecord, new("Sin registro coincidente") },
         { AuthInvalidEmailCode, new("Código de correo electrónico no válido") },
         { AuthInvalidResetPwdCode, new("Código de restablecimiento de contraseña no válido") },

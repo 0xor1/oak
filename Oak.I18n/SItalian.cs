@@ -25,6 +25,7 @@ public static partial class S
         { NoSpecialChar, new("Nessun carattere speciale") },
         { UnexpectedError, new("Si è verificato un errore imprevisto") },
         { AuthAlreadyAuthenticated, new("Già in sessione autenticata") },
+        { AuthNotAuthenticated, new("Non in sessione autenticata") },
         { NoMatchingRecord, new("Nessun record corrispondente") },
         { AuthInvalidEmailCode, new("Codice e-mail non valido") },
         { AuthInvalidResetPwdCode, new("Codice di reimpostazione della password non valido") },

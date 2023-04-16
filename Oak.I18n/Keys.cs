@@ -18,6 +18,7 @@ public static partial class S
     public const string AuthInvalidResetPwdCode = Common.Shared.S.AuthInvalidResetPwdCode;
     public const string AuthAccountNotVerified = Common.Shared.S.AuthAccountNotVerified;
     public const string AuthAlreadyAuthenticated = Common.Shared.S.AuthAlreadyAuthenticated;
+    public const string AuthNotAuthenticated = Common.Shared.S.AuthNotAuthenticated;
     public const string AuthAttemptRateLimit = Common.Shared.S.AuthAttemptRateLimit;
     public const string AuthConfirmEmailSubject = Common.Shared.S.AuthConfirmEmailSubject;
     public const string AuthConfirmEmailHtml = Common.Shared.S.AuthConfirmEmailHtml;

@@ -25,6 +25,7 @@ public static partial class S
         { NoSpecialChar, new("No special character") },
         { UnexpectedError, new("An unexpected error occurred") },
         { AuthAlreadyAuthenticated, new("Already in authenticated session") },
+        { AuthNotAuthenticated, new("Not in authenticated session") },
         { NoMatchingRecord, new("No matching record") },
         { AuthInvalidEmailCode, new("Invalid email code") },
         { AuthInvalidResetPwdCode, new("Invalid reset password code") },
