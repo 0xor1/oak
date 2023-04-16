@@ -110,6 +110,8 @@ public static partial class S
         { Success, new("Succès") },
         { Error, new("Erreur") },
         { Update, new("Mise à jour") },
-        { Updating, new("Mise à jour") }
+        { Updating, new("Mise à jour") },
+        { InsufficientPermission, new("Permission insuffisante") },
+        { OrgTooMany, new("Vous êtes déjà membre d'un trop grand nombre d'organisations") }
     };
 }

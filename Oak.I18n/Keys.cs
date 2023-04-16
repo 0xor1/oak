@@ -60,4 +60,8 @@ public static partial class S
     public const string Error = "error";
     public const string Update = "update";
     public const string Updating = "updating";
+    public const string InsufficientPermission = "insufficient_permission";
+
+    // org
+    public const string OrgTooMany = "org_too_many";
 }

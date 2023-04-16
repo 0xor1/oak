@@ -105,6 +105,8 @@ public static partial class S
         { Success, new("Success") },
         { Error, new("Error") },
         { Update, new("Update") },
-        { Updating, new("Updating") }
+        { Updating, new("Updating") },
+        { InsufficientPermission, new("Insufficient Permission") },
+        { OrgTooMany, new("You are already a member of too many Orgs") }
     };
 }
