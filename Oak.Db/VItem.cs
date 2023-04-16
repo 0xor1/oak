@@ -1,5 +1,15 @@
-﻿namespace Oak.Db;
+﻿using Microsoft.EntityFrameworkCore;
 
+namespace Oak.Db;
+
+[PrimaryKey(
+    nameof(Org),
+    nameof(Project),
+    nameof(Task),
+    nameof(Type),
+    nameof(CreatedOn),
+    nameof(CreatedBy)
+)]
 public class VItem
 {
     public string Org { get; set; }

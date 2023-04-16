@@ -1,9 +1,11 @@
 ﻿using Common.Server;
 using Common.Shared;
+using Microsoft.EntityFrameworkCore;
 using Oak.I18n;
 
 namespace Oak.Db;
 
+[PrimaryKey(nameof(Org), nameof(Id))]
 public class Project
 {
     public string Org { get; set; }
