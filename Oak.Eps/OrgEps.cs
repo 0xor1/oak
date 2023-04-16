@@ -23,8 +23,9 @@ internal static class OrgEps
                 db.Orgs.Add(newOrg);
                 db.OrgMembers.Add(new ()
                 {
-                    IsActive = true,
+                    Org = newOrg.Id,
                     Member = ses.Id,
+                    IsActive = true,
                     Name = req.OwnerMemberName,
                     Role = OrgMemberRole.Owner
                 });
