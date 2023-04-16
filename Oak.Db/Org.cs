@@ -2,6 +2,7 @@
 using Common.Shared;
 using Microsoft.EntityFrameworkCore;
 using Oak.I18n;
+using ApiOrg = Oak.Api.Org.Org;
 
 namespace Oak.Db;
 
@@ -10,4 +11,6 @@ public class Org
 {
     public string Id { get; set; }
     public string Name { get; set; }
+
+    public ApiOrg ToApi() => new(Id, Name);
 }
