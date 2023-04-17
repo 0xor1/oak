@@ -16,6 +16,7 @@ public static partial class S
             )
         },
         { Invalid, new("Inválido") },
+        { RpcUnknownEndpoint, new("Extremo de RPC desconocido") },
         { AuthInvalidEmail, new("Email inválido") },
         { AuthInvalidPwd, new("Contraseña invalida") },
         { LessThan8Chars, new("Menos de 8 caracteres") },

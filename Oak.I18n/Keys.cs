@@ -5,6 +5,7 @@ namespace Oak.I18n;
 public static partial class S
 {
     public const string Invalid = Common.Shared.S.Invalid;
+    public const string RpcUnknownEndpoint = Common.Shared.S.RpcUnknownEndpoint;
     public const string UnexpectedError = Common.Shared.S.UnexpectedError;
     public const string NoMatchingRecord = Common.Shared.S.NoMatchingRecord;
     public const string AuthInvalidEmail = Common.Shared.S.AuthInvalidEmail;

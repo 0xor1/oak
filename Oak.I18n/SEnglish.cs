@@ -16,6 +16,7 @@ public static partial class S
             )
         },
         { Invalid, new("Invalid") },
+        { RpcUnknownEndpoint, new("Unknown RPC endpoint") },
         { AuthInvalidEmail, new("Invalid email") },
         { AuthInvalidPwd, new("Invalid password") },
         { LessThan8Chars, new("Less than 8 characters") },
