@@ -3,6 +3,7 @@ using System.Runtime.Serialization;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using Oak.Api.OrgMember;
 
 namespace Oak.Db;
 
@@ -14,13 +15,4 @@ public class OrgMember
     public bool IsActive { get; set; }
     public string Name { get; set; }
     public OrgMemberRole Role { get; set; }
-}
-
-public enum OrgMemberRole
-{
-    Owner,
-    Admin,
-    WriteAllProjects,
-    ReadAllProjects,
-    PerProject
 }
