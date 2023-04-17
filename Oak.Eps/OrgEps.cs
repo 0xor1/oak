@@ -54,6 +54,24 @@ internal static class OrgEps
             var org = await db.Orgs.SingleAsync(x => x.Id == req.Id);
             org.Name = req.NewName;
             return org.ToApi();
+        })),
+        
+        new RpcEndpoint<Delete, Nothing>(Api.Delete, async (ctx, req) =>
+        await ctx.DbTx<OakDb, Nothing>(async (db, ses) =>
+        {
+            var x = await db.OrgMembers.SingleOrDefaultAsync(x => x.Org == req.Id && x.IsActive && x.Member == ses.Id && x.Role == OrgMemberRole.Owner);
+            ctx.ErrorIf(x == null, S.InsufficientPermission, null, HttpStatusCode.Forbidden);
+            await db.Orgs.Where(x => x.Id == req.Id).ExecuteDeleteAsync();
+            await db.OrgMembers.Where(x => x.Org == req.Id).ExecuteDeleteAsync();
+            await db.ProjectLocks.Where(x => x.Org == req.Id).ExecuteDeleteAsync();
+            await db.Projects.Where(x => x.Org == req.Id).ExecuteDeleteAsync();
+            await db.ProjectMembers.Where(x => x.Org == req.Id).ExecuteDeleteAsync();
+            await db.Activities.Where(x => x.Org == req.Id).ExecuteDeleteAsync();
+            await db.Tasks.Where(x => x.Org == req.Id).ExecuteDeleteAsync();
+            await db.VItems.Where(x => x.Org == req.Id).ExecuteDeleteAsync();
+            await db.Files.Where(x => x.Org == req.Id).ExecuteDeleteAsync();
+            await db.Comments.Where(x => x.Org == req.Id).ExecuteDeleteAsync();
+            return new Nothing();
         }))
             
     };

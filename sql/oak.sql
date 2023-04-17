@@ -201,8 +201,8 @@ CREATE TABLE Files(
     UNIQUE INDEX(Org, Project, Name, CreatedOn, CreatedBy, Task)
 );
 
-DROP TABLE IF EXISTS Notes;
-CREATE TABLE Notes(
+DROP TABLE IF EXISTS Comments;
+CREATE TABLE Comments(
     Org VARCHAR(22) NOT NULL,
     Project VARCHAR(22) NOT NULL,
     Task VARCHAR(22) NOT NULL,

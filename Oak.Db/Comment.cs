@@ -3,7 +3,7 @@
 namespace Oak.Db;
 
 [PrimaryKey(nameof(Org), nameof(Project), nameof(Task), nameof(CreatedOn), nameof(CreatedBy))]
-public class Note
+public class Comment
 {
     public string Org { get; set; }
     public string Project { get; set; }
