@@ -61,16 +61,17 @@ internal static class OrgEps
         {
             var x = await db.OrgMembers.SingleOrDefaultAsync(x => x.Org == req.Id && x.IsActive && x.Member == ses.Id && x.Role == OrgMemberRole.Owner);
             ctx.ErrorIf(x == null, S.InsufficientPermission, null, HttpStatusCode.Forbidden);
-            await db.Orgs.Where(x => x.Id == req.Id).ExecuteDeleteAsync();
-            await db.OrgMembers.Where(x => x.Org == req.Id).ExecuteDeleteAsync();
-            await db.ProjectLocks.Where(x => x.Org == req.Id).ExecuteDeleteAsync();
-            await db.Projects.Where(x => x.Org == req.Id).ExecuteDeleteAsync();
-            await db.ProjectMembers.Where(x => x.Org == req.Id).ExecuteDeleteAsync();
-            await db.Activities.Where(x => x.Org == req.Id).ExecuteDeleteAsync();
-            await db.Tasks.Where(x => x.Org == req.Id).ExecuteDeleteAsync();
-            await db.VItems.Where(x => x.Org == req.Id).ExecuteDeleteAsync();
-            await db.Files.Where(x => x.Org == req.Id).ExecuteDeleteAsync();
-            await db.Comments.Where(x => x.Org == req.Id).ExecuteDeleteAsync();
+            await TaskExt.WhenAll(
+                db.Orgs.Where(x => x.Id == req.Id).ExecuteDeleteAsync(),
+                db.OrgMembers.Where(x => x.Org == req.Id).ExecuteDeleteAsync(),
+                db.ProjectLocks.Where(x => x.Org == req.Id).ExecuteDeleteAsync(),
+                db.Projects.Where(x => x.Org == req.Id).ExecuteDeleteAsync(),
+                db.ProjectMembers.Where(x => x.Org == req.Id).ExecuteDeleteAsync(),
+                db.Activities.Where(x => x.Org == req.Id).ExecuteDeleteAsync(),
+                db.Tasks.Where(x => x.Org == req.Id).ExecuteDeleteAsync(),
+                db.VItems.Where(x => x.Org == req.Id).ExecuteDeleteAsync(),
+                db.Files.Where(x => x.Org == req.Id).ExecuteDeleteAsync(),
+                db.Comments.Where(x => x.Org == req.Id).ExecuteDeleteAsync());
             return new Nothing();
         }))
             
