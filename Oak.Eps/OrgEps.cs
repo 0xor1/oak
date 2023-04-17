@@ -3,9 +3,12 @@ using Common.Server;
 using Common.Shared;
 using Microsoft.EntityFrameworkCore;
 using Oak.Api.Org;
+using Oak.Api.OrgMember;
 using Oak.Db;
 using Org = Oak.Api.Org.Org;
+using Get = Oak.Api.Org.Get;
 using S = Oak.I18n.S;
+using Update = Oak.Api.Org.Update;
 
 namespace Oak.Eps;
 
@@ -38,12 +41,20 @@ internal static class OrgEps
                 return newOrg.ToApi();
             })),
         
-        new RpcEndpoint<Nothing, IReadOnlyList<Org>>(Api.Get, async (ctx, _) =>
+        new RpcEndpoint<Get, IReadOnlyList<Org>>(Api.Get, async (ctx, req) =>
         {
             var ses = ctx.GetAuthedSession();
             var db = ctx.Get<OakDb>();
             var orgs = await db.OrgMembers.Where(x => x.IsActive && x.Member == ses.Id).Select(x => x.Org).ToListAsync();
-            return await db.Orgs.Where(x => orgs.Contains(x.Id)).Select(x => new Org(x.Id, x.Name)).ToListAsync();
+            var qry = db.Orgs.Where(x => orgs.Contains(x.Id));
+            qry = req switch
+            {
+                (OrgOrderBy.Name, true) => qry.OrderBy(x => x.Name),
+                (OrgOrderBy.CreatedOn, true) => qry.OrderBy(x => x.CreatedOn),
+                (OrgOrderBy.Name, false) => qry.OrderByDescending(x => x.Name),
+                (OrgOrderBy.CreatedOn, false) => qry.OrderByDescending(x => x.CreatedOn),
+            };
+            return await qry.Select(x => x.ToApi()).ToListAsync();
         }),
         
         new RpcEndpoint<Update, Org>(Api.Update, async (ctx, req) =>

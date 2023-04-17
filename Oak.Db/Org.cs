@@ -11,6 +11,7 @@ public class Org
 {
     public string Id { get; set; }
     public string Name { get; set; }
+    public DateTime CreatedOn { get; set; }
 
-    public ApiOrg ToApi() => new(Id, Name);
+    public ApiOrg ToApi() => new(Id, Name, CreatedOn);
 }

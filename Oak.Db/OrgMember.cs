@@ -15,4 +15,6 @@ public class OrgMember
     public bool IsActive { get; set; }
     public string Name { get; set; }
     public OrgMemberRole Role { get; set; }
+
+    public Api.OrgMember.OrgMember ToApi() => new(Org, Member, IsActive, Name, Role);
 }
