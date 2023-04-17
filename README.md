@@ -1,8 +1,7 @@
-Dnsk - dotnet starter kit
-=========================
+Oak
+===
 
-This project is the basic starting point for my dotnet based projects, 
-revolving around the primary technologies:
+A Project management app built with:
 
 * Client - Blazor WASM
 * Server - Aspnet core Grpc
