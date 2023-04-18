@@ -16,6 +16,7 @@ public static class OakEps
                 var eps = (List<IRpcEndpoint>) AuthEps<OakDb>.Eps;
                 eps.AddRange(OrgEps.Eps);
                 eps.AddRange(OrgMemberEps.Eps);
+                eps.AddRange(ProjectEps.Eps);
                 _eps = eps;
             }
             return _eps;
