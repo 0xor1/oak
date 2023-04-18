@@ -60,8 +60,7 @@ internal static class OrgEps
         new RpcEndpoint<Update, Org>(Api.Update, async (ctx, req) =>
         await ctx.DbTx<OakDb, Org>(async (db, ses) =>
         {
-            var x = await db.OrgMembers.SingleOrDefaultAsync(x => x.Org == req.Id && x.IsActive && x.Member == ses.Id && x.Role == OrgMemberRole.Owner);
-            ctx.ErrorIf(x == null, S.InsufficientPermission, null, HttpStatusCode.Forbidden);
+            await EpsUtil.MustHaveOrgAccess(ctx, db, ses, req.Id, OrgMemberRole.Owner);
             var org = await db.Orgs.SingleAsync(x => x.Id == req.Id);
             org.Name = req.NewName;
             return org.ToApi();
@@ -70,8 +69,7 @@ internal static class OrgEps
         new RpcEndpoint<Delete, Nothing>(Api.Delete, async (ctx, req) =>
         await ctx.DbTx<OakDb, Nothing>(async (db, ses) =>
         {
-            var x = await db.OrgMembers.SingleOrDefaultAsync(x => x.Org == req.Id && x.IsActive && x.Member == ses.Id && x.Role == OrgMemberRole.Owner);
-            ctx.ErrorIf(x == null, S.InsufficientPermission, null, HttpStatusCode.Forbidden);
+            await EpsUtil.MustHaveOrgAccess(ctx, db, ses, req.Id, OrgMemberRole.Owner);
             await TaskExt.WhenAll(
                 db.Orgs.Where(x => x.Id == req.Id).ExecuteDeleteAsync(),
                 db.OrgMembers.Where(x => x.Org == req.Id).ExecuteDeleteAsync(),
