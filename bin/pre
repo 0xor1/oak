@@ -12,8 +12,11 @@ docker-compose -f docker/docker-compose.yml up -d
 ./bin/wait-for-it -t 5 127.0.0.1:9000 -- echo "minio ready"
 ./bin/wait-for-it -t 60 127.0.0.1:3306 -- echo "mariadb ready"
 
-if [ "$1" != "gh-actions" ]; then
-  # do stuff locally and not on gh-actions
-fi
+dotnet build
+dotnet test --collect:"XPlat Code Coverage"
+dotnet tool install -g dotnet-reportgenerator-globaltool
+rm -r test_coverage
+reportgenerator -reports:"*\TestResults\*\coverage.cobertura.xml " -targetdir:"test_coverage" -reporttypes:Html
+rm -r */TestResults
 
 docker-compose -f docker/docker-compose.yml stop

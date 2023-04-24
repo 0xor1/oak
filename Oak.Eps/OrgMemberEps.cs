@@ -92,6 +92,14 @@ internal static class OrgMemberEps
                 var updateMem = await db.OrgMembers.SingleOrDefaultAsync(x => x.Org == req.Org && x.Member == req.Member);
                 ctx.ErrorIf(updateMem == null, S.NoMatchingRecord, null, HttpStatusCode.NotFound);
                 updateMem.NotNull();
+                ctx.ErrorIf(updateMem.Role > sesRole, S.InsufficientPermission, null, HttpStatusCode.Forbidden);
+                if (updateMem is { IsActive: true, Role: OrgMemberRole.Owner } && ((req.NewRole != null && req.NewRole != OrgMemberRole.Owner) || req.IsActive is false))
+                {
+                    // a live org owner is being downgraded permissions or being deactivated completely,
+                    // need to ensure that org is not left without any owners
+                    var ownerCount = await db.OrgMembers.CountAsync(x => x.Org == req.Org && x.IsActive && x.Role == OrgMemberRole.Owner);
+                    ctx.ErrorIf(ownerCount == 1, S.InsufficientPermission, null, HttpStatusCode.Forbidden);
+                }
                 updateMem.IsActive = req.IsActive ?? updateMem.IsActive;
                 updateMem.Name = req.NewName ?? updateMem.Name;
                 updateMem.Role = req.NewRole ?? updateMem.Role;
