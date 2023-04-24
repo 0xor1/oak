@@ -68,7 +68,7 @@
         _doing = true;
         try
         {
-            await Api.Auth.ResetPwd.Do(new (Email, Code, _model.NewPwd));
+            await Api.Auth.ResetPwd(new (Email, Code, _model.NewPwd));
             _success = true;
         }
         catch

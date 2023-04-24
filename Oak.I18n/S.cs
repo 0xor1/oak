@@ -39,7 +39,7 @@ public static partial class S
 
     static S()
     {
-        Inst = Common.Shared.S.Init(
+        Inst = new Strings(
             DefaultLang,
             DefaultDateFmt,
             DefaultTimeFmt,
@@ -49,18 +49,4 @@ public static partial class S
             Library
         );
     }
-
-    public static string Get(string lang, string key, object? model = null) =>
-        Inst.Get(lang, key, model);
-
-    public static bool TryGet(string lang, string key, out string res, object? model = null) =>
-        Inst.TryGet(lang, key, out res);
-
-    public static string GetOr(string lang, string key, string def, object? model = null) =>
-        Inst.GetOr(lang, key, def, model);
-
-    public static string GetOrAddress(string lang, string key, object? model = null) =>
-        Inst.GetOrAddress(lang, key, model);
-
-    public static string BestLang(string acceptLangsHeader) => Inst.BestLang(acceptLangsHeader);
 }

@@ -51,7 +51,7 @@
         _doing = true;
         try
         {
-            await Api.Auth.VerifyEmail.Do(new (Email, Code));
+            await Api.Auth.VerifyEmail(new (Email, Code));
             _success = true;
         }
         catch

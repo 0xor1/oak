@@ -14,12 +14,11 @@ namespace Oak.Eps;
 
 internal static class OrgEps
 {
-    private static readonly IOrgApi Api = IOrgApi.Init();
     private const int MaxActiveOrgs = 10;
 
     public static IReadOnlyList<IRpcEndpoint> Eps { get; } = new List<IRpcEndpoint>()
     {
-        new RpcEndpoint<Create, Org>(Api.Create, async (ctx, req) =>
+        new RpcEndpoint<Create, Org>(OrgRpcs.Create, async (ctx, req) =>
             await ctx.DbTx<OakDb, Org>(async (db, ses) =>
             {
                 var activeOrgs = await db.OrgMembers.CountAsync(x => x.IsActive && x.Member == ses.Id);
@@ -41,7 +40,7 @@ internal static class OrgEps
                 return newOrg.ToApi();
             })),
         
-        new RpcEndpoint<Get, IReadOnlyList<Org>>(Api.Get, async (ctx, req) =>
+        new RpcEndpoint<Get, IReadOnlyList<Org>>(OrgRpcs.Get, async (ctx, req) =>
         {
             var ses = ctx.GetAuthedSession();
             var db = ctx.Get<OakDb>();
@@ -57,7 +56,7 @@ internal static class OrgEps
             return await qry.Select(x => x.ToApi()).ToListAsync();
         }),
         
-        new RpcEndpoint<Update, Org>(Api.Update, async (ctx, req) =>
+        new RpcEndpoint<Update, Org>(OrgRpcs.Update, async (ctx, req) =>
         await ctx.DbTx<OakDb, Org>(async (db, ses) =>
         {
             await EpsUtil.MustHaveOrgAccess(ctx, db, ses, req.Id, OrgMemberRole.Owner);
@@ -66,7 +65,7 @@ internal static class OrgEps
             return org.ToApi();
         })),
         
-        new RpcEndpoint<Delete, Nothing>(Api.Delete, async (ctx, req) =>
+        new RpcEndpoint<Delete, Nothing>(OrgRpcs.Delete, async (ctx, req) =>
         await ctx.DbTx<OakDb, Nothing>(async (db, ses) =>
         {
             await EpsUtil.MustHaveOrgAccess(ctx, db, ses, req.Id, OrgMemberRole.Owner);
@@ -81,7 +80,7 @@ internal static class OrgEps
                 db.VItems.Where(x => x.Org == req.Id).ExecuteDeleteAsync(),
                 db.Files.Where(x => x.Org == req.Id).ExecuteDeleteAsync(),
                 db.Comments.Where(x => x.Org == req.Id).ExecuteDeleteAsync());
-            return new Nothing();
+            return Nothing.Inst;
         }))
             
     };

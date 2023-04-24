@@ -4,18 +4,28 @@ namespace Oak.Api.OrgMember;
 
 public interface IOrgMemberApi
 {
-    private static IOrgMemberApi? _inst;
-    static IOrgMemberApi Init() => _inst ??= new OrgMemberApi();
-    
-    public Rpc<Add, OrgMember> Add { get; }
-    public Rpc<Get, IReadOnlyList<OrgMember>> Get { get; }
-    public Rpc<Update, OrgMember> Update { get; }
+    public Task<OrgMember> Add(Add arg);
+    public Task<IReadOnlyList<OrgMember>> Get(Get arg);
+    public Task<OrgMember> Update(Update arg);
 }
 public class OrgMemberApi: IOrgMemberApi
 {
-    public Rpc<Add, OrgMember> Add { get; } = new ("/org_member/add");
-    public Rpc<Get, IReadOnlyList<OrgMember>> Get { get; } = new ("/org_member/get");
-    public Rpc<Update, OrgMember> Update { get; } = new ("/org_member/update");
+    private readonly IRpcClient _client;
+
+    public OrgMemberApi(IRpcClient client)
+    {
+        _client = client;
+    }
+
+    public Task<OrgMember> Add(Add arg) => _client.Do(OrgMemberRpcs.Add, arg);
+    public Task<IReadOnlyList<OrgMember>> Get(Get arg) => _client.Do(OrgMemberRpcs.Get, arg);
+    public Task<OrgMember> Update(Update arg) => _client.Do(OrgMemberRpcs.Update, arg);
+}
+public static class OrgMemberRpcs
+{
+    public static readonly Rpc<Add, OrgMember> Add = new ("/org_member/add");
+    public static readonly Rpc<Get, IReadOnlyList<OrgMember>> Get = new ("/org_member/get");
+    public static readonly Rpc<Update, OrgMember> Update = new ("/org_member/update");
 }
 
 public record OrgMember(string Org, string Member, bool IsActive, string Name, OrgMemberRole Role);

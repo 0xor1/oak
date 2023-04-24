@@ -1,6 +1,4 @@
-﻿using Common.Shared;
-
-namespace Oak.I18n;
+﻿namespace Oak.I18n;
 
 public static partial class S
 {

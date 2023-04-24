@@ -57,7 +57,7 @@
         _success = false;
         try
         {
-            await Api.Auth.SendResetPwdEmail.Do(new (_model.Email));
+            await Api.Auth.SendResetPwdEmail(new (_model.Email));
             _success = true;
         }
         catch

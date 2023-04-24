@@ -11,11 +11,9 @@ namespace Oak.Eps;
 
 internal static class OrgMemberEps
 {
-    private static readonly IOrgMemberApi Api = IOrgMemberApi.Init();
-
     public static IReadOnlyList<IRpcEndpoint> Eps { get; } = new List<IRpcEndpoint>()
     {
-        new RpcEndpoint<Add, OrgMember>(Api.Add, async (ctx, req) =>
+        new RpcEndpoint<Add, OrgMember>(OrgMemberRpcs.Add, async (ctx, req) =>
             await ctx.DbTx<OakDb, OrgMember>(async (db, ses) =>
             {
                 // check current member has sufficient permissions
@@ -38,7 +36,7 @@ internal static class OrgMemberEps
                 return newMem.ToApi();
             })),
         
-        new RpcEndpoint<Get, IReadOnlyList<OrgMember>>(Api.Get, async (ctx, req) =>
+        new RpcEndpoint<Get, IReadOnlyList<OrgMember>>(OrgMemberRpcs.Get, async (ctx, req) =>
         {
             var ses = ctx.GetAuthedSession();
             var db = ctx.Get<OakDb>();
@@ -83,7 +81,7 @@ internal static class OrgMemberEps
             return await qry.Select(x => x.ToApi()).ToListAsync();
         }),
         
-        new RpcEndpoint<Update, OrgMember>(Api.Update, async (ctx, req) =>
+        new RpcEndpoint<Update, OrgMember>(OrgMemberRpcs.Update, async (ctx, req) =>
             await ctx.DbTx<OakDb, OrgMember>(async (db, ses) =>
             {
                 // check current member has sufficient permissions
