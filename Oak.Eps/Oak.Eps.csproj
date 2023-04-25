@@ -12,7 +12,7 @@
     </ItemGroup>
     
     <ItemGroup>
-        <PackageReference Include="0xor1.Common.Server" Version="2.1.4" />
+        <PackageReference Include="0xor1.Common.Server" Version="2.1.7" />
     </ItemGroup>
 
 </Project>

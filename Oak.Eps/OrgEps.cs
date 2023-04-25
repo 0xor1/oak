@@ -8,6 +8,7 @@ using Oak.Db;
 using Org = Oak.Api.Org.Org;
 using Get = Oak.Api.Org.Get;
 using S = Oak.I18n.S;
+using Task = System.Threading.Tasks.Task;
 using Update = Oak.Api.Org.Update;
 
 namespace Oak.Eps;
@@ -70,19 +71,44 @@ internal static class OrgEps
         await ctx.DbTx<OakDb, Nothing>(async (db, ses) =>
         {
             await EpsUtil.MustHaveOrgAccess(ctx, db, ses, req.Id, OrgMemberRole.Owner);
-            await TaskExt.WhenAll(
-                db.Orgs.Where(x => x.Id == req.Id).ExecuteDeleteAsync(),
-                db.OrgMembers.Where(x => x.Org == req.Id).ExecuteDeleteAsync(),
-                db.ProjectLocks.Where(x => x.Org == req.Id).ExecuteDeleteAsync(),
-                db.Projects.Where(x => x.Org == req.Id).ExecuteDeleteAsync(),
-                db.ProjectMembers.Where(x => x.Org == req.Id).ExecuteDeleteAsync(),
-                db.Activities.Where(x => x.Org == req.Id).ExecuteDeleteAsync(),
-                db.Tasks.Where(x => x.Org == req.Id).ExecuteDeleteAsync(),
-                db.VItems.Where(x => x.Org == req.Id).ExecuteDeleteAsync(),
-                db.Files.Where(x => x.Org == req.Id).ExecuteDeleteAsync(),
-                db.Comments.Where(x => x.Org == req.Id).ExecuteDeleteAsync());
+            await RawBatchDelete(db, new List<string>(){req.Id});
             return Nothing.Inst;
         }))
             
     };
+
+    public static async Task AuthOnDelete(OakDb db, Session ses)
+    {
+        // when a user wants to delete their account entirely,
+        var allOwnerOrgs = await db.OrgMembers.Where(x => x.Member == ses.Id && x.IsActive && x.Role == OrgMemberRole.Owner).Select(x => x.Org).Distinct().ToListAsync();
+        var activeOwnerCounts = await db.OrgMembers.Where(x => allOwnerOrgs.Contains(x.Org) && x.IsActive && x.Role == OrgMemberRole.Owner).GroupBy(x => x.Org).Select(x => new {Org = x.Key, ActiveOwnerCount = x.Count()}).ToListAsync();
+        var orgsWithSoleOwner = activeOwnerCounts.Where(x => x.ActiveOwnerCount == 1).Select(x => x.Org).ToList();
+        if (orgsWithSoleOwner.Any())
+        {
+            // we can auto delete all their orgs for which they are the sole owner
+            await RawBatchDelete(db, orgsWithSoleOwner);
+        }
+        // all remaining orgs user is not the sole owner so just deactivate them.
+        await RawBatchDeactivate(db, ses);
+    }
+
+    private static async Task RawBatchDelete(OakDb db, List<string> orgs)
+    {
+        await db.Orgs.Where(x => orgs.Contains(x.Id)).ExecuteDeleteAsync();
+        await db.OrgMembers.Where(x => orgs.Contains(x.Org)).ExecuteDeleteAsync();
+        await db.ProjectLocks.Where(x => orgs.Contains(x.Org)).ExecuteDeleteAsync();
+        await db.Projects.Where(x => orgs.Contains(x.Org)).ExecuteDeleteAsync();
+        await db.ProjectMembers.Where(x => orgs.Contains(x.Org)).ExecuteDeleteAsync();
+        await db.Activities.Where(x => orgs.Contains(x.Org)).ExecuteDeleteAsync();
+        await db.Tasks.Where(x => orgs.Contains(x.Org)).ExecuteDeleteAsync();
+        await db.VItems.Where(x => orgs.Contains(x.Org)).ExecuteDeleteAsync();
+        await db.Files.Where(x => orgs.Contains(x.Org)).ExecuteDeleteAsync();
+        await db.Comments.Where(x => orgs.Contains(x.Org)).ExecuteDeleteAsync();
+        // TODO delete all files from S3 using IStoreClient.DeletePrefix(bucket, orgId);
+    }
+
+    private static async Task RawBatchDeactivate(OakDb db, Session ses)
+    {
+        await db.OrgMembers.Where(x => x.Member == ses.Id).ExecuteUpdateAsync(x => x.SetProperty(x => x.IsActive, x => false));
+    }
 }
