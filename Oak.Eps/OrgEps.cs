@@ -28,7 +28,7 @@ internal static class OrgEps
                 {
                     Id = Id.New(),
                     Name = req.Name,
-                    CreatedOn = DateTime.UtcNow
+                    CreatedOn = DateTimeExt.UtcNowMilli()
                 };
                 await db.Orgs.AddAsync(newOrg);
                 await db.OrgMembers.AddAsync(new ()

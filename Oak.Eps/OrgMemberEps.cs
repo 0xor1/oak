@@ -22,7 +22,7 @@ internal static class OrgMemberEps
                 var sesRole = sesOrgMem.NotNull().Role;
                 ctx.ErrorIf(sesRole is not (OrgMemberRole.Owner or OrgMemberRole.Admin) || (sesRole is OrgMemberRole.Admin && req.Role == OrgMemberRole.Owner), S.InsufficientPermission, null, HttpStatusCode.Forbidden);
                 // check new member is an active user
-                var newMemExists =  await db.Auths.AnyAsync(x => x.Id == req.Member && x.ActivatedOn != DateTimeExts.Zero());
+                var newMemExists =  await db.Auths.AnyAsync(x => x.Id == req.Member && x.ActivatedOn != DateTimeExt.Zero());
                 ctx.ErrorIf(!newMemExists, S.NoMatchingRecord, null, HttpStatusCode.NotFound);
                 var newMem = new Db.OrgMember()
                 {
