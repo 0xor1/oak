@@ -13,7 +13,7 @@ public interface IApi : Common.Shared.Auth.IApi
     public IProjectApi Project { get; }
 }
 
-public class Api: IApi
+public class Api : IApi
 {
     public Api(IRpcClient client)
     {
@@ -21,7 +21,8 @@ public class Api: IApi
         Org = new OrgApi(client);
         OrgMember = new OrgMemberApi(client);
         Project = new ProjectApi(client);
-    } 
+    }
+
     public IAuthApi Auth { get; }
     public IOrgApi Org { get; }
     public IOrgMemberApi OrgMember { get; }

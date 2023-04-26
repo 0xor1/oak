@@ -10,7 +10,7 @@ public interface IOrgApi
     public Task Delete(Delete arg);
 }
 
-public class OrgApi: IOrgApi
+public class OrgApi : IOrgApi
 {
     private readonly IRpcClient _client;
 
@@ -20,22 +20,30 @@ public class OrgApi: IOrgApi
     }
 
     public Task<Org> Create(Create arg) => _client.Do(OrgRpcs.Create, arg);
+
     public Task<IReadOnlyList<Org>> Get(Get arg) => _client.Do(OrgRpcs.Get, arg);
+
     public Task<Org> Update(Update arg) => _client.Do(OrgRpcs.Update, arg);
+
     public Task Delete(Delete arg) => _client.Do(OrgRpcs.Delete, arg);
 }
+
 public static class OrgRpcs
 {
-    public static readonly Rpc<Create, Org> Create = new ("/org/create");
-    public static readonly Rpc<Get, IReadOnlyList<Org>> Get = new ("/org/get");
-    public static readonly Rpc<Update, Org> Update = new ("/org/update");
-    public static readonly Rpc<Delete, Nothing> Delete = new ("/org/delete");
+    public static readonly Rpc<Create, Org> Create = new("/org/create");
+    public static readonly Rpc<Get, IReadOnlyList<Org>> Get = new("/org/get");
+    public static readonly Rpc<Update, Org> Update = new("/org/update");
+    public static readonly Rpc<Delete, Nothing> Delete = new("/org/delete");
 }
 
 public record Org(string Id, string Name, DateTime CreatedOn);
+
 public record Create(string Name, string OwnerMemberName);
+
 public record Get(OrgOrderBy OrderBy = OrgOrderBy.Name, bool Asc = true);
+
 public record Update(string Id, string NewName);
+
 public record Delete(string Id);
 
 public enum OrgOrderBy
