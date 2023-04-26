@@ -10,42 +10,43 @@ public class OakDb : DbContext, IAuthDb
     public OakDb(DbContextOptions<OakDb> opts)
         : base(opts) { }
 
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
-    {
-        // all enum to string conversions
-        modelBuilder
-            .Entity<OrgMember>()
-            .Property(e => e.Role)
-            .HasConversion(
-                v => v.ToString(),
-                v => (OrgMemberRole)Enum.Parse(typeof(OrgMemberRole), v)
-            );
-        modelBuilder
-            .Entity<ProjectMember>()
-            .Property(e => e.Role)
-            .HasConversion(
-                v => v.ToString(),
-                v => (ProjectMemberRole)Enum.Parse(typeof(ProjectMemberRole), v)
-            );
-        modelBuilder
-            .Entity<Activity>()
-            .Property(e => e.ItemType)
-            .HasConversion(
-                v => v.ToString(),
-                v => (ActivityItemType)Enum.Parse(typeof(ActivityItemType), v)
-            );
-        modelBuilder
-            .Entity<Activity>()
-            .Property(e => e.Action)
-            .HasConversion(
-                v => v.ToString(),
-                v => (ActivityAction)Enum.Parse(typeof(ActivityAction), v)
-            );
-        modelBuilder
-            .Entity<VItem>()
-            .Property(e => e.Type)
-            .HasConversion(v => v.ToString(), v => (VItemType)Enum.Parse(typeof(VItemType), v));
-    }
+    // its easier to implement meaningful ordering when the enums are stored as ints
+    // protected override void OnModelCreating(ModelBuilder modelBuilder)
+    // {
+    //     // all enum to string conversions
+    //     modelBuilder
+    //         .Entity<OrgMember>()
+    //         .Property(e => e.Role)
+    //         .HasConversion(
+    //             v => v.ToString(),
+    //             v => (OrgMemberRole)Enum.Parse(typeof(OrgMemberRole), v)
+    //         );
+    //     modelBuilder
+    //         .Entity<ProjectMember>()
+    //         .Property(e => e.Role)
+    //         .HasConversion(
+    //             v => v.ToString(),
+    //             v => (ProjectMemberRole)Enum.Parse(typeof(ProjectMemberRole), v)
+    //         );
+    //     modelBuilder
+    //         .Entity<Activity>()
+    //         .Property(e => e.ItemType)
+    //         .HasConversion(
+    //             v => v.ToString(),
+    //             v => (ActivityItemType)Enum.Parse(typeof(ActivityItemType), v)
+    //         );
+    //     modelBuilder
+    //         .Entity<Activity>()
+    //         .Property(e => e.Action)
+    //         .HasConversion(
+    //             v => v.ToString(),
+    //             v => (ActivityAction)Enum.Parse(typeof(ActivityAction), v)
+    //         );
+    //     modelBuilder
+    //         .Entity<VItem>()
+    //         .Property(e => e.Type)
+    //         .HasConversion(v => v.ToString(), v => (VItemType)Enum.Parse(typeof(VItemType), v));
+    // }
 
     public async void LockProject(string org, string project)
     {

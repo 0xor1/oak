@@ -30,7 +30,7 @@ public static class OrgMemberRpcs
 
 public record OrgMember(string Org, string Member, bool IsActive, string Name, OrgMemberRole Role);
 public record Add(string Org, string Member, string Name, OrgMemberRole Role);
-public record Get(string Org, string? Member, bool IsActive, string? NameStartsWith, OrgMemberRole? Role, OrgMemberOrderBy OrderBy = OrgMemberOrderBy.Name, bool Asc = true);
+public record Get(string Org, bool IsActive, string? Member = null, string? NameStartsWith = null, OrgMemberRole? Role = null, OrgMemberOrderBy OrderBy = OrgMemberOrderBy.Name, bool Asc = true);
 public record Update(string Org, string Member, bool? IsActive, string? NewName, OrgMemberRole? NewRole);
 
 public enum OrgMemberRole

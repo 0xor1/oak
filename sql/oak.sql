@@ -59,7 +59,7 @@ CREATE TABLE OrgMembers(
     Member VARCHAR(22) NOT NULL,
     IsActive BOOL NOT NULL DEFAULT 1,
     Name VARCHAR(250) NOT NULL,
-    Role VARCHAR(25) NOT NULL, # 'owner', 'admin', 'write_all_projects', 'read_all_projects', 'per_project'
+    Role INT NOT NULL, # 'owner', 'admin', 'write_all_projects', 'read_all_projects', 'per_project'
     PRIMARY KEY (Org, Member),
     UNIQUE INDEX (Org, IsActive, Role, Name, Member),
     UNIQUE INDEX (Member, IsActive, Org),
@@ -102,7 +102,7 @@ CREATE TABLE ProjectMembers(
     Org VARCHAR(22) NOT NULL,
     Project VARCHAR(22) NOT NULL,
     Member VARCHAR(22) NOT NULL,
-    Role VARCHAR(25) NOT NULL, # 'admin', 'writer', 'reader'
+    Role INT NOT NULL, # 'admin', 'writer', 'reader'
     PRIMARY KEY (Org, Project, Member),
     UNIQUE INDEX (Org, Project, Role, Member),
     UNIQUE INDEX (Member, Org, Project)
@@ -116,10 +116,10 @@ CREATE TABLE Activities(
     OccurredOn DATETIME(3) NOT NULL,
     Member VARCHAR(22) NOT NULL,
     Item VARCHAR(22) NOT NULL,
-    ItemType VARCHAR(50) NOT NULL,
+    ItemType INT NOT NULL,
     TaskDeleted BOOL NOT NULL,
     ItemDeleted BOOL NOT NULL,
-    Action VARCHAR(50) NOT NULL,
+    Action INT NOT NULL,
     TaskName VARCHAR(250) NULL,
     ItemName VARCHAR(250) NULL,
     ExtraInfo VARCHAR(10000) NULL,
