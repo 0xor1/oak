@@ -105,8 +105,6 @@ internal static class OrgMemberEps
                                 => qry.OrderBy(x => x.Name),
                             (_, _, _, _, _, OrgMemberOrderBy.IsActive, true)
                                 => qry.OrderBy(x => x.IsActive).ThenBy(x => x.Name),
-                            // TODO should enums be switched to int sql storage so they have more
-                            // meaningful ordering???, alphabetical ordering is meaningless!!!
                             (_, _, _, _, _, OrgMemberOrderBy.Role, true)
                                 => qry.OrderBy(x => x.Role).ThenBy(x => x.Name),
                             (_, _, _, _, _, OrgMemberOrderBy.Name, false)
