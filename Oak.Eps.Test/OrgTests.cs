@@ -66,7 +66,17 @@ public class OrgTests : IDisposable
         Assert.Equal(a, res[0]);
         Assert.Equal(b, res[1]);
         Assert.Equal(c, res[2]);
-
+    }
+    
+    [Fact]
+    public async void Delete_Success()
+    {    
+        var userName = "ali";
+        var (ali, _, _) = await _rpcTestRig.NewApi(userName);
+        var a = await ali.Org.Create(new ("a", userName));
+        await ali.Org.Delete(new(a.Id));
+        var res = await ali.Org.Get(new());
+        Assert.Empty(res);
     }
 
     public void Dispose()
