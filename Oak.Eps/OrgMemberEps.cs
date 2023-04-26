@@ -86,13 +86,17 @@ internal static class OrgMemberEps
             {
                 // check current member has sufficient permissions
                 var sesOrgMem = await db.OrgMembers.Where(x => x.Org == req.Org && x.IsActive && x.Member == ses.Id).SingleOrDefaultAsync();
+                // msut be a member
                 ctx.ErrorIf(sesOrgMem == null, S.InsufficientPermission, null, HttpStatusCode.Forbidden);
                 var sesRole = sesOrgMem.NotNull().Role;
+                // must be an owner or admin, and admins cant make members owners
                 ctx.ErrorIf(sesRole is not (OrgMemberRole.Owner or OrgMemberRole.Admin) || (sesRole is OrgMemberRole.Admin && req.NewRole == OrgMemberRole.Owner), S.InsufficientPermission, null, HttpStatusCode.Forbidden);
                 var updateMem = await db.OrgMembers.SingleOrDefaultAsync(x => x.Org == req.Org && x.Member == req.Member);
+                // update target must exist
                 ctx.ErrorIf(updateMem == null, S.NoMatchingRecord, null, HttpStatusCode.NotFound);
                 updateMem.NotNull();
-                ctx.ErrorIf(updateMem.Role > sesRole, S.InsufficientPermission, null, HttpStatusCode.Forbidden);
+                // cant update a member with high permissions than you
+                ctx.ErrorIf(updateMem.Role < sesRole, S.InsufficientPermission, null, HttpStatusCode.Forbidden);
                 if (updateMem is { IsActive: true, Role: OrgMemberRole.Owner } && ((req.NewRole != null && req.NewRole != OrgMemberRole.Owner) || req.IsActive is false))
                 {
                     // a live org owner is being downgraded permissions or being deactivated completely,
