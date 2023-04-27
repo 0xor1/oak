@@ -27,7 +27,7 @@ internal static class OrgEps
                         async (db, ses) =>
                         {
                             var activeOrgs = await db.OrgMembers.CountAsync(
-                                x => x.IsActive && x.Member == ses.Id
+                                x => x.IsActive && x.Id == ses.Id
                             );
                             ctx.ErrorIf(
                                 activeOrgs > MaxActiveOrgs,
@@ -46,7 +46,7 @@ internal static class OrgEps
                                 new()
                                 {
                                     Org = newOrg.Id,
-                                    Member = ses.Id,
+                                    Id = ses.Id,
                                     IsActive = true,
                                     Name = req.OwnerMemberName,
                                     Role = OrgMemberRole.Owner
@@ -63,7 +63,7 @@ internal static class OrgEps
                     var ses = ctx.GetAuthedSession();
                     var db = ctx.Get<OakDb>();
                     var orgs = await db.OrgMembers
-                        .Where(x => x.IsActive && x.Member == ses.Id)
+                        .Where(x => x.IsActive && x.Id == ses.Id)
                         .Select(x => x.Org)
                         .ToListAsync();
                     var qry = db.Orgs.Where(x => orgs.Contains(x.Id));
@@ -120,7 +120,7 @@ internal static class OrgEps
     {
         // when a user wants to delete their account entirely,
         var allOwnerOrgs = await db.OrgMembers
-            .Where(x => x.Member == ses.Id && x.IsActive && x.Role == OrgMemberRole.Owner)
+            .Where(x => x.Id == ses.Id && x.IsActive && x.Role == OrgMemberRole.Owner)
             .Select(x => x.Org)
             .Distinct()
             .ToListAsync();
@@ -160,7 +160,7 @@ internal static class OrgEps
     private static async Task RawBatchDeactivate(OakDb db, Session ses)
     {
         await db.OrgMembers
-            .Where(x => x.Member == ses.Id)
+            .Where(x => x.Id == ses.Id)
             .ExecuteUpdateAsync(x => x.SetProperty(x => x.IsActive, x => false));
     }
 }

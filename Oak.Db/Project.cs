@@ -18,4 +18,21 @@ public class Project
     public DateTime? StartOn { get; set; }
     public DateTime? EndOn { get; set; }
     public ulong FileLimit { get; set; }
+
+    public Api.Project.Project ToApi(Task t)
+        => new(
+            Org, 
+            Id, 
+            IsArchived, 
+            IsPublic, 
+            Name, 
+            CreatedOn, 
+            CurrencySymbol, 
+            CurrencyCode, 
+            HoursPerDay, 
+            DaysPerWeek, 
+            StartOn, 
+            EndOn,
+            FileLimit,
+            t.ToApi());
 }

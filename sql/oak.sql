@@ -56,20 +56,20 @@ CREATE TABLE Orgs(
 DROP TABLE IF EXISTS OrgMembers;
 CREATE TABLE OrgMembers(
     Org VARCHAR(22) NOT NULL,
-    Member VARCHAR(22) NOT NULL,
+    Id VARCHAR(22) NOT NULL,
     IsActive BOOL NOT NULL DEFAULT 1,
     Name VARCHAR(250) NOT NULL,
     Role INT NOT NULL, # 'owner', 'admin', 'write_all_projects', 'read_all_projects', 'per_project'
-    PRIMARY KEY (Org, Member),
-    UNIQUE INDEX (Org, IsActive, Role, Name, Member),
-    UNIQUE INDEX (Member, IsActive, Org),
-    UNIQUE INDEX(Org, IsActive, Name, Role, Member)
+    PRIMARY KEY (Org, Id),
+    UNIQUE INDEX (Org, IsActive, Role, Name, Id),
+    UNIQUE INDEX (Id, IsActive, Org),
+    UNIQUE INDEX(Org, IsActive, Name, Role, Id)
 );
 
 DROP TABLE IF EXISTS ProjectLocks;
 CREATE TABLE ProjectLocks(
     Org VARCHAR(22) NOT NULL,
-    Project VARCHAR(22) NOT NULL,
+    Id VARCHAR(22) NOT NULL,
     PRIMARY KEY(Org, Project)
 );
 
@@ -89,7 +89,6 @@ CREATE TABLE Projects(
     EndOn DATETIME(3) NULL,
     FileLimit BIGINT UNSIGNED NOT NULL,
     PRIMARY KEY (Org, Id),
-    UNIQUE INDEX(id),
     UNIQUE INDEX(Org, IsArchived, IsPublic, Name, CreatedOn, Id),
     UNIQUE INDEX(Org, IsArchived, IsPublic, CreatedOn, Name, Id),
     UNIQUE INDEX(Org, IsArchived, IsPublic, StartOn, Name, Id),
@@ -101,11 +100,11 @@ DROP TABLE IF EXISTS ProjectMembers;
 CREATE TABLE ProjectMembers(
     Org VARCHAR(22) NOT NULL,
     Project VARCHAR(22) NOT NULL,
-    Member VARCHAR(22) NOT NULL,
+    Id VARCHAR(22) NOT NULL,
     Role INT NOT NULL, # 'admin', 'writer', 'reader'
-    PRIMARY KEY (Org, Project, Member),
-    UNIQUE INDEX (Org, Project, Role, Member),
-    UNIQUE INDEX (Member, Org, Project)
+    PRIMARY KEY (Org, Project, Id),
+    UNIQUE INDEX (Org, Project, Role, Id),
+    UNIQUE INDEX (Id, Org, Project)
 );
 
 DROP TABLE IF EXISTS Activities;
@@ -114,7 +113,7 @@ CREATE TABLE Activities(
     Project VARCHAR(22) NOT NULL,
     Task VARCHAR(22) NULL,
     OccurredOn DATETIME(3) NOT NULL,
-    Member VARCHAR(22) NOT NULL,
+    User VARCHAR(22) NOT NULL,
     Item VARCHAR(22) NOT NULL,
     ItemType INT NOT NULL,
     TaskDeleted BOOL NOT NULL,
@@ -123,12 +122,12 @@ CREATE TABLE Activities(
     TaskName VARCHAR(250) NULL,
     ItemName VARCHAR(250) NULL,
     ExtraInfo VARCHAR(10000) NULL,
-    PRIMARY KEY (Org, Project, OccurredOn, Item, Member),
-    UNIQUE INDEX (Org, Project, ItemDeleted, OccurredOn, Item, Member),
-    UNIQUE INDEX (Org, Project, item, OccurredOn, Member),
-    UNIQUE INDEX (Org, Project, task, Item, OccurredOn, Member),
-    UNIQUE INDEX (Org, Project, Member, OccurredOn, Item),
-    UNIQUE INDEX (Org, Project, Member, ItemDeleted, OccurredOn, Item)
+    PRIMARY KEY (Org, Project, OccurredOn, Item, User),
+    UNIQUE INDEX (Org, Project, ItemDeleted, OccurredOn, Item, User),
+    UNIQUE INDEX (Org, Project, item, OccurredOn, User),
+    UNIQUE INDEX (Org, Project, task, Item, OccurredOn, User),
+    UNIQUE INDEX (Org, Project, User, OccurredOn, Item),
+    UNIQUE INDEX (Org, Project, User, ItemDeleted, OccurredOn, Item)
 );
 
 DROP TABLE IF EXISTS Tasks;
@@ -139,7 +138,7 @@ CREATE TABLE Tasks(
     Parent VARCHAR(22) NULL,
     FirstChild VARCHAR(22) NULL,
     NextSib VARCHAR(22) NULL,
-    Member VARCHAR(22) NULL,
+    User VARCHAR(22) NULL,
     Name VARCHAR(250) NOT NULL,
     Description VARCHAR(1250) NOT NULL,
     CreatedBy VARCHAR(22) NOT NULL,
@@ -163,7 +162,7 @@ CREATE TABLE Tasks(
     PRIMARY KEY (Org, Project, Id),
     UNIQUE INDEX(Org, Project, Parent, Id),
     UNIQUE INDEX(Org, Project, NextSib, Id),
-    UNIQUE INDEX(Org, Project, Member, Id)
+    UNIQUE INDEX(Org, Project, User, Id)
 );
 
 DROP TABLE IF EXISTS VItems;

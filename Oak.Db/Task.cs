@@ -11,7 +11,7 @@ public class Task
     public string? Parent { get; set; }
     public string? FirstChild { get; set; }
     public string? NextSib { get; set; }
-    public string? Member { get; set; }
+    public string? User { get; set; }
     public string Name { get; set; }
     public string Description { get; set; }
     public string CreatedBy { get; set; }
@@ -32,4 +32,34 @@ public class Task
     public ulong ChildN { get; set; }
     public ulong DescN { get; set; }
     public bool IsParallel { get; set; }
+
+    public Api.Task.Task ToApi()
+        => new(
+            Org, 
+            Project,
+            Id, 
+            Parent,
+            FirstChild,
+            NextSib,
+            User,
+            Name,
+            Description,
+            CreatedBy,
+            CreatedOn,
+            TimeEst,
+            TimeInc,
+            TimeSubMin,
+            TimeSubEst,
+            TimeSubInc,
+            CostEst,
+            CostInc,
+            CostSubEst,
+            CostSubInc,
+            FileN,
+            FileSize,
+            FileSubN,
+            FileSubSize,
+            ChildN,
+            DescN,
+            IsParallel);
 }

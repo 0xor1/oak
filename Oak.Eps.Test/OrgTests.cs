@@ -21,7 +21,7 @@ public class OrgTests : IDisposable
     {
         var userName = "ali";
         var (ali, _, _) = await _rpcTestRig.NewApi(userName);
-        var name = "Oak.Eps.Test";
+        var name = "a";
         var org = await ali.Org.Create(new(name, userName));
         Assert.Equal(name, org.Name);
         Assert.True(org.CreatedOn.AddSeconds(1) > DateTimeExt.UtcNowMilli());

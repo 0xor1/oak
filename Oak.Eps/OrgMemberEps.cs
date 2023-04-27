@@ -22,7 +22,7 @@ internal static class OrgMemberEps
                         {
                             // check current member has sufficient permissions
                             var sesOrgMem = await db.OrgMembers
-                                .Where(x => x.Org == req.Org && x.IsActive && x.Member == ses.Id)
+                                .Where(x => x.Org == req.Org && x.IsActive && x.Id == ses.Id)
                                 .SingleOrDefaultAsync();
                             ctx.ErrorIf(
                                 sesOrgMem == null,
@@ -43,7 +43,7 @@ internal static class OrgMemberEps
                             );
                             // check new member is an active user
                             var newMemExists = await db.Auths.AnyAsync(
-                                x => x.Id == req.Member && x.ActivatedOn != DateTimeExt.Zero()
+                                x => x.Id == req.Id && x.ActivatedOn != DateTimeExt.Zero()
                             );
                             ctx.ErrorIf(
                                 !newMemExists,
@@ -54,7 +54,7 @@ internal static class OrgMemberEps
                             var newMem = new Db.OrgMember()
                             {
                                 Org = req.Org,
-                                Member = req.Member,
+                                Id = req.Id,
                                 IsActive = true,
                                 Name = req.Name,
                                 Role = req.Role
@@ -72,7 +72,7 @@ internal static class OrgMemberEps
                     var db = ctx.Get<OakDb>();
                     // check current member has sufficient permissions
                     var isActiveMember = await db.OrgMembers.AnyAsync(
-                        x => x.Org == req.Org && x.IsActive && x.Member == ses.Id
+                        x => x.Org == req.Org && x.IsActive && x.Id == ses.Id
                     );
                     ctx.ErrorIf(
                         !isActiveMember,
@@ -84,7 +84,7 @@ internal static class OrgMemberEps
                     // filters
                     if (req.Member != null)
                     {
-                        qry = qry.Where(x => x.Member == req.Member);
+                        qry = qry.Where(x => x.Id == req.Member);
                     }
                     else
                     {
@@ -94,25 +94,25 @@ internal static class OrgMemberEps
                             qry = qry.Where(x => x.Role == req.Role);
                         }
 
-                        if (req.NameStartsWith != null)
+                        if (!req.NameStartsWith.IsNullOrWhiteSpace())
                         {
                             qry = qry.Where(x => x.Name.StartsWith(req.NameStartsWith));
                         }
 
-                        qry = req switch
+                        qry = (req.OrderBy, req.Asc) switch
                         {
-                            (_, _, _, _, _, OrgMemberOrderBy.Name, true)
+                            (OrgMemberOrderBy.Name, true)
                                 => qry.OrderBy(x => x.Name),
-                            (_, _, _, _, _, OrgMemberOrderBy.IsActive, true)
+                            (OrgMemberOrderBy.IsActive, true)
                                 => qry.OrderBy(x => x.IsActive).ThenBy(x => x.Name),
-                            (_, _, _, _, _, OrgMemberOrderBy.Role, true)
+                            (OrgMemberOrderBy.Role, true)
                                 => qry.OrderBy(x => x.Role).ThenBy(x => x.Name),
-                            (_, _, _, _, _, OrgMemberOrderBy.Name, false)
+                            (OrgMemberOrderBy.Name, false)
                                 => qry.OrderByDescending(x => x.Name),
-                            (_, _, _, _, _, OrgMemberOrderBy.IsActive, false)
+                            (OrgMemberOrderBy.IsActive, false)
                                 => qry.OrderByDescending(x => x.IsActive)
                                     .ThenByDescending(x => x.Name),
-                            (_, _, _, _, _, OrgMemberOrderBy.Role, false)
+                            (OrgMemberOrderBy.Role, false)
                                 => qry.OrderByDescending(x => x.Role).ThenByDescending(x => x.Name),
                         };
                     }
@@ -127,7 +127,7 @@ internal static class OrgMemberEps
                         {
                             // check current member has sufficient permissions
                             var sesOrgMem = await db.OrgMembers
-                                .Where(x => x.Org == req.Org && x.IsActive && x.Member == ses.Id)
+                                .Where(x => x.Org == req.Org && x.IsActive && x.Id == ses.Id)
                                 .SingleOrDefaultAsync();
                             // msut be a member
                             ctx.ErrorIf(
@@ -149,7 +149,7 @@ internal static class OrgMemberEps
                                 HttpStatusCode.Forbidden
                             );
                             var updateMem = await db.OrgMembers.SingleOrDefaultAsync(
-                                x => x.Org == req.Org && x.Member == req.Member
+                                x => x.Org == req.Org && x.Id == req.Id
                             );
                             // update target must exist
                             ctx.ErrorIf(

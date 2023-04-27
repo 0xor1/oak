@@ -2,14 +2,14 @@
 
 namespace Oak.Db;
 
-[PrimaryKey(nameof(Org), nameof(Project), nameof(OccurredOn), nameof(Item), nameof(Member))]
+[PrimaryKey(nameof(Org), nameof(Project), nameof(OccurredOn), nameof(Item), nameof(User))]
 public class Activity
 {
     public string Org { get; set; }
     public string Project { get; set; }
     public string? Task { get; set; }
     public DateTime OccurredOn { get; set; }
-    public string Member { get; set; }
+    public string User { get; set; }
     public string Item { get; set; }
     public ActivityItemType ItemType { get; set; }
     public bool TaskDeleted { get; set; }

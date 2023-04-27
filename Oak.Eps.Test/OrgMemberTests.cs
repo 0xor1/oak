@@ -24,7 +24,7 @@ public class OrgMemberTests : IDisposable
         var org = await ali.Org.Create(new("a", "ali"));
         var mem = await ali.OrgMember.Add(new(org.Id, bobSes.Id, bobName, OrgMemberRole.Admin));
         Assert.Equal(org.Id, mem.Org);
-        Assert.Equal(bobSes.Id, mem.Member);
+        Assert.Equal(bobSes.Id, mem.Id);
         Assert.True(mem.IsActive);
         Assert.Equal(bobName, mem.Name);
         Assert.Equal(OrgMemberRole.Admin, mem.Role);
@@ -41,10 +41,10 @@ public class OrgMemberTests : IDisposable
         var mem = await ali.OrgMember.Add(new(org.Id, bobSes.Id, bobName, OrgMemberRole.Owner));
         var newName = "yolo";
         mem = await ali.OrgMember.Update(
-            new(org.Id, mem.Member, false, newName, OrgMemberRole.PerProject)
+            new(org.Id, mem.Id, false, newName, OrgMemberRole.PerProject)
         );
         Assert.Equal(org.Id, mem.Org);
-        Assert.Equal(bobSes.Id, mem.Member);
+        Assert.Equal(bobSes.Id, mem.Id);
         Assert.False(mem.IsActive);
         Assert.Equal(newName, mem.Name);
         Assert.Equal(OrgMemberRole.PerProject, mem.Role);

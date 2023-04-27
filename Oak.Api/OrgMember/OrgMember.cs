@@ -32,9 +32,9 @@ public static class OrgMemberRpcs
     public static readonly Rpc<Update, OrgMember> Update = new("/org_member/update");
 }
 
-public record OrgMember(string Org, string Member, bool IsActive, string Name, OrgMemberRole Role);
+public record OrgMember(string Org, string Id, bool IsActive, string Name, OrgMemberRole Role);
 
-public record Add(string Org, string Member, string Name, OrgMemberRole Role);
+public record Add(string Org, string Id, string Name, OrgMemberRole Role);
 
 public record Get(
     string Org,
@@ -48,7 +48,7 @@ public record Get(
 
 public record Update(
     string Org,
-    string Member,
+    string Id,
     bool? IsActive,
     string? NewName,
     OrgMemberRole? NewRole

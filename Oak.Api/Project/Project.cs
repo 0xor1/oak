@@ -33,12 +33,47 @@ public static class ProjectRpcs
     public static readonly Rpc<Delete, Project> Delete = new("/project/delete");
 }
 
-public record Project(string Org, string Id, string Name);
+public record Project(
+    string Org,
+    string Id,
+    bool IsArchived,
+    bool IsPublic,
+    string Name,
+    DateTime CreatedOn,
+    string CurrencySymbol,
+    string CurrencyCode,
+    uint? HoursPerDay,
+    uint? DaysPerWeek,
+    DateTime? StartOn,
+    DateTime? EndOn,
+    ulong FileLimit,
+    Task.Task Task
+);
 
-public record Create(string Org, string Member, string Name);
+public record Create(
+    string Org, 
+    bool IsPublic,
+    string Name,
+    string CurrencySymbol,
+    string CurrencyCode,
+    uint? HoursPerDay,
+    uint? DaysPerWeek,
+    DateTime? StartOn,
+    DateTime? EndOn,
+    ulong FileLimit);
 
-public record Get();
+public record Get(string Org, bool IsArchived, bool IsPublic, string? Id = null, string? NameStartsWith = null, MinMax<DateTime>? CreatedOn = null, MinMax<DateTime>? StartOn = null, MinMax<DateTime>? EndOn = null, ProjectOrderBy OrderBy = ProjectOrderBy.Name,
+    bool Asc = true);
 
 public record Update();
 
 public record Delete();
+
+public enum ProjectOrderBy
+{
+    Name,
+    CreatedOn,
+    StartOn,
+    EndOn
+}
+
