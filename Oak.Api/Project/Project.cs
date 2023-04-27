@@ -51,7 +51,7 @@ public record Project(
 );
 
 public record Create(
-    string Org, 
+    string Org,
     bool IsPublic,
     string Name,
     string CurrencySymbol,
@@ -60,10 +60,21 @@ public record Create(
     uint? DaysPerWeek,
     DateTime? StartOn,
     DateTime? EndOn,
-    ulong FileLimit);
+    ulong FileLimit
+);
 
-public record Get(string Org, bool IsArchived, bool IsPublic, string? Id = null, string? NameStartsWith = null, MinMax<DateTime>? CreatedOn = null, MinMax<DateTime>? StartOn = null, MinMax<DateTime>? EndOn = null, ProjectOrderBy OrderBy = ProjectOrderBy.Name,
-    bool Asc = true);
+public record Get(
+    string Org,
+    bool IsArchived,
+    bool IsPublic,
+    string? Id = null,
+    string? NameStartsWith = null,
+    MinMax<DateTime>? CreatedOn = null,
+    MinMax<DateTime>? StartOn = null,
+    MinMax<DateTime>? EndOn = null,
+    ProjectOrderBy OrderBy = ProjectOrderBy.Name,
+    bool Asc = true
+);
 
 public record Update();
 
@@ -76,4 +87,3 @@ public enum ProjectOrderBy
     StartOn,
     EndOn
 }
-

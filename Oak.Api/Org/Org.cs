@@ -7,7 +7,7 @@ public interface IOrgApi
     public Task<Org> Create(Create arg);
     public Task<IReadOnlyList<Org>> Get(Get arg);
     public Task<Org> Update(Update arg);
-    public Task Delete(Delete arg);
+    public System.Threading.Tasks.Task Delete(Delete arg);
 }
 
 public class OrgApi : IOrgApi
@@ -25,7 +25,7 @@ public class OrgApi : IOrgApi
 
     public Task<Org> Update(Update arg) => _client.Do(OrgRpcs.Update, arg);
 
-    public Task Delete(Delete arg) => _client.Do(OrgRpcs.Delete, arg);
+    public System.Threading.Tasks.Task Delete(Delete arg) => _client.Do(OrgRpcs.Delete, arg);
 }
 
 public static class OrgRpcs

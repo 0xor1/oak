@@ -46,11 +46,7 @@ internal static class ProjectEps
                                 FileLimit = req.FileLimit
                             };
                             await db.Projects.AddAsync(p);
-                            await db.ProjectLocks.AddAsync(new()
-                            {
-                                Org = req.Org,
-                                Id = p.Id
-                            });
+                            await db.ProjectLocks.AddAsync(new() { Org = req.Org, Id = p.Id });
                             var t = new Db.Task()
                             {
                                 Org = req.Org,
@@ -62,13 +58,15 @@ internal static class ProjectEps
                                 CreatedOn = DateTimeExt.UtcNowMilli()
                             };
                             await db.Tasks.AddAsync(t);
-                            await db.ProjectMembers.AddAsync(new()
-                            {
-                                Org = req.Org,
-                                Project = p.Id,
-                                Id = ses.Id,
-                                Role = ProjectMemberRole.Admin
-                            });
+                            await db.ProjectMembers.AddAsync(
+                                new()
+                                {
+                                    Org = req.Org,
+                                    Project = p.Id,
+                                    Id = ses.Id,
+                                    Role = ProjectMemberRole.Admin
+                                }
+                            );
                             return p.ToApi(t);
                         }
                     )
@@ -82,17 +80,38 @@ internal static class ProjectEps
                     if (req.Id != null)
                     {
                         // requesting a specific project
-                        await EpsUtil.MustHaveProjectAccess(ctx, db, ses, req.Org, req.Id, ProjectMemberRole.Reader);
-                        var res = await db.Projects.Where(x => x.Org == req.Org && x.Id == req.Id).ToListAsync();
+                        await EpsUtil.MustHaveProjectAccess(
+                            ctx,
+                            db,
+                            ses,
+                            req.Org,
+                            req.Id,
+                            ProjectMemberRole.Reader
+                        );
+                        var res = await db.Projects
+                            .Where(x => x.Org == req.Org && x.Id == req.Id)
+                            .ToListAsync();
                         ctx.ErrorIf(!res.Any(), S.NoMatchingRecord, null, HttpStatusCode.NotFound);
-                        var t = await db.Tasks.SingleAsync(x => x.Org == req.Org && x.Project == req.Id && x.Id == req.Id);
+                        var t = await db.Tasks.SingleAsync(
+                            x => x.Org == req.Org && x.Project == req.Id && x.Id == req.Id
+                        );
                         return res.Select(x => x.ToApi(t)).ToList();
                     }
 
                     var orgMemRole = await EpsUtil.OrgRole(db, ses, req.Org);
-                    ctx.ErrorIf(!req.IsPublic && orgMemRole == null, S.InsufficientPermission, null, HttpStatusCode.Forbidden);
+                    ctx.ErrorIf(
+                        !req.IsPublic && orgMemRole == null,
+                        S.InsufficientPermission,
+                        null,
+                        HttpStatusCode.Forbidden
+                    );
 
-                    var qry = db.Projects.Where(x => x.Org == req.Org && x.IsArchived == req.IsArchived && x.IsPublic == req.IsPublic);
+                    var qry = db.Projects.Where(
+                        x =>
+                            x.Org == req.Org
+                            && x.IsArchived == req.IsArchived
+                            && x.IsPublic == req.IsPublic
+                    );
                     if (!req.NameStartsWith.IsNullOrWhiteSpace())
                     {
                         qry = qry.Where(x => x.Name.StartsWith(req.NameStartsWith));
@@ -130,14 +149,18 @@ internal static class ProjectEps
                             qry = qry.Where(x => x.EndOn <= req.EndOn.Max);
                         }
                     }
-                    
+
                     if (!req.IsPublic && orgMemRole > OrgMemberRole.ReadAllProjects)
                     {
                         // req is for private projects and the user has per project permissions access
-                        var projectIds = await db.ProjectMembers.Where(x => x.Org == req.Org && x.Id == ses.Id).Select(x => x.Project).Distinct().ToListAsync();
+                        var projectIds = await db.ProjectMembers
+                            .Where(x => x.Org == req.Org && x.Id == ses.Id)
+                            .Select(x => x.Project)
+                            .Distinct()
+                            .ToListAsync();
                         qry = qry.Where(x => projectIds.Contains(x.Id));
                     }
-                    
+
                     qry = (req.OrderBy, req.Asc) switch
                     {
                         (ProjectOrderBy.Name, true)
@@ -159,7 +182,9 @@ internal static class ProjectEps
                     };
                     var ps = await qry.ToListAsync();
                     var ids = ps.Select(x => x.Id).ToList();
-                    var ts = await db.Tasks.Where(x => x.Org == req.Org && x.Project == x.Id && ids.Contains(x.Id)).ToListAsync();
+                    var ts = await db.Tasks
+                        .Where(x => x.Org == req.Org && x.Project == x.Id && ids.Contains(x.Id))
+                        .ToListAsync();
                     return ps.Select(x => x.ToApi(ts.Single(y => y.Id == x.Id))).ToList();
                 }
             )

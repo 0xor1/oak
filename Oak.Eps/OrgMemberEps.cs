@@ -101,14 +101,12 @@ internal static class OrgMemberEps
 
                         qry = (req.OrderBy, req.Asc) switch
                         {
-                            (OrgMemberOrderBy.Name, true)
-                                => qry.OrderBy(x => x.Name),
+                            (OrgMemberOrderBy.Name, true) => qry.OrderBy(x => x.Name),
                             (OrgMemberOrderBy.IsActive, true)
                                 => qry.OrderBy(x => x.IsActive).ThenBy(x => x.Name),
                             (OrgMemberOrderBy.Role, true)
                                 => qry.OrderBy(x => x.Role).ThenBy(x => x.Name),
-                            (OrgMemberOrderBy.Name, false)
-                                => qry.OrderByDescending(x => x.Name),
+                            (OrgMemberOrderBy.Name, false) => qry.OrderByDescending(x => x.Name),
                             (OrgMemberOrderBy.IsActive, false)
                                 => qry.OrderByDescending(x => x.IsActive)
                                     .ThenByDescending(x => x.Name),

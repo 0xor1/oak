@@ -33,11 +33,11 @@ public class Task
     public ulong DescN { get; set; }
     public bool IsParallel { get; set; }
 
-    public Api.Task.Task ToApi()
-        => new(
-            Org, 
+    public Api.Task.Task ToApi() =>
+        new(
+            Org,
             Project,
-            Id, 
+            Id,
             Parent,
             FirstChild,
             NextSib,
@@ -61,5 +61,6 @@ public class Task
             FileSubSize,
             ChildN,
             DescN,
-            IsParallel);
+            IsParallel
+        );
 }

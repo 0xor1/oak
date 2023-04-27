@@ -21,7 +21,6 @@ public class ProjectTests : IDisposable
     public async void Create_Success()
     {
         var (ali, org) = await Setup();
-        
     }
 
     private async Task<(IApi, Org)> Setup()

@@ -27,4 +27,5 @@ public record Task(
     ulong FileSubSize,
     ulong ChildN,
     ulong DescN,
-    bool IsParallel);
+    bool IsParallel
+);
