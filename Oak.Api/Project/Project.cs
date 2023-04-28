@@ -65,13 +65,13 @@ public record Create(
 
 public record Get(
     string Org,
-    bool IsArchived,
-    bool IsPublic,
     string? Id = null,
+    bool IsPublic = false,
     string? NameStartsWith = null,
     MinMax<DateTime>? CreatedOn = null,
     MinMax<DateTime>? StartOn = null,
     MinMax<DateTime>? EndOn = null,
+    bool IsArchived = false,
     ProjectOrderBy OrderBy = ProjectOrderBy.Name,
     bool Asc = true
 );

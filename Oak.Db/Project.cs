@@ -9,10 +9,10 @@ public class Project
     public string Id { get; set; }
     public bool IsArchived { get; set; }
     public bool IsPublic { get; set; }
-    public string Name { get; set; }
+    public string Name { get; set; } = "";
     public DateTime CreatedOn { get; set; }
-    public string CurrencySymbol { get; set; }
-    public string CurrencyCode { get; set; }
+    public string CurrencySymbol { get; set; } = "$";
+    public string CurrencyCode { get; set; } = "USD";
     public uint? HoursPerDay { get; set; }
     public uint? DaysPerWeek { get; set; }
     public DateTime? StartOn { get; set; }

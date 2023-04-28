@@ -70,7 +70,7 @@ DROP TABLE IF EXISTS ProjectLocks;
 CREATE TABLE ProjectLocks(
     Org VARCHAR(22) NOT NULL,
     Id VARCHAR(22) NOT NULL,
-    PRIMARY KEY(Org, Project)
+    PRIMARY KEY(Org, Id)
 );
 
 DROP TABLE IF EXISTS Projects;
