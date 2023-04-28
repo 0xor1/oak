@@ -1,7 +1,6 @@
 using Common.Shared;
 using Common.Server.Auth;
 using Microsoft.EntityFrameworkCore;
-using Oak.Api.OrgMember;
 
 namespace Oak.Db;
 
