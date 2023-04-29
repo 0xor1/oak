@@ -1,9 +1,8 @@
-﻿using System.Net;
-using Common.Server;
+﻿using Common.Server;
 using Microsoft.EntityFrameworkCore;
 using Oak.Api.OrgMember;
+using Oak.Api.ProjectMember;
 using Oak.Db;
-using S = Oak.I18n.S;
 using Task = System.Threading.Tasks.Task;
 
 namespace Oak.Eps;
@@ -12,6 +11,13 @@ internal static class EpsUtil
 {
     public static async Task<bool> IsActiveOrgMember(OakDb db, Session ses, string org) =>
         await OrgRole(db, ses, org) != null;
+
+    public static async Task MustBeActiveOrgMember(
+        IRpcCtx ctx,
+        OakDb db,
+        Session ses,
+        string org
+    ) => ctx.InsufficientPermissionsIf(!await IsActiveOrgMember(db, ses, org));
 
     public static async Task<OrgMemberRole?> OrgRole(OakDb db, Session ses, string org)
     {

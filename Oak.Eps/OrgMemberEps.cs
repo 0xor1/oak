@@ -1,11 +1,9 @@
-﻿using System.Net;
-using Common.Server;
+﻿using Common.Server;
 using Common.Shared;
 using Microsoft.EntityFrameworkCore;
 using Oak.Api.OrgMember;
 using Oak.Db;
 using OrgMember = Oak.Api.OrgMember.OrgMember;
-using S = Oak.I18n.S;
 
 namespace Oak.Eps;
 
@@ -51,6 +49,20 @@ internal static class OrgMemberEps
                         }
                     )
             ),
+            new RpcEndpoint<Exact, OrgMember>(
+                OrgMemberRpcs.GetOne,
+                async (ctx, req) =>
+                {
+                    var ses = ctx.GetAuthedSession();
+                    var db = ctx.Get<OakDb>();
+                    await EpsUtil.MustBeActiveOrgMember(ctx, db, ses, req.Org);
+                    var mem = await db.OrgMembers.SingleOrDefaultAsync(
+                        x => x.Org == req.Org && x.Id == req.Id
+                    );
+                    ctx.NotFoundIf(mem == null);
+                    return mem.NotNull().ToApi();
+                }
+            ),
             new RpcEndpoint<Get, IReadOnlyList<OrgMember>>(
                 OrgMemberRpcs.Get,
                 async (ctx, req) =>
@@ -64,38 +76,30 @@ internal static class OrgMemberEps
                     ctx.InsufficientPermissionsIf(!isActiveMember);
                     var qry = db.OrgMembers.Where(x => x.Org == req.Org);
                     // filters
-                    if (req.Member != null)
+                    qry = qry.Where(x => x.IsActive == req.IsActive);
+                    if (req.Role != null)
                     {
-                        qry = qry.Where(x => x.Id == req.Member);
+                        qry = qry.Where(x => x.Role == req.Role);
                     }
-                    else
+
+                    if (!req.NameStartsWith.IsNullOrWhiteSpace())
                     {
-                        qry = qry.Where(x => x.IsActive == req.IsActive);
-                        if (req.Role != null)
-                        {
-                            qry = qry.Where(x => x.Role == req.Role);
-                        }
-
-                        if (!req.NameStartsWith.IsNullOrWhiteSpace())
-                        {
-                            qry = qry.Where(x => x.Name.StartsWith(req.NameStartsWith));
-                        }
-
-                        qry = (req.OrderBy, req.Asc) switch
-                        {
-                            (OrgMemberOrderBy.Name, true) => qry.OrderBy(x => x.Name),
-                            (OrgMemberOrderBy.IsActive, true)
-                                => qry.OrderBy(x => x.IsActive).ThenBy(x => x.Name),
-                            (OrgMemberOrderBy.Role, true)
-                                => qry.OrderBy(x => x.Role).ThenBy(x => x.Name),
-                            (OrgMemberOrderBy.Name, false) => qry.OrderByDescending(x => x.Name),
-                            (OrgMemberOrderBy.IsActive, false)
-                                => qry.OrderByDescending(x => x.IsActive)
-                                    .ThenByDescending(x => x.Name),
-                            (OrgMemberOrderBy.Role, false)
-                                => qry.OrderByDescending(x => x.Role).ThenByDescending(x => x.Name),
-                        };
+                        qry = qry.Where(x => x.Name.StartsWith(req.NameStartsWith));
                     }
+
+                    qry = (req.OrderBy, req.Asc) switch
+                    {
+                        (OrgMemberOrderBy.Name, true) => qry.OrderBy(x => x.Name),
+                        (OrgMemberOrderBy.IsActive, true)
+                            => qry.OrderBy(x => x.IsActive).ThenBy(x => x.Name),
+                        (OrgMemberOrderBy.Role, true)
+                            => qry.OrderBy(x => x.Role).ThenBy(x => x.Name),
+                        (OrgMemberOrderBy.Name, false) => qry.OrderByDescending(x => x.Name),
+                        (OrgMemberOrderBy.IsActive, false)
+                            => qry.OrderByDescending(x => x.IsActive).ThenByDescending(x => x.Name),
+                        (OrgMemberOrderBy.Role, false)
+                            => qry.OrderByDescending(x => x.Role).ThenByDescending(x => x.Name),
+                    };
                     return await qry.Select(x => x.ToApi()).ToListAsync();
                 }
             ),
