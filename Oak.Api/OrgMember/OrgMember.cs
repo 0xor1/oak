@@ -45,17 +45,12 @@ public record Get(
     bool IsActive,
     string? NameStartsWith = null,
     OrgMemberRole? Role = null,
+    string? After = null,
     OrgMemberOrderBy OrderBy = OrgMemberOrderBy.Name,
     bool Asc = true
 );
 
-public record Update(
-    string Org,
-    string Id,
-    bool? IsActive,
-    string? NewName,
-    OrgMemberRole? NewRole
-);
+public record Update(string Org, string Id, bool? IsActive, string? Name, OrgMemberRole? Role);
 
 public record Exact(string Org, string Id);
 
@@ -70,7 +65,6 @@ public enum OrgMemberRole
 
 public enum OrgMemberOrderBy
 {
-    IsActive,
     Name,
     Role
 }

@@ -87,18 +87,61 @@ internal static class OrgMemberEps
                         qry = qry.Where(x => x.Name.StartsWith(req.NameStartsWith));
                     }
 
+                    if (req.After != null)
+                    {
+                        // implement cursor based pagination ... in a fashion
+                        var after = await db.OrgMembers.SingleOrDefaultAsync(
+                            x => x.Org == req.Org && x.Id == req.After
+                        );
+                        ctx.NotFoundIf(after == null);
+                        after.NotNull();
+                        qry = (req.OrderBy, req.Asc) switch
+                        {
+                            (OrgMemberOrderBy.Name, true)
+                                => qry.Where(
+                                    x =>
+                                        x.Name.CompareTo(after.Name) > 0
+                                        || (
+                                            x.Name.CompareTo(after.Name) == 0 && x.Role > after.Role
+                                        )
+                                ),
+                            (OrgMemberOrderBy.Role, true)
+                                => qry.Where(
+                                    x =>
+                                        x.Role > after.Role
+                                        || (
+                                            x.Role == after.Role && x.Name.CompareTo(after.Name) > 0
+                                        )
+                                ),
+                            (OrgMemberOrderBy.Name, false)
+                                => qry.Where(
+                                    x =>
+                                        x.Name.CompareTo(after.Name) < 0
+                                        || (
+                                            x.Name.CompareTo(after.Name) == 0 && x.Role > after.Role
+                                        )
+                                ),
+                            (OrgMemberOrderBy.Role, false)
+                                => qry.Where(
+                                    x =>
+                                        x.Role < after.Role
+                                        || (
+                                            x.Role == after.Role && x.Name.CompareTo(after.Name) > 0
+                                        )
+                                ),
+                        };
+                    }
+
                     qry = (req.OrderBy, req.Asc) switch
                     {
-                        (OrgMemberOrderBy.Name, true) => qry.OrderBy(x => x.Name),
-                        (OrgMemberOrderBy.IsActive, true)
-                            => qry.OrderBy(x => x.IsActive).ThenBy(x => x.Name),
+                        (OrgMemberOrderBy.Name, true)
+                            => qry.OrderBy(x => x.Name).ThenBy(x => x.Role),
                         (OrgMemberOrderBy.Role, true)
                             => qry.OrderBy(x => x.Role).ThenBy(x => x.Name),
-                        (OrgMemberOrderBy.Name, false) => qry.OrderByDescending(x => x.Name),
-                        (OrgMemberOrderBy.IsActive, false)
-                            => qry.OrderByDescending(x => x.IsActive).ThenByDescending(x => x.Name),
+                        (OrgMemberOrderBy.Name, false)
+                            => qry.OrderByDescending(x => x.Name).ThenBy(x => x.Role),
                         (OrgMemberOrderBy.Role, false)
-                            => qry.OrderByDescending(x => x.Role).ThenByDescending(x => x.Name),
+                            => qry.OrderByDescending(x => x.Role).ThenBy(x => x.Name),
                     };
                     return await qry.Select(x => x.ToApi()).ToListAsync();
                 }
@@ -121,7 +164,7 @@ internal static class OrgMemberEps
                                 sesRole is not (OrgMemberRole.Owner or OrgMemberRole.Admin)
                                     || (
                                         sesRole is OrgMemberRole.Admin
-                                        && req.NewRole == OrgMemberRole.Owner
+                                        && req.Role == OrgMemberRole.Owner
                                     )
                             );
                             var updateMem = await db.OrgMembers.SingleOrDefaultAsync(
@@ -135,7 +178,7 @@ internal static class OrgMemberEps
                             if (
                                 updateMem is { IsActive: true, Role: OrgMemberRole.Owner }
                                 && (
-                                    (req.NewRole != null && req.NewRole != OrgMemberRole.Owner)
+                                    (req.Role != null && req.Role != OrgMemberRole.Owner)
                                     || req.IsActive is false
                                 )
                             )
@@ -151,8 +194,8 @@ internal static class OrgMemberEps
                                 ctx.InsufficientPermissionsIf(ownerCount == 1);
                             }
                             updateMem.IsActive = req.IsActive ?? updateMem.IsActive;
-                            updateMem.Name = req.NewName ?? updateMem.Name;
-                            updateMem.Role = req.NewRole ?? updateMem.Role;
+                            updateMem.Name = req.Name ?? updateMem.Name;
+                            updateMem.Role = req.Role ?? updateMem.Role;
                             return updateMem.NotNull().ToApi();
                         }
                     )

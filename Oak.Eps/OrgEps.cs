@@ -105,7 +105,7 @@ internal static class OrgEps
                                 OrgMemberRole.Owner
                             );
                             var org = await db.Orgs.SingleAsync(x => x.Id == req.Id);
-                            org.Name = req.NewName;
+                            org.Name = req.Name;
                             return org.ToApi();
                         }
                     )

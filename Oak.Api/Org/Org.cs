@@ -46,7 +46,7 @@ public record Create(string Name, string OwnerMemberName);
 
 public record Get(OrgOrderBy OrderBy = OrgOrderBy.Name, bool Asc = true);
 
-public record Update(string Id, string NewName);
+public record Update(string Id, string Name);
 
 public record Exact(string Id);
 

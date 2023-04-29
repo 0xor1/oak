@@ -1,4 +1,5 @@
 ﻿using Common.Server;
+using Common.Shared;
 using Microsoft.EntityFrameworkCore;
 using Oak.Api.OrgMember;
 using Oak.Api.ProjectMember;
@@ -60,6 +61,7 @@ internal static class EpsUtil
     }
 
     public static async Task<bool> HasProjectAccess(
+        IRpcCtx ctx,
         OakDb db,
         Session ses,
         string org,
@@ -67,17 +69,12 @@ internal static class EpsUtil
         ProjectMemberRole role
     )
     {
-        var isPublicList = await db.Projects
-            .Where(x => x.Org == org && x.Id == project)
-            .Select(x => x.IsPublic)
-            .ToListAsync();
-        if (!isPublicList.Any())
-        {
-            // there is no such project
-            return false;
-        }
+        var p = await db.Projects.SingleOrDefaultAsync(x => x.Org == org && x.Id == project);
 
-        var isPublic = isPublicList.Single();
+        ctx.NotFoundIf(p == null);
+        p.NotNull();
+
+        var isPublic = p.IsPublic;
         if (isPublic && role == ProjectMemberRole.Reader)
         {
             // project is public and only asking for read access
@@ -118,5 +115,5 @@ internal static class EpsUtil
         string org,
         string project,
         ProjectMemberRole role
-    ) => ctx.InsufficientPermissionsIf(!await HasProjectAccess(db, ses, org, project, role));
+    ) => ctx.InsufficientPermissionsIf(!await HasProjectAccess(ctx, db, ses, org, project, role));
 }

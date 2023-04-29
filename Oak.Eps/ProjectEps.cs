@@ -278,9 +278,77 @@ internal static class ProjectEps
                 ProjectRpcs.Update,
                 async (ctx, req) =>
                     await ctx.DbTx<OakDb, Project>(
-                        (db, ses) =>
+                        async (db, ses) =>
                         {
-                            return new Db.Project().ToApi((new())).AsTask();
+                            await EpsUtil.MustHaveProjectAccess(
+                                ctx,
+                                db,
+                                ses,
+                                req.Org,
+                                req.Id,
+                                ProjectMemberRole.Admin
+                            );
+                            var p = await db.Projects.SingleOrDefaultAsync(
+                                x => x.Org == req.Org && x.Id == req.Id
+                            );
+                            ctx.NotFoundIf(p == null);
+                            p.NotNull();
+                            p.Name = req.Name ?? p.Name;
+                            p.IsPublic = req.IsPublic ?? p.IsPublic;
+                            p.CurrencySymbol = req.CurrencySymbol ?? p.CurrencySymbol;
+                            p.CurrencyCode = req.CurrencyCode ?? p.CurrencyCode;
+                            p.HoursPerDay = req.HoursPerDay ?? p.HoursPerDay;
+                            p.DaysPerWeek = req.DaysPerWeek ?? p.DaysPerWeek;
+                            p.StartOn = req.StartOn ?? p.StartOn;
+                            p.EndOn = req.EndOn ?? p.EndOn;
+                            p.FileLimit = req.FileLimit ?? p.FileLimit;
+                            var t = await db.Tasks.SingleAsync(
+                                x => x.Org == req.Org && x.Project == req.Id && x.Id == req.Id
+                            );
+                            return p.ToApi(t);
+                        }
+                    )
+            ),
+            new RpcEndpoint<Exact, Nothing>(
+                ProjectRpcs.Delete,
+                async (ctx, req) =>
+                    await ctx.DbTx<OakDb, Nothing>(
+                        async (db, ses) =>
+                        {
+                            await EpsUtil.MustHaveProjectAccess(
+                                ctx,
+                                db,
+                                ses,
+                                req.Org,
+                                req.Id,
+                                ProjectMemberRole.Admin
+                            );
+                            await db.Projects
+                                .Where(x => x.Org == req.Org && x.Id == req.Id)
+                                .ExecuteDeleteAsync();
+                            await db.ProjectLocks
+                                .Where(x => x.Org == req.Org && x.Id == req.Id)
+                                .ExecuteDeleteAsync();
+                            await db.Activities
+                                .Where(x => x.Org == req.Org && x.Project == req.Id)
+                                .ExecuteDeleteAsync();
+                            await db.ProjectMembers
+                                .Where(x => x.Org == req.Org && x.Project == req.Id)
+                                .ExecuteDeleteAsync();
+                            await db.Tasks
+                                .Where(x => x.Org == req.Org && x.Project == req.Id)
+                                .ExecuteDeleteAsync();
+                            await db.VItems
+                                .Where(x => x.Org == req.Org && x.Project == req.Id)
+                                .ExecuteDeleteAsync();
+                            await db.Files
+                                .Where(x => x.Org == req.Org && x.Project == req.Id)
+                                .ExecuteDeleteAsync();
+                            await db.Comments
+                                .Where(x => x.Org == req.Org && x.Project == req.Id)
+                                .ExecuteDeleteAsync();
+                            // TODO use IStoreClient.DeletePrefix to delete all project files
+                            return Nothing.Inst;
                         }
                     )
             )

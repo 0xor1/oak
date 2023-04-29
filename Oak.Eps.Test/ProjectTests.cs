@@ -233,6 +233,59 @@ public class ProjectTests : IDisposable
         Assert.Equal(c, res[0]);
     }
 
+    [Fact]
+    public async void Update_Success()
+    {
+        var (ali, bob, cat, dan, anon, org) = await Setup();
+        var a = await ali.Project.Create(
+            new(
+                org.Id,
+                true,
+                "a",
+                "£",
+                "GBP",
+                8,
+                5,
+                DateTimeExt.UtcNowMilli(),
+                DateTimeExt.UtcNowMilli().Add(TimeSpan.FromDays(5)),
+                10
+            )
+        );
+        var aUp = await ali.Project.Update(new(a.Org, a.Id, Name: "aUp"));
+        Assert.Equal("aUp", aUp.Name);
+        var backToA = aUp with { Name = a.Name };
+        Assert.Equal(a, backToA);
+    }
+
+    [Fact]
+    public async void Delete_Success()
+    {
+        var (ali, bob, cat, dan, anon, org) = await Setup();
+        var a = await ali.Project.Create(
+            new(
+                org.Id,
+                true,
+                "a",
+                "£",
+                "GBP",
+                8,
+                5,
+                DateTimeExt.UtcNowMilli(),
+                DateTimeExt.UtcNowMilli().Add(TimeSpan.FromDays(5)),
+                10
+            )
+        );
+        await ali.Project.Delete(new(a.Org, a.Id));
+        try
+        {
+            await ali.Project.GetOne(new(a.Org, a.Id));
+        }
+        catch (RpcTestException ex)
+        {
+            Assert.Equal("Entity not found", ex.Rpc.Message);
+        }
+    }
+
     private async Task<(IApi Ali, IApi Bob, IApi Cat, IApi Dan, IApi Anon, Org)> Setup()
     {
         var userName = "ali";
