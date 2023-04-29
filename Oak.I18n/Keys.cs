@@ -5,7 +5,12 @@ public static partial class S
     public const string Invalid = Common.Shared.S.Invalid;
     public const string RpcUnknownEndpoint = Common.Shared.S.RpcUnknownEndpoint;
     public const string UnexpectedError = Common.Shared.S.UnexpectedError;
-    public const string NoMatchingRecord = Common.Shared.S.NoMatchingRecord;
+    public const string EntityNotFound = Common.Shared.S.EntityNotFound;
+    public const string InsufficientPermission = Common.Shared.S.InsufficientPermission;
+    public const string ApiError = Common.Shared.S.ApiError;
+    public const string MinMaxNullArgs = Common.Shared.S.MinMaxNullArgs;
+    public const string MinMaxReversedArgs = Common.Shared.S.MinMaxReversedArgs;
+    public const string BadRequest = Common.Shared.S.BadRequest;
     public const string AuthInvalidEmail = Common.Shared.S.AuthInvalidEmail;
     public const string AuthInvalidPwd = Common.Shared.S.AuthInvalidPwd;
     public const string LessThan8Chars = Common.Shared.S.AuthLessThan8Chars;
@@ -25,7 +30,6 @@ public static partial class S
     public const string AuthResetPwdSubject = Common.Shared.S.AuthResetPwdSubject;
     public const string AuthResetPwdHtml = Common.Shared.S.AuthResetPwdHtml;
     public const string AuthResetPwdText = Common.Shared.S.AuthResetPwdText;
-    public const string ApiError = Common.Shared.S.ApiError;
     public const string Oak = "oak";
     public const string Home = "home";
     public const string L10n = "l10n";
@@ -59,7 +63,6 @@ public static partial class S
     public const string Error = "error";
     public const string Update = "update";
     public const string Updating = "updating";
-    public const string InsufficientPermission = "insufficient_permission";
 
     // org
     public const string OrgTooMany = "org_too_many";

@@ -56,6 +56,19 @@ internal static class OrgEps
                         }
                     )
             ),
+            new RpcEndpoint<Exact, Org>(
+                OrgRpcs.GetOne,
+                async (ctx, req) =>
+                {
+                    var ses = ctx.GetAuthedSession();
+                    var db = ctx.Get<OakDb>();
+                    await EpsUtil.MustHaveOrgAccess(ctx, db, ses, req.Id, OrgMemberRole.PerProject);
+
+                    var org = await db.Orgs.SingleOrDefaultAsync(x => x.Id == req.Id);
+                    ctx.NotFoundIf(org == null);
+                    return org.NotNull().ToApi();
+                }
+            ),
             new RpcEndpoint<Get, IReadOnlyList<Org>>(
                 OrgRpcs.Get,
                 async (ctx, req) =>
@@ -96,7 +109,7 @@ internal static class OrgEps
                         }
                     )
             ),
-            new RpcEndpoint<Delete, Nothing>(
+            new RpcEndpoint<Exact, Nothing>(
                 OrgRpcs.Delete,
                 async (ctx, req) =>
                     await ctx.DbTx<OakDb, Nothing>(

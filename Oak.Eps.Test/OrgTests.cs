@@ -45,6 +45,8 @@ public class OrgTests : IDisposable
         var c = await ali.Org.Create(new("c", userName));
         var b = await ali.Org.Create(new("b", userName));
         var a = await ali.Org.Create(new("a", userName));
+        var one = await ali.Org.GetOne(new(a.Id));
+        Assert.Equal(a, one);
         var res = await ali.Org.Get(new());
         Assert.Equal(3, res.Count);
         Assert.Equal(a, res[0]);

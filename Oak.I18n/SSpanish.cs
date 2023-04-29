@@ -17,6 +17,13 @@ public static partial class S
         },
         { Invalid, new("Inválido") },
         { RpcUnknownEndpoint, new("Extremo de RPC desconocido") },
+        { UnexpectedError, new("Ocurrió un error inesperado") },
+        { EntityNotFound, new("Entidad no encontrada") },
+        { InsufficientPermission, new("Permiso insuficiente") },
+        { ApiError, new("Error de API") },
+        { MinMaxNullArgs, new("Los argumentos min y max son nulos") },
+        { MinMaxReversedArgs, new("Los valores Min {{Min}} y Max {{Max}} están fuera de orden") },
+        { BadRequest, new("Solicitud incorrecta") },
         { AuthInvalidEmail, new("Email inválido") },
         { AuthInvalidPwd, new("Contraseña invalida") },
         { LessThan8Chars, new("Menos de 8 caracteres") },
@@ -24,10 +31,8 @@ public static partial class S
         { NoUpperCaseChar, new("Sin carácter en mayúscula") },
         { NoDigit, new("Sin dígito") },
         { NoSpecialChar, new("Sin carácter especial") },
-        { UnexpectedError, new("Ocurrió un error inesperado") },
         { AuthAlreadyAuthenticated, new("Ya en sesión autenticada") },
         { AuthNotAuthenticated, new("No en sesión autenticada") },
-        { NoMatchingRecord, new("Sin registro coincidente") },
         { AuthInvalidEmailCode, new("Código de correo electrónico no válido") },
         { AuthInvalidResetPwdCode, new("Código de restablecimiento de contraseña no válido") },
         {
@@ -68,7 +73,6 @@ public static partial class S
                 "Haga clic en este enlace para restablecer su contraseña: {{BaseHref}}/reset_pwd?email={{Email}}&code={{Code}}"
             )
         },
-        { ApiError, new("Error de API") },
         { Home, new("Hogar") },
         { L10n, new("Localización") },
         { Language, new("Idioma") },
@@ -111,7 +115,6 @@ public static partial class S
         { Error, new("Error") },
         { Update, new("Actualizar") },
         { Updating, new("Actualizando") },
-        { InsufficientPermission, new("Permiso insuficiente") },
         { OrgTooMany, new("Ya eres miembro de demasiadas organizaciones") }
     };
 }

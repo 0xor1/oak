@@ -38,13 +38,7 @@ internal static class EpsUtil
         Session ses,
         string org,
         OrgMemberRole role
-    ) =>
-        ctx.ErrorIf(
-            !await HasOrgAccess(db, ses, org, role),
-            S.InsufficientPermission,
-            null,
-            HttpStatusCode.Forbidden
-        );
+    ) => ctx.InsufficientPermissionsIf(!await HasOrgAccess(db, ses, org, role));
 
     public static async Task<ProjectMemberRole?> ProjectRole(
         OakDb db,
@@ -118,11 +112,5 @@ internal static class EpsUtil
         string org,
         string project,
         ProjectMemberRole role
-    ) =>
-        ctx.ErrorIf(
-            !await HasProjectAccess(db, ses, org, project, role),
-            S.InsufficientPermission,
-            null,
-            HttpStatusCode.Forbidden
-        );
+    ) => ctx.InsufficientPermissionsIf(!await HasProjectAccess(db, ses, org, project, role));
 }

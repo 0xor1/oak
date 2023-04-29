@@ -24,33 +24,20 @@ internal static class OrgMemberEps
                             var sesOrgMem = await db.OrgMembers
                                 .Where(x => x.Org == req.Org && x.IsActive && x.Id == ses.Id)
                                 .SingleOrDefaultAsync();
-                            ctx.ErrorIf(
-                                sesOrgMem == null,
-                                S.InsufficientPermission,
-                                null,
-                                HttpStatusCode.Forbidden
-                            );
+                            ctx.InsufficientPermissionsIf(sesOrgMem == null);
                             var sesRole = sesOrgMem.NotNull().Role;
-                            ctx.ErrorIf(
+                            ctx.InsufficientPermissionsIf(
                                 sesRole is not (OrgMemberRole.Owner or OrgMemberRole.Admin)
                                     || (
                                         sesRole is OrgMemberRole.Admin
                                         && req.Role == OrgMemberRole.Owner
-                                    ),
-                                S.InsufficientPermission,
-                                null,
-                                HttpStatusCode.Forbidden
+                                    )
                             );
                             // check new member is an active user
                             var newMemExists = await db.Auths.AnyAsync(
                                 x => x.Id == req.Id && x.ActivatedOn != DateTimeExt.Zero()
                             );
-                            ctx.ErrorIf(
-                                !newMemExists,
-                                S.NoMatchingRecord,
-                                null,
-                                HttpStatusCode.NotFound
-                            );
+                            ctx.NotFoundIf(!newMemExists);
                             var newMem = new Db.OrgMember()
                             {
                                 Org = req.Org,
@@ -74,12 +61,7 @@ internal static class OrgMemberEps
                     var isActiveMember = await db.OrgMembers.AnyAsync(
                         x => x.Org == req.Org && x.IsActive && x.Id == ses.Id
                     );
-                    ctx.ErrorIf(
-                        !isActiveMember,
-                        S.InsufficientPermission,
-                        null,
-                        HttpStatusCode.Forbidden
-                    );
+                    ctx.InsufficientPermissionsIf(!isActiveMember);
                     var qry = db.OrgMembers.Where(x => x.Org == req.Org);
                     // filters
                     if (req.Member != null)
@@ -128,42 +110,24 @@ internal static class OrgMemberEps
                                 .Where(x => x.Org == req.Org && x.IsActive && x.Id == ses.Id)
                                 .SingleOrDefaultAsync();
                             // msut be a member
-                            ctx.ErrorIf(
-                                sesOrgMem == null,
-                                S.InsufficientPermission,
-                                null,
-                                HttpStatusCode.Forbidden
-                            );
+                            ctx.InsufficientPermissionsIf(sesOrgMem == null);
                             var sesRole = sesOrgMem.NotNull().Role;
                             // must be an owner or admin, and admins cant make members owners
-                            ctx.ErrorIf(
+                            ctx.InsufficientPermissionsIf(
                                 sesRole is not (OrgMemberRole.Owner or OrgMemberRole.Admin)
                                     || (
                                         sesRole is OrgMemberRole.Admin
                                         && req.NewRole == OrgMemberRole.Owner
-                                    ),
-                                S.InsufficientPermission,
-                                null,
-                                HttpStatusCode.Forbidden
+                                    )
                             );
                             var updateMem = await db.OrgMembers.SingleOrDefaultAsync(
                                 x => x.Org == req.Org && x.Id == req.Id
                             );
                             // update target must exist
-                            ctx.ErrorIf(
-                                updateMem == null,
-                                S.NoMatchingRecord,
-                                null,
-                                HttpStatusCode.NotFound
-                            );
+                            ctx.InsufficientPermissionsIf(updateMem == null);
                             updateMem.NotNull();
                             // cant update a member with high permissions than you
-                            ctx.ErrorIf(
-                                updateMem.Role < sesRole,
-                                S.InsufficientPermission,
-                                null,
-                                HttpStatusCode.Forbidden
-                            );
+                            ctx.InsufficientPermissionsIf(updateMem.Role < sesRole);
                             if (
                                 updateMem is { IsActive: true, Role: OrgMemberRole.Owner }
                                 && (
@@ -180,12 +144,7 @@ internal static class OrgMemberEps
                                         && x.IsActive
                                         && x.Role == OrgMemberRole.Owner
                                 );
-                                ctx.ErrorIf(
-                                    ownerCount == 1,
-                                    S.InsufficientPermission,
-                                    null,
-                                    HttpStatusCode.Forbidden
-                                );
+                                ctx.InsufficientPermissionsIf(ownerCount == 1);
                             }
                             updateMem.IsActive = req.IsActive ?? updateMem.IsActive;
                             updateMem.Name = req.NewName ?? updateMem.Name;

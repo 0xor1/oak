@@ -8,6 +8,7 @@ using Oak.Db;
 using S = Oak.I18n.S;
 using Get = Oak.Api.Project.Get;
 using Project = Oak.Api.Project.Project;
+using Update = Oak.Api.Project.Update;
 
 namespace Oak.Eps;
 
@@ -71,40 +72,41 @@ internal static class ProjectEps
                         }
                     )
             ),
+            new RpcEndpoint<Exact, Project>(
+                ProjectRpcs.GetOne,
+                async (ctx, req) =>
+                {
+                    var ses = ctx.GetSession();
+                    var db = ctx.Get<OakDb>();
+                    // requesting a specific project
+                    await EpsUtil.MustHaveProjectAccess(
+                        ctx,
+                        db,
+                        ses,
+                        req.Org,
+                        req.Id,
+                        ProjectMemberRole.Reader
+                    );
+                    var res = await db.Projects.SingleOrDefaultAsync(
+                        x => x.Org == req.Org && x.Id == req.Id
+                    );
+                    ctx.NotFoundIf(res == null);
+                    res.NotNull();
+                    var t = await db.Tasks.SingleAsync(
+                        x => x.Org == req.Org && x.Project == req.Id && x.Id == req.Id
+                    );
+                    return res.ToApi(t);
+                }
+            ),
             new RpcEndpoint<Get, IReadOnlyList<Project>>(
                 ProjectRpcs.Get,
                 async (ctx, req) =>
                 {
                     var ses = ctx.GetSession();
                     var db = ctx.Get<OakDb>();
-                    if (req.Id != null)
-                    {
-                        // requesting a specific project
-                        await EpsUtil.MustHaveProjectAccess(
-                            ctx,
-                            db,
-                            ses,
-                            req.Org,
-                            req.Id,
-                            ProjectMemberRole.Reader
-                        );
-                        var res = await db.Projects
-                            .Where(x => x.Org == req.Org && x.Id == req.Id)
-                            .ToListAsync();
-                        ctx.ErrorIf(!res.Any(), S.NoMatchingRecord, null, HttpStatusCode.NotFound);
-                        var t = await db.Tasks.SingleAsync(
-                            x => x.Org == req.Org && x.Project == req.Id && x.Id == req.Id
-                        );
-                        return res.Select(x => x.ToApi(t)).ToList();
-                    }
 
                     var orgMemRole = await EpsUtil.OrgRole(db, ses, req.Org);
-                    ctx.ErrorIf(
-                        !req.IsPublic && orgMemRole == null,
-                        S.InsufficientPermission,
-                        null,
-                        HttpStatusCode.Forbidden
-                    );
+                    ctx.InsufficientPermissionsIf(!req.IsPublic && orgMemRole == null);
 
                     var qry = db.Projects.Where(
                         x =>
@@ -160,7 +162,90 @@ internal static class ProjectEps
                             .ToListAsync();
                         qry = qry.Where(x => projectIds.Contains(x.Id));
                     }
-
+                    if (req.After != null)
+                    {
+                        // implement cursor based pagination ... in a fashion
+                        var after = await db.Projects.SingleOrDefaultAsync(
+                            x => x.Org == req.Org && x.Id == req.After
+                        );
+                        ctx.NotFoundIf(after == null);
+                        after.NotNull();
+                        qry = (req.OrderBy, req.Asc) switch
+                        {
+                            (ProjectOrderBy.Name, true)
+                                => qry.Where(
+                                    x =>
+                                        x.Name.CompareTo(after.Name) > 0
+                                        || (
+                                            x.Name.CompareTo(after.Name) == 0
+                                            && x.CreatedOn > after.CreatedOn
+                                        )
+                                ),
+                            (ProjectOrderBy.CreatedOn, true)
+                                => qry.Where(
+                                    x =>
+                                        x.CreatedOn > after.CreatedOn
+                                        || (
+                                            x.CreatedOn == after.CreatedOn
+                                            && x.Name.CompareTo(after.Name) > 0
+                                        )
+                                ),
+                            (ProjectOrderBy.StartOn, true)
+                                => qry.Where(
+                                    x =>
+                                        x.StartOn > after.StartOn
+                                        || (
+                                            x.StartOn == after.StartOn
+                                            && x.Name.CompareTo(after.Name) > 0
+                                        )
+                                ),
+                            (ProjectOrderBy.EndOn, true)
+                                => qry.Where(
+                                    x =>
+                                        x.EndOn > after.EndOn
+                                        || (
+                                            x.EndOn == after.EndOn
+                                            && x.Name.CompareTo(after.Name) > 0
+                                        )
+                                ),
+                            (ProjectOrderBy.Name, false)
+                                => qry.Where(
+                                    x =>
+                                        x.Name.CompareTo(after.Name) < 0
+                                        || (
+                                            x.Name.CompareTo(after.Name) == 0
+                                            && x.CreatedOn > after.CreatedOn
+                                        )
+                                ),
+                            (ProjectOrderBy.CreatedOn, false)
+                                => qry.Where(
+                                    x =>
+                                        x.CreatedOn < after.CreatedOn
+                                        || (
+                                            x.CreatedOn == after.CreatedOn
+                                            && x.Name.CompareTo(after.Name) > 0
+                                        )
+                                ),
+                            (ProjectOrderBy.StartOn, false)
+                                => qry.Where(
+                                    x =>
+                                        x.StartOn < after.StartOn
+                                        || (
+                                            x.StartOn == after.StartOn
+                                            && x.Name.CompareTo(after.Name) > 0
+                                        )
+                                ),
+                            (ProjectOrderBy.EndOn, false)
+                                => qry.Where(
+                                    x =>
+                                        x.EndOn < after.EndOn
+                                        || (
+                                            x.EndOn == after.EndOn
+                                            && x.Name.CompareTo(after.Name) > 0
+                                        )
+                                ),
+                        };
+                    }
                     qry = (req.OrderBy, req.Asc) switch
                     {
                         (ProjectOrderBy.Name, true)
@@ -180,6 +265,7 @@ internal static class ProjectEps
                         (ProjectOrderBy.EndOn, false)
                             => qry.OrderByDescending(x => x.EndOn).ThenBy(x => x.Name),
                     };
+                    qry = qry.Take(100);
                     var ps = await qry.ToListAsync();
                     var ids = ps.Select(x => x.Id).ToList();
                     var ts = await db.Tasks
@@ -187,6 +273,16 @@ internal static class ProjectEps
                         .ToListAsync();
                     return ps.Select(x => x.ToApi(ts.Single(y => y.Id == x.Id))).ToList();
                 }
+            ),
+            new RpcEndpoint<Update, Project>(
+                ProjectRpcs.Update,
+                async (ctx, req) =>
+                    await ctx.DbTx<OakDb, Project>(
+                        (db, ses) =>
+                        {
+                            return new Db.Project().ToApi((new())).AsTask();
+                        }
+                    )
             )
         };
 }

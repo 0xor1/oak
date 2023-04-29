@@ -17,6 +17,13 @@ public static partial class S
         },
         { Invalid, new("Invalid") },
         { RpcUnknownEndpoint, new("Unknown RPC endpoint") },
+        { UnexpectedError, new("An unexpected error occurred") },
+        { EntityNotFound, new("Entity not found") },
+        { InsufficientPermission, new("Insufficient permission") },
+        { ApiError, new("Api Error") },
+        { MinMaxNullArgs, new("Both min and  max arguments are null") },
+        { MinMaxReversedArgs, new("Min {{Min}} and Max {{Max}} values are out of ordered") },
+        { BadRequest, new("Bad request") },
         { AuthInvalidEmail, new("Invalid email") },
         { AuthInvalidPwd, new("Invalid password") },
         { LessThan8Chars, new("Less than 8 characters") },
@@ -24,10 +31,8 @@ public static partial class S
         { NoUpperCaseChar, new("No uppercase character") },
         { NoDigit, new("No digit") },
         { NoSpecialChar, new("No special character") },
-        { UnexpectedError, new("An unexpected error occurred") },
         { AuthAlreadyAuthenticated, new("Already in authenticated session") },
         { AuthNotAuthenticated, new("Not in authenticated session") },
-        { NoMatchingRecord, new("No matching record") },
         { AuthInvalidEmailCode, new("Invalid email code") },
         { AuthInvalidResetPwdCode, new("Invalid reset password code") },
         {
@@ -66,7 +71,6 @@ public static partial class S
                 "Please click this link to reset your password: {{BaseHref}}/reset_pwd?email={{Email}}&code={{Code}}"
             )
         },
-        { ApiError, new("Api Error") },
         { Home, new("Home") },
         { L10n, new("Localization") },
         { Language, new("Language") },
@@ -107,7 +111,6 @@ public static partial class S
         { Error, new("Error") },
         { Update, new("Update") },
         { Updating, new("Updating") },
-        { InsufficientPermission, new("Insufficient Permission") },
         { OrgTooMany, new("You are already a member of too many Orgs") }
     };
 }

@@ -88,12 +88,11 @@ public class ProjectTests : IDisposable
         );
 
         // get a specifc project by id
-        var res = await ali.Project.Get(new(org.Id, b.Id));
-        Assert.Equal(1, res.Count);
-        Assert.Equal(b, res[0]);
+        var one = await ali.Project.GetOne(new(org.Id, b.Id));
+        Assert.Equal(b, one);
 
         // get all private projects
-        res = await ali.Project.Get(new(org.Id));
+        var res = await ali.Project.Get(new(org.Id));
         Assert.Equal(1, res.Count);
         Assert.Equal(b, res[0]);
 
@@ -121,11 +120,31 @@ public class ProjectTests : IDisposable
         res = await dan.Project.Get(new(org.Id));
         Assert.Equal(0, res.Count);
 
+        // get all public projects ordered By Name
+        res = await ali.Project.Get(new(org.Id, IsPublic: true, OrderBy: ProjectOrderBy.Name));
+        Assert.Equal(2, res.Count);
+        Assert.Equal(a, res[0]);
+        Assert.Equal(c, res[1]);
+
+        // get all public projects ordered By Name after A
+        res = await ali.Project.Get(
+            new(org.Id, IsPublic: true, After: a.Id, OrderBy: ProjectOrderBy.Name)
+        );
+        Assert.Equal(1, res.Count);
+        Assert.Equal(c, res[0]);
+
         // get all public projects ordered By CreatedOn
         res = await ali.Project.Get(new(org.Id, IsPublic: true, OrderBy: ProjectOrderBy.CreatedOn));
         Assert.Equal(2, res.Count);
         Assert.Equal(a, res[0]);
         Assert.Equal(c, res[1]);
+
+        // get all public projects ordered By CreatedOn after a
+        res = await ali.Project.Get(
+            new(org.Id, IsPublic: true, After: a.Id, OrderBy: ProjectOrderBy.CreatedOn)
+        );
+        Assert.Equal(1, res.Count);
+        Assert.Equal(c, res[0]);
 
         // get all public projects ordered By StartOn
         res = await ali.Project.Get(new(org.Id, IsPublic: true, OrderBy: ProjectOrderBy.StartOn));
@@ -133,11 +152,25 @@ public class ProjectTests : IDisposable
         Assert.Equal(c, res[0]);
         Assert.Equal(a, res[1]);
 
+        // get all public projects ordered By StartOn after C
+        res = await ali.Project.Get(
+            new(org.Id, IsPublic: true, After: c.Id, OrderBy: ProjectOrderBy.StartOn)
+        );
+        Assert.Equal(1, res.Count);
+        Assert.Equal(a, res[0]);
+
         // get all public projects ordered By EndOn
         res = await ali.Project.Get(new(org.Id, IsPublic: true, OrderBy: ProjectOrderBy.EndOn));
         Assert.Equal(2, res.Count);
         Assert.Equal(c, res[0]);
         Assert.Equal(a, res[1]);
+
+        // get all public projects ordered By EndOn after C
+        res = await ali.Project.Get(
+            new(org.Id, IsPublic: true, After: c.Id, OrderBy: ProjectOrderBy.EndOn)
+        );
+        Assert.Equal(1, res.Count);
+        Assert.Equal(a, res[0]);
 
         // get all public projects ordered By Name Desc
         res = await ali.Project.Get(
@@ -147,6 +180,13 @@ public class ProjectTests : IDisposable
         Assert.Equal(c, res[0]);
         Assert.Equal(a, res[1]);
 
+        // get all public projects ordered By Name Desc after C
+        res = await ali.Project.Get(
+            new(org.Id, IsPublic: true, After: c.Id, OrderBy: ProjectOrderBy.Name, Asc: false)
+        );
+        Assert.Equal(1, res.Count);
+        Assert.Equal(a, res[0]);
+
         // get all public projects ordered By CreatedOn Desc
         res = await ali.Project.Get(
             new(org.Id, IsPublic: true, OrderBy: ProjectOrderBy.CreatedOn, Asc: false)
@@ -154,6 +194,13 @@ public class ProjectTests : IDisposable
         Assert.Equal(2, res.Count);
         Assert.Equal(c, res[0]);
         Assert.Equal(a, res[1]);
+
+        // get all public projects ordered By CreatedOn Desc after C
+        res = await ali.Project.Get(
+            new(org.Id, IsPublic: true, After: c.Id, OrderBy: ProjectOrderBy.CreatedOn, Asc: false)
+        );
+        Assert.Equal(1, res.Count);
+        Assert.Equal(a, res[0]);
 
         // get all public projects ordered By StartOn Desc
         res = await ali.Project.Get(
@@ -163,6 +210,13 @@ public class ProjectTests : IDisposable
         Assert.Equal(a, res[0]);
         Assert.Equal(c, res[1]);
 
+        // get all public projects ordered By StartOn Desc after A
+        res = await ali.Project.Get(
+            new(org.Id, IsPublic: true, After: a.Id, OrderBy: ProjectOrderBy.StartOn, Asc: false)
+        );
+        Assert.Equal(1, res.Count);
+        Assert.Equal(c, res[0]);
+
         // get all public projects ordered By EndOn Desc
         res = await ali.Project.Get(
             new(org.Id, IsPublic: true, OrderBy: ProjectOrderBy.EndOn, Asc: false)
@@ -170,6 +224,13 @@ public class ProjectTests : IDisposable
         Assert.Equal(2, res.Count);
         Assert.Equal(a, res[0]);
         Assert.Equal(c, res[1]);
+
+        // get all public projects ordered By EndOn Desc after A
+        res = await ali.Project.Get(
+            new(org.Id, IsPublic: true, After: a.Id, OrderBy: ProjectOrderBy.EndOn, Asc: false)
+        );
+        Assert.Equal(1, res.Count);
+        Assert.Equal(c, res[0]);
     }
 
     private async Task<(IApi Ali, IApi Bob, IApi Cat, IApi Dan, IApi Anon, Org)> Setup()

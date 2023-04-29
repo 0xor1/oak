@@ -17,6 +17,13 @@ public static partial class S
         },
         { Invalid, new("Non valido") },
         { RpcUnknownEndpoint, new("Endpoint RPC sconosciuto") },
+        { UnexpectedError, new("Si è verificato un errore imprevisto") },
+        { EntityNotFound, new("Entità non trovata") },
+        { InsufficientPermission, new("Autorizzazione insufficiente") },
+        { ApiError, new("Errore API") },
+        { MinMaxNullArgs, new("Entrambi gli argomenti min e max sono nulli") },
+        { MinMaxReversedArgs, new("I valori Min {{Min}} e Max {{Max}} non sono ordinati") },
+        { BadRequest, new("Brutta richiesta") },
         { AuthInvalidEmail, new("E-mail non valido") },
         { AuthInvalidPwd, new("Password non valida") },
         { LessThan8Chars, new("Meno di 8 caratteri") },
@@ -24,10 +31,8 @@ public static partial class S
         { NoUpperCaseChar, new("Nessun carattere maiuscolo") },
         { NoDigit, new("Nessuna cifra") },
         { NoSpecialChar, new("Nessun carattere speciale") },
-        { UnexpectedError, new("Si è verificato un errore imprevisto") },
         { AuthAlreadyAuthenticated, new("Già in sessione autenticata") },
         { AuthNotAuthenticated, new("Non in sessione autenticata") },
-        { NoMatchingRecord, new("Nessun record corrispondente") },
         { AuthInvalidEmailCode, new("Codice e-mail non valido") },
         { AuthInvalidResetPwdCode, new("Codice di reimpostazione della password non valido") },
         {
@@ -66,7 +71,6 @@ public static partial class S
                 "Fai clic su questo link per reimpostare la tua password: {{BaseHref}}/reset_pwd?email={{Email}}&code={{Code}}"
             )
         },
-        { ApiError, new("Errore API") },
         { Home, new("Casa") },
         { L10n, new("Localizzazione") },
         { Language, new("Lingua") },
@@ -107,7 +111,6 @@ public static partial class S
         { Error, new("Errore") },
         { Update, new("Aggiornamento") },
         { Updating, new("In aggiornamento") },
-        { InsufficientPermission, new("Autorizzazione insufficiente") },
         { OrgTooMany, new("Sei già membro di troppe org") }
     };
 }

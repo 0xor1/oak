@@ -17,6 +17,13 @@ public static partial class S
         },
         { Invalid, new("Ungültig") },
         { RpcUnknownEndpoint, new("Unbekannter RPC-Endpunkt") },
+        { UnexpectedError, new("Ein unerwarteter Fehler ist aufgetreten") },
+        { EntityNotFound, new("Entität nicht gefunden") },
+        { InsufficientPermission, new("Unzureichende Erlaubnis") },
+        { ApiError, new("API-Fehler") },
+        { MinMaxNullArgs, new("Sowohl das Min- als auch das Max-Argument sind null") },
+        { MinMaxReversedArgs, new("Min. {{Min}}- und Max. {{Max}}-Werte sind nicht geordnet") },
+        { BadRequest, new("Ungültige Anforderung") },
         { AuthInvalidEmail, new("Ungültige E-Mail") },
         { AuthInvalidPwd, new("Ungültiges Passwort") },
         { LessThan8Chars, new("Weniger als 8 Zeichen") },
@@ -24,10 +31,8 @@ public static partial class S
         { NoUpperCaseChar, new("Kein Großbuchstabe") },
         { NoDigit, new("Keine Ziffer") },
         { NoSpecialChar, new("Kein Sonderzeichen") },
-        { UnexpectedError, new("Ein unerwarteter Fehler ist aufgetreten") },
         { AuthAlreadyAuthenticated, new("Bereits in authentifizierter Sitzung") },
         { AuthNotAuthenticated, new("Nicht in authentifizierter Sitzung") },
-        { NoMatchingRecord, new("Kein übereinstimmender Datensatz") },
         { AuthInvalidEmailCode, new("Ungültiger E-Mail-Code") },
         { AuthInvalidResetPwdCode, new("Ungültiger Passwort-Reset-Code") },
         {
@@ -66,7 +71,6 @@ public static partial class S
                 "Bitte klicken Sie auf diesen Link, um Ihr Passwort zurückzusetzen: {{BaseHref}}/reset_pwd?email={{Email}}&code={{Code}}"
             )
         },
-        { ApiError, new("API-Fehler") },
         { Home, new("Heim") },
         { L10n, new("Lokalisierung") },
         { Language, new("Sprache") },
@@ -109,7 +113,6 @@ public static partial class S
         { Error, new("Fehler") },
         { Update, new("Aktualisieren") },
         { Updating, new("Aktualisierung") },
-        { InsufficientPermission, new("Unzureichende Berechtigung") },
         { OrgTooMany, new("Sie sind bereits Mitglied in zu vielen Orgs") }
     };
 }
