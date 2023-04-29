@@ -10,4 +10,9 @@ public class ProjectMember
     public string Project { get; set; }
     public string Id { get; set; }
     public ProjectMemberRole Role { get; set; }
+
+    public Api.ProjectMember.ProjectMember ToApi()
+    {
+        throw new NotImplementedException();
+    }
 }

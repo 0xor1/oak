@@ -17,6 +17,7 @@ public static class OakEps
                 eps.AddRange(OrgEps.Eps);
                 eps.AddRange(OrgMemberEps.Eps);
                 eps.AddRange(ProjectEps.Eps);
+                eps.AddRange(ProjectMemberEps.Eps);
                 _eps = eps;
             }
             return _eps;
