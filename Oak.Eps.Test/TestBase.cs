@@ -5,6 +5,7 @@ using Oak.Api.OrgMember;
 using Oak.Api.Project;
 using Oak.Db;
 using Org = Oak.Api.Org.Org;
+using Project = Oak.Api.Project.Project;
 using S = Oak.I18n.S;
 
 namespace Oak.Eps.Test;
@@ -37,6 +38,22 @@ public class TestBase : IDisposable
 
         return (ali, bob, cat, dan, anon, org);
     }
+
+    protected async Task<Project> CreateProject(IApi api, string org) =>
+        await api.Project.Create(
+            new(
+                org,
+                true,
+                "a",
+                "£",
+                "GBP",
+                8,
+                5,
+                DateTimeExt.UtcNowMilli(),
+                DateTimeExt.UtcNowMilli().Add(TimeSpan.FromDays(5)),
+                10
+            )
+        );
 
     public void Dispose()
     {

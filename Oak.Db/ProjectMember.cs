@@ -18,6 +18,7 @@ public class ProjectMember
             Org,
             Project,
             Id,
+            Name,
             Role,
             stats.TimeEst,
             stats.TimeInc,

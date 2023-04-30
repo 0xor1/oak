@@ -46,6 +46,7 @@ public record ProjectMember(
     string Org,
     string Project,
     string Id,
+    string Name,
     ProjectMemberRole Role,
     ulong TimeEst,
     ulong TimeInc,

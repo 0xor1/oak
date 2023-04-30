@@ -78,9 +78,9 @@ internal static class ProjectMemberEps
                                     TimeInc = (ulong)x.Sum(x => (decimal)x.TimeInc),
                                     CostEst = (ulong)x.Sum(x => (decimal)x.CostEst),
                                     CostInc = (ulong)x.Sum(x => (decimal)x.CostInc),
-                                    FileN = (ulong)x.Sum(x => (decimal)x.CostEst),
-                                    FileSize = (ulong)x.Sum(x => (decimal)x.CostInc),
-                                    TaskN = (ulong)x.Sum(x => (decimal)x.CostEst)
+                                    FileN = (ulong)x.Sum(x => (decimal)x.FileN),
+                                    FileSize = (ulong)x.Sum(x => (decimal)x.FileSize),
+                                    TaskN = (ulong)x.Count()
                                 }
                         )
                         .SingleAsync();
