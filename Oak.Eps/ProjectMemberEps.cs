@@ -70,7 +70,7 @@ internal static class ProjectMemberEps
                         req.Project,
                         new List<string>() { mem.Id }
                     );
-                    return mem.ToApi(stats.Single());
+                    return mem.ToApi(stats.SingleOrDefault() ?? new ProjectMemberStats());
                 }
             ),
             new RpcEndpoint<Get, IReadOnlyList<ProjectMember>>(
@@ -189,13 +189,14 @@ internal static class ProjectMemberEps
                             );
                             ctx.NotFoundIf(mem == null);
                             mem.NotNull();
+                            mem.Role = req.Role;
                             var stats = await GetStats(
                                 db,
                                 req.Org,
                                 req.Project,
                                 new List<string>() { mem.Id }
                             );
-                            return mem.ToApi(stats.Single());
+                            return mem.ToApi(stats.SingleOrDefault() ?? new ProjectMemberStats());
                         }
                     )
             ),

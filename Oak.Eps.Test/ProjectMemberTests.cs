@@ -127,4 +127,48 @@ public class ProjectMemberTests : TestBase
         Assert.Equal(1, res.Count);
         Assert.Equal(aliPm, res[0]);
     }
+
+    [Fact]
+    public async void Update_Success()
+    {
+        var (ali, bob, cat, dan, anon, org) = await Setup();
+        var p = await CreateProject(ali, org.Id);
+        var aliId = (await ali.Auth.GetSession()).Id;
+        var bobId = (await bob.Auth.GetSession()).Id;
+        var mems = await SetProjectMembers(
+            ali,
+            org.Id,
+            p.Id,
+            new() { (bobId, ProjectMemberRole.Admin), }
+        );
+        var bobPm = mems[0];
+
+        var updatedBob = await ali.ProjectMember.Update(
+            new(org.Id, p.Id, bobPm.Id, ProjectMemberRole.Reader)
+        );
+        Assert.Equal(ProjectMemberRole.Reader, updatedBob.Role);
+        Assert.Equal(bobPm, updatedBob with { Role = ProjectMemberRole.Admin });
+    }
+
+    [Fact]
+    public async void Remove_Success()
+    {
+        var (ali, bob, cat, dan, anon, org) = await Setup();
+        var p = await CreateProject(ali, org.Id);
+        var aliId = (await ali.Auth.GetSession()).Id;
+        var bobId = (await bob.Auth.GetSession()).Id;
+        var mems = await SetProjectMembers(
+            ali,
+            org.Id,
+            p.Id,
+            new() { (bobId, ProjectMemberRole.Admin), }
+        );
+        var aliPm = await ali.ProjectMember.GetOne(new(org.Id, p.Id, aliId));
+        var bobPm = mems[0];
+
+        await ali.ProjectMember.Remove(new(org.Id, p.Id, bobPm.Id));
+        var res = await ali.ProjectMember.Get(new(org.Id, p.Id));
+        Assert.Equal(1, res.Count);
+        Assert.Equal(aliPm, res[0]);
+    }
 }
