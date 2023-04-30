@@ -89,9 +89,14 @@ internal static class EpsUtil
             return false;
         }
 
-        if (orgRole is (OrgMemberRole.Owner or OrgMemberRole.Admin))
+        if (
+            orgRole is (OrgMemberRole.Owner or OrgMemberRole.Admin)
+            || (orgRole is OrgMemberRole.WriteAllProjects && role >= ProjectMemberRole.Writer)
+            || (orgRole is OrgMemberRole.ReadAllProjects && role >= ProjectMemberRole.Reader)
+        )
         {
             // org owners and admins have full access to all permissions on all projects
+            // and if a user has write all or read all access and that is all that is required, return true now.
             return true;
         }
 

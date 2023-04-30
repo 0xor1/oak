@@ -143,7 +143,7 @@ internal static class OrgMemberEps
                         (OrgMemberOrderBy.Name, false)
                             => qry.OrderByDescending(x => x.Name).ThenBy(x => x.Role),
                     };
-                    return await qry.Select(x => x.ToApi()).ToListAsync();
+                    return await qry.Take(100).Select(x => x.ToApi()).ToListAsync();
                 }
             ),
             new RpcEndpoint<Update, OrgMember>(

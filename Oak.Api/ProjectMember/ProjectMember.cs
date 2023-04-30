@@ -4,11 +4,11 @@ namespace Oak.Api.ProjectMember;
 
 public interface IProjectMemberApi
 {
-    public Task<ProjectMember> Create(Create arg);
+    public Task<ProjectMember> Add(Create arg);
     public Task<ProjectMember> GetOne(Exact arg);
     public Task<IReadOnlyList<ProjectMember>> Get(Get arg);
     public Task<ProjectMember> Update(Update arg);
-    public System.Threading.Tasks.Task Delete(Exact arg);
+    public System.Threading.Tasks.Task Remove(Exact arg);
 }
 
 public class ProjectMemberApi : IProjectMemberApi
@@ -20,7 +20,7 @@ public class ProjectMemberApi : IProjectMemberApi
         _client = client;
     }
 
-    public Task<ProjectMember> Create(Create arg) => _client.Do(ProjectMemberRpcs.Create, arg);
+    public Task<ProjectMember> Add(Create arg) => _client.Do(ProjectMemberRpcs.Add, arg);
 
     public Task<ProjectMember> GetOne(Exact arg) => _client.Do(ProjectMemberRpcs.GetOne, arg);
 
@@ -29,17 +29,17 @@ public class ProjectMemberApi : IProjectMemberApi
 
     public Task<ProjectMember> Update(Update arg) => _client.Do(ProjectMemberRpcs.Update, arg);
 
-    public System.Threading.Tasks.Task Delete(Exact arg) =>
-        _client.Do(ProjectMemberRpcs.Delete, arg);
+    public System.Threading.Tasks.Task Remove(Exact arg) =>
+        _client.Do(ProjectMemberRpcs.Remove, arg);
 }
 
 public static class ProjectMemberRpcs
 {
-    public static readonly Rpc<Create, ProjectMember> Create = new("/project_member/create");
+    public static readonly Rpc<Create, ProjectMember> Add = new("/project_member/add");
     public static readonly Rpc<Exact, ProjectMember> GetOne = new("/project_member/get_one");
     public static readonly Rpc<Get, IReadOnlyList<ProjectMember>> Get = new("/project_member/get");
     public static readonly Rpc<Update, ProjectMember> Update = new("/project_member/update");
-    public static readonly Rpc<Exact, Nothing> Delete = new("/project_member/delete");
+    public static readonly Rpc<Exact, Nothing> Remove = new("/project_member/remove");
 }
 
 public record ProjectMember(
@@ -68,30 +68,15 @@ public record Create(string Org, string Project, string Id, ProjectMemberRole Ro
 
 public record Get(
     string Org,
-    bool IsPublic = false,
+    string Project,
+    ProjectMemberRole? Role = null,
     string? NameStartsWith = null,
-    MinMax<DateTime>? CreatedOn = null,
-    MinMax<DateTime>? StartOn = null,
-    MinMax<DateTime>? EndOn = null,
-    bool IsArchived = false,
     string? After = null,
-    ProjectMemberOrderBy OrderBy = ProjectMemberOrderBy.Name,
+    ProjectMemberOrderBy OrderBy = ProjectMemberOrderBy.Role,
     bool Asc = true
 );
 
-public record Update(
-    string Org,
-    string Id,
-    bool? IsPublic = null,
-    string? Name = null,
-    string? CurrencySymbol = null,
-    string? CurrencyCode = null,
-    uint? HoursPerDay = null,
-    uint? DaysPerWeek = null,
-    DateTime? StartOn = null,
-    DateTime? EndOn = null,
-    ulong? FileLimit = null
-);
+public record Update(string Org, string Project, string Id, ProjectMemberRole Role);
 
 public record Exact(string Org, string Project, string Id);
 

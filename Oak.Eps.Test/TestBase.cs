@@ -3,10 +3,13 @@ using Common.Shared;
 using Oak.Api;
 using Oak.Api.OrgMember;
 using Oak.Api.Project;
+using Oak.Api.ProjectMember;
 using Oak.Db;
 using Org = Oak.Api.Org.Org;
 using Project = Oak.Api.Project.Project;
+using ProjectMember = Oak.Api.ProjectMember.ProjectMember;
 using S = Oak.I18n.S;
+using Task = System.Threading.Tasks.Task;
 
 namespace Oak.Eps.Test;
 
@@ -54,6 +57,21 @@ public class TestBase : IDisposable
                 10
             )
         );
+
+    protected async Task<List<ProjectMember>> SetProjectMembers(
+        IApi api,
+        string org,
+        string project,
+        List<(string Id, ProjectMemberRole Role)> users
+    )
+    {
+        var res = new List<ProjectMember>();
+        foreach (var user in users)
+        {
+            res.Add(await api.ProjectMember.Add(new(org, project, user.Id, user.Role)));
+        }
+        return res;
+    }
 
     public void Dispose()
     {

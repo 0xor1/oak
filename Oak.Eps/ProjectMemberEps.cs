@@ -14,7 +14,7 @@ internal static class ProjectMemberEps
         new List<IRpcEndpoint>()
         {
             new RpcEndpoint<Create, ProjectMember>(
-                ProjectMemberRpcs.Create,
+                ProjectMemberRpcs.Add,
                 async (ctx, req) =>
                     await ctx.DbTx<OakDb, ProjectMember>(
                         async (db, ses) =>
@@ -64,28 +64,192 @@ internal static class ProjectMemberEps
                     );
                     ctx.NotFoundIf(mem == null);
                     mem.NotNull();
-                    var stats = await db.Tasks
-                        .Where(
-                            x => x.Org == req.Org && x.Project == req.Project && x.User == mem.Id
-                        )
-                        .GroupBy(x => x.Id)
-                        .Select(
-                            x =>
-                                new ProjectMemberStats()
-                                {
-                                    Id = x.Key,
-                                    TimeEst = (ulong)x.Sum(x => (decimal)x.TimeEst),
-                                    TimeInc = (ulong)x.Sum(x => (decimal)x.TimeInc),
-                                    CostEst = (ulong)x.Sum(x => (decimal)x.CostEst),
-                                    CostInc = (ulong)x.Sum(x => (decimal)x.CostInc),
-                                    FileN = (ulong)x.Sum(x => (decimal)x.FileN),
-                                    FileSize = (ulong)x.Sum(x => (decimal)x.FileSize),
-                                    TaskN = (ulong)x.Count()
-                                }
-                        )
-                        .SingleAsync();
-                    return mem.ToApi(stats);
+                    var stats = await GetStats(
+                        db,
+                        req.Org,
+                        req.Project,
+                        new List<string>() { mem.Id }
+                    );
+                    return mem.ToApi(stats.Single());
                 }
+            ),
+            new RpcEndpoint<Get, IReadOnlyList<ProjectMember>>(
+                ProjectMemberRpcs.Get,
+                async (ctx, req) =>
+                {
+                    var ses = ctx.GetAuthedSession();
+                    var db = ctx.Get<OakDb>();
+                    await EpsUtil.MustHaveProjectAccess(
+                        ctx,
+                        db,
+                        ses,
+                        req.Org,
+                        req.Project,
+                        ProjectMemberRole.Reader
+                    );
+                    var qry = db.ProjectMembers.Where(
+                        x => x.Org == req.Org && x.Project == req.Project
+                    );
+                    if (req.Role != null)
+                    {
+                        qry = qry.Where(x => x.Role == req.Role);
+                    }
+
+                    if (!req.NameStartsWith.IsNullOrWhiteSpace())
+                    {
+                        qry = qry.Where(x => x.Name.StartsWith(req.NameStartsWith));
+                    }
+
+                    if (req.After != null)
+                    {
+                        // implement cursor based pagination ... in a fashion
+                        var after = await db.ProjectMembers.SingleOrDefaultAsync(
+                            x => x.Org == req.Org && x.Project == req.Project && x.Id == req.After
+                        );
+                        ctx.NotFoundIf(after == null);
+                        after.NotNull();
+                        qry = (req.OrderBy, req.Asc) switch
+                        {
+                            (ProjectMemberOrderBy.Role, true)
+                                => qry.Where(
+                                    x =>
+                                        x.Role > after.Role
+                                        || (
+                                            x.Role == after.Role && x.Name.CompareTo(after.Name) > 0
+                                        )
+                                ),
+                            (ProjectMemberOrderBy.Name, true)
+                                => qry.Where(
+                                    x =>
+                                        x.Name.CompareTo(after.Name) > 0
+                                        || (
+                                            x.Name.CompareTo(after.Name) == 0 && x.Role > after.Role
+                                        )
+                                ),
+                            (ProjectMemberOrderBy.Role, false)
+                                => qry.Where(
+                                    x =>
+                                        x.Role < after.Role
+                                        || (
+                                            x.Role == after.Role && x.Name.CompareTo(after.Name) > 0
+                                        )
+                                ),
+                            (ProjectMemberOrderBy.Name, false)
+                                => qry.Where(
+                                    x =>
+                                        x.Name.CompareTo(after.Name) < 0
+                                        || (
+                                            x.Name.CompareTo(after.Name) == 0 && x.Role > after.Role
+                                        )
+                                ),
+                        };
+                    }
+
+                    qry = (req.OrderBy, req.Asc) switch
+                    {
+                        (ProjectMemberOrderBy.Role, true)
+                            => qry.OrderBy(x => x.Role).ThenBy(x => x.Name),
+                        (ProjectMemberOrderBy.Name, true)
+                            => qry.OrderBy(x => x.Name).ThenBy(x => x.Role),
+                        (ProjectMemberOrderBy.Role, false)
+                            => qry.OrderByDescending(x => x.Role).ThenBy(x => x.Name),
+                        (ProjectMemberOrderBy.Name, false)
+                            => qry.OrderByDescending(x => x.Name).ThenBy(x => x.Role),
+                    };
+                    qry = qry.Take(100);
+                    var mems = await qry.ToListAsync();
+                    var ids = mems.Select(x => x.Id).ToList();
+                    var stats = await GetStats(db, req.Org, req.Project, ids);
+                    return mems.Select(
+                            x =>
+                                x.ToApi(
+                                    stats.SingleOrDefault(y => y.Id == x.Id)
+                                        ?? new ProjectMemberStats()
+                                )
+                        )
+                        .ToList();
+                }
+            ),
+            new RpcEndpoint<Update, ProjectMember>(
+                ProjectMemberRpcs.Update,
+                async (ctx, req) =>
+                    await ctx.DbTx<OakDb, ProjectMember>(
+                        async (db, ses) =>
+                        {
+                            await EpsUtil.MustHaveProjectAccess(
+                                ctx,
+                                db,
+                                ses,
+                                req.Org,
+                                req.Project,
+                                ProjectMemberRole.Admin
+                            );
+                            var mem = await db.ProjectMembers.SingleOrDefaultAsync(
+                                x => x.Org == req.Org && x.Project == req.Project && x.Id == req.Id
+                            );
+                            ctx.NotFoundIf(mem == null);
+                            mem.NotNull();
+                            var stats = await GetStats(
+                                db,
+                                req.Org,
+                                req.Project,
+                                new List<string>() { mem.Id }
+                            );
+                            return mem.ToApi(stats.Single());
+                        }
+                    )
+            ),
+            new RpcEndpoint<Exact, Nothing>(
+                ProjectMemberRpcs.Remove,
+                async (ctx, req) =>
+                    await ctx.DbTx<OakDb, Nothing>(
+                        async (db, ses) =>
+                        {
+                            await EpsUtil.MustHaveProjectAccess(
+                                ctx,
+                                db,
+                                ses,
+                                req.Org,
+                                req.Project,
+                                ProjectMemberRole.Admin
+                            );
+                            await db.ProjectMembers
+                                .Where(
+                                    x =>
+                                        x.Org == req.Org
+                                        && x.Project == req.Project
+                                        && x.Id == req.Id
+                                )
+                                .ExecuteDeleteAsync();
+                            // dont do anything clever like mass unassigning their currently assigned tasks
+                            return Nothing.Inst;
+                        }
+                    )
             )
         };
+
+    private static async Task<List<ProjectMemberStats>> GetStats(
+        OakDb db,
+        string org,
+        string project,
+        List<string> ids
+    ) =>
+        await db.Tasks
+            .Where(x => x.Org == org && x.Project == project && ids.Contains(x.User))
+            .GroupBy(x => x.User)
+            .Select(
+                x =>
+                    new ProjectMemberStats()
+                    {
+                        Id = x.Key,
+                        TimeEst = (ulong)x.Sum(x => (decimal)x.TimeEst),
+                        TimeInc = (ulong)x.Sum(x => (decimal)x.TimeInc),
+                        CostEst = (ulong)x.Sum(x => (decimal)x.CostEst),
+                        CostInc = (ulong)x.Sum(x => (decimal)x.CostInc),
+                        FileN = (ulong)x.Sum(x => (decimal)x.FileN),
+                        FileSize = (ulong)x.Sum(x => (decimal)x.FileSize),
+                        TaskN = (ulong)x.Count()
+                    }
+            )
+            .ToListAsync();
 }
