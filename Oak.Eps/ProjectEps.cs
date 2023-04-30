@@ -5,6 +5,7 @@ using Oak.Api.OrgMember;
 using Oak.Api.Project;
 using Oak.Api.ProjectMember;
 using Oak.Db;
+using Create = Oak.Api.Project.Create;
 using Exact = Oak.Api.Project.Exact;
 using Get = Oak.Api.Project.Get;
 using Project = Oak.Api.Project.Project;
@@ -59,12 +60,16 @@ internal static class ProjectEps
                                 CreatedOn = DateTimeExt.UtcNowMilli()
                             };
                             await db.Tasks.AddAsync(t);
+                            var mem = await db.OrgMembers.SingleAsync(
+                                x => x.Org == req.Org && x.Id == ses.Id
+                            );
                             await db.ProjectMembers.AddAsync(
                                 new()
                                 {
                                     Org = req.Org,
                                     Project = p.Id,
                                     Id = ses.Id,
+                                    Name = mem.Name,
                                     Role = ProjectMemberRole.Admin
                                 }
                             );

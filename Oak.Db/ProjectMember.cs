@@ -9,6 +9,7 @@ public class ProjectMember
     public string Org { get; set; }
     public string Project { get; set; }
     public string Id { get; set; }
+    public string Name { get; set; }
     public ProjectMemberRole Role { get; set; }
 
     public Api.ProjectMember.ProjectMember ToApi()

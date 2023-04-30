@@ -1,6 +1,7 @@
 ﻿using Common.Shared;
 
 namespace Oak.Api.ProjectMember;
+
 public interface IProjectMemberApi
 {
     public Task<ProjectMember> Create(Create arg);
@@ -23,11 +24,13 @@ public class ProjectMemberApi : IProjectMemberApi
 
     public Task<ProjectMember> GetOne(Exact arg) => _client.Do(ProjectMemberRpcs.GetOne, arg);
 
-    public Task<IReadOnlyList<ProjectMember>> Get(Get arg) => _client.Do(ProjectMemberRpcs.Get, arg);
+    public Task<IReadOnlyList<ProjectMember>> Get(Get arg) =>
+        _client.Do(ProjectMemberRpcs.Get, arg);
 
     public Task<ProjectMember> Update(Update arg) => _client.Do(ProjectMemberRpcs.Update, arg);
 
-    public System.Threading.Tasks.Task Delete(Exact arg) => _client.Do(ProjectMemberRpcs.Delete, arg);
+    public System.Threading.Tasks.Task Delete(Exact arg) =>
+        _client.Do(ProjectMemberRpcs.Delete, arg);
 }
 
 public static class ProjectMemberRpcs
@@ -38,8 +41,8 @@ public static class ProjectMemberRpcs
     public static readonly Rpc<Update, ProjectMember> Update = new("/project_member/update");
     public static readonly Rpc<Exact, Nothing> Delete = new("/project_member/delete");
 }
-public record ProjectMember
-(
+
+public record ProjectMember(
     string Org,
     string Project,
     string Id,
@@ -50,7 +53,7 @@ public record ProjectMember
     ulong CostInc,
     ulong FileN,
     ulong FileSize,
-    ulong TaskN    
+    ulong TaskN
 );
 
 public enum ProjectMemberRole
@@ -59,6 +62,7 @@ public enum ProjectMemberRole
     Writer,
     Reader
 }
+
 public record Create(
     string Org,
     string Project,
@@ -100,13 +104,10 @@ public record Update(
     ulong? FileLimit = null
 );
 
-public record Exact(string Org, string Id);
+public record Exact(string Org, string Project, string Id);
 
 public enum ProjectMemberOrderBy
 {
-    Name,
-    CreatedOn,
-    StartOn,
-    EndOn
+    Role,
+    Name
 }
-

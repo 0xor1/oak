@@ -97,14 +97,6 @@ internal static class OrgMemberEps
                         after.NotNull();
                         qry = (req.OrderBy, req.Asc) switch
                         {
-                            (OrgMemberOrderBy.Name, true)
-                                => qry.Where(
-                                    x =>
-                                        x.Name.CompareTo(after.Name) > 0
-                                        || (
-                                            x.Name.CompareTo(after.Name) == 0 && x.Role > after.Role
-                                        )
-                                ),
                             (OrgMemberOrderBy.Role, true)
                                 => qry.Where(
                                     x =>
@@ -113,10 +105,10 @@ internal static class OrgMemberEps
                                             x.Role == after.Role && x.Name.CompareTo(after.Name) > 0
                                         )
                                 ),
-                            (OrgMemberOrderBy.Name, false)
+                            (OrgMemberOrderBy.Name, true)
                                 => qry.Where(
                                     x =>
-                                        x.Name.CompareTo(after.Name) < 0
+                                        x.Name.CompareTo(after.Name) > 0
                                         || (
                                             x.Name.CompareTo(after.Name) == 0 && x.Role > after.Role
                                         )
@@ -129,19 +121,27 @@ internal static class OrgMemberEps
                                             x.Role == after.Role && x.Name.CompareTo(after.Name) > 0
                                         )
                                 ),
+                            (OrgMemberOrderBy.Name, false)
+                                => qry.Where(
+                                    x =>
+                                        x.Name.CompareTo(after.Name) < 0
+                                        || (
+                                            x.Name.CompareTo(after.Name) == 0 && x.Role > after.Role
+                                        )
+                                ),
                         };
                     }
 
                     qry = (req.OrderBy, req.Asc) switch
                     {
-                        (OrgMemberOrderBy.Name, true)
-                            => qry.OrderBy(x => x.Name).ThenBy(x => x.Role),
                         (OrgMemberOrderBy.Role, true)
                             => qry.OrderBy(x => x.Role).ThenBy(x => x.Name),
-                        (OrgMemberOrderBy.Name, false)
-                            => qry.OrderByDescending(x => x.Name).ThenBy(x => x.Role),
+                        (OrgMemberOrderBy.Name, true)
+                            => qry.OrderBy(x => x.Name).ThenBy(x => x.Role),
                         (OrgMemberOrderBy.Role, false)
                             => qry.OrderByDescending(x => x.Role).ThenBy(x => x.Name),
+                        (OrgMemberOrderBy.Name, false)
+                            => qry.OrderByDescending(x => x.Name).ThenBy(x => x.Role),
                     };
                     return await qry.Select(x => x.ToApi()).ToListAsync();
                 }
@@ -193,9 +193,13 @@ internal static class OrgMemberEps
                                 );
                                 ctx.InsufficientPermissionsIf(ownerCount == 1);
                             }
+                            var nameUpdated = req.Name != null && updateMem.Name != req.Name;
                             updateMem.IsActive = req.IsActive ?? updateMem.IsActive;
                             updateMem.Name = req.Name ?? updateMem.Name;
                             updateMem.Role = req.Role ?? updateMem.Role;
+                            await db.ProjectMembers
+                                .Where(x => x.Org == req.Org && x.Id == req.Id)
+                                .ExecuteUpdateAsync(x => x.SetProperty(x => x.Name, _ => req.Name));
                             return updateMem.NotNull().ToApi();
                         }
                     )

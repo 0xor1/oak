@@ -101,10 +101,12 @@ CREATE TABLE ProjectMembers(
     Org VARCHAR(22) NOT NULL,
     Project VARCHAR(22) NOT NULL,
     Id VARCHAR(22) NOT NULL,
+    Name VARCHAR(250) NOT NULL,
     Role INT NOT NULL, # 'admin', 'writer', 'reader'
     PRIMARY KEY (Org, Project, Id),
-    UNIQUE INDEX (Org, Project, Role, Id),
-    UNIQUE INDEX (Id, Org, Project)
+    UNIQUE INDEX (Org, Project, Role, Name, Id),
+    UNIQUE INDEX (Org, Project, Name, Role, Id),
+    INDEX (Org, Id)
 );
 
 DROP TABLE IF EXISTS Activities;

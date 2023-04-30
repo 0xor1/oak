@@ -46,7 +46,7 @@ public record Get(
     string? NameStartsWith = null,
     OrgMemberRole? Role = null,
     string? After = null,
-    OrgMemberOrderBy OrderBy = OrgMemberOrderBy.Name,
+    OrgMemberOrderBy OrderBy = OrgMemberOrderBy.Role,
     bool Asc = true
 );
 
@@ -65,6 +65,6 @@ public enum OrgMemberRole
 
 public enum OrgMemberOrderBy
 {
-    Name,
-    Role
+    Role,
+    Name
 }
