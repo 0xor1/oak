@@ -197,9 +197,12 @@ internal static class OrgMemberEps
                             updateMem.IsActive = req.IsActive ?? updateMem.IsActive;
                             updateMem.Name = req.Name ?? updateMem.Name;
                             updateMem.Role = req.Role ?? updateMem.Role;
-                            await db.ProjectMembers
-                                .Where(x => x.Org == req.Org && x.Id == req.Id)
-                                .ExecuteUpdateAsync(x => x.SetProperty(x => x.Name, _ => req.Name));
+                            if (nameUpdated)
+                            {
+                                await db.ProjectMembers
+                                    .Where(x => x.Org == req.Org && x.Id == req.Id)
+                                    .ExecuteUpdateAsync(x => x.SetProperty(x => x.Name, _ => req.Name));
+                            }
                             return updateMem.NotNull().ToApi();
                         }
                     )
