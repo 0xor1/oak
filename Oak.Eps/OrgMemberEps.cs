@@ -201,7 +201,9 @@ internal static class OrgMemberEps
                             {
                                 await db.ProjectMembers
                                     .Where(x => x.Org == req.Org && x.Id == req.Id)
-                                    .ExecuteUpdateAsync(x => x.SetProperty(x => x.Name, _ => req.Name));
+                                    .ExecuteUpdateAsync(
+                                        x => x.SetProperty(x => x.Name, _ => req.Name)
+                                    );
                             }
                             return updateMem.NotNull().ToApi();
                         }

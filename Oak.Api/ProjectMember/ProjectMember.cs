@@ -63,19 +63,7 @@ public enum ProjectMemberRole
     Reader
 }
 
-public record Create(
-    string Org,
-    string Project,
-    string Id,
-    string Name,
-    string CurrencySymbol,
-    string CurrencyCode,
-    uint? HoursPerDay,
-    uint? DaysPerWeek,
-    DateTime? StartOn,
-    DateTime? EndOn,
-    ulong FileLimit
-);
+public record Create(string Org, string Project, string Id, ProjectMemberRole Role);
 
 public record Get(
     string Org,

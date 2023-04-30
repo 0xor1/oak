@@ -9,15 +9,8 @@ using S = Oak.I18n.S;
 
 namespace Oak.Eps.Test;
 
-public class ProjectTests : IDisposable
+public class ProjectTests : TestBase
 {
-    private readonly RpcTestRig<OakDb, Api.Api> _rpcTestRig;
-
-    public ProjectTests()
-    {
-        _rpcTestRig = new RpcTestRig<OakDb, Api.Api>(S.Inst, OakEps.Eps, c => new Api.Api(c));
-    }
-
     [Fact]
     public async void Create_Success()
     {
@@ -284,30 +277,5 @@ public class ProjectTests : IDisposable
         {
             Assert.Equal("Entity not found", ex.Rpc.Message);
         }
-    }
-
-    private async Task<(IApi Ali, IApi Bob, IApi Cat, IApi Dan, IApi Anon, Org)> Setup()
-    {
-        var userName = "ali";
-        var (ali, _, _) = await _rpcTestRig.NewApi(userName);
-        var org = await ali.Org.Create(new("a", userName));
-        var (bob, _, _) = await _rpcTestRig.NewApi("bob");
-        var bobId = (await bob.Auth.GetSession()).Id;
-        var (cat, _, _) = await _rpcTestRig.NewApi("cat");
-        var catId = (await cat.Auth.GetSession()).Id;
-        var (dan, _, _) = await _rpcTestRig.NewApi("dan");
-        var danId = (await dan.Auth.GetSession()).Id;
-        var (anon, _, _) = await _rpcTestRig.NewApi();
-
-        await ali.OrgMember.Add(new(org.Id, bobId, "bob", OrgMemberRole.Admin));
-        await ali.OrgMember.Add(new(org.Id, catId, "cat", OrgMemberRole.WriteAllProjects));
-        await ali.OrgMember.Add(new(org.Id, danId, "dan", OrgMemberRole.PerProject));
-
-        return (ali, bob, cat, dan, anon, org);
-    }
-
-    public void Dispose()
-    {
-        _rpcTestRig.Dispose();
     }
 }

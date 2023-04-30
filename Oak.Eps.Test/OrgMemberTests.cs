@@ -5,21 +5,14 @@ using S = Oak.I18n.S;
 
 namespace Oak.Eps.Test;
 
-public class OrgMemberTests : IDisposable
+public class OrgMemberTests : TestBase
 {
-    private readonly RpcTestRig<OakDb, Api.Api> _rpcTestRig;
-
-    public OrgMemberTests()
-    {
-        _rpcTestRig = new RpcTestRig<OakDb, Api.Api>(S.Inst, OakEps.Eps, c => new Api.Api(c));
-    }
-
     [Fact]
     public async void Add_Success()
     {
         var bobName = "bob";
-        var (ali, _, _) = await _rpcTestRig.NewApi("ali");
-        var (bob, _, _) = await _rpcTestRig.NewApi(bobName);
+        var (ali, _, _) = await Rig.NewApi("ali");
+        var (bob, _, _) = await Rig.NewApi(bobName);
         var bobSes = await bob.Auth.GetSession();
         var org = await ali.Org.Create(new("a", "ali"));
         var mem = await ali.OrgMember.Add(new(org.Id, bobSes.Id, bobName, OrgMemberRole.Admin));
@@ -34,8 +27,8 @@ public class OrgMemberTests : IDisposable
     public async void Update_Success()
     {
         var bobName = "bob";
-        var (ali, _, _) = await _rpcTestRig.NewApi("ali");
-        var (bob, _, _) = await _rpcTestRig.NewApi(bobName);
+        var (ali, _, _) = await Rig.NewApi("ali");
+        var (bob, _, _) = await Rig.NewApi(bobName);
         var bobSes = await bob.Auth.GetSession();
         var org = await ali.Org.Create(new("a", "ali"));
         var mem = await ali.OrgMember.Add(new(org.Id, bobSes.Id, bobName, OrgMemberRole.Owner));
@@ -55,9 +48,9 @@ public class OrgMemberTests : IDisposable
     {
         var bobName = "bob";
         var catName = "cat";
-        var (ali, _, _) = await _rpcTestRig.NewApi("ali");
-        var (bob, _, _) = await _rpcTestRig.NewApi(bobName);
-        var (cat, _, _) = await _rpcTestRig.NewApi(catName);
+        var (ali, _, _) = await Rig.NewApi("ali");
+        var (bob, _, _) = await Rig.NewApi(bobName);
+        var (cat, _, _) = await Rig.NewApi(catName);
         var bobSes = await bob.Auth.GetSession();
         var org = await ali.Org.Create(new("a", "ali"));
         var aliMem = (await ali.OrgMember.Get(new(org.Id, true))).Single();
@@ -126,10 +119,5 @@ public class OrgMemberTests : IDisposable
         Assert.Equal(2, res.Count);
         Assert.Equal(bobMem, res[0]);
         Assert.Equal(aliMem, res[1]);
-    }
-
-    public void Dispose()
-    {
-        _rpcTestRig.Dispose();
     }
 }

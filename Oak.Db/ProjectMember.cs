@@ -12,8 +12,32 @@ public class ProjectMember
     public string Name { get; set; }
     public ProjectMemberRole Role { get; set; }
 
-    public Api.ProjectMember.ProjectMember ToApi()
+    public Api.ProjectMember.ProjectMember ToApi(ProjectMemberStats stats)
     {
-        throw new NotImplementedException();
+        return new(
+            Org,
+            Project,
+            Id,
+            Role,
+            stats.TimeEst,
+            stats.TimeInc,
+            stats.CostEst,
+            stats.CostInc,
+            stats.FileN,
+            stats.FileSize,
+            stats.TaskN
+        );
     }
+}
+
+public class ProjectMemberStats
+{
+    public string Id { get; set; }
+    public ulong TimeEst { get; set; }
+    public ulong TimeInc { get; set; }
+    public ulong CostEst { get; set; }
+    public ulong CostInc { get; set; }
+    public ulong FileN { get; set; }
+    public ulong FileSize { get; set; }
+    public ulong TaskN { get; set; }
 }
