@@ -76,12 +76,19 @@ public class OrgMemberTests : TestBase
         // get members with search filters nameStartsWith and role
         res = await ali.OrgMember.Get(new(org.Id, true, "ca", OrgMemberRole.WriteAllProjects));
         Assert.Equal(catMem, res.Single());
-        // get members with role order
-        res = await ali.OrgMember.Get(new(org.Id, true, null, null, null, OrgMemberOrderBy.Role));
+        // get members with name order
+        res = await ali.OrgMember.Get(new(org.Id, true, null, null, null, OrgMemberOrderBy.Name));
         Assert.Equal(3, res.Count);
         Assert.Equal(aliMem, res[0]);
         Assert.Equal(bobMem, res[1]);
         Assert.Equal(catMem, res[2]);
+        // get members with name order after ali
+        res = await ali.OrgMember.Get(
+            new(org.Id, true, null, null, aliMem.Id, OrgMemberOrderBy.Name)
+        );
+        Assert.Equal(2, res.Count);
+        Assert.Equal(bobMem, res[0]);
+        Assert.Equal(catMem, res[1]);
         // get members with role order after ali
         res = await ali.OrgMember.Get(
             new(org.Id, true, null, null, aliMem.Id, OrgMemberOrderBy.Role)
@@ -112,7 +119,7 @@ public class OrgMemberTests : TestBase
         Assert.Equal(catMem, res[0]);
         Assert.Equal(bobMem, res[1]);
         Assert.Equal(aliMem, res[2]);
-        // get members with desc role order
+        // get members with desc role order after cat
         res = await ali.OrgMember.Get(
             new(org.Id, true, null, null, catMem.Id, OrgMemberOrderBy.Role, false)
         );
