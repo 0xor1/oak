@@ -59,9 +59,72 @@ public class ProjectMemberTests : TestBase
         var bobPm = mems[0];
         var catPm = mems[1];
         var danPm = mems[2];
-        var res = await ali.ProjectMember.Get(new(org.Id, p.Id, ProjectMemberRole.Admin));
-        Assert.Equal(2, res.Count);
+
+        // all filters
+        var res = await ali.ProjectMember.Get(new(org.Id, p.Id, ProjectMemberRole.Admin, "a"));
+        Assert.Equal(1, res.Count);
+        Assert.Equal(aliPm, res[0]);
+
+        // order by role asc
+        res = await ali.ProjectMember.Get(new(org.Id, p.Id));
+        Assert.Equal(4, res.Count);
         Assert.Equal(aliPm, res[0]);
         Assert.Equal(bobPm, res[1]);
+        Assert.Equal(catPm, res[2]);
+        Assert.Equal(danPm, res[3]);
+
+        // order by role asc after ali
+        res = await ali.ProjectMember.Get(new(org.Id, p.Id, After: aliId));
+        Assert.Equal(3, res.Count);
+        Assert.Equal(bobPm, res[0]);
+        Assert.Equal(catPm, res[1]);
+        Assert.Equal(danPm, res[2]);
+
+        // order by role desc
+        res = await ali.ProjectMember.Get(new(org.Id, p.Id, Asc: false));
+        Assert.Equal(4, res.Count);
+        Assert.Equal(danPm, res[0]);
+        Assert.Equal(catPm, res[1]);
+        Assert.Equal(aliPm, res[2]);
+        Assert.Equal(bobPm, res[3]);
+
+        // order by role desc after bob
+        res = await ali.ProjectMember.Get(new(org.Id, p.Id, After: aliId, Asc: false));
+        Assert.Equal(1, res.Count);
+        Assert.Equal(bobPm, res[0]);
+
+        // order by name asc
+        res = await ali.ProjectMember.Get(new(org.Id, p.Id, OrderBy: ProjectMemberOrderBy.Name));
+        Assert.Equal(4, res.Count);
+        Assert.Equal(aliPm, res[0]);
+        Assert.Equal(bobPm, res[1]);
+        Assert.Equal(catPm, res[2]);
+        Assert.Equal(danPm, res[3]);
+
+        // order by name asc after ali
+        res = await ali.ProjectMember.Get(
+            new(org.Id, p.Id, After: aliId, OrderBy: ProjectMemberOrderBy.Name)
+        );
+        Assert.Equal(3, res.Count);
+        Assert.Equal(bobPm, res[0]);
+        Assert.Equal(catPm, res[1]);
+        Assert.Equal(danPm, res[2]);
+
+        // order by name desc
+        res = await ali.ProjectMember.Get(
+            new(org.Id, p.Id, OrderBy: ProjectMemberOrderBy.Name, Asc: false)
+        );
+        Assert.Equal(4, res.Count);
+        Assert.Equal(danPm, res[0]);
+        Assert.Equal(catPm, res[1]);
+        Assert.Equal(bobPm, res[2]);
+        Assert.Equal(aliPm, res[3]);
+
+        // order by name desc after bob
+        res = await ali.ProjectMember.Get(
+            new(org.Id, p.Id, After: bobId, OrderBy: ProjectMemberOrderBy.Name, Asc: false)
+        );
+        Assert.Equal(1, res.Count);
+        Assert.Equal(aliPm, res[0]);
     }
 }
