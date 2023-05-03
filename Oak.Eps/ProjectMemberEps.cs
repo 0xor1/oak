@@ -1,10 +1,14 @@
 ﻿using Common.Server;
 using Common.Shared;
 using Microsoft.EntityFrameworkCore;
+using Oak.Api.OrgMember;
 using Oak.Api.ProjectMember;
 using Oak.Db;
 using ProjectMember = Oak.Api.ProjectMember.ProjectMember;
 using Create = Oak.Api.ProjectMember.Create;
+using Exact = Oak.Api.ProjectMember.Exact;
+using Get = Oak.Api.ProjectMember.Get;
+using Update = Oak.Api.ProjectMember.Update;
 
 namespace Oak.Eps;
 
@@ -32,6 +36,14 @@ internal static class ProjectMemberEps
                             );
                             ctx.NotFoundIf(orgMem == null);
                             orgMem.NotNull();
+                            if (orgMem.Role is OrgMemberRole.Owner or OrgMemberRole.Admin)
+                            {
+                                // org level owners and admins cant be less than project admins
+                                req = req with
+                                {
+                                    Role = ProjectMemberRole.Admin
+                                };
+                            }
                             var mem = new Db.ProjectMember()
                             {
                                 Org = req.Org,
@@ -189,6 +201,17 @@ internal static class ProjectMemberEps
                             );
                             ctx.NotFoundIf(mem == null);
                             mem.NotNull();
+                            var orgMem = await db.OrgMembers.SingleAsync(
+                                x => x.Org == req.Org && x.Id == req.Id
+                            );
+                            if (orgMem.Role is OrgMemberRole.Owner or OrgMemberRole.Admin)
+                            {
+                                // org level owners and admins cant be less than project admins
+                                req = req with
+                                {
+                                    Role = ProjectMemberRole.Admin
+                                };
+                            }
                             mem.Role = req.Role;
                             var stats = await GetStats(
                                 db,
