@@ -6,7 +6,9 @@ public interface ITaskApi
 {
     public Task<Task> Create(Create arg);
     public Task<Task> GetOne(Exact arg);
-    public Task<IReadOnlyList<Task>> Get(Get arg);
+    public Task<SetRes<Task>> GetAncestors(Exact arg);
+    public Task<SetRes<Task>> GetChildren(GetChildren arg);
+    public Task<IReadOnlyDictionary<string, Task>> GetAllDescendants(Exact arg);
     public Task<Task> Update(Update arg);
     public System.Threading.Tasks.Task Delete(Exact arg);
 }
@@ -24,7 +26,9 @@ public class TaskApi : ITaskApi
 
     public Task<Task> GetOne(Exact arg) => _client.Do(TaskRpcs.GetOne, arg);
 
-    public Task<IReadOnlyList<Task>> Get(Get arg) => _client.Do(TaskRpcs.Get, arg);
+    public Task<SetRes<Task>> GetAncestors(Exact arg) => _client.Do(TaskRpcs.GetAncestors, arg);
+    public Task<SetRes<Task>> GetChildren(GetChildren arg) => _client.Do(TaskRpcs.GetChildren, arg);
+    public Task<IReadOnlyDictionary<string, Task>> GetAllDescendants(Exact arg) => _client.Do(TaskRpcs.GetAllDescendants, arg);
 
     public Task<Task> Update(Update arg) => _client.Do(TaskRpcs.Update, arg);
 
@@ -35,7 +39,9 @@ public static class TaskRpcs
 {
     public static readonly Rpc<Create, Task> Create = new("/task/create");
     public static readonly Rpc<Exact, Task> GetOne = new("/task/get_one");
-    public static readonly Rpc<Get, IReadOnlyList<Task>> Get = new("/task/get");
+    public static readonly Rpc<Exact, SetRes<Task>> GetAncestors = new("/task/get_ancestors");
+    public static readonly Rpc<GetChildren, SetRes<Task>> GetChildren = new("/task/get_children");
+    public static readonly Rpc<Exact, IReadOnlyDictionary<string, Task>> GetAllDescendants = new("/task/get_all_descendants");
     public static readonly Rpc<Update, Task> Update = new("/task/update");
     public static readonly Rpc<Exact, Nothing> Delete = new("/task/delete");
 }
@@ -91,10 +97,6 @@ public record Get(
     bool Asc = true
 );
 
-public record NSet<T>(T? V);
-
-public record SetRes<T>(IReadOnlyList<T> Set, bool More);
-
 public record Update(
     string Org,
     string Project,
@@ -108,5 +110,7 @@ public record Update(
     ulong? TimeEst,
     ulong? CostEst
 );
+
+public record GetChildren(string Org, string Project, string Id, string? After) : Exact(Org, Project, Id);
 
 public record Exact(string Org, string Project, string Id);
