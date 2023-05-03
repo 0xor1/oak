@@ -4,7 +4,7 @@ namespace Oak.Api.ProjectMember;
 
 public interface IProjectMemberApi
 {
-    public Task<ProjectMember> Add(Create arg);
+    public Task<ProjectMember> Add(Add arg);
     public Task<ProjectMember> GetOne(Exact arg);
     public Task<IReadOnlyList<ProjectMember>> Get(Get arg);
     public Task<ProjectMember> Update(Update arg);
@@ -20,7 +20,7 @@ public class ProjectMemberApi : IProjectMemberApi
         _client = client;
     }
 
-    public Task<ProjectMember> Add(Create arg) => _client.Do(ProjectMemberRpcs.Add, arg);
+    public Task<ProjectMember> Add(Add arg) => _client.Do(ProjectMemberRpcs.Add, arg);
 
     public Task<ProjectMember> GetOne(Exact arg) => _client.Do(ProjectMemberRpcs.GetOne, arg);
 
@@ -35,7 +35,7 @@ public class ProjectMemberApi : IProjectMemberApi
 
 public static class ProjectMemberRpcs
 {
-    public static readonly Rpc<Create, ProjectMember> Add = new("/project_member/add");
+    public static readonly Rpc<Add, ProjectMember> Add = new("/project_member/add");
     public static readonly Rpc<Exact, ProjectMember> GetOne = new("/project_member/get_one");
     public static readonly Rpc<Get, IReadOnlyList<ProjectMember>> Get = new("/project_member/get");
     public static readonly Rpc<Update, ProjectMember> Update = new("/project_member/update");
@@ -64,7 +64,7 @@ public enum ProjectMemberRole
     Reader
 }
 
-public record Create(string Org, string Project, string Id, ProjectMemberRole Role);
+public record Add(string Org, string Project, string Id, ProjectMemberRole Role);
 
 public record Get(
     string Org,

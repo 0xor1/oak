@@ -4,8 +4,8 @@ using Microsoft.EntityFrameworkCore;
 using Oak.Api.OrgMember;
 using Oak.Api.ProjectMember;
 using Oak.Db;
+using Add = Oak.Api.ProjectMember.Add;
 using ProjectMember = Oak.Api.ProjectMember.ProjectMember;
-using Create = Oak.Api.ProjectMember.Create;
 using Exact = Oak.Api.ProjectMember.Exact;
 using Get = Oak.Api.ProjectMember.Get;
 using Update = Oak.Api.ProjectMember.Update;
@@ -17,7 +17,7 @@ internal static class ProjectMemberEps
     public static IReadOnlyList<IRpcEndpoint> Eps { get; } =
         new List<IRpcEndpoint>()
         {
-            new RpcEndpoint<Create, ProjectMember>(
+            new RpcEndpoint<Add, ProjectMember>(
                 ProjectMemberRpcs.Add,
                 async (ctx, req) =>
                     await ctx.DbTx<OakDb, ProjectMember>(
