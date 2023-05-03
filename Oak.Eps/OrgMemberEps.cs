@@ -63,7 +63,7 @@ internal static class OrgMemberEps
                     return mem.NotNull().ToApi();
                 }
             ),
-            new RpcEndpoint<Get, IReadOnlyList<OrgMember>>(
+            new RpcEndpoint<Get, SetRes<OrgMember>>(
                 OrgMemberRpcs.Get,
                 async (ctx, req) =>
                 {
@@ -143,7 +143,8 @@ internal static class OrgMemberEps
                         (OrgMemberOrderBy.Name, false)
                             => qry.OrderByDescending(x => x.Name).ThenBy(x => x.Role),
                     };
-                    return await qry.Take(100).Select(x => x.ToApi()).ToListAsync();
+                    var set = await qry.Take(101).Select(x => x.ToApi()).ToListAsync();
+                    return SetRes<OrgMember>.FromLimit(set, 101);
                 }
             ),
             new RpcEndpoint<Update, OrgMember>(

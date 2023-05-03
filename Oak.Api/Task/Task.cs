@@ -91,6 +91,22 @@ public record Get(
     bool Asc = true
 );
 
-public record Update(string Org, string Project, string Id);
+public record NSet<T>(T? V);
+
+public record SetRes<T>(IReadOnlyList<T> Set, bool More);
+
+public record Update(
+    string Org,
+    string Project,
+    string Id,
+    string? Parent,
+    NSet<string>? PrevSib,
+    string? Name,
+    string? Description,
+    bool? IsParallel,
+    NSet<string>? User,
+    ulong? TimeEst,
+    ulong? CostEst
+);
 
 public record Exact(string Org, string Project, string Id);

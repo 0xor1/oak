@@ -6,7 +6,7 @@ public interface IProjectApi
 {
     public Task<Project> Create(Create arg);
     public Task<Project> GetOne(Exact arg);
-    public Task<IReadOnlyList<Project>> Get(Get arg);
+    public Task<SetRes<Project>> Get(Get arg);
     public Task<Project> Update(Update arg);
     public System.Threading.Tasks.Task Delete(Exact arg);
 }
@@ -24,7 +24,7 @@ public class ProjectApi : IProjectApi
 
     public Task<Project> GetOne(Exact arg) => _client.Do(ProjectRpcs.GetOne, arg);
 
-    public Task<IReadOnlyList<Project>> Get(Get arg) => _client.Do(ProjectRpcs.Get, arg);
+    public Task<SetRes<Project>> Get(Get arg) => _client.Do(ProjectRpcs.Get, arg);
 
     public Task<Project> Update(Update arg) => _client.Do(ProjectRpcs.Update, arg);
 
@@ -35,7 +35,7 @@ public static class ProjectRpcs
 {
     public static readonly Rpc<Create, Project> Create = new("/project/create");
     public static readonly Rpc<Exact, Project> GetOne = new("/project/get_one");
-    public static readonly Rpc<Get, IReadOnlyList<Project>> Get = new("/project/get");
+    public static readonly Rpc<Get, SetRes<Project>> Get = new("/project/get");
     public static readonly Rpc<Update, Project> Update = new("/project/update");
     public static readonly Rpc<Exact, Nothing> Delete = new("/project/delete");
 }

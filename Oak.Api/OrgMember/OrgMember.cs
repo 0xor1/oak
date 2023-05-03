@@ -6,7 +6,7 @@ public interface IOrgMemberApi
 {
     public Task<OrgMember> Add(Add arg);
     Task<OrgMember> GetOne(Exact arg);
-    public Task<IReadOnlyList<OrgMember>> Get(Get arg);
+    public Task<SetRes<OrgMember>> Get(Get arg);
     public Task<OrgMember> Update(Update arg);
 }
 
@@ -23,7 +23,7 @@ public class OrgMemberApi : IOrgMemberApi
 
     public Task<OrgMember> GetOne(Exact arg) => _client.Do(OrgMemberRpcs.GetOne, arg);
 
-    public Task<IReadOnlyList<OrgMember>> Get(Get arg) => _client.Do(OrgMemberRpcs.Get, arg);
+    public Task<SetRes<OrgMember>> Get(Get arg) => _client.Do(OrgMemberRpcs.Get, arg);
 
     public Task<OrgMember> Update(Update arg) => _client.Do(OrgMemberRpcs.Update, arg);
 }
@@ -32,7 +32,7 @@ public static class OrgMemberRpcs
 {
     public static readonly Rpc<Add, OrgMember> Add = new("/org_member/add");
     public static readonly Rpc<Exact, OrgMember> GetOne = new("/org_member/get_one");
-    public static readonly Rpc<Get, IReadOnlyList<OrgMember>> Get = new("/org_member/get");
+    public static readonly Rpc<Get, SetRes<OrgMember>> Get = new("/org_member/get");
     public static readonly Rpc<Update, OrgMember> Update = new("/org_member/update");
 }
 

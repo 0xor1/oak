@@ -80,143 +80,189 @@ public class ProjectTests : TestBase
         Assert.Equal(b, one);
 
         // get all private projects
-        var res = await ali.Project.Get(new(org.Id));
+        var res = (await ali.Project.Get(new(org.Id))).Set;
         Assert.Equal(1, res.Count);
         Assert.Equal(b, res[0]);
 
         // get all public projects
-        res = await ali.Project.Get(new(org.Id, IsPublic: true));
+        res = (await ali.Project.Get(new(org.Id, IsPublic: true))).Set;
         Assert.Equal(2, res.Count);
         Assert.Equal(a, res[0]);
         Assert.Equal(c, res[1]);
 
         // get public projects with filters
-        res = await ali.Project.Get(
-            new(
-                org.Id,
-                IsPublic: true,
-                NameStartsWith: "a",
-                CreatedOn: new(a.CreatedOn, a.CreatedOn),
-                StartOn: new(a.StartOn.NotNull(), a.StartOn.NotNull()),
-                EndOn: new(a.EndOn.NotNull(), a.EndOn.NotNull())
+        res = (
+            await ali.Project.Get(
+                new(
+                    org.Id,
+                    IsPublic: true,
+                    NameStartsWith: "a",
+                    CreatedOn: new(a.CreatedOn, a.CreatedOn),
+                    StartOn: new(a.StartOn.NotNull(), a.StartOn.NotNull()),
+                    EndOn: new(a.EndOn.NotNull(), a.EndOn.NotNull())
+                )
             )
-        );
+        ).Set;
         Assert.Equal(1, res.Count);
         Assert.Equal(a, res[0]);
 
         // get private projects as perProject permission user
-        res = await dan.Project.Get(new(org.Id));
+        res = (await dan.Project.Get(new(org.Id))).Set;
         Assert.Equal(0, res.Count);
 
         // get all public projects ordered By Name
-        res = await ali.Project.Get(new(org.Id, IsPublic: true, OrderBy: ProjectOrderBy.Name));
+        res = (
+            await ali.Project.Get(new(org.Id, IsPublic: true, OrderBy: ProjectOrderBy.Name))
+        ).Set;
         Assert.Equal(2, res.Count);
         Assert.Equal(a, res[0]);
         Assert.Equal(c, res[1]);
 
         // get all public projects ordered By Name after A
-        res = await ali.Project.Get(
-            new(org.Id, IsPublic: true, After: a.Id, OrderBy: ProjectOrderBy.Name)
-        );
+        res = (
+            await ali.Project.Get(
+                new(org.Id, IsPublic: true, After: a.Id, OrderBy: ProjectOrderBy.Name)
+            )
+        ).Set;
         Assert.Equal(1, res.Count);
         Assert.Equal(c, res[0]);
 
         // get all public projects ordered By CreatedOn
-        res = await ali.Project.Get(new(org.Id, IsPublic: true, OrderBy: ProjectOrderBy.CreatedOn));
+        res = (
+            await ali.Project.Get(new(org.Id, IsPublic: true, OrderBy: ProjectOrderBy.CreatedOn))
+        ).Set;
         Assert.Equal(2, res.Count);
         Assert.Equal(a, res[0]);
         Assert.Equal(c, res[1]);
 
         // get all public projects ordered By CreatedOn after a
-        res = await ali.Project.Get(
-            new(org.Id, IsPublic: true, After: a.Id, OrderBy: ProjectOrderBy.CreatedOn)
-        );
+        res = (
+            await ali.Project.Get(
+                new(org.Id, IsPublic: true, After: a.Id, OrderBy: ProjectOrderBy.CreatedOn)
+            )
+        ).Set;
         Assert.Equal(1, res.Count);
         Assert.Equal(c, res[0]);
 
         // get all public projects ordered By StartOn
-        res = await ali.Project.Get(new(org.Id, IsPublic: true, OrderBy: ProjectOrderBy.StartOn));
+        res = (
+            await ali.Project.Get(new(org.Id, IsPublic: true, OrderBy: ProjectOrderBy.StartOn))
+        ).Set;
         Assert.Equal(2, res.Count);
         Assert.Equal(c, res[0]);
         Assert.Equal(a, res[1]);
 
         // get all public projects ordered By StartOn after C
-        res = await ali.Project.Get(
-            new(org.Id, IsPublic: true, After: c.Id, OrderBy: ProjectOrderBy.StartOn)
-        );
+        res = (
+            await ali.Project.Get(
+                new(org.Id, IsPublic: true, After: c.Id, OrderBy: ProjectOrderBy.StartOn)
+            )
+        ).Set;
         Assert.Equal(1, res.Count);
         Assert.Equal(a, res[0]);
 
         // get all public projects ordered By EndOn
-        res = await ali.Project.Get(new(org.Id, IsPublic: true, OrderBy: ProjectOrderBy.EndOn));
+        res = (
+            await ali.Project.Get(new(org.Id, IsPublic: true, OrderBy: ProjectOrderBy.EndOn))
+        ).Set;
         Assert.Equal(2, res.Count);
         Assert.Equal(c, res[0]);
         Assert.Equal(a, res[1]);
 
         // get all public projects ordered By EndOn after C
-        res = await ali.Project.Get(
-            new(org.Id, IsPublic: true, After: c.Id, OrderBy: ProjectOrderBy.EndOn)
-        );
+        res = (
+            await ali.Project.Get(
+                new(org.Id, IsPublic: true, After: c.Id, OrderBy: ProjectOrderBy.EndOn)
+            )
+        ).Set;
         Assert.Equal(1, res.Count);
         Assert.Equal(a, res[0]);
 
         // get all public projects ordered By Name Desc
-        res = await ali.Project.Get(
-            new(org.Id, IsPublic: true, OrderBy: ProjectOrderBy.Name, Asc: false)
-        );
+        res = (
+            await ali.Project.Get(
+                new(org.Id, IsPublic: true, OrderBy: ProjectOrderBy.Name, Asc: false)
+            )
+        ).Set;
         Assert.Equal(2, res.Count);
         Assert.Equal(c, res[0]);
         Assert.Equal(a, res[1]);
 
         // get all public projects ordered By Name Desc after C
-        res = await ali.Project.Get(
-            new(org.Id, IsPublic: true, After: c.Id, OrderBy: ProjectOrderBy.Name, Asc: false)
-        );
+        res = (
+            await ali.Project.Get(
+                new(org.Id, IsPublic: true, After: c.Id, OrderBy: ProjectOrderBy.Name, Asc: false)
+            )
+        ).Set;
         Assert.Equal(1, res.Count);
         Assert.Equal(a, res[0]);
 
         // get all public projects ordered By CreatedOn Desc
-        res = await ali.Project.Get(
-            new(org.Id, IsPublic: true, OrderBy: ProjectOrderBy.CreatedOn, Asc: false)
-        );
+        res = (
+            await ali.Project.Get(
+                new(org.Id, IsPublic: true, OrderBy: ProjectOrderBy.CreatedOn, Asc: false)
+            )
+        ).Set;
         Assert.Equal(2, res.Count);
         Assert.Equal(c, res[0]);
         Assert.Equal(a, res[1]);
 
         // get all public projects ordered By CreatedOn Desc after C
-        res = await ali.Project.Get(
-            new(org.Id, IsPublic: true, After: c.Id, OrderBy: ProjectOrderBy.CreatedOn, Asc: false)
-        );
+        res = (
+            await ali.Project.Get(
+                new(
+                    org.Id,
+                    IsPublic: true,
+                    After: c.Id,
+                    OrderBy: ProjectOrderBy.CreatedOn,
+                    Asc: false
+                )
+            )
+        ).Set;
         Assert.Equal(1, res.Count);
         Assert.Equal(a, res[0]);
 
         // get all public projects ordered By StartOn Desc
-        res = await ali.Project.Get(
-            new(org.Id, IsPublic: true, OrderBy: ProjectOrderBy.StartOn, Asc: false)
-        );
+        res = (
+            await ali.Project.Get(
+                new(org.Id, IsPublic: true, OrderBy: ProjectOrderBy.StartOn, Asc: false)
+            )
+        ).Set;
         Assert.Equal(2, res.Count);
         Assert.Equal(a, res[0]);
         Assert.Equal(c, res[1]);
 
         // get all public projects ordered By StartOn Desc after A
-        res = await ali.Project.Get(
-            new(org.Id, IsPublic: true, After: a.Id, OrderBy: ProjectOrderBy.StartOn, Asc: false)
-        );
+        res = (
+            await ali.Project.Get(
+                new(
+                    org.Id,
+                    IsPublic: true,
+                    After: a.Id,
+                    OrderBy: ProjectOrderBy.StartOn,
+                    Asc: false
+                )
+            )
+        ).Set;
         Assert.Equal(1, res.Count);
         Assert.Equal(c, res[0]);
 
         // get all public projects ordered By EndOn Desc
-        res = await ali.Project.Get(
-            new(org.Id, IsPublic: true, OrderBy: ProjectOrderBy.EndOn, Asc: false)
-        );
+        res = (
+            await ali.Project.Get(
+                new(org.Id, IsPublic: true, OrderBy: ProjectOrderBy.EndOn, Asc: false)
+            )
+        ).Set;
         Assert.Equal(2, res.Count);
         Assert.Equal(a, res[0]);
         Assert.Equal(c, res[1]);
 
         // get all public projects ordered By EndOn Desc after A
-        res = await ali.Project.Get(
-            new(org.Id, IsPublic: true, After: a.Id, OrderBy: ProjectOrderBy.EndOn, Asc: false)
-        );
+        res = (
+            await ali.Project.Get(
+                new(org.Id, IsPublic: true, After: a.Id, OrderBy: ProjectOrderBy.EndOn, Asc: false)
+            )
+        ).Set;
         Assert.Equal(1, res.Count);
         Assert.Equal(c, res[0]);
     }

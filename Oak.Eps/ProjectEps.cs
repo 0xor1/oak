@@ -103,7 +103,7 @@ internal static class ProjectEps
                     return res.ToApi(t);
                 }
             ),
-            new RpcEndpoint<Get, IReadOnlyList<Project>>(
+            new RpcEndpoint<Get, SetRes<Project>>(
                 ProjectRpcs.Get,
                 async (ctx, req) =>
                 {
@@ -270,13 +270,14 @@ internal static class ProjectEps
                         (ProjectOrderBy.EndOn, false)
                             => qry.OrderByDescending(x => x.EndOn).ThenBy(x => x.Name),
                     };
-                    qry = qry.Take(100);
+                    qry = qry.Take(101);
                     var ps = await qry.ToListAsync();
                     var ids = ps.Select(x => x.Id).ToList();
                     var ts = await db.Tasks
                         .Where(x => x.Org == req.Org && x.Project == x.Id && ids.Contains(x.Id))
                         .ToListAsync();
-                    return ps.Select(x => x.ToApi(ts.Single(y => y.Id == x.Id))).ToList();
+                    var set = ps.Select(x => x.ToApi(ts.Single(y => y.Id == x.Id))).ToList();
+                    return SetRes<Project>.FromLimit(set, 101);
                 }
             ),
             new RpcEndpoint<Update, Project>(

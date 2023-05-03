@@ -50,7 +50,7 @@ public class OrgMemberTests : TestBase
         var (cat, _, _) = await Rig.NewApi(catName);
         var bobSes = await bob.Auth.GetSession();
         var org = await ali.Org.Create(new("a", "ali"));
-        var aliMem = (await ali.OrgMember.Get(new(org.Id, true))).Single();
+        var aliMem = (await ali.OrgMember.Get(new(org.Id, true))).Set.Single();
         var bobMem = await ali.OrgMember.Add(new(org.Id, bobSes.Id, bobName, OrgMemberRole.Admin));
         var catSes = await cat.Auth.GetSession();
         var catMem = await ali.OrgMember.Add(
@@ -60,66 +60,78 @@ public class OrgMemberTests : TestBase
         var one = await ali.OrgMember.GetOne(new(org.Id, aliMem.Id));
         Assert.Equal(aliMem, one);
         // get all by default ordering
-        var res = await ali.OrgMember.Get(new(org.Id, true));
+        var res = (await ali.OrgMember.Get(new(org.Id, true))).Set;
         Assert.Equal(3, res.Count);
         Assert.Equal(aliMem, res[0]);
         Assert.Equal(bobMem, res[1]);
         Assert.Equal(catMem, res[2]);
         // get all by default ordering after ali
-        res = await ali.OrgMember.Get(new(org.Id, true, After: aliMem.Id));
+        res = (await ali.OrgMember.Get(new(org.Id, true, After: aliMem.Id))).Set;
         Assert.Equal(2, res.Count);
         Assert.Equal(bobMem, res[0]);
         Assert.Equal(catMem, res[1]);
         // get members with search filters nameStartsWith and role
-        res = await ali.OrgMember.Get(new(org.Id, true, "ca", OrgMemberRole.WriteAllProjects));
+        res = (
+            await ali.OrgMember.Get(new(org.Id, true, "ca", OrgMemberRole.WriteAllProjects))
+        ).Set;
         Assert.Equal(catMem, res.Single());
         // get members with name order
-        res = await ali.OrgMember.Get(new(org.Id, true, null, null, null, OrgMemberOrderBy.Name));
+        res = (
+            await ali.OrgMember.Get(new(org.Id, true, null, null, null, OrgMemberOrderBy.Name))
+        ).Set;
         Assert.Equal(3, res.Count);
         Assert.Equal(aliMem, res[0]);
         Assert.Equal(bobMem, res[1]);
         Assert.Equal(catMem, res[2]);
         // get members with name order after ali
-        res = await ali.OrgMember.Get(
-            new(org.Id, true, null, null, aliMem.Id, OrgMemberOrderBy.Name)
-        );
+        res = (
+            await ali.OrgMember.Get(new(org.Id, true, null, null, aliMem.Id, OrgMemberOrderBy.Name))
+        ).Set;
         Assert.Equal(2, res.Count);
         Assert.Equal(bobMem, res[0]);
         Assert.Equal(catMem, res[1]);
         // get members with role order after ali
-        res = await ali.OrgMember.Get(
-            new(org.Id, true, null, null, aliMem.Id, OrgMemberOrderBy.Role)
-        );
+        res = (
+            await ali.OrgMember.Get(new(org.Id, true, null, null, aliMem.Id, OrgMemberOrderBy.Role))
+        ).Set;
         Assert.Equal(2, res.Count);
         Assert.Equal(bobMem, res[0]);
         Assert.Equal(catMem, res[1]);
         // get members with desc name order
-        res = await ali.OrgMember.Get(
-            new(org.Id, true, null, null, null, OrgMemberOrderBy.Name, false)
-        );
+        res = (
+            await ali.OrgMember.Get(
+                new(org.Id, true, null, null, null, OrgMemberOrderBy.Name, false)
+            )
+        ).Set;
         Assert.Equal(3, res.Count);
         Assert.Equal(catMem, res[0]);
         Assert.Equal(bobMem, res[1]);
         Assert.Equal(aliMem, res[2]);
         // get members with desc name order after cat
-        res = await ali.OrgMember.Get(
-            new(org.Id, true, null, null, catMem.Id, OrgMemberOrderBy.Name, false)
-        );
+        res = (
+            await ali.OrgMember.Get(
+                new(org.Id, true, null, null, catMem.Id, OrgMemberOrderBy.Name, false)
+            )
+        ).Set;
         Assert.Equal(2, res.Count);
         Assert.Equal(bobMem, res[0]);
         Assert.Equal(aliMem, res[1]);
         // get members with desc role order
-        res = await ali.OrgMember.Get(
-            new(org.Id, true, null, null, null, OrgMemberOrderBy.Role, false)
-        );
+        res = (
+            await ali.OrgMember.Get(
+                new(org.Id, true, null, null, null, OrgMemberOrderBy.Role, false)
+            )
+        ).Set;
         Assert.Equal(3, res.Count);
         Assert.Equal(catMem, res[0]);
         Assert.Equal(bobMem, res[1]);
         Assert.Equal(aliMem, res[2]);
         // get members with desc role order after cat
-        res = await ali.OrgMember.Get(
-            new(org.Id, true, null, null, catMem.Id, OrgMemberOrderBy.Role, false)
-        );
+        res = (
+            await ali.OrgMember.Get(
+                new(org.Id, true, null, null, catMem.Id, OrgMemberOrderBy.Role, false)
+            )
+        ).Set;
         Assert.Equal(2, res.Count);
         Assert.Equal(bobMem, res[0]);
         Assert.Equal(aliMem, res[1]);

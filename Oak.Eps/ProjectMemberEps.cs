@@ -85,7 +85,7 @@ internal static class ProjectMemberEps
                     return mem.ToApi(stats.SingleOrDefault() ?? new ProjectMemberStats());
                 }
             ),
-            new RpcEndpoint<Get, IReadOnlyList<ProjectMember>>(
+            new RpcEndpoint<Get, SetRes<ProjectMember>>(
                 ProjectMemberRpcs.Get,
                 async (ctx, req) =>
                 {
@@ -168,11 +168,11 @@ internal static class ProjectMemberEps
                         (ProjectMemberOrderBy.Name, false)
                             => qry.OrderByDescending(x => x.Name).ThenBy(x => x.Role),
                     };
-                    qry = qry.Take(100);
+                    qry = qry.Take(101);
                     var mems = await qry.ToListAsync();
                     var ids = mems.Select(x => x.Id).ToList();
                     var stats = await GetStats(db, req.Org, req.Project, ids);
-                    return mems.Select(
+                    var set = mems.Select(
                             x =>
                                 x.ToApi(
                                     stats.SingleOrDefault(y => y.Id == x.Id)
@@ -180,6 +180,7 @@ internal static class ProjectMemberEps
                                 )
                         )
                         .ToList();
+                    return SetRes<ProjectMember>.FromLimit(set, 101);
                 }
             ),
             new RpcEndpoint<Update, ProjectMember>(
