@@ -4,6 +4,7 @@ using Oak.Api.Org;
 using Oak.Api.OrgMember;
 using Oak.Api.Project;
 using Oak.Api.ProjectMember;
+using Oak.Api.Task;
 
 namespace Oak.Api;
 
@@ -13,6 +14,7 @@ public interface IApi : Common.Shared.Auth.IApi
     public IOrgMemberApi OrgMember { get; }
     public IProjectApi Project { get; }
     public IProjectMemberApi ProjectMember { get; }
+    public ITaskApi Task { get; }
 }
 
 public class Api : IApi
@@ -24,6 +26,7 @@ public class Api : IApi
         OrgMember = new OrgMemberApi(client);
         Project = new ProjectApi(client);
         ProjectMember = new ProjectMemberApi(client);
+        Task = new TaskApi(client);
     }
 
     public IAuthApi Auth { get; }
@@ -31,4 +34,5 @@ public class Api : IApi
     public IOrgMemberApi OrgMember { get; }
     public IProjectApi Project { get; }
     public IProjectMemberApi ProjectMember { get; }
+    public ITaskApi Task { get; }
 }
