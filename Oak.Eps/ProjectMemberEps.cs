@@ -26,7 +26,7 @@ internal static class ProjectMemberEps
                             await EpsUtil.MustHaveProjectAccess(
                                 ctx,
                                 db,
-                                ses,
+                                ses.Id,
                                 req.Org,
                                 req.Project,
                                 ProjectMemberRole.Admin
@@ -34,7 +34,7 @@ internal static class ProjectMemberEps
                             var orgMem = await db.OrgMembers.SingleOrDefaultAsync(
                                 x => x.Org == req.Org && x.Id == req.Id
                             );
-                            ctx.NotFoundIf(orgMem == null);
+                            ctx.NotFoundIf(orgMem == null, model: new { Name = "Org Member" });
                             orgMem.NotNull();
                             if (orgMem.Role is OrgMemberRole.Owner or OrgMemberRole.Admin)
                             {
@@ -66,7 +66,7 @@ internal static class ProjectMemberEps
                     await EpsUtil.MustHaveProjectAccess(
                         ctx,
                         db,
-                        ses,
+                        ses.Id,
                         req.Org,
                         req.Project,
                         ProjectMemberRole.Reader
@@ -74,7 +74,7 @@ internal static class ProjectMemberEps
                     var mem = await db.ProjectMembers.SingleOrDefaultAsync(
                         x => x.Org == req.Org && x.Project == req.Project && x.Id == req.Id
                     );
-                    ctx.NotFoundIf(mem == null);
+                    ctx.NotFoundIf(mem == null, model: new { Name = "Project Member" });
                     mem.NotNull();
                     var stats = await GetStats(
                         db,
@@ -94,7 +94,7 @@ internal static class ProjectMemberEps
                     await EpsUtil.MustHaveProjectAccess(
                         ctx,
                         db,
-                        ses,
+                        ses.Id,
                         req.Org,
                         req.Project,
                         ProjectMemberRole.Reader
@@ -118,7 +118,7 @@ internal static class ProjectMemberEps
                         var after = await db.ProjectMembers.SingleOrDefaultAsync(
                             x => x.Org == req.Org && x.Project == req.Project && x.Id == req.After
                         );
-                        ctx.NotFoundIf(after == null);
+                        ctx.NotFoundIf(after == null, model: new { Name = "Project Member" });
                         after.NotNull();
                         qry = (req.OrderBy, req.Asc) switch
                         {
@@ -192,7 +192,7 @@ internal static class ProjectMemberEps
                             await EpsUtil.MustHaveProjectAccess(
                                 ctx,
                                 db,
-                                ses,
+                                ses.Id,
                                 req.Org,
                                 req.Project,
                                 ProjectMemberRole.Admin
@@ -200,7 +200,7 @@ internal static class ProjectMemberEps
                             var mem = await db.ProjectMembers.SingleOrDefaultAsync(
                                 x => x.Org == req.Org && x.Project == req.Project && x.Id == req.Id
                             );
-                            ctx.NotFoundIf(mem == null);
+                            ctx.NotFoundIf(mem == null, model: new { Name = "Project Member" });
                             mem.NotNull();
                             var orgMem = await db.OrgMembers.SingleAsync(
                                 x => x.Org == req.Org && x.Id == req.Id
@@ -233,7 +233,7 @@ internal static class ProjectMemberEps
                             await EpsUtil.MustHaveProjectAccess(
                                 ctx,
                                 db,
-                                ses,
+                                ses.Id,
                                 req.Org,
                                 req.Project,
                                 ProjectMemberRole.Admin

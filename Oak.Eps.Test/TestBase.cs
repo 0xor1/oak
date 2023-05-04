@@ -73,6 +73,6 @@ public class TestBase : IDisposable
 
     public void Dispose()
     {
-        Rig.Dispose();
+        // Rig.Dispose();
     }
 }

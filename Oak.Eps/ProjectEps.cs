@@ -27,7 +27,7 @@ internal static class ProjectEps
                             await EpsUtil.MustHaveOrgAccess(
                                 ctx,
                                 db,
-                                ses,
+                                ses.Id,
                                 req.Org,
                                 OrgMemberRole.Admin
                             );
@@ -87,7 +87,7 @@ internal static class ProjectEps
                     await EpsUtil.MustHaveProjectAccess(
                         ctx,
                         db,
-                        ses,
+                        ses.Id,
                         req.Org,
                         req.Id,
                         ProjectMemberRole.Reader
@@ -95,7 +95,7 @@ internal static class ProjectEps
                     var res = await db.Projects.SingleOrDefaultAsync(
                         x => x.Org == req.Org && x.Id == req.Id
                     );
-                    ctx.NotFoundIf(res == null);
+                    ctx.NotFoundIf(res == null, model: new { Name = "Project" });
                     res.NotNull();
                     var t = await db.Tasks.SingleAsync(
                         x => x.Org == req.Org && x.Project == req.Id && x.Id == req.Id
@@ -110,7 +110,7 @@ internal static class ProjectEps
                     var ses = ctx.GetSession();
                     var db = ctx.Get<OakDb>();
 
-                    var orgMemRole = await EpsUtil.OrgRole(db, ses, req.Org);
+                    var orgMemRole = await EpsUtil.OrgRole(db, ses.Id, req.Org);
                     ctx.InsufficientPermissionsIf(!req.IsPublic && orgMemRole == null);
 
                     var qry = db.Projects.Where(
@@ -173,7 +173,7 @@ internal static class ProjectEps
                         var after = await db.Projects.SingleOrDefaultAsync(
                             x => x.Org == req.Org && x.Id == req.After
                         );
-                        ctx.NotFoundIf(after == null);
+                        ctx.NotFoundIf(after == null, model: new { Name = "Project" });
                         after.NotNull();
                         qry = (req.OrderBy, req.Asc) switch
                         {
@@ -289,7 +289,7 @@ internal static class ProjectEps
                             await EpsUtil.MustHaveProjectAccess(
                                 ctx,
                                 db,
-                                ses,
+                                ses.Id,
                                 req.Org,
                                 req.Id,
                                 ProjectMemberRole.Admin
@@ -297,7 +297,7 @@ internal static class ProjectEps
                             var p = await db.Projects.SingleOrDefaultAsync(
                                 x => x.Org == req.Org && x.Id == req.Id
                             );
-                            ctx.NotFoundIf(p == null);
+                            ctx.NotFoundIf(p == null, model: new { Name = "Project" });
                             p.NotNull();
                             p.Name = req.Name ?? p.Name;
                             p.IsPublic = req.IsPublic ?? p.IsPublic;
@@ -324,7 +324,7 @@ internal static class ProjectEps
                             await EpsUtil.MustHaveProjectAccess(
                                 ctx,
                                 db,
-                                ses,
+                                ses.Id,
                                 req.Org,
                                 req.Id,
                                 ProjectMemberRole.Admin

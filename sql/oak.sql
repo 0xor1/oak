@@ -302,9 +302,9 @@ INTO
     newChildN,
     newDescN
 FROM
-    tasks t
+    Tasks t
         LEFT JOIN
-    tasks c
+    Tasks c
     ON
                 c.Org=_org
             AND
@@ -331,7 +331,7 @@ IF curTimeSubMin <> newtimeSubMin OR
       curDescN <> newDescN THEN
 
 UPDATE
-    tasks
+    Tasks
 SET
     TimeSubMin=newtimeSubMin,
     TimeSubEst=newtimeSubEst,

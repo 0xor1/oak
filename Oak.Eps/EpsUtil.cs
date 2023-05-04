@@ -1,61 +1,89 @@
-﻿using Common.Server;
+﻿using System.Text.RegularExpressions;
+using Common.Server;
 using Common.Shared;
 using Microsoft.EntityFrameworkCore;
 using Oak.Api.OrgMember;
 using Oak.Api.ProjectMember;
 using Oak.Db;
+using S = Oak.I18n.S;
 using Task = System.Threading.Tasks.Task;
 
 namespace Oak.Eps;
 
 internal static class EpsUtil
 {
-    public static async Task<bool> IsActiveOrgMember(OakDb db, Session ses, string org) =>
-        await OrgRole(db, ses, org) != null;
+    public static void ValidStr(
+        IRpcCtx ctx,
+        string val,
+        int min,
+        int max,
+        string name,
+        List<Regex>? regexes = null
+    )
+    {
+        var m = new
+        {
+            Name = name,
+            Min = min,
+            Max = max,
+            Regexes = regexes?.Select(x => x.ToString())
+        };
+        ctx.BadRequestIf(val.Length < min || val.Length > max, S.StringValidation, m);
+        if (regexes != null)
+        {
+            foreach (var r in regexes)
+            {
+                ctx.BadRequestIf(!r.IsMatch(val), S.StringValidation, m);
+            }
+        }
+    }
+
+    public static async Task<bool> IsActiveOrgMember(OakDb db, string user, string org) =>
+        await OrgRole(db, user, org) != null;
 
     public static async Task MustBeActiveOrgMember(
         IRpcCtx ctx,
         OakDb db,
-        Session ses,
+        string user,
         string org
-    ) => ctx.InsufficientPermissionsIf(!await IsActiveOrgMember(db, ses, org));
+    ) => ctx.InsufficientPermissionsIf(!await IsActiveOrgMember(db, user, org));
 
-    public static async Task<OrgMemberRole?> OrgRole(OakDb db, Session ses, string org)
+    public static async Task<OrgMemberRole?> OrgRole(OakDb db, string user, string org)
     {
         var orgMem = await db.OrgMembers.SingleOrDefaultAsync(
-            x => x.Org == org && x.IsActive && x.Id == ses.Id
+            x => x.Org == org && x.IsActive && x.Id == user
         );
         return orgMem?.Role;
     }
 
     public static async Task<bool> HasOrgAccess(
         OakDb db,
-        Session ses,
+        string user,
         string org,
         OrgMemberRole role
     )
     {
-        var memRole = await OrgRole(db, ses, org);
+        var memRole = await OrgRole(db, user, org);
         return memRole != null && memRole <= role;
     }
 
     public static async Task MustHaveOrgAccess(
         IRpcCtx ctx,
         OakDb db,
-        Session ses,
+        string user,
         string org,
         OrgMemberRole role
-    ) => ctx.InsufficientPermissionsIf(!await HasOrgAccess(db, ses, org, role));
+    ) => ctx.InsufficientPermissionsIf(!await HasOrgAccess(db, user, org, role));
 
     public static async Task<ProjectMemberRole?> ProjectRole(
         OakDb db,
-        Session ses,
+        string user,
         string org,
         string project
     )
     {
         var projMem = await db.ProjectMembers.SingleOrDefaultAsync(
-            x => x.Org == org && x.Project == project && x.Id == ses.Id
+            x => x.Org == org && x.Project == project && x.Id == user
         );
         return projMem?.Role;
     }
@@ -63,7 +91,7 @@ internal static class EpsUtil
     public static async Task<bool> HasProjectAccess(
         IRpcCtx ctx,
         OakDb db,
-        Session ses,
+        string user,
         string org,
         string project,
         ProjectMemberRole role
@@ -71,7 +99,7 @@ internal static class EpsUtil
     {
         var p = await db.Projects.SingleOrDefaultAsync(x => x.Org == org && x.Id == project);
 
-        ctx.NotFoundIf(p == null);
+        ctx.NotFoundIf(p == null, model: new { Name = "Project" });
         p.NotNull();
 
         var isPublic = p.IsPublic;
@@ -83,7 +111,7 @@ internal static class EpsUtil
 
         // at this point explicit access permission is required
         // 1. ensure active org member
-        var orgRole = await OrgRole(db, ses, org);
+        var orgRole = await OrgRole(db, user, org);
         if (orgRole == null)
         {
             return false;
@@ -100,7 +128,7 @@ internal static class EpsUtil
             return true;
         }
 
-        var projRole = await ProjectRole(db, ses, org, project);
+        var projRole = await ProjectRole(db, user, org, project);
         if (projRole != null && projRole <= role)
         {
             // user has sufficient project permission
@@ -116,9 +144,9 @@ internal static class EpsUtil
     public static async Task MustHaveProjectAccess(
         IRpcCtx ctx,
         OakDb db,
-        Session ses,
+        string user,
         string org,
         string project,
         ProjectMemberRole role
-    ) => ctx.InsufficientPermissionsIf(!await HasProjectAccess(ctx, db, ses, org, project, role));
+    ) => ctx.InsufficientPermissionsIf(!await HasProjectAccess(ctx, db, user, org, project, role));
 }

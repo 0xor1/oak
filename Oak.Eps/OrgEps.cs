@@ -63,10 +63,16 @@ internal static class OrgEps
                 {
                     var ses = ctx.GetAuthedSession();
                     var db = ctx.Get<OakDb>();
-                    await EpsUtil.MustHaveOrgAccess(ctx, db, ses, req.Id, OrgMemberRole.PerProject);
+                    await EpsUtil.MustHaveOrgAccess(
+                        ctx,
+                        db,
+                        ses.Id,
+                        req.Id,
+                        OrgMemberRole.PerProject
+                    );
 
                     var org = await db.Orgs.SingleOrDefaultAsync(x => x.Id == req.Id);
-                    ctx.NotFoundIf(org == null);
+                    ctx.NotFoundIf(org == null, model: new { Name = "Org" });
                     return org.NotNull().ToApi();
                 }
             ),
@@ -100,7 +106,7 @@ internal static class OrgEps
                             await EpsUtil.MustHaveOrgAccess(
                                 ctx,
                                 db,
-                                ses,
+                                ses.Id,
                                 req.Id,
                                 OrgMemberRole.Owner
                             );
@@ -119,7 +125,7 @@ internal static class OrgEps
                             await EpsUtil.MustHaveOrgAccess(
                                 ctx,
                                 db,
-                                ses,
+                                ses.Id,
                                 req.Id,
                                 OrgMemberRole.Owner
                             );

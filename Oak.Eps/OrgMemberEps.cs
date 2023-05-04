@@ -35,7 +35,7 @@ internal static class OrgMemberEps
                             var newMemExists = await db.Auths.AnyAsync(
                                 x => x.Id == req.Id && x.ActivatedOn != DateTimeExt.Zero()
                             );
-                            ctx.NotFoundIf(!newMemExists);
+                            ctx.NotFoundIf(!newMemExists, model: new { Name = "User" });
                             var newMem = new Db.OrgMember()
                             {
                                 Org = req.Org,
@@ -55,11 +55,11 @@ internal static class OrgMemberEps
                 {
                     var ses = ctx.GetAuthedSession();
                     var db = ctx.Get<OakDb>();
-                    await EpsUtil.MustBeActiveOrgMember(ctx, db, ses, req.Org);
+                    await EpsUtil.MustBeActiveOrgMember(ctx, db, ses.Id, req.Org);
                     var mem = await db.OrgMembers.SingleOrDefaultAsync(
                         x => x.Org == req.Org && x.Id == req.Id
                     );
-                    ctx.NotFoundIf(mem == null);
+                    ctx.NotFoundIf(mem == null, model: new { Name = "Org Member" });
                     return mem.NotNull().ToApi();
                 }
             ),
@@ -93,7 +93,7 @@ internal static class OrgMemberEps
                         var after = await db.OrgMembers.SingleOrDefaultAsync(
                             x => x.Org == req.Org && x.Id == req.After
                         );
-                        ctx.NotFoundIf(after == null);
+                        ctx.NotFoundIf(after == null, model: new { Name = "Org Member" });
                         after.NotNull();
                         qry = (req.OrderBy, req.Asc) switch
                         {

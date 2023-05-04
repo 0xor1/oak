@@ -18,7 +18,7 @@ public static partial class S
         { Invalid, new("Ungültig") },
         { RpcUnknownEndpoint, new("Unbekannter RPC-Endpunkt") },
         { UnexpectedError, new("Ein unerwarteter Fehler ist aufgetreten") },
-        { EntityNotFound, new("Entität nicht gefunden") },
+        { EntityNotFound, new("{{Name}} nicht gefunden") },
         { InsufficientPermission, new("Unzureichende Erlaubnis") },
         { ApiError, new("API-Fehler") },
         { MinMaxNullArgs, new("Sowohl das Min- als auch das Max-Argument sind null") },
@@ -113,6 +113,10 @@ public static partial class S
         { Error, new("Fehler") },
         { Update, new("Aktualisieren") },
         { Updating, new("Aktualisierung") },
+        {
+            StringValidation,
+            new("Ungültiger String {{Name}}, Min. {{Min}}, Max. {{Max}}, Regexes {{Regexes}}")
+        },
         { OrgTooMany, new("Sie sind bereits Mitglied in zu vielen Orgs") }
     };
 }

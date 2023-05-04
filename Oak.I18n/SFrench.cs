@@ -18,7 +18,7 @@ public static partial class S
         { Invalid, new("Invalide") },
         { RpcUnknownEndpoint, new("Point de terminaison RPC inconnu") },
         { UnexpectedError, new("Une erreur inattendue est apparue") },
-        { EntityNotFound, new("Entité introuvable") },
+        { EntityNotFound, new("{{Name}} introuvable") },
         { InsufficientPermission, new("Permission insuffisante") },
         { ApiError, new("Erreur API") },
         { MinMaxNullArgs, new("Les arguments min et max sont nuls") },
@@ -116,6 +116,10 @@ public static partial class S
         { Error, new("Erreur") },
         { Update, new("Mise à jour") },
         { Updating, new("Mise à jour") },
+        {
+            StringValidation,
+            new("Chaîne non valide {{Name}}, Min {{Min}}, Max {{Max}}, Regexes {{Regexes}}")
+        },
         { OrgTooMany, new("Vous êtes déjà membre d'un trop grand nombre d'organisations") }
     };
 }

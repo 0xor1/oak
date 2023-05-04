@@ -47,16 +47,12 @@ public class OakDb : DbContext, IAuthDb
     //         .HasConversion(v => v.ToString(), v => (VItemType)Enum.Parse(typeof(VItemType), v));
     // }
 
-    public async void LockProject(string org, string project)
+    public async System.Threading.Tasks.Task LockProject(string org, string id)
     {
-        var exists = await Database
-            .SqlQueryRaw<bool>(
-                "SELECT COUNT(*)=1 FROM ProjectLocks WHERE Org={0} AND Project={1} FOR UPDATE",
-                org,
-                project
-            )
-            .SingleAsync();
-        Throw.DataIf(!exists, $"project doesnt exists, org: {org}, project: {project}");
+        var pl = await ProjectLocks
+            .FromSql($"SELECT * FROM ProjectLocks WHERE Org={org} AND id={id} FOR UPDATE")
+            .SingleOrDefaultAsync();
+        Throw.DataIf(pl == null, $"project doesnt exists, org: {org}, id: {id}");
     }
 
     public async Task<List<string>> SetAncestralChainAggregateValuesFromTask(
@@ -66,11 +62,8 @@ public class OakDb : DbContext, IAuthDb
     )
     {
         return await Database
-            .SqlQueryRaw<string>(
-                "CALL SetAncestralChainAggregateValuesFromTask({0}, {1}, {2})",
-                org,
-                project,
-                task
+            .SqlQuery<string>(
+                $"CALL SetAncestralChainAggregateValuesFromTask({org}, {project}, {task})"
             )
             .ToListAsync();
     }

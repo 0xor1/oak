@@ -316,7 +316,7 @@ public class ProjectTests : TestBase
         }
         catch (RpcTestException ex)
         {
-            Assert.Equal("Entity not found", ex.Rpc.Message);
+            Assert.Equal("Project not found", ex.Rpc.Message);
         }
     }
 }
