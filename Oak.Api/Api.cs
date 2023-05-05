@@ -36,3 +36,22 @@ public class Api : IApi
     public IProjectMemberApi ProjectMember { get; }
     public ITaskApi Task { get; }
 }
+
+public enum ActivityItemType
+{
+    Org,
+    Project,
+    Member,
+    Task,
+    Time,
+    Cost,
+    File,
+    Note
+}
+
+public enum ActivityAction
+{
+    Create,
+    Update,
+    Delete
+}

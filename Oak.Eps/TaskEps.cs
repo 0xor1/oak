@@ -1,6 +1,7 @@
 ﻿using Common.Server;
 using Common.Shared;
 using Microsoft.EntityFrameworkCore;
+using Oak.Api;
 using Oak.Api.ProjectMember;
 using Oak.Api.Task;
 using Oak.Db;
@@ -122,8 +123,22 @@ internal static class TaskEps
                                 req.Project,
                                 req.Parent
                             );
-                            await db.Entry(parent).ReloadAsync();
-                            // TODO await EpsUtil.LogActivity(ctx, db, ses, req.Org, req.Project, t.Id, t.Id, ItemType.Task, Action.Create, t.Name, null, null, ancestors);
+                            await db.Entry(parent.NotNull()).ReloadAsync();
+                            await EpsUtil.LogActivity(
+                                ctx,
+                                db,
+                                ses,
+                                req.Org,
+                                req.Project,
+                                t.Id,
+                                t.Id,
+                                ActivityItemType.Task,
+                                ActivityAction.Create,
+                                t.Name,
+                                null,
+                                null,
+                                ancestors
+                            );
                             var p = await db.Tasks.SingleAsync(
                                 x =>
                                     x.Org == req.Org

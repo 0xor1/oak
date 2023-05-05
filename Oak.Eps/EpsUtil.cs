@@ -2,6 +2,9 @@
 using Common.Server;
 using Common.Shared;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using Oak.Api;
 using Oak.Api.OrgMember;
 using Oak.Api.ProjectMember;
 using Oak.Db;
@@ -149,4 +152,99 @@ internal static class EpsUtil
         string project,
         ProjectMemberRole role
     ) => ctx.InsufficientPermissionsIf(!await HasProjectAccess(ctx, db, user, org, project, role));
+
+    public static async Task LogActivity(
+        IRpcCtx ctx,
+        OakDb db,
+        Session ses,
+        string org,
+        string project,
+        string task,
+        string item,
+        ActivityItemType type,
+        ActivityAction action,
+        string itemName,
+        object? extraInfo,
+        object? fcmExtraInfo,
+        List<string> ancestors
+    )
+    {
+        Throw.OpIf(
+            type == ActivityItemType.Task && task != item,
+            "item type is task but task id and item id are not the same"
+        );
+        string? exInStr = null;
+        if (extraInfo != null)
+        {
+            exInStr = JsonConvert.SerializeObject(extraInfo, SerializerSettings);
+            Throw.DataIf(exInStr.Length > 10000, "extraInfo string is too long");
+        }
+
+        var taskDeleted = type == ActivityItemType.Task && action == ActivityAction.Delete;
+        var itemDeleted = action == ActivityAction.Delete;
+        var occuredOn = DateTimeExt.UtcNowMilli();
+        var taskName = itemName;
+        if (type != ActivityItemType.Task)
+        {
+            taskName = (
+                await db.Tasks.SingleAsync(
+                    x => x.Org == org && x.Project == project && x.Id == task
+                )
+            ).Name;
+        }
+
+        await db.Activities.AddAsync(
+            new()
+            {
+                Org = org,
+                Project = project,
+                Task = task,
+                OccurredOn = occuredOn,
+                User = ses.Id,
+                Item = item,
+                ItemType = type,
+                TaskDeleted = taskDeleted,
+                ItemDeleted = itemDeleted,
+                Action = action,
+                TaskName = taskName,
+                ItemName = itemName,
+                ExtraInfo = exInStr
+            }
+        );
+
+        if (itemDeleted)
+        {
+            if (type == ActivityItemType.Task)
+            {
+                await db.Activities
+                    .Where(x => x.Org == org && x.Project == project && x.Task == task)
+                    .ExecuteUpdateAsync(
+                        x =>
+                            x.SetProperty(x => x.TaskDeleted, _ => true)
+                                .SetProperty(x => x.ItemDeleted, _ => true)
+                    );
+            }
+            else
+            {
+                await db.Activities
+                    .Where(x => x.Org == org && x.Project == project && x.Item == item)
+                    .ExecuteUpdateAsync(x => x.SetProperty(x => x.ItemDeleted, _ => true));
+            }
+        }
+        // TODO send fcm notification
+        // ctx.Get<FCM>
+    }
+
+    private static readonly JsonSerializerSettings SerializerSettings =
+        new()
+        {
+            Formatting = Formatting.None,
+            MissingMemberHandling = MissingMemberHandling.Error,
+            NullValueHandling = NullValueHandling.Ignore,
+            Converters = new List<JsonConverter>()
+            {
+                new StringEnumConverter(),
+                new StrTrimConverter()
+            }
+        };
 }

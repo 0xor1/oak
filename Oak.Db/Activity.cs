@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Oak.Api;
 
 namespace Oak.Db;
 
@@ -18,23 +19,4 @@ public class Activity
     public string? TaskName { get; set; }
     public string? ItemName { get; set; }
     public string? ExtraInfo { get; set; }
-}
-
-public enum ActivityItemType
-{
-    Org,
-    Project,
-    Member,
-    Task,
-    Time,
-    Cost,
-    File,
-    Note
-}
-
-public enum ActivityAction
-{
-    Create,
-    Update,
-    Delete
 }
