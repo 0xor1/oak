@@ -9,6 +9,7 @@ public interface IProjectApi
     public Task<SetRes<Project>> Get(Get arg);
     public Task<Project> Update(Update arg);
     public System.Threading.Tasks.Task Delete(Exact arg);
+    public Task<SetRes<Activity>> GetActivities(GetActivities arg);
 }
 
 public class ProjectApi : IProjectApi
@@ -29,6 +30,9 @@ public class ProjectApi : IProjectApi
     public Task<Project> Update(Update arg) => _client.Do(ProjectRpcs.Update, arg);
 
     public System.Threading.Tasks.Task Delete(Exact arg) => _client.Do(ProjectRpcs.Delete, arg);
+
+    public Task<SetRes<Activity>> GetActivities(GetActivities arg) =>
+        _client.Do(ProjectRpcs.GetActivities, arg);
 }
 
 public static class ProjectRpcs
@@ -38,6 +42,8 @@ public static class ProjectRpcs
     public static readonly Rpc<Get, SetRes<Project>> Get = new("/project/get");
     public static readonly Rpc<Update, Project> Update = new("/project/update");
     public static readonly Rpc<Exact, Nothing> Delete = new("/project/delete");
+    public static readonly Rpc<GetActivities, SetRes<Activity>> GetActivities =
+        new("/project/get_activities");
 }
 
 public record Project(
@@ -106,3 +112,30 @@ public enum ProjectOrderBy
     StartOn,
     EndOn
 }
+
+public record Activity(
+    string Org,
+    string Project,
+    string? Task,
+    DateTime OccurredOn,
+    string User,
+    string Item,
+    ActivityItemType ItemType,
+    bool TaskDeleted,
+    bool ItemDeleted,
+    ActivityAction Action,
+    string? TaskName,
+    string? ItemName,
+    string? ExtraInfo
+);
+
+public record GetActivities(
+    string Org,
+    string Project,
+    bool ExcludeDeletedItem = true,
+    string? Task = null,
+    string? Item = null,
+    string? User = null,
+    MinMax<DateTime>? OccuredOn = null,
+    bool Asc = false
+);

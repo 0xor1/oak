@@ -19,4 +19,21 @@ public class Activity
     public string? TaskName { get; set; }
     public string? ItemName { get; set; }
     public string? ExtraInfo { get; set; }
+
+    public Api.Project.Activity ToApi() =>
+        new Api.Project.Activity(
+            Org,
+            Project,
+            Task,
+            OccurredOn,
+            User,
+            Item,
+            ItemType,
+            TaskDeleted,
+            ItemDeleted,
+            Action,
+            TaskName,
+            ItemName,
+            ExtraInfo
+        );
 }

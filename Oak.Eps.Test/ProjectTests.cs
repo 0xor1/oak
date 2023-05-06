@@ -319,4 +319,47 @@ public class ProjectTests : TestBase
             Assert.Equal("Project not found", ex.Rpc.Message);
         }
     }
+
+    [Fact]
+    public async void GetActivities_Success()
+    {
+        var (ali, bob, cat, dan, anon, org) = await Setup();
+        var a = await ali.Project.Create(
+            new(
+                org.Id,
+                true,
+                "a",
+                "£",
+                "GBP",
+                8,
+                5,
+                DateTimeExt.UtcNowMilli(),
+                DateTimeExt.UtcNowMilli().Add(TimeSpan.FromDays(5)),
+                10
+            )
+        );
+        var aliSes = await ali.Auth.GetSession();
+        a = await ali.Project.Update(new(a.Org, a.Id, Name: "yolo"));
+        var res = await ali.Project.GetActivities(new(a.Org, a.Id));
+        Assert.Equal(2, res.Set.Count);
+        Assert.Equal("yolo", res.Set[0].ItemName);
+        Assert.Equal("a", res.Set[1].ItemName);
+        res = await ali.Project.GetActivities(
+            new(
+                a.Org,
+                a.Id,
+                Task: a.Id,
+                Item: a.Id,
+                OccuredOn: new MinMax<DateTime>(
+                    DateTimeExt.UtcNowMilli().Add(TimeSpan.FromSeconds(-1)),
+                    DateTimeExt.UtcNowMilli().Add(TimeSpan.FromSeconds(1))
+                ),
+                User: aliSes.Id,
+                Asc: true
+            )
+        );
+        Assert.Equal(2, res.Set.Count);
+        Assert.Equal("a", res.Set[0].ItemName);
+        Assert.Equal("yolo", res.Set[1].ItemName);
+    }
 }

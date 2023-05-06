@@ -6,6 +6,7 @@ using Oak.Api.OrgMember;
 using Oak.Api.Project;
 using Oak.Api.ProjectMember;
 using Oak.Db;
+using Activity = Oak.Api.Project.Activity;
 using Create = Oak.Api.Project.Create;
 using Exact = Oak.Api.Project.Exact;
 using Get = Oak.Api.Project.Get;
@@ -389,6 +390,51 @@ internal static class ProjectEps
                             return Nothing.Inst;
                         }
                     )
+            ),
+            new RpcEndpoint<GetActivities, SetRes<Activity>>(
+                ProjectRpcs.GetActivities,
+                async (ctx, req) =>
+                {
+                    var ses = ctx.GetSession();
+                    var db = ctx.Get<OakDb>();
+                    await EpsUtil.MustHaveProjectAccess(
+                        ctx,
+                        db,
+                        ses.Id,
+                        req.Org,
+                        req.Project,
+                        ProjectMemberRole.Reader
+                    );
+                    var qry = db.Activities.Where(
+                        x => x.Org == req.Org && x.Project == req.Project
+                    );
+                    if (req.ExcludeDeletedItem)
+                    {
+                        qry = qry.Where(x => x.ItemDeleted == false);
+                    }
+                    if (req.Item != null)
+                    {
+                        qry = qry.Where(x => x.Item == req.Item);
+                    }
+                    if (req.User != null)
+                    {
+                        qry = qry.Where(x => x.User == req.User);
+                    }
+                    if (req.OccuredOn?.Min != null)
+                    {
+                        qry = qry.Where(x => x.OccurredOn >= req.OccuredOn.Min);
+                    }
+                    if (req.OccuredOn?.Max != null)
+                    {
+                        qry = qry.Where(x => x.OccurredOn <= req.OccuredOn.Max);
+                    }
+                    qry = req.Asc
+                        ? qry.OrderBy(x => x.OccurredOn)
+                        : qry.OrderByDescending(x => x.OccurredOn);
+                    qry = qry.Take(101);
+                    var set = await qry.ToListAsync();
+                    return SetRes<Activity>.FromLimit(set.Select(x => x.ToApi()).ToList(), 101);
+                }
             )
         };
 }

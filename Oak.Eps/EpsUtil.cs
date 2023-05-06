@@ -194,24 +194,23 @@ internal static class EpsUtil
         }
         taskName ??= itemName;
 
-        await db.Activities.AddAsync(
-            new()
-            {
-                Org = org,
-                Project = project,
-                Task = task,
-                OccurredOn = occuredOn,
-                User = ses.Id,
-                Item = item,
-                ItemType = type,
-                TaskDeleted = taskDeleted,
-                ItemDeleted = itemDeleted,
-                Action = action,
-                TaskName = taskName,
-                ItemName = itemName,
-                ExtraInfo = exInStr
-            }
-        );
+        var a = new Activity()
+        {
+            Org = org,
+            Project = project,
+            Task = task,
+            OccurredOn = occuredOn,
+            User = ses.Id,
+            Item = item,
+            ItemType = type,
+            TaskDeleted = taskDeleted,
+            ItemDeleted = itemDeleted,
+            Action = action,
+            TaskName = taskName,
+            ItemName = itemName,
+            ExtraInfo = exInStr
+        };
+        await db.Activities.AddAsync(a);
 
         if (itemDeleted)
         {
@@ -231,6 +230,12 @@ internal static class EpsUtil
                     .Where(x => x.Org == org && x.Project == project && x.Item == item)
                     .ExecuteUpdateAsync(x => x.SetProperty(x => x.ItemDeleted, _ => true));
             }
+        }
+
+        var sendAct = a.ToApi();
+        if (fcmExtraInfo != null)
+        {
+            sendAct = sendAct with { ExtraInfo = Json.From(fcmExtraInfo) };
         }
         // TODO send fcm notification
         // ctx.Get<FCM>
