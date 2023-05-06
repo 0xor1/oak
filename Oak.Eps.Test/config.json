@@ -17,5 +17,13 @@
     "key": "abc",
     "secret": "123",
     "noReplyAddress": "noreply@yolo.solo"
+  },
+  "store": {
+    "region": "http://localhost:9000",
+    "key": "localtest",
+    "secret": "localtest"
+  },
+  "fcm": {
+    "serviceAccountKeyFile": ""
   }
 }
