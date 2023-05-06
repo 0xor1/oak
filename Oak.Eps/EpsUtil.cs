@@ -166,7 +166,7 @@ internal static class EpsUtil
         string itemName,
         object? extraInfo,
         object? fcmExtraInfo,
-        List<string> ancestors
+        List<string>? ancestors
     )
     {
         Throw.OpIf(
@@ -176,22 +176,23 @@ internal static class EpsUtil
         string? exInStr = null;
         if (extraInfo != null)
         {
-            exInStr = JsonConvert.SerializeObject(extraInfo, SerializerSettings);
+            exInStr = Json.From(extraInfo);
             Throw.DataIf(exInStr.Length > 10000, "extraInfo string is too long");
         }
 
         var taskDeleted = type == ActivityItemType.Task && action == ActivityAction.Delete;
         var itemDeleted = action == ActivityAction.Delete;
         var occuredOn = DateTimeExt.UtcNowMilli();
-        var taskName = itemName;
+        string? taskName = null;
         if (type != ActivityItemType.Task)
         {
             taskName = (
-                await db.Tasks.SingleAsync(
+                await db.Tasks.SingleOrDefaultAsync(
                     x => x.Org == org && x.Project == project && x.Id == task
                 )
-            ).Name;
+            )?.Name;
         }
+        taskName ??= itemName;
 
         await db.Activities.AddAsync(
             new()
@@ -234,17 +235,4 @@ internal static class EpsUtil
         // TODO send fcm notification
         // ctx.Get<FCM>
     }
-
-    private static readonly JsonSerializerSettings SerializerSettings =
-        new()
-        {
-            Formatting = Formatting.None,
-            MissingMemberHandling = MissingMemberHandling.Error,
-            NullValueHandling = NullValueHandling.Ignore,
-            Converters = new List<JsonConverter>()
-            {
-                new StringEnumConverter(),
-                new StrTrimConverter()
-            }
-        };
 }

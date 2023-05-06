@@ -287,7 +287,7 @@ public class ProjectTests : TestBase
         );
         var aUp = await ali.Project.Update(new(a.Org, a.Id, Name: "aUp"));
         Assert.Equal("aUp", aUp.Name);
-        var backToA = aUp with { Name = a.Name };
+        var backToA = aUp with { Name = a.Name, Task = a.Task with { Name = a.Task.Name } };
         Assert.Equal(a, backToA);
     }
 

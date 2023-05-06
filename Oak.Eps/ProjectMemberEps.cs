@@ -1,6 +1,7 @@
 ﻿using Common.Server;
 using Common.Shared;
 using Microsoft.EntityFrameworkCore;
+using Oak.Api;
 using Oak.Api.OrgMember;
 using Oak.Api.ProjectMember;
 using Oak.Db;
@@ -53,6 +54,21 @@ internal static class ProjectMemberEps
                                 Role = req.Role
                             };
                             await db.ProjectMembers.AddAsync(mem);
+                            await EpsUtil.LogActivity(
+                                ctx,
+                                db,
+                                ses,
+                                req.Org,
+                                req.Project,
+                                req.Project,
+                                mem.Id,
+                                ActivityItemType.Member,
+                                ActivityAction.Create,
+                                mem.Name,
+                                null,
+                                null,
+                                null
+                            );
                             return mem.ToApi(new ProjectMemberStats());
                         }
                     )
@@ -214,6 +230,22 @@ internal static class ProjectMemberEps
                                 };
                             }
                             mem.Role = req.Role;
+                            await EpsUtil.LogActivity(
+                                ctx,
+                                db,
+                                ses,
+                                req.Org,
+                                req.Project,
+                                req.Project,
+                                mem.Id,
+                                ActivityItemType.Member,
+                                ActivityAction.Update,
+                                mem.Name,
+                                null,
+                                null,
+                                null
+                            );
+
                             var stats = await GetStats(
                                 db,
                                 req.Org,
@@ -238,6 +270,10 @@ internal static class ProjectMemberEps
                                 req.Project,
                                 ProjectMemberRole.Admin
                             );
+                            var mem = await db.ProjectMembers.SingleOrDefaultAsync(
+                                x => x.Org == req.Org && x.Project == req.Project && x.Id == req.Id
+                            );
+                            ctx.NotFoundIf(mem == null, model: new { Name = "Project Member" });
                             await db.ProjectMembers
                                 .Where(
                                     x =>
@@ -246,6 +282,22 @@ internal static class ProjectMemberEps
                                         && x.Id == req.Id
                                 )
                                 .ExecuteDeleteAsync();
+                            await EpsUtil.LogActivity(
+                                ctx,
+                                db,
+                                ses,
+                                req.Org,
+                                req.Project,
+                                req.Project,
+                                mem.NotNull().Id,
+                                ActivityItemType.Member,
+                                ActivityAction.Delete,
+                                mem.Name,
+                                null,
+                                null,
+                                null
+                            );
+
                             // dont do anything clever like mass unassigning their currently assigned tasks
                             return Nothing.Inst;
                         }

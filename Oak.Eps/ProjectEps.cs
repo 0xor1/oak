@@ -1,6 +1,7 @@
 ﻿using Common.Server;
 using Common.Shared;
 using Microsoft.EntityFrameworkCore;
+using Oak.Api;
 using Oak.Api.OrgMember;
 using Oak.Api.Project;
 using Oak.Api.ProjectMember;
@@ -72,6 +73,21 @@ internal static class ProjectEps
                                     Name = mem.Name,
                                     Role = ProjectMemberRole.Admin
                                 }
+                            );
+                            await EpsUtil.LogActivity(
+                                ctx,
+                                db,
+                                ses,
+                                req.Org,
+                                p.Id,
+                                p.Id,
+                                p.Id,
+                                ActivityItemType.Project,
+                                ActivityAction.Create,
+                                p.Name,
+                                null,
+                                null,
+                                null
                             );
                             return p.ToApi(t);
                         }
@@ -310,6 +326,22 @@ internal static class ProjectEps
                             p.FileLimit = req.FileLimit ?? p.FileLimit;
                             var t = await db.Tasks.SingleAsync(
                                 x => x.Org == req.Org && x.Project == req.Id && x.Id == req.Id
+                            );
+                            t.Name = p.Name;
+                            await EpsUtil.LogActivity(
+                                ctx,
+                                db,
+                                ses,
+                                p.Org,
+                                p.Id,
+                                p.Id,
+                                p.Id,
+                                ActivityItemType.Project,
+                                ActivityAction.Update,
+                                p.Name,
+                                req,
+                                null,
+                                null
                             );
                             return p.ToApi(t);
                         }
