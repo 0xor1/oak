@@ -17,5 +17,8 @@
     "key": "abc",
     "secret": "123",
     "noReplyAddress": "noreply@yolo.solo"
+  },
+  "fcm": {
+    "serviceAccountKeyFile": ""
   }
 }
