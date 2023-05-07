@@ -1,6 +1,7 @@
 ﻿using System.Text.RegularExpressions;
 using Common.Server;
 using Common.Shared;
+using FirebaseAdmin.Messaging;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
@@ -237,7 +238,14 @@ internal static class EpsUtil
         {
             sendAct = sendAct with { ExtraInfo = Json.From(fcmExtraInfo) };
         }
-        // TODO send fcm notification
-        // ctx.Get<FCM>
+        ancestors ??= new List<string>();
+        var fcm = ctx.Get<IFcmClient>();
+        await fcm.SendTopic(
+            ctx,
+            db,
+            ses,
+            new List<string>() { org, project },
+            new FcmData(sendAct, ancestors)
+        );
     }
 }

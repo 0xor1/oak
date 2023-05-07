@@ -71,6 +71,9 @@ public static partial class S
                 "Please click this link to reset your password: {{BaseHref}}/reset_pwd?email={{Email}}&code={{Code}}"
             )
         },
+        { AuthFcmTopicInvalid, new("Fcm topic invalid Min: {{Min}}, Max: {{Max}}") },
+        { AuthFcmTokenInvalid, new("Fcm token invalid") },
+        { AuthFcmNotEnabled, new("Fcm not enabled") },
         { Home, new("Home") },
         { L10n, new("Localization") },
         { Language, new("Language") },

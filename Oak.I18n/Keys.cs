@@ -30,6 +30,9 @@ public static partial class S
     public const string AuthResetPwdSubject = Common.Shared.S.AuthResetPwdSubject;
     public const string AuthResetPwdHtml = Common.Shared.S.AuthResetPwdHtml;
     public const string AuthResetPwdText = Common.Shared.S.AuthResetPwdText;
+    public const string AuthFcmTopicInvalid = Common.Shared.S.AuthFcmTopicInvalid;
+    public const string AuthFcmTokenInvalid = Common.Shared.S.AuthFcmTokenInvalid;
+    public const string AuthFcmNotEnabled = Common.Shared.S.AuthFcmNotEnabled;
     public const string Oak = "oak";
     public const string Home = "home";
     public const string L10n = "l10n";

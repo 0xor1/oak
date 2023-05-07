@@ -73,6 +73,9 @@ public static partial class S
                 "Haga clic en este enlace para restablecer su contraseña: {{BaseHref}}/reset_pwd?email={{Email}}&code={{Code}}"
             )
         },
+        { AuthFcmTopicInvalid, new("Tema de Fcm no válido Min: {{Min}}, Max: {{Max}}") },
+        { AuthFcmTokenInvalid, new("Token de Fcm no válido") },
+        { AuthFcmNotEnabled, new("Fcm no habilitado") },
         { Home, new("Hogar") },
         { L10n, new("Localización") },
         { Language, new("Idioma") },

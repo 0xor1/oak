@@ -71,6 +71,9 @@ public static partial class S
                 "Fai clic su questo link per reimpostare la tua password: {{BaseHref}}/reset_pwd?email={{Email}}&code={{Code}}"
             )
         },
+        { AuthFcmTopicInvalid, new("Argomento Fcm non valido Min: {{Min}}, Max: {{Max}}") },
+        { AuthFcmTokenInvalid, new("Token Fcm non valido") },
+        { AuthFcmNotEnabled, new("Fcm non abilitato") },
         { Home, new("Casa") },
         { L10n, new("Localizzazione") },
         { Language, new("Lingua") },

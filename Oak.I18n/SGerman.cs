@@ -71,6 +71,9 @@ public static partial class S
                 "Bitte klicken Sie auf diesen Link, um Ihr Passwort zurückzusetzen: {{BaseHref}}/reset_pwd?email={{Email}}&code={{Code}}"
             )
         },
+        { AuthFcmTopicInvalid, new("FCM-Thema ungültig Min: {{Min}}, Max: {{Max}}") },
+        { AuthFcmTokenInvalid, new("Fcm-Token ungültig") },
+        { AuthFcmNotEnabled, new("FCM nicht aktiviert") },
         { Home, new("Heim") },
         { L10n, new("Lokalisierung") },
         { Language, new("Sprache") },

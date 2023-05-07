@@ -71,6 +71,9 @@ public static partial class S
                 "Veuillez cliquer sur ce lien pour réinitialiser votre mot de passe: {{BaseHref}}/reset_pwd?email={{Email}}&code={{Code}}"
             )
         },
+        { AuthFcmTopicInvalid, new("Sujet Fcm invalide Min: {{Min}}, Max: {{Max}}") },
+        { AuthFcmTokenInvalid, new("Jeton Fcm invalide") },
+        { AuthFcmNotEnabled, new("FCM non activé") },
         { Home, new("Maison") },
         { L10n, new("Localisation") },
         { Language, new("Langue") },

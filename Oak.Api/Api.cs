@@ -55,3 +55,5 @@ public enum ActivityAction
     Update,
     Delete
 }
+
+public record FcmData(Activity Activity, IReadOnlyList<string> Ancestors);

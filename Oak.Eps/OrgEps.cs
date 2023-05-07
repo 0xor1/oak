@@ -4,6 +4,7 @@ using Common.Shared;
 using Microsoft.EntityFrameworkCore;
 using Oak.Api.Org;
 using Oak.Api.OrgMember;
+using Oak.Api.ProjectMember;
 using Oak.Db;
 using Exact = Oak.Api.Org.Exact;
 using Org = Oak.Api.Org.Org;
@@ -136,7 +137,7 @@ internal static class OrgEps
             )
         };
 
-    public static async Task AuthOnDelete(OakDb db, Session ses)
+    public static async Task AuthOnDelete(IRpcCtx ctx, OakDb db, Session ses)
     {
         // when a user wants to delete their account entirely,
         var allOwnerOrgs = await db.OrgMembers
@@ -160,6 +161,24 @@ internal static class OrgEps
         }
         // all remaining orgs user is not the sole owner so just deactivate them.
         await RawBatchDeactivate(db, ses);
+    }
+
+    public static async Task AuthValidateFcmTopic(
+        IRpcCtx ctx,
+        OakDb db,
+        Session ses,
+        IReadOnlyList<string> topic
+    )
+    {
+        ctx.BadRequestIf(topic.Count != 2);
+        await EpsUtil.MustHaveProjectAccess(
+            ctx,
+            db,
+            ses.Id,
+            topic[0],
+            topic[1],
+            ProjectMemberRole.Reader
+        );
     }
 
     private static async Task RawBatchDelete(OakDb db, List<string> orgs)
