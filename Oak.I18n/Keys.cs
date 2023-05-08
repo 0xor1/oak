@@ -70,4 +70,9 @@ public static partial class S
 
     // org
     public const string OrgTooMany = "org_too_many";
+    // task
+    public const string TaskTooManyDescN = "task_too_many_descn";
+    public const string TaskCantSetParentOrPrevSibOnRootProjectNode = "task_cant_set_parent_or_prev_sib_on_root_project_node";
+    public const string TaskRecursiveLoopDetected = "task_recursive_loop_detected";
+    public const string TaskMovePrevSibParentMismatch = "task_move_prev_sib_parent_mismatch";
 }

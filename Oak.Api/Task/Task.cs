@@ -8,9 +8,10 @@ public interface ITaskApi
     public Task<Task> GetOne(Exact arg);
     public Task<SetRes<Task>> GetAncestors(Exact arg);
     public Task<SetRes<Task>> GetChildren(GetChildren arg);
-    public Task<IReadOnlyDictionary<string, Task>> GetAllDescendants(Exact arg);
-    public Task<Task> Update(Update arg);
-    public System.Threading.Tasks.Task Delete(Exact arg);
+    public Task<InitView> GetInitView(Exact arg);
+    public Task<IReadOnlyList<Task>> GetAllDescendants(Exact arg);
+    public Task<UpdateRes> Update(Update arg);
+    public Task<Task> Delete(Exact arg);
 }
 
 public class TaskApi : ITaskApi
@@ -29,13 +30,14 @@ public class TaskApi : ITaskApi
     public Task<SetRes<Task>> GetAncestors(Exact arg) => _client.Do(TaskRpcs.GetAncestors, arg);
 
     public Task<SetRes<Task>> GetChildren(GetChildren arg) => _client.Do(TaskRpcs.GetChildren, arg);
+    public Task<InitView> GetInitView(Exact arg) => _client.Do(TaskRpcs.GetInitView, arg);
 
-    public Task<IReadOnlyDictionary<string, Task>> GetAllDescendants(Exact arg) =>
+    public Task<IReadOnlyList<Task>> GetAllDescendants(Exact arg) =>
         _client.Do(TaskRpcs.GetAllDescendants, arg);
 
-    public Task<Task> Update(Update arg) => _client.Do(TaskRpcs.Update, arg);
+    public Task<UpdateRes> Update(Update arg) => _client.Do(TaskRpcs.Update, arg);
 
-    public System.Threading.Tasks.Task Delete(Exact arg) => _client.Do(TaskRpcs.Delete, arg);
+    public Task<Task> Delete(Exact arg) => _client.Do(TaskRpcs.Delete, arg);
 }
 
 public static class TaskRpcs
@@ -44,10 +46,11 @@ public static class TaskRpcs
     public static readonly Rpc<Exact, Task> GetOne = new("/task/get_one");
     public static readonly Rpc<Exact, SetRes<Task>> GetAncestors = new("/task/get_ancestors");
     public static readonly Rpc<GetChildren, SetRes<Task>> GetChildren = new("/task/get_children");
-    public static readonly Rpc<Exact, IReadOnlyDictionary<string, Task>> GetAllDescendants =
+    public static readonly Rpc<Exact, InitView> GetInitView = new("/task/get_init_view");
+    public static readonly Rpc<Exact, IReadOnlyList<Task>> GetAllDescendants =
         new("/task/get_all_descendants");
-    public static readonly Rpc<Update, Task> Update = new("/task/update");
-    public static readonly Rpc<Exact, Nothing> Delete = new("/task/delete");
+    public static readonly Rpc<Update, UpdateRes> Update = new("/task/update");
+    public static readonly Rpc<Exact, Task> Delete = new("/task/delete");
 }
 
 public record Task(
@@ -117,6 +120,10 @@ public record Update(
     ulong? CostEst
 );
 
+public record UpdateRes(Task Task, Task OldParent, Task NewParent);
+
 public record GetChildren(string Org, string Project, string Id, string? After);
 
 public record Exact(string Org, string Project, string Id);
+
+public record InitView(Task Task, SetRes<Task> Children, SetRes<Task> Ancestors);

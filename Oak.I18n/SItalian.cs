@@ -118,6 +118,7 @@ public static partial class S
             StringValidation,
             new("Stringa non valida {{Name}}, Min {{Min}}, Max {{Max}}, Regexes {{Regexes}}")
         },
-        { OrgTooMany, new("Sei già membro di troppe org") }
+        { OrgTooMany, new("Sei già membro di troppe org") },
+        { TaskTooManyDescN, new("Troppi discendenti per ottenerli tutti, valido solo per attività con 1000 o meno discendenti") }
     };
 }

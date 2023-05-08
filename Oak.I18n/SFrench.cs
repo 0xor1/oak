@@ -123,6 +123,7 @@ public static partial class S
             StringValidation,
             new("Chaîne non valide {{Name}}, Min {{Min}}, Max {{Max}}, Regexes {{Regexes}}")
         },
-        { OrgTooMany, new("Vous êtes déjà membre d'un trop grand nombre d'organisations") }
+        { OrgTooMany, new("Vous êtes déjà membre d'un trop grand nombre d'organisations") },
+        { TaskTooManyDescN, new("Trop de descendants pour tous les obtenir, valide uniquement sur les tâches avec 1000 descendants ou moins") }
     };
 }

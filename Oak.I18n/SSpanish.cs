@@ -122,6 +122,7 @@ public static partial class S
             StringValidation,
             new("Cadena no válida {{Nombre}}, Min {{Min}}, Max {{Max}}, Regexes {{Regexes}}")
         },
-        { OrgTooMany, new("Ya eres miembro de demasiadas organizaciones") }
+        { OrgTooMany, new("Ya eres miembro de demasiadas organizaciones") },
+        { TaskTooManyDescN, new("Demasiados descendientes para obtenerlos todos, solo válido en tareas con 1000 o menos descendientes") }
     };
 }

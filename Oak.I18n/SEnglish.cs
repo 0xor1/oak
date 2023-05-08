@@ -118,6 +118,7 @@ public static partial class S
             StringValidation,
             new("Invalid string {{Name}}, Min {{Min}}, Max {{Max}}, Regexes {{Regexes}}")
         },
-        { OrgTooMany, new("You are already a member of too many Orgs") }
+        { OrgTooMany, new("You are already a member of too many Orgs") },
+        { TaskTooManyDescN, new("Too many descendants to get all of them, only valid on tasks with 1000 or fewer descendants") }
     };
 }
