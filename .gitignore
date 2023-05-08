@@ -9,5 +9,3 @@ riderModule.iml
 *.css
 /Scratch
 *.sln.DotSettings.user
-!bin/pre
-!bin/wait-for-it
