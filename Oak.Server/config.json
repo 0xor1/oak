@@ -19,6 +19,6 @@
     "noReplyAddress": "noreply@yolo.solo"
   },
   "fcm": {
-    "serviceAccountKeyFile": ""
+    "serviceAccountKeyFile": "C:\\Users\\danie\\code\\dotnet\\Oak\\Oak.Server\\fcm_service_account_key.json"
   }
 }
