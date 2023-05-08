@@ -9,3 +9,4 @@ riderModule.iml
 *.css
 /Scratch
 *.sln.DotSettings.user
+fcm_service_account_key.json
