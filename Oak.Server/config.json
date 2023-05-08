@@ -18,6 +18,11 @@
     "secret": "123",
     "noReplyAddress": "noreply@yolo.solo"
   },
+  "store": {
+    "region": "http://localhost:9000",
+    "key": "localtest",
+    "secret": "localtest"
+  },
   "fcm": {
     "serviceAccountKeyFile": "C:\\Users\\danie\\code\\dotnet\\Oak\\Oak.Server\\fcm_service_account_key.json"
   }
