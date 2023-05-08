@@ -291,7 +291,7 @@ internal static class TaskEps
                                 else
                                 {
                                     // need to update oldParent firstChild as t is it
-                                    oldParent.FirstChild = t.NextSib;
+                                    oldParent.NotNull().FirstChild = t.NextSib;
                                 }
 
                                 t.Parent = newParent.Id;
@@ -360,16 +360,52 @@ internal static class TaskEps
                                 }
                                 // at this point all the moving has been done
                                 var nameUpdated = false;
+                                if (req.Name != null && t.Name != req.Name)
+                                {
+                                    t.Name = req.Name;
+                                    simpleUpdateRequired = true;
+                                    nameUpdated = true;
+                                }
+                                if (req.Description != null && t.Description != req.Description)
+                                {
+                                    t.Description = req.Description;
+                                    simpleUpdateRequired = true;
+                                }
+
+                                var isParallelChanged = false;
+                                if (req.IsParallel != null && t.IsParallel != req.IsParallel)
+                                {
+                                    t.IsParallel = req.IsParallel.NotNull();
+                                    treeUpdateRequired = true;
+                                    isParallelChanged = true; 
+                                }
+
+                                if (req.User != null && req.User.V != t.User)
+                                {
+                                    t.User = req.User.V;
+                                    simpleUpdateRequired = true;
+                                }
+
+                                if (req.TimeEst != null && req.TimeEst != t.TimeEst)
+                                {
+                                    t.TimeEst = req.TimeEst.NotNull();
+                                    treeUpdateRequired = true;
+                                }
+
+                                if (req.CostEst != null && req.CostEst != t.CostEst)
+                                {
+                                    t.CostEst = req.CostEst.NotNull();
+                                    treeUpdateRequired = true;
+                                }
+
                             }
-                            
                             await db.SaveChangesAsync();
                             // at this point the tree structure has been updated so all tasks are pointing to the correct new positions
                             // all that remains to do is update aggregate values
-                            var ancestors = await db.SetAncestralChainAggregateValuesFromTask(
-                                req.Org,
-                                req.Project,
-                                req.Parent
-                            );
+                            if (simpleUpdateRequired || treeUpdateRequired)
+                            {
+                                var ancestors = new List<string>();
+                            }
                             await db.Entry(parent.NotNull()).ReloadAsync();
                             await EpsUtil.LogActivity(
                                 ctx,
