@@ -124,6 +124,29 @@ public static partial class S
             new("Chaîne non valide {{Name}}, Min {{Min}}, Max {{Max}}, Regexes {{Regexes}}")
         },
         { OrgTooMany, new("Vous êtes déjà membre d'un trop grand nombre d'organisations") },
-        { TaskTooManyDescN, new("Trop de descendants pour tous les obtenir, valide uniquement sur les tâches avec 1000 descendants ou moins") }
+        {
+            TaskTooManyDescN,
+            new(
+                "Trop de descendants pour tous les obtenir, valide uniquement sur les tâches avec 1000 descendants ou moins"
+            )
+        },
+        {
+            TaskCantMoveRootProjectNode,
+            new(
+                "Impossible de déplacer le nœud du projet racine"
+            )
+        },
+        {
+            TaskRecursiveLoopDetected,
+            new(
+                "L'opération de déplacement entraînerait une boucle récursive"
+            )
+        },
+        {
+            TaskMovePrevSibParentMismatch,
+            new(
+                "Les précédents identifiants des frères et sœurs et des parents ne correspondent pas"
+            )
+        }
     };
 }

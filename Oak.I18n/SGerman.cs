@@ -121,6 +121,29 @@ public static partial class S
             new("Ungültiger String {{Name}}, Min. {{Min}}, Max. {{Max}}, Regexes {{Regexes}}")
         },
         { OrgTooMany, new("Sie sind bereits Mitglied in zu vielen Orgs") },
-        { TaskTooManyDescN, new("Zu viele Nachkommen, um alle zu erhalten, nur gültig für Aufgaben mit 1000 oder weniger Nachkommen") }
+        {
+            TaskTooManyDescN,
+            new(
+                "Zu viele Nachkommen, um alle zu erhalten, nur gültig für Aufgaben mit 1000 oder weniger Nachkommen"
+            )
+        },
+        {
+            TaskCantMoveRootProjectNode,
+            new(
+                "Stammprojektknoten kann nicht verschoben werden"
+            )
+        },
+        {
+            TaskRecursiveLoopDetected,
+            new(
+                "Die Move-Operation würde zu einer rekursiven Schleife führen"
+            )
+        },
+        {
+            TaskMovePrevSibParentMismatch,
+            new(
+                "Frühere Geschwister- und Eltern-IDs stimmen nicht überein"
+            )
+        }
     };
 }

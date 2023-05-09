@@ -123,6 +123,29 @@ public static partial class S
             new("Cadena no válida {{Nombre}}, Min {{Min}}, Max {{Max}}, Regexes {{Regexes}}")
         },
         { OrgTooMany, new("Ya eres miembro de demasiadas organizaciones") },
-        { TaskTooManyDescN, new("Demasiados descendientes para obtenerlos todos, solo válido en tareas con 1000 o menos descendientes") }
+        {
+            TaskTooManyDescN,
+            new(
+                "Demasiados descendientes para obtenerlos todos, solo válido en tareas con 1000 o menos descendientes"
+            )
+        },
+        {
+            TaskCantMoveRootProjectNode,
+            new(
+                "No se puede mover el nodo del proyecto raíz"
+            )
+        },
+        {
+            TaskRecursiveLoopDetected,
+            new(
+                "La operación de movimiento daría como resultado un bucle recursivo"
+            )
+        },
+        {
+            TaskMovePrevSibParentMismatch,
+            new(
+                "Las identificaciones de padres y hermanos anteriores no coinciden"
+            )
+        }
     };
 }

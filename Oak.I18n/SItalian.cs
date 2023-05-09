@@ -119,6 +119,29 @@ public static partial class S
             new("Stringa non valida {{Name}}, Min {{Min}}, Max {{Max}}, Regexes {{Regexes}}")
         },
         { OrgTooMany, new("Sei già membro di troppe org") },
-        { TaskTooManyDescN, new("Troppi discendenti per ottenerli tutti, valido solo per attività con 1000 o meno discendenti") }
+        {
+            TaskTooManyDescN,
+            new(
+                "Troppi discendenti per ottenerli tutti, valido solo per attività con 1000 o meno discendenti"
+            )
+        },
+        {
+            TaskCantMoveRootProjectNode,
+            new(
+                "Impossibile spostare il nodo principale del progetto"
+            )
+        },
+        {
+            TaskRecursiveLoopDetected,
+            new(
+                "L'operazione di spostamento risulterebbe in un ciclo ricorsivo"
+            )
+        },
+        {
+            TaskMovePrevSibParentMismatch,
+            new(
+                "Gli ID dei fratelli e dei genitori precedenti non corrispondono"
+            )
+        }
     };
 }

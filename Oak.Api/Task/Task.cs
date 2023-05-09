@@ -30,6 +30,7 @@ public class TaskApi : ITaskApi
     public Task<SetRes<Task>> GetAncestors(Exact arg) => _client.Do(TaskRpcs.GetAncestors, arg);
 
     public Task<SetRes<Task>> GetChildren(GetChildren arg) => _client.Do(TaskRpcs.GetChildren, arg);
+
     public Task<InitView> GetInitView(Exact arg) => _client.Do(TaskRpcs.GetInitView, arg);
 
     public Task<IReadOnlyList<Task>> GetAllDescendants(Exact arg) =>
@@ -120,7 +121,7 @@ public record Update(
     ulong? CostEst
 );
 
-public record UpdateRes(Task Task, Task OldParent, Task NewParent);
+public record UpdateRes(Task Task, Task? OldParent, Task? NewParent);
 
 public record GetChildren(string Org, string Project, string Id, string? After);
 

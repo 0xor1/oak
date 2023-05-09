@@ -183,7 +183,10 @@ internal static class TaskEps
                             {
                                 // updating root node project task
                                 requiredPerm = ProjectMemberRole.Admin;
-                                ctx.BadRequestIf(req.Parent != null || req.PrevSib != null, S.TaskCantSetParentOrPrevSibOnRootProjectNode);
+                                ctx.BadRequestIf(
+                                    req.Parent != null || req.PrevSib != null,
+                                    S.TaskCantMoveRootProjectNode
+                                );
                             }
                             await EpsUtil.MustHaveProjectAccess(
                                 ctx,
@@ -201,7 +204,7 @@ internal static class TaskEps
                                 await EpsUtil.MustHaveProjectAccess(
                                     ctx,
                                     db,
-                                    req.User.V, 
+                                    req.User.V,
                                     req.Org,
                                     req.Project,
                                     ProjectMemberRole.Writer
@@ -210,21 +213,20 @@ internal static class TaskEps
 
                             var treeUpdateRequired = false;
                             var simpleUpdateRequired = false;
-                            if (req.Parent != null ||
-                                req.PrevSib != null ||
-                                req.CostEst != null ||
-                                req.TimeEst != null ||
-                                req.IsParallel != null)
+                            if (
+                                req.Parent != null
+                                || req.PrevSib != null
+                                || req.CostEst != null
+                                || req.TimeEst != null
+                                || req.IsParallel != null
+                            )
                             {
                                 // if moving the task or setting an aggregate value effecting property
                                 // we must lock
                                 await db.LockProject(req.Org, req.Project);
                             }
                             var t = await db.Tasks.SingleOrDefaultAsync(
-                                x =>
-                                    x.Org == req.Org
-                                    && x.Project == req.Project
-                                    && x.Id == req.Id
+                                x => x.Org == req.Org && x.Project == req.Project && x.Id == req.Id
                             );
                             ctx.NotFoundIf(t == null, model: new { Name = "Task" });
                             t.NotNull();
@@ -236,24 +238,55 @@ internal static class TaskEps
                             {
                                 // if move parent is specified but its to the existing parent,
                                 // just null it out as it effects nothing
-                                req = req with { Parent = null };
+                                req = req with
+                                {
+                                    Parent = null
+                                };
                             }
                             if (req.Parent != null)
                             {
-                                string? newNextSib = null;
                                 // changing parent
-                                newParent = await db.Tasks.SingleOrDefaultAsync(x => x.Org == req.Org && x.Project == req.Project && x.Id == req.Parent);
-                                ctx.NotFoundIf(newParent == null, model: new { Name = "Parent Task" });
+                                string? newNextSib = null;
+                                newParent = await db.Tasks.SingleOrDefaultAsync(
+                                    x =>
+                                        x.Org == req.Org
+                                        && x.Project == req.Project
+                                        && x.Id == req.Parent
+                                );
+                                ctx.NotFoundIf(
+                                    newParent == null,
+                                    model: new { Name = "Parent Task" }
+                                );
                                 newParent.NotNull();
-                                var tFromAncestors = await db.Tasks.FromSql(RecursiveLoopDetectionQry(req.Org, req.Project, req.Id)).SingleOrDefaultAsync();
-                                ctx.BadRequestIf(tFromAncestors != null || t.Id == req.Parent, S.TaskRecursiveLoopDetected);
+                                var tFromAncestors = await db.Tasks
+                                    .FromSql(
+                                        RecursiveLoopDetectionQry(req.Org, req.Project, req.Id)
+                                    )
+                                    .SingleOrDefaultAsync();
+                                ctx.BadRequestIf(
+                                    tFromAncestors != null || t.Id == req.Parent,
+                                    S.TaskRecursiveLoopDetected
+                                );
                                 if (req.PrevSib != null && req.PrevSib.V != null)
                                 {
-                                    ctx.BadRequestIf(req.PrevSib.V == t.Id, S.TaskRecursiveLoopDetected);
-                                    newPrevSib = await db.Tasks.SingleOrDefaultAsync(x =>
-                                        x.Org == req.Org && x.Project == req.Project && x.Id == req.PrevSib.V);
-                                    ctx.NotFoundIf(newPrevSib == null, model: new {Name = "Previous Sibling"});
-                                    ctx.BadRequestIf(newPrevSib.NotNull().Parent != newParent.Id, S.TaskMovePrevSibParentMismatch);
+                                    ctx.BadRequestIf(
+                                        req.PrevSib.V == t.Id,
+                                        S.TaskRecursiveLoopDetected
+                                    );
+                                    newPrevSib = await db.Tasks.SingleOrDefaultAsync(
+                                        x =>
+                                            x.Org == req.Org
+                                            && x.Project == req.Project
+                                            && x.Id == req.PrevSib.V
+                                    );
+                                    ctx.NotFoundIf(
+                                        newPrevSib == null,
+                                        model: new { Name = "Previous Sibling" }
+                                    );
+                                    ctx.BadRequestIf(
+                                        newPrevSib.NotNull().Parent != newParent.Id,
+                                        S.TaskMovePrevSibParentMismatch
+                                    );
                                     newNextSib = newPrevSib.NextSib;
                                     newPrevSib.NextSib = t.Id;
                                 }
@@ -270,7 +303,12 @@ internal static class TaskEps
                                 }
                                 else
                                 {
-                                    oldPrevSib = await db.Tasks.SingleOrDefaultAsync(x => x.Org == req.Org && x.Project == req.Project && x.NextSib == t.Id);
+                                    oldPrevSib = await db.Tasks.SingleOrDefaultAsync(
+                                        x =>
+                                            x.Org == req.Org
+                                            && x.Project == req.Project
+                                            && x.NextSib == t.Id
+                                    );
                                 }
                                 // need to get old parent for ancestor value updates
                                 if (newPrevSib != null && newPrevSib.Id == t.Parent)
@@ -280,10 +318,17 @@ internal static class TaskEps
                                 }
                                 else
                                 {
-                                    oldParent = await db.Tasks.SingleOrDefaultAsync(x =>
-                                        x.Org == req.Org && x.Project == req.Project && x.Id == t.Parent);
+                                    oldParent = await db.Tasks.SingleOrDefaultAsync(
+                                        x =>
+                                            x.Org == req.Org
+                                            && x.Project == req.Project
+                                            && x.Id == t.Parent
+                                    );
                                 }
-                                ctx.NotFoundIf(oldParent == null, model: new {Name = "Old Parent Task"});
+                                ctx.NotFoundIf(
+                                    oldParent == null,
+                                    model: new { Name = "Old Parent Task" }
+                                );
                                 if (oldPrevSib != null)
                                 {
                                     oldPrevSib.NextSib = t.NextSib;
@@ -303,16 +348,35 @@ internal static class TaskEps
                             {
                                 // we now know we are doing a purely horizontal move, i.e. not changing parent node
                                 // get oldPrevSib
-                                oldPrevSib = await db.Tasks.SingleOrDefaultAsync(x =>
-                                    x.Org == req.Org && x.Project == req.Project && x.NextSib == t.Id);
-                                if (!((oldPrevSib == null && req.PrevSib.V == null) ||
-                                      (oldPrevSib != null && req.PrevSib.V != null &&
-                                       oldPrevSib.Id == req.PrevSib.V)))
+                                oldPrevSib = await db.Tasks.SingleOrDefaultAsync(
+                                    x =>
+                                        x.Org == req.Org
+                                        && x.Project == req.Project
+                                        && x.NextSib == t.Id
+                                );
+                                if (
+                                    !(
+                                        (oldPrevSib == null && req.PrevSib.V == null)
+                                        || (
+                                            oldPrevSib != null
+                                            && req.PrevSib.V != null
+                                            && oldPrevSib.Id == req.PrevSib.V
+                                        )
+                                    )
+                                )
                                 {
                                     string? newNextSib = null;
                                     // here we know that an actual change is being attempted
-                                    oldParent = await db.Tasks.SingleOrDefaultAsync(x => x.Org == req.Org && x.Project == req.Project && x.Id == t.Parent);
-                                    ctx.NotFoundIf(oldParent == null, model: new {Name = "Old Parent"});
+                                    oldParent = await db.Tasks.SingleOrDefaultAsync(
+                                        x =>
+                                            x.Org == req.Org
+                                            && x.Project == req.Project
+                                            && x.Id == t.Parent
+                                    );
+                                    ctx.NotFoundIf(
+                                        oldParent == null,
+                                        model: new { Name = "Old Parent" }
+                                    );
                                     oldParent.NotNull();
                                     if (req.PrevSib.V != null)
                                     {
@@ -328,12 +392,25 @@ internal static class TaskEps
                                             // save an update query
                                             oldParent = null;
                                         }
-                                        ctx.BadRequestIf(req.PrevSib.V == t.Id, S.TaskRecursiveLoopDetected);
-                                        newPrevSib = await db.Tasks.SingleOrDefaultAsync(x =>
-                                            x.Org == req.Org && x.Project == req.Project && x.Id == req.PrevSib.V);
-                                        ctx.NotFoundIf(newPrevSib == null, model: new {Name = "Previous Sibling"});
+                                        ctx.BadRequestIf(
+                                            req.PrevSib.V == t.Id,
+                                            S.TaskRecursiveLoopDetected
+                                        );
+                                        newPrevSib = await db.Tasks.SingleOrDefaultAsync(
+                                            x =>
+                                                x.Org == req.Org
+                                                && x.Project == req.Project
+                                                && x.Id == req.PrevSib.V
+                                        );
+                                        ctx.NotFoundIf(
+                                            newPrevSib == null,
+                                            model: new { Name = "Previous Sibling" }
+                                        );
                                         newPrevSib.NotNull();
-                                        ctx.BadRequestIf(newPrevSib.Parent != t.Parent, S.TaskMovePrevSibParentMismatch);
+                                        ctx.BadRequestIf(
+                                            newPrevSib.Parent != t.Parent,
+                                            S.TaskMovePrevSibParentMismatch
+                                        );
                                         newNextSib = newPrevSib.NextSib;
                                         newPrevSib.NextSib = t.Id;
                                     }
@@ -356,79 +433,165 @@ internal static class TaskEps
                                 {
                                     // here we know no change is being made so ensure everything that should be null is
                                     oldPrevSib = null;
-                                    req = req with {PrevSib = null};
+                                    req = req with { PrevSib = null };
                                 }
-                                // at this point all the moving has been done
-                                var nameUpdated = false;
-                                if (req.Name != null && t.Name != req.Name)
-                                {
-                                    t.Name = req.Name;
-                                    simpleUpdateRequired = true;
-                                    nameUpdated = true;
-                                }
-                                if (req.Description != null && t.Description != req.Description)
-                                {
-                                    t.Description = req.Description;
-                                    simpleUpdateRequired = true;
-                                }
+                            }
+                            // at this point all the moving has been done
+                            var nameUpdated = false;
+                            if (req.Name != null && t.Name != req.Name)
+                            {
+                                t.Name = req.Name;
+                                simpleUpdateRequired = true;
+                                nameUpdated = true;
+                            }
+                            if (req.Description != null && t.Description != req.Description)
+                            {
+                                t.Description = req.Description;
+                                simpleUpdateRequired = true;
+                            }
 
-                                var isParallelChanged = false;
-                                if (req.IsParallel != null && t.IsParallel != req.IsParallel)
-                                {
-                                    t.IsParallel = req.IsParallel.NotNull();
-                                    treeUpdateRequired = true;
-                                    isParallelChanged = true; 
-                                }
+                            var isParallelChanged = false;
+                            if (req.IsParallel != null && t.IsParallel != req.IsParallel)
+                            {
+                                t.IsParallel = req.IsParallel.NotNull();
+                                treeUpdateRequired = true;
+                                isParallelChanged = true;
+                            }
 
-                                if (req.User != null && req.User.V != t.User)
-                                {
-                                    t.User = req.User.V;
-                                    simpleUpdateRequired = true;
-                                }
+                            if (req.User != null && req.User.V != t.User)
+                            {
+                                t.User = req.User.V;
+                                simpleUpdateRequired = true;
+                            }
 
-                                if (req.TimeEst != null && req.TimeEst != t.TimeEst)
-                                {
-                                    t.TimeEst = req.TimeEst.NotNull();
-                                    treeUpdateRequired = true;
-                                }
+                            if (req.TimeEst != null && req.TimeEst != t.TimeEst)
+                            {
+                                t.TimeEst = req.TimeEst.NotNull();
+                                treeUpdateRequired = true;
+                            }
 
-                                if (req.CostEst != null && req.CostEst != t.CostEst)
-                                {
-                                    t.CostEst = req.CostEst.NotNull();
-                                    treeUpdateRequired = true;
-                                }
+                            if (req.CostEst != null && req.CostEst != t.CostEst)
+                            {
+                                t.CostEst = req.CostEst.NotNull();
+                                treeUpdateRequired = true;
+                            }
 
+                            // rename project record if it was project root node
+                            if (nameUpdated && t.Id == t.Project)
+                            {
+                                await db.Projects
+                                    .Where(x => x.Org == req.Org && x.Id == req.Project)
+                                    .ExecuteUpdateAsync(
+                                        x => x.SetProperty(x => x.Name, _ => t.Name)
+                                    );
                             }
                             await db.SaveChangesAsync();
+                            await db.Entry(t).ReloadAsync();
+                            var reloaded = new HashSet<string>();
+                            var reload = async (Db.Task? t) =>
+                            {
+                                if (t != null && !reloaded.Contains(t.Id))
+                                {
+                                    reloaded.Add(t.Id);
+                                    await db.Entry(t).ReloadAsync();
+                                }
+                            };
+
                             // at this point the tree structure has been updated so all tasks are pointing to the correct new positions
                             // all that remains to do is update aggregate values
                             if (simpleUpdateRequired || treeUpdateRequired)
                             {
                                 var ancestors = new List<string>();
+                                if (treeUpdateRequired)
+                                {
+                                    if (isParallelChanged)
+                                    {
+                                        // if parallel has been changed need to recalculate agg values on this task as it effects minimum time
+                                        ancestors =
+                                            await db.SetAncestralChainAggregateValuesFromTask(
+                                                req.Org,
+                                                req.Project,
+                                                req.Id
+                                            );
+                                        if (ancestors.Count > 0)
+                                        {
+                                            // here we know the task was updated as it's id was returned in the ancestors set
+                                            // so we need to get it again as the timeMin value has changed
+                                            await reload(t);
+                                        }
+                                    }
+
+                                    if (newParent != null)
+                                    {
+                                        // if we moved parent we must recalculate aggregate values on the new and old parents ancestral chains
+                                        if (ancestors.Count < 2)
+                                        {
+                                            // if ancestors has less than 2 entries the new parent hasn't been updated yet
+                                            ancestors.AddRange(
+                                                await db.SetAncestralChainAggregateValuesFromTask(
+                                                    req.Org,
+                                                    req.Project,
+                                                    newParent.Id
+                                                )
+                                            );
+                                            await reload(newParent);
+                                        }
+
+                                        ancestors.AddRange(
+                                            await db.SetAncestralChainAggregateValuesFromTask(
+                                                req.Org,
+                                                req.Project,
+                                                oldParent.NotNull().Id
+                                            )
+                                        );
+                                        await reload(oldParent);
+                                        ancestors = ancestors.Distinct().ToList();
+                                    }
+                                    else if (t.Parent != null)
+                                    {
+                                        // need to do the t.Parent nil check here incase it's the root project node having est value updated
+                                        // here a tree update is required but the task has not been moved parents
+                                        // so it must have had an est value changed on it, so update from its parent
+                                        if (ancestors.Count < 2)
+                                        {
+                                            // if ancestors has less than 2 entries the parent hasn't been updated yet by the call in the isParallelChanged section above.
+                                            ancestors.AddRange(
+                                                await db.SetAncestralChainAggregateValuesFromTask(
+                                                    req.Org,
+                                                    req.Project,
+                                                    t.Parent
+                                                )
+                                            );
+                                        }
+                                    }
+                                }
+
+                                if (req.Name != null)
+                                {
+                                    req = req with { Name = req.Name.Ellipsis(50) };
+                                }
+
+                                if (req.Description != null)
+                                {
+                                    req = req with { Description = req.Description.Ellipsis(50) };
+                                }
+                                await EpsUtil.LogActivity(
+                                    ctx,
+                                    db,
+                                    ses,
+                                    req.Org,
+                                    req.Project,
+                                    t.Id,
+                                    t.Id,
+                                    ActivityItemType.Task,
+                                    ActivityAction.Update,
+                                    t.Name,
+                                    req,
+                                    null,
+                                    ancestors
+                                );
                             }
-                            await db.Entry(parent.NotNull()).ReloadAsync();
-                            await EpsUtil.LogActivity(
-                                ctx,
-                                db,
-                                ses,
-                                req.Org,
-                                req.Project,
-                                t.Id,
-                                t.Id,
-                                ActivityItemType.Task,
-                                ActivityAction.Create,
-                                t.Name,
-                                req,
-                                null,
-                                ancestors
-                            );
-                            var p = await db.Tasks.SingleAsync(
-                                x =>
-                                    x.Org == req.Org
-                                    && x.Project == req.Project
-                                    && x.Id == req.Parent
-                            );
-                            return new UpdateRes(t.ToApi(), t.ToApi(), t.ToApi());
+                            return new UpdateRes(t.ToApi(), oldParent?.ToApi(), newParent?.ToApi());
                         }
                     )
             ),
@@ -527,9 +690,19 @@ internal static class TaskEps
                         x => x.Org == req.Org && x.Project == req.Project && x.Id == req.Id
                     );
                     ctx.NotFoundIf(t == null, model: new { Name = "Task" });
-                    var children = await db.Tasks.FromSql(ChildrenQry(req.Org, req.Project, req.Id, 101)).Select(x => x.ToApi()).ToListAsync();
-                    var ancestors = await db.Tasks.FromSql(AncestorsQry(req.Org, req.Project, req.Id, 101)).Select(x => x.ToApi()).ToListAsync();
-                    return new InitView(t.NotNull().ToApi(), SetRes<Task>.FromLimit(children, 101), SetRes<Task>.FromLimit(ancestors, 101));
+                    var children = await db.Tasks
+                        .FromSql(ChildrenQry(req.Org, req.Project, req.Id, 101))
+                        .Select(x => x.ToApi())
+                        .ToListAsync();
+                    var ancestors = await db.Tasks
+                        .FromSql(AncestorsQry(req.Org, req.Project, req.Id, 101))
+                        .Select(x => x.ToApi())
+                        .ToListAsync();
+                    return new InitView(
+                        t.NotNull().ToApi(),
+                        SetRes<Task>.FromLimit(children, 101),
+                        SetRes<Task>.FromLimit(ancestors, 101)
+                    );
                 }
             ),
             new RpcEndpoint<Exact, IReadOnlyList<Task>>(
@@ -555,7 +728,10 @@ internal static class TaskEps
                     {
                         return new List<Task>();
                     }
-                    return await db.Tasks.FromSql(DescendantsQry(req.Org, req.Project, req.Id)).Select(x => x.ToApi()).ToListAsync();
+                    return await db.Tasks
+                        .FromSql(DescendantsQry(req.Org, req.Project, req.Id))
+                        .Select(x => x.ToApi())
+                        .ToListAsync();
                 }
             ),
         };
@@ -652,11 +828,7 @@ ORDER BY s.N ASC
 LIMIT {limit}
 """;
 
-    private static FormattableString DescendantsQry(
-        string org,
-        string project,
-        string id
-    ) =>
+    private static FormattableString DescendantsQry(string org, string project, string id) =>
         $"""
 WITH RECURSIVE Nodes (Id) 
 AS (
