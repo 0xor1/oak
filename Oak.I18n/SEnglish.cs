@@ -125,23 +125,8 @@ public static partial class S
                 "Too many descendants to get all of them, only valid on tasks with 1000 or fewer descendants"
             )
         },
-        {
-            TaskCantMoveRootProjectNode,
-            new(
-                "Can't move root project node"
-            )
-        },
-        {
-            TaskRecursiveLoopDetected,
-            new(
-                "Move operation would result in recursive loop"
-            )
-        },
-        {
-            TaskMovePrevSibParentMismatch,
-            new(
-                "Previous sibling and parent ids are mismatched"
-            )
-        }
+        { TaskCantMoveRootProjectNode, new("Can't move root project node") },
+        { TaskRecursiveLoopDetected, new("Move operation would result in recursive loop") },
+        { TaskMovePrevSibParentMismatch, new("Previous sibling and parent ids are mismatched") }
     };
 }

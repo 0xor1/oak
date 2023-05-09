@@ -127,23 +127,14 @@ public static partial class S
                 "Zu viele Nachkommen, um alle zu erhalten, nur gültig für Aufgaben mit 1000 oder weniger Nachkommen"
             )
         },
-        {
-            TaskCantMoveRootProjectNode,
-            new(
-                "Stammprojektknoten kann nicht verschoben werden"
-            )
-        },
+        { TaskCantMoveRootProjectNode, new("Stammprojektknoten kann nicht verschoben werden") },
         {
             TaskRecursiveLoopDetected,
-            new(
-                "Die Move-Operation würde zu einer rekursiven Schleife führen"
-            )
+            new("Die Move-Operation würde zu einer rekursiven Schleife führen")
         },
         {
             TaskMovePrevSibParentMismatch,
-            new(
-                "Frühere Geschwister- und Eltern-IDs stimmen nicht überein"
-            )
+            new("Frühere Geschwister- und Eltern-IDs stimmen nicht überein")
         }
     };
 }

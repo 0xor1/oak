@@ -130,17 +130,10 @@ public static partial class S
                 "Trop de descendants pour tous les obtenir, valide uniquement sur les tâches avec 1000 descendants ou moins"
             )
         },
-        {
-            TaskCantMoveRootProjectNode,
-            new(
-                "Impossible de déplacer le nœud du projet racine"
-            )
-        },
+        { TaskCantMoveRootProjectNode, new("Impossible de déplacer le nœud du projet racine") },
         {
             TaskRecursiveLoopDetected,
-            new(
-                "L'opération de déplacement entraînerait une boucle récursive"
-            )
+            new("L'opération de déplacement entraînerait une boucle récursive")
         },
         {
             TaskMovePrevSibParentMismatch,

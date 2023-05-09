@@ -127,21 +127,15 @@ public static partial class S
         },
         {
             TaskCantMoveRootProjectNode,
-            new(
-                "Impossibile spostare il nodo principale del progetto"
-            )
+            new("Impossibile spostare il nodo principale del progetto")
         },
         {
             TaskRecursiveLoopDetected,
-            new(
-                "L'operazione di spostamento risulterebbe in un ciclo ricorsivo"
-            )
+            new("L'operazione di spostamento risulterebbe in un ciclo ricorsivo")
         },
         {
             TaskMovePrevSibParentMismatch,
-            new(
-                "Gli ID dei fratelli e dei genitori precedenti non corrispondono"
-            )
+            new("Gli ID dei fratelli e dei genitori precedenti non corrispondono")
         }
     };
 }
