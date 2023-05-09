@@ -8,6 +8,8 @@ using Org = Oak.Api.Org.Org;
 using Project = Oak.Api.Project.Project;
 using ProjectMember = Oak.Api.ProjectMember.ProjectMember;
 using S = Oak.I18n.S;
+using ApiTask = Oak.Api.Task.Task;
+using Task = System.Threading.Tasks.Task;
 
 namespace Oak.Eps.Test;
 
@@ -71,8 +73,136 @@ public class TestBase : IDisposable
         return res;
     }
 
+    protected async Task<TestTree> CreateTaskTree(IApi api, string org)
+    {
+        var p = await api.Project.Create(
+            new(
+                org,
+                true,
+                "a",
+                "£",
+                "GBP",
+                8,
+                5,
+                DateTimeExt.UtcNowMilli(),
+                DateTimeExt.UtcNowMilli().Add(TimeSpan.FromDays(5)),
+                10
+            )
+        );
+
+        var tt = await TestTree.Init(api, org, p.Id);
+
+        // validate the values are correct
+        Assert.Equal(8ul, tt.P.DescN);
+        Assert.Equal(4ul, tt.P.ChildN);
+        Assert.Equal(18ul, tt.P.TimeSubMin);
+        Assert.Equal(36ul, tt.P.TimeSubEst);
+        Assert.Equal(36ul, tt.P.CostSubEst);
+        Assert.Equal(4ul, tt.A.DescN);
+        Assert.Equal(4ul, tt.A.ChildN);
+        Assert.Equal(8ul, tt.A.TimeSubMin);
+        Assert.Equal(26ul, tt.A.TimeSubEst);
+        Assert.Equal(26ul, tt.A.CostSubEst);
+        // validate the structure
+        Assert.Null(tt.P.NextSib);
+        Assert.Equal(tt.A.Id, tt.P.FirstChild);
+        Assert.Equal(tt.B.Id, tt.A.NextSib);
+        Assert.Equal(tt.C.Id, tt.B.NextSib);
+        Assert.Equal(tt.D.Id, tt.C.NextSib);
+        Assert.Null(tt.D.NextSib);
+        Assert.Equal(tt.E.Id, tt.A.FirstChild);
+        Assert.Equal(tt.F.Id, tt.E.NextSib);
+        Assert.Equal(tt.G.Id, tt.F.NextSib);
+        Assert.Equal(tt.H.Id, tt.G.NextSib);
+        Assert.Null(tt.H.NextSib);
+
+        return tt;
+    }
+
     public void Dispose()
     {
         Rig.Dispose();
+    }
+}
+
+public record TestTree
+{
+    private IApi api { get; init; }
+    private string org { get; init; }
+    private string project { get; init; }
+    public ApiTask P { get; private set; }
+    public ApiTask A { get; private set; }
+    public ApiTask B { get; private set; }
+    public ApiTask C { get; private set; }
+    public ApiTask D { get; private set; }
+    public ApiTask E { get; private set; }
+    public ApiTask F { get; private set; }
+    public ApiTask G { get; private set; }
+    public ApiTask H { get; private set; }
+
+    private TestTree() { }
+
+    public static async Task<TestTree> Init(IApi api, string org, string project)
+    {
+        // make 4 tasks a-d that are all children of the root node, in order
+        var a = (
+            await api.Task.Create(
+                new(org, project, project, null, "a", TimeEst: 1, CostEst: 1, IsParallel: true)
+            )
+        ).New;
+        var b = (
+            await api.Task.Create(new(org, project, project, a.Id, "b", TimeEst: 2, CostEst: 2))
+        ).New;
+        var c = (
+            await api.Task.Create(new(org, project, project, b.Id, "c", TimeEst: 3, CostEst: 3))
+        ).New;
+        var d = (
+            await api.Task.Create(new(org, project, project, c.Id, "d", TimeEst: 4, CostEst: 4))
+        ).New;
+
+        // make 4 tasks e-h that are all children of a, created in reverse order
+        var h = (
+            await api.Task.Create(new(org, project, a.Id, null, "h", TimeEst: 8, CostEst: 8))
+        ).New;
+        var g = (
+            await api.Task.Create(new(org, project, a.Id, null, "g", TimeEst: 7, CostEst: 7))
+        ).New;
+        var f = (
+            await api.Task.Create(new(org, project, a.Id, null, "f", TimeEst: 6, CostEst: 6))
+        ).New;
+        var e = (
+            await api.Task.Create(new(org, project, a.Id, null, "e", TimeEst: 5, CostEst: 5))
+        ).New;
+        var p = await api.Task.GetOne(new(org, project, project));
+
+        var all = (await api.Task.GetAllDescendants(new(org, project, project)))
+            .OrderBy(x => x.Name)
+            .ToList();
+
+        var tt = new TestTree()
+        {
+            api = api,
+            org = org,
+            project = project
+        };
+        await tt.Refresh();
+        return tt;
+    }
+
+    public async Task Refresh()
+    {
+        var p = await api.Task.GetOne(new(org, project, project));
+        var all = (await api.Task.GetAllDescendants(new(org, project, project)))
+            .OrderBy(x => x.Name)
+            .ToList();
+        P = p;
+        A = all[0];
+        B = all[1];
+        C = all[2];
+        D = all[3];
+        E = all[4];
+        F = all[5];
+        G = all[6];
+        H = all[7];
     }
 }

@@ -260,7 +260,12 @@ internal static class TaskEps
                                 newParent.NotNull();
                                 var tFromAncestors = await db.Tasks
                                     .FromSql(
-                                        RecursiveLoopDetectionQry(req.Org, req.Project, req.Id)
+                                        RecursiveLoopDetectionQry(
+                                            req.Org,
+                                            req.Project,
+                                            newParent.Id,
+                                            t.Id
+                                        )
                                     )
                                     .SingleOrDefaultAsync();
                                 ctx.BadRequestIf(
@@ -743,7 +748,7 @@ internal static class TaskEps
         int limit
     ) =>
         $"""
-WITH RECURSIVE Ancestors (N, Id) 
+WITH RECURSIVE Ancestors (N, tId) 
 AS (
     SELECT 0,
         Parent 
@@ -757,11 +762,11 @@ AS (
     FROM Tasks t, Ancestors a 
     WHERE t.Org={org} 
     AND t.Project={project} 
-    AND t.Id = a.Id
-) CYCLE Id RESTRICT
+    AND t.Id = a.tId
+) CYCLE tId RESTRICT
 SELECT * 
 FROM Tasks t 
-JOIN Ancestors a ON t.Id = a.Id 
+JOIN Ancestors a ON t.Id = a.tId 
 WHERE t.Org={org} 
 AND t.Project={project} 
 ORDER BY a.N ASC 
@@ -775,7 +780,7 @@ LIMIT {limit}
         int limit
     ) =>
         $"""
-WITH RECURSIVE Sibs (N, Id) 
+WITH RECURSIVE Sibs (N, tId) 
 AS (
     SELECT 0 AS N,
         FirstChild AS Id 
@@ -789,10 +794,10 @@ AS (
     FROM Tasks t, Sibs s 
     WHERE t.Org={org} 
     AND t.Project={project} 
-    AND t.Id = s.Id) CYCLE Id RESTRICT
+    AND t.Id = s.tId) CYCLE tId RESTRICT
 SELECT * 
 FROM Tasks t 
-JOIN Sibs s ON t.Id = s.Id 
+JOIN Sibs s ON t.Id = s.tId 
 WHERE t.Org={org} AND t.Project={project} 
 ORDER BY s.N ASC
 LIMIT {limit}
@@ -805,10 +810,10 @@ LIMIT {limit}
         int limit
     ) =>
         $"""
-WITH RECURSIVE Sibs (N, Id) 
+WITH RECURSIVE Sibs (N, tId) 
 AS (
     SELECT 0 AS N,
-        NextSib AS Id 
+        NextSib AS tId 
     FROM Tasks 
     WHERE Org={org} 
     AND Project={project} 
@@ -819,10 +824,11 @@ AS (
     FROM Tasks t, Sibs s 
     WHERE t.Org={org} 
     AND t.Project={project} 
-    AND t.Id = s.Id) CYCLE Id RESTRICT
+    AND t.Id = s.tId
+) CYCLE tId RESTRICT
 SELECT * 
 FROM Tasks t 
-JOIN Sibs s ON t.Id = s.Id 
+JOIN Sibs s ON t.Id = s.tId 
 WHERE t.Org={org} AND t.Project={project} 
 ORDER BY s.N ASC
 LIMIT {limit}
@@ -830,7 +836,7 @@ LIMIT {limit}
 
     private static FormattableString DescendantsQry(string org, string project, string id) =>
         $"""
-WITH RECURSIVE Nodes (Id) 
+WITH RECURSIVE Nodes (tId) 
 AS (
     SELECT Id 
     FROM Tasks 
@@ -840,13 +846,13 @@ AS (
     UNION 
     SELECT t.Id 
     FROM Tasks t 
-    JOIN Nodes n ON t.Parent = n.Id 
+    JOIN Nodes n ON t.Parent = n.tId 
     WHERE t.Org={org}
     AND t.Project={project}
-) CYCLE id RESTRICT 
+) CYCLE tId RESTRICT 
 SELECT * 
 FROM Tasks t 
-JOIN Nodes n ON t.Id = n.Id 
+JOIN Nodes n ON t.Id = n.tId 
 WHERE t.Org={org} 
 AND t.Project={project}
 """;
@@ -854,27 +860,28 @@ AND t.Project={project}
     private static FormattableString RecursiveLoopDetectionQry(
         string org,
         string project,
+        string newParentId,
         string id
     ) =>
         $"""
-WITH RECURSIVE Ancestors (N, Id) 
+WITH RECURSIVE Ancestors (N, tId) 
 AS (
     SELECT 0,
         Parent 
     FROM Tasks 
     WHERE Org={org} 
     AND Project={project} 
-    AND Id={id} 
+    AND Id={newParentId} 
     UNION 
     SELECT a.N + 1, 
         t.Parent 
     FROM Tasks t, Ancestors a 
     WHERE t.Org={org} 
     AND t.Project={project} 
-    AND t.Id = a.Id
-) CYCLE Id RESTRICT
+    AND t.Id = a.tId
+) CYCLE tId RESTRICT
 SELECT * FROM Tasks t 
-JOIN Ancestors a ON t.Id = a.Id 
+JOIN Ancestors a ON t.Id = a.tId 
 WHERE t.Org={org} 
 AND t.Project={project}
 AND t.Id={id}

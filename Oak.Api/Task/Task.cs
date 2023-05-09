@@ -111,14 +111,14 @@ public record Update(
     string Org,
     string Project,
     string Id,
-    string? Parent,
-    NSet<string>? PrevSib,
-    string? Name,
-    string? Description,
-    bool? IsParallel,
-    NSet<string>? User,
-    ulong? TimeEst,
-    ulong? CostEst
+    string? Parent = null,
+    NSet<string>? PrevSib = null,
+    string? Name = null,
+    string? Description = null,
+    bool? IsParallel = null,
+    NSet<string>? User = null,
+    ulong? TimeEst = null,
+    ulong? CostEst = null
 );
 
 public record UpdateRes(Task Task, Task? OldParent, Task? NewParent);
