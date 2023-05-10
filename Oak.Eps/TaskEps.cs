@@ -621,7 +621,7 @@ internal static class TaskEps
                     return t.NotNull().ToApi();
                 }
             ),
-            new RpcEndpoint<Exact, SetRes<Task>>(
+            new RpcEndpoint<Exact, IReadOnlyList<Task>>(
                 TaskRpcs.GetAncestors,
                 async (ctx, req) =>
                 {
@@ -639,13 +639,13 @@ internal static class TaskEps
                         x => x.Org == req.Org && x.Project == req.Project && x.Id == req.Id
                     );
                     ctx.NotFoundIf(t == null, model: new { Name = "Task" });
-                    var res = await db.Tasks
-                        .FromSql(AncestorsQry(req.Org, req.Project, req.Id, 101))
+                    return await db.Tasks
+                        .FromSql(AncestorsQry(req.Org, req.Project, req.Id, 100))
+                        .Select(x => x.ToApi())
                         .ToListAsync();
-                    return SetRes<Task>.FromLimit(res.Select(x => x.ToApi()).ToList(), 101);
                 }
             ),
-            new RpcEndpoint<GetChildren, SetRes<Task>>(
+            new RpcEndpoint<GetChildren, IReadOnlyList<Task>>(
                 TaskRpcs.GetChildren,
                 async (ctx, req) =>
                 {
@@ -666,15 +666,14 @@ internal static class TaskEps
                     FormattableString? qry = null;
                     if (req.After == null)
                     {
-                        qry = ChildrenQry(req.Org, req.Project, req.Id, 101);
+                        qry = ChildrenQry(req.Org, req.Project, req.Id, 10);
                     }
                     else
                     {
-                        qry = SiblingsQry(req.Org, req.Project, req.After.NotNull(), 101);
+                        qry = SiblingsQry(req.Org, req.Project, req.After.NotNull(), 10);
                     }
 
-                    var res = await db.Tasks.FromSql(qry).ToListAsync();
-                    return SetRes<Task>.FromLimit(res.Select(x => x.ToApi()).ToList(), 101);
+                    return await db.Tasks.FromSql(qry).Select(x => x.ToApi()).ToListAsync();
                 }
             ),
             new RpcEndpoint<Exact, InitView>(
@@ -695,18 +694,16 @@ internal static class TaskEps
                         x => x.Org == req.Org && x.Project == req.Project && x.Id == req.Id
                     );
                     ctx.NotFoundIf(t == null, model: new { Name = "Task" });
-                    var children = await db.Tasks
-                        .FromSql(ChildrenQry(req.Org, req.Project, req.Id, 101))
-                        .Select(x => x.ToApi())
-                        .ToListAsync();
-                    var ancestors = await db.Tasks
-                        .FromSql(AncestorsQry(req.Org, req.Project, req.Id, 101))
-                        .Select(x => x.ToApi())
-                        .ToListAsync();
                     return new InitView(
                         t.NotNull().ToApi(),
-                        SetRes<Task>.FromLimit(children, 101),
-                        SetRes<Task>.FromLimit(ancestors, 101)
+                        await db.Tasks
+                            .FromSql(ChildrenQry(req.Org, req.Project, req.Id, 100))
+                            .Select(x => x.ToApi())
+                            .ToListAsync(),
+                        await db.Tasks
+                            .FromSql(AncestorsQry(req.Org, req.Project, req.Id, 100))
+                            .Select(x => x.ToApi())
+                            .ToListAsync()
                     );
                 }
             ),

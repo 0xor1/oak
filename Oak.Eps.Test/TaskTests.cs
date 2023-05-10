@@ -518,4 +518,57 @@ public class TaskTests : TestBase
         Assert.Equal(tt.H.Id, tt.G.NextSib);
         Assert.Null(tt.H.NextSib);
     }
+
+    [Fact]
+    public async void GetAncestors_Success()
+    {
+        var (ali, bob, cat, dan, anon, org) = await Setup();
+        var tt = await CreateTaskTree(ali, org.Id);
+        var ancestors = await ali.Task.GetAncestors(new(org.Id, tt.P.Id, tt.F.Id));
+        Assert.Equal(2, ancestors.Count);
+        Assert.Equal(tt.A, ancestors[0]);
+        Assert.Equal(tt.P, ancestors[1]);
+    }
+
+    [Fact]
+    public async void GetChildren_Success()
+    {
+        var (ali, bob, cat, dan, anon, org) = await Setup();
+        var tt = await CreateTaskTree(ali, org.Id);
+        var children = await ali.Task.GetChildren(new(org.Id, tt.P.Id, tt.A.Id, null));
+        Assert.Equal(4, children.Count);
+        Assert.Equal(tt.E, children[0]);
+        Assert.Equal(tt.F, children[1]);
+        Assert.Equal(tt.G, children[2]);
+        Assert.Equal(tt.H, children[3]);
+        children = await ali.Task.GetChildren(new(org.Id, tt.P.Id, tt.A.Id, tt.F.Id));
+        Assert.Equal(2, children.Count);
+        Assert.Equal(tt.G, children[0]);
+        Assert.Equal(tt.H, children[1]);
+    }
+
+    [Fact]
+    public async void GetDescendants_Empty()
+    {
+        var (ali, bob, cat, dan, anon, org) = await Setup();
+        var tt = await CreateTaskTree(ali, org.Id);
+        var descendants = await ali.Task.GetAllDescendants(new(org.Id, tt.P.Id, tt.F.Id));
+        Assert.Equal(0, descendants.Count);
+    }
+
+    [Fact]
+    public async void GetInitView_Success()
+    {
+        var (ali, bob, cat, dan, anon, org) = await Setup();
+        var tt = await CreateTaskTree(ali, org.Id);
+        var init = await ali.Task.GetInitView(new(org.Id, tt.P.Id, tt.A.Id));
+        Assert.Equal(tt.A, init.Task);
+        Assert.Equal(1, init.Ancestors.Count);
+        Assert.Equal(tt.P, init.Ancestors[0]);
+        Assert.Equal(4, init.Children.Count);
+        Assert.Equal(tt.E, init.Children[0]);
+        Assert.Equal(tt.F, init.Children[1]);
+        Assert.Equal(tt.G, init.Children[2]);
+        Assert.Equal(tt.H, init.Children[3]);
+    }
 }

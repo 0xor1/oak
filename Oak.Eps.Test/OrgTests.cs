@@ -1,3 +1,4 @@
+using Common.Server.Test;
 using Common.Shared;
 using Oak.Api.Org;
 
@@ -68,5 +69,40 @@ public class OrgTests : TestBase
         await ali.Org.Delete(new(a.Id));
         var res = await ali.Org.Get(new());
         Assert.Empty(res);
+    }
+
+    [Fact]
+    public async void ValidateFcmTopic_Success()
+    {
+        var (ali, _, _, _, _, org) = await Setup();
+        var p = await CreateProject(ali, org.Id);
+        await ali.Auth.FcmEnabled(new(true));
+        var res = await ali.Auth.FcmRegister(
+            new(new List<string>() { org.Id, p.Id }, "abc:123", null)
+        );
+        Assert.NotEmpty(res.Client);
+        RpcTestException? ex = null;
+        try
+        {
+            res = await ali.Auth.FcmRegister(
+                new(new List<string>() { org.Id }, "abc:123", res.Client)
+            );
+        }
+        catch (RpcTestException x)
+        {
+            ex = x;
+        }
+        Assert.Equal("Bad request", ex.Rpc.Message);
+        try
+        {
+            res = await ali.Auth.FcmRegister(
+                new(new List<string>() { p.Id, org.Id }, "abc:123", res.Client)
+            );
+        }
+        catch (RpcTestException x)
+        {
+            ex = x;
+        }
+        Assert.Equal("Project not found", ex.Rpc.Message);
     }
 }

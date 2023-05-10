@@ -6,8 +6,8 @@ public interface ITaskApi
 {
     public Task<CreateRes> Create(Create arg);
     public Task<Task> GetOne(Exact arg);
-    public Task<SetRes<Task>> GetAncestors(Exact arg);
-    public Task<SetRes<Task>> GetChildren(GetChildren arg);
+    public Task<IReadOnlyList<Task>> GetAncestors(Exact arg);
+    public Task<IReadOnlyList<Task>> GetChildren(GetChildren arg);
     public Task<InitView> GetInitView(Exact arg);
     public Task<IReadOnlyList<Task>> GetAllDescendants(Exact arg);
     public Task<UpdateRes> Update(Update arg);
@@ -27,9 +27,11 @@ public class TaskApi : ITaskApi
 
     public Task<Task> GetOne(Exact arg) => _client.Do(TaskRpcs.GetOne, arg);
 
-    public Task<SetRes<Task>> GetAncestors(Exact arg) => _client.Do(TaskRpcs.GetAncestors, arg);
+    public Task<IReadOnlyList<Task>> GetAncestors(Exact arg) =>
+        _client.Do(TaskRpcs.GetAncestors, arg);
 
-    public Task<SetRes<Task>> GetChildren(GetChildren arg) => _client.Do(TaskRpcs.GetChildren, arg);
+    public Task<IReadOnlyList<Task>> GetChildren(GetChildren arg) =>
+        _client.Do(TaskRpcs.GetChildren, arg);
 
     public Task<InitView> GetInitView(Exact arg) => _client.Do(TaskRpcs.GetInitView, arg);
 
@@ -45,8 +47,10 @@ public static class TaskRpcs
 {
     public static readonly Rpc<Create, CreateRes> Create = new("/task/create");
     public static readonly Rpc<Exact, Task> GetOne = new("/task/get_one");
-    public static readonly Rpc<Exact, SetRes<Task>> GetAncestors = new("/task/get_ancestors");
-    public static readonly Rpc<GetChildren, SetRes<Task>> GetChildren = new("/task/get_children");
+    public static readonly Rpc<Exact, IReadOnlyList<Task>> GetAncestors =
+        new("/task/get_ancestors");
+    public static readonly Rpc<GetChildren, IReadOnlyList<Task>> GetChildren =
+        new("/task/get_children");
     public static readonly Rpc<Exact, InitView> GetInitView = new("/task/get_init_view");
     public static readonly Rpc<Exact, IReadOnlyList<Task>> GetAllDescendants =
         new("/task/get_all_descendants");
@@ -99,14 +103,6 @@ public record Create(
     ulong CostEst = 0
 );
 
-public record Get(
-    string Org,
-    string Project,
-    string? NameStartsWith = null,
-    string? After = null,
-    bool Asc = true
-);
-
 public record Update(
     string Org,
     string Project,
@@ -127,4 +123,4 @@ public record GetChildren(string Org, string Project, string Id, string? After);
 
 public record Exact(string Org, string Project, string Id);
 
-public record InitView(Task Task, SetRes<Task> Children, SetRes<Task> Ancestors);
+public record InitView(Task Task, IReadOnlyList<Task> Children, IReadOnlyList<Task> Ancestors);
