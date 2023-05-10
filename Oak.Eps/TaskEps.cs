@@ -601,6 +601,30 @@ internal static class TaskEps
                     )
             ),
             new RpcEndpoint<Exact, Task>(
+                TaskRpcs.Delete,
+                async (ctx, req) =>
+                    await ctx.DbTx<OakDb, Task>(
+                        async (db, ses) =>
+                        {
+                            await EpsUtil.MustHaveProjectAccess(
+                                ctx,
+                                db,
+                                ses.Id,
+                                req.Org,
+                                req.Project,
+                                ProjectMemberRole.Writer
+                            );
+
+                            await db.LockProject(req.Org, req.Project);
+                            // get correct next sib value from either prevSib if
+                            // specified or parent.FirstChild otherwise. Then update prevSibs nextSib value
+                            // or parents firstChild value depending on the scenario.
+                            // TODO impl delete
+                            return new Db.Task().ToApi();
+                        }
+                    )
+            ),
+            new RpcEndpoint<Exact, Task>(
                 TaskRpcs.GetOne,
                 async (ctx, req) =>
                 {
