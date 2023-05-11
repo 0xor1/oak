@@ -135,6 +135,18 @@ public static partial class S
         {
             TaskMovePrevSibParentMismatch,
             new("Frühere Geschwister- und Eltern-IDs stimmen nicht überein")
+        },
+        {
+            TaskDeleteProjectAttempt,
+            new(
+                "Der Projektknoten kann nicht vom Aufgabenendpunkt gelöscht werden. Verwenden Sie den Projektlöschendpunkt"
+            )
+        },
+        {
+            TaskTooManyDescNToDelete,
+            new(
+                "Eine Aufgabe mit {{Max}} oder mehr untergeordneten Aufgaben kann nicht gelöscht werden"
+            )
         }
     };
 }

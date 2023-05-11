@@ -1,5 +1,8 @@
+using Amazon.S3;
+using Common.Server;
 using Common.Server.Test;
 using Common.Shared;
+using Microsoft.Extensions.DependencyInjection;
 using Oak.Api;
 using Oak.Api.OrgMember;
 using Oak.Api.ProjectMember;
@@ -19,7 +22,16 @@ public class TestBase : IDisposable
 
     public TestBase()
     {
-        Rig = new RpcTestRig<OakDb, Api.Api>(S.Inst, OakEps.Eps, c => new Api.Api(c));
+        Rig = new RpcTestRig<OakDb, Api.Api>(
+            S.Inst,
+            OakEps.Eps,
+            c => new Api.Api(c),
+            async (sp) =>
+            {
+                using var sc = sp.GetRequiredService<IStoreClient>();
+                await sc.CreateBucket(OrgEps.FilesBucket, S3CannedACL.Private);
+            }
+        );
     }
 
     protected async Task<(IApi Ali, IApi Bob, IApi Cat, IApi Dan, IApi Anon, Org)> Setup()
@@ -130,15 +142,25 @@ public record TestTree
     private IApi api { get; init; }
     private string org { get; init; }
     private string project { get; init; }
-    public ApiTask P { get; private set; }
-    public ApiTask A { get; private set; }
-    public ApiTask B { get; private set; }
-    public ApiTask C { get; private set; }
-    public ApiTask D { get; private set; }
-    public ApiTask E { get; private set; }
-    public ApiTask F { get; private set; }
-    public ApiTask G { get; private set; }
-    public ApiTask H { get; private set; }
+
+    public ApiTask? MaybeP { get; private set; }
+    public ApiTask? MaybeA { get; private set; }
+    public ApiTask? MaybeB { get; private set; }
+    public ApiTask? MaybeC { get; private set; }
+    public ApiTask? MaybeD { get; private set; }
+    public ApiTask? MaybeE { get; private set; }
+    public ApiTask? MaybeF { get; private set; }
+    public ApiTask? MaybeG { get; private set; }
+    public ApiTask? MaybeH { get; private set; }
+    public ApiTask P => MaybeP.NotNull();
+    public ApiTask A => MaybeA.NotNull();
+    public ApiTask B => MaybeB.NotNull();
+    public ApiTask C => MaybeC.NotNull();
+    public ApiTask D => MaybeD.NotNull();
+    public ApiTask E => MaybeE.NotNull();
+    public ApiTask F => MaybeF.NotNull();
+    public ApiTask G => MaybeG.NotNull();
+    public ApiTask H => MaybeH.NotNull();
 
     private TestTree() { }
 
@@ -195,14 +217,14 @@ public record TestTree
         var all = (await api.Task.GetAllDescendants(new(org, project, project)))
             .OrderBy(x => x.Name)
             .ToList();
-        P = p;
-        A = all[0];
-        B = all[1];
-        C = all[2];
-        D = all[3];
-        E = all[4];
-        F = all[5];
-        G = all[6];
-        H = all[7];
+        MaybeP = p;
+        MaybeA = all.SingleOrDefault(x => x.Name == "a");
+        MaybeB = all.SingleOrDefault(x => x.Name == "b");
+        MaybeC = all.SingleOrDefault(x => x.Name == "c");
+        MaybeD = all.SingleOrDefault(x => x.Name == "d");
+        MaybeE = all.SingleOrDefault(x => x.Name == "e");
+        MaybeF = all.SingleOrDefault(x => x.Name == "f");
+        MaybeG = all.SingleOrDefault(x => x.Name == "g");
+        MaybeH = all.SingleOrDefault(x => x.Name == "h");
     }
 }

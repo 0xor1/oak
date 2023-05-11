@@ -3,4 +3,4 @@ using Oak.Db;
 using Oak.Eps;
 using Oak.I18n;
 
-Server.Run<OakDb>(args, S.Inst, OakEps.Eps);
+Server.Run<OakDb>(args, S.Inst, OakEps.Eps, OrgEps.InitApp);

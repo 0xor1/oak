@@ -140,6 +140,16 @@ public static partial class S
             new(
                 "Les précédents identifiants des frères et sœurs et des parents ne correspondent pas"
             )
+        },
+        {
+            TaskDeleteProjectAttempt,
+            new(
+                "Impossible de supprimer le nœud de projet du point de terminaison des tâches, utilisez le point de terminaison de suppression du projet"
+            )
+        },
+        {
+            TaskTooManyDescNToDelete,
+            new("Impossible de supprimer une tâche avec {{Max}} ou plusieurs tâches descendantes")
         }
     };
 }

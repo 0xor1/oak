@@ -386,7 +386,11 @@ internal static class ProjectEps
                             await db.Comments
                                 .Where(x => x.Org == req.Org && x.Project == req.Id)
                                 .ExecuteDeleteAsync();
-                            // TODO use IStoreClient.DeletePrefix to delete all project files
+                            using var store = ctx.Get<IStoreClient>();
+                            await store.DeletePrefix(
+                                OrgEps.FilesBucket,
+                                string.Join("/", req.Org, req.Id)
+                            );
                             return Nothing.Inst;
                         }
                     )

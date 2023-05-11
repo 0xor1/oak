@@ -137,6 +137,16 @@ public static partial class S
         {
             TaskMovePrevSibParentMismatch,
             new("Las identificaciones de padres y hermanos anteriores no coinciden")
+        },
+        {
+            TaskDeleteProjectAttempt,
+            new(
+                "No se puede eliminar el nodo del proyecto del punto final de tareas, use el punto final de eliminación del proyecto"
+            )
+        },
+        {
+            TaskTooManyDescNToDelete,
+            new("No se puede eliminar una tarea con {{Max}} o más tareas descendientes")
         }
     };
 }

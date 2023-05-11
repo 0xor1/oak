@@ -76,4 +76,6 @@ public static partial class S
     public const string TaskCantMoveRootProjectNode = "task_cant_move_root_project_node";
     public const string TaskRecursiveLoopDetected = "task_recursive_loop_detected";
     public const string TaskMovePrevSibParentMismatch = "task_move_prev_sib_parent_mismatch";
+    public const string TaskDeleteProjectAttempt = "task_delete_project_attempt";
+    public const string TaskTooManyDescNToDelete = "task_too_many_descn_to_delete";
 }

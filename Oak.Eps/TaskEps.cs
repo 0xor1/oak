@@ -606,21 +606,153 @@ internal static class TaskEps
                     await ctx.DbTx<OakDb, Task>(
                         async (db, ses) =>
                         {
+                            ctx.BadRequestIf(req.Project == req.Id, S.TaskDeleteProjectAttempt);
+                            await db.LockProject(req.Org, req.Project);
+                            var t = await db.Tasks.SingleOrDefaultAsync(
+                                x => x.Org == req.Org && x.Project == req.Project && x.Id == req.Id
+                            );
+                            ctx.NotFoundIf(t == null, model: new { Name = "Task" });
+                            t.NotNull();
+                            var requiredRole = ProjectMemberRole.Admin;
+                            if (
+                                t.CreatedBy == ses.Id
+                                && t.DescN == 0
+                                && t.CreatedOn.Add(TimeSpan.FromHours(1)) > DateTime.UtcNow
+                            )
+                            {
+                                // if it was created by me in the past 1 hour and it has no descendants I
+                                // can delete it as just a writer role
+                                requiredRole = ProjectMemberRole.Writer;
+                            }
                             await EpsUtil.MustHaveProjectAccess(
                                 ctx,
                                 db,
                                 ses.Id,
                                 req.Org,
                                 req.Project,
-                                ProjectMemberRole.Writer
+                                requiredRole
+                            );
+                            ctx.BadRequestIf(
+                                t.DescN > 20,
+                                S.TaskTooManyDescNToDelete,
+                                model: new { Max = 20 }
+                            );
+                            var prevTask = await db.Tasks.SingleOrDefaultAsync(
+                                x =>
+                                    x.Org == req.Org
+                                    && x.Project == req.Project
+                                    && x.NextSib == req.Id
+                            );
+                            if (prevTask == null)
+                            {
+                                // t must be first child so prevTask must be its parent
+                                prevTask = await db.Tasks.SingleOrDefaultAsync(
+                                    x =>
+                                        x.Org == req.Org
+                                        && x.Project == req.Project
+                                        && x.Id == t.Parent
+                                );
+                                Throw.DataIf(
+                                    prevTask == null || prevTask.FirstChild != t.Id,
+                                    $"invalid data detected when trying to delete task node {t.Id}"
+                                );
+                                prevTask.NotNull();
+                                prevTask.FirstChild = t.NextSib;
+                            }
+                            else
+                            {
+                                prevTask.NextSib = t.NextSib;
+                            }
+
+                            var tasksToDelete = await db.Tasks
+                                .FromSql(DescendantsQry(req.Org, req.Project, req.Id))
+                                .Select(x => new { x.Id, HasFiles = x.FileN > 0 })
+                                .ToListAsync();
+                            tasksToDelete.Add(new { t.Id, HasFiles = t.FileN > 0 });
+                            var allTaskIds = tasksToDelete.Select(x => x.Id);
+
+                            await db.Tasks
+                                .Where(
+                                    x =>
+                                        x.Org == req.Org
+                                        && x.Project == req.Project
+                                        && allTaskIds.Contains(x.Id)
+                                )
+                                .ExecuteDeleteAsync();
+                            await db.VItems
+                                .Where(
+                                    x =>
+                                        x.Org == req.Org
+                                        && x.Project == req.Project
+                                        && allTaskIds.Contains(x.Task)
+                                )
+                                .ExecuteDeleteAsync();
+                            await db.Files
+                                .Where(
+                                    x =>
+                                        x.Org == req.Org
+                                        && x.Project == req.Project
+                                        && allTaskIds.Contains(x.Task)
+                                )
+                                .ExecuteDeleteAsync();
+                            await db.Comments
+                                .Where(
+                                    x =>
+                                        x.Org == req.Org
+                                        && x.Project == req.Project
+                                        && allTaskIds.Contains(x.Task)
+                                )
+                                .ExecuteDeleteAsync();
+                            await db.SaveChangesAsync();
+
+                            var ancestors = await db.SetAncestralChainAggregateValuesFromTask(
+                                req.Org,
+                                req.Project,
+                                t.Parent.NotNull()
                             );
 
-                            await db.LockProject(req.Org, req.Project);
-                            // get correct next sib value from either prevSib if
-                            // specified or parent.FirstChild otherwise. Then update prevSibs nextSib value
-                            // or parents firstChild value depending on the scenario.
-                            // TODO impl delete
-                            return new Db.Task().ToApi();
+                            var extraInfo = t.ToApi();
+                            extraInfo = extraInfo with
+                            {
+                                Name = extraInfo.Name.Ellipsis(50).NotNull(),
+                                Description = extraInfo.Description.Ellipsis(50).NotNull()
+                            };
+                            await EpsUtil.LogActivity(
+                                ctx,
+                                db,
+                                ses,
+                                req.Org,
+                                req.Project,
+                                req.Id,
+                                req.Id,
+                                ActivityItemType.Task,
+                                ActivityAction.Delete,
+                                t.Name,
+                                extraInfo,
+                                null,
+                                ancestors
+                            );
+
+                            using var store = ctx.Get<IStoreClient>();
+                            foreach (var task in tasksToDelete.Where(x => x.HasFiles))
+                            {
+                                await store.DeletePrefix(
+                                    OrgEps.FilesBucket,
+                                    string.Join("/", req.Org, req.Project, task.Id)
+                                );
+                            }
+
+                            if (prevTask.Id == t.Parent)
+                            {
+                                await db.Entry(prevTask).ReloadAsync();
+                                return prevTask.ToApi();
+                            }
+
+                            var parent = await db.Tasks.SingleAsync(
+                                x =>
+                                    x.Org == req.Org && x.Project == req.Project && x.Id == t.Parent
+                            );
+                            return parent.ToApi();
                         }
                     )
             ),

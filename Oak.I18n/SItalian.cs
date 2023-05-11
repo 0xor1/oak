@@ -136,6 +136,16 @@ public static partial class S
         {
             TaskMovePrevSibParentMismatch,
             new("Gli ID dei fratelli e dei genitori precedenti non corrispondono")
+        },
+        {
+            TaskDeleteProjectAttempt,
+            new(
+                "Impossibile eliminare il nodo del progetto dall'endpoint delle attività, utilizzare l'endpoint di eliminazione del progetto"
+            )
+        },
+        {
+            TaskTooManyDescNToDelete,
+            new("Impossibile eliminare un'attività con {{Max}} o più attività discendenti")
         }
     };
 }

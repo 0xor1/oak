@@ -571,4 +571,55 @@ public class TaskTests : TestBase
         Assert.Equal(tt.G, init.Children[2]);
         Assert.Equal(tt.H, init.Children[3]);
     }
+
+    [Fact]
+    public async void Delete_B()
+    {
+        var (ali, bob, cat, dan, anon, org) = await Setup();
+        var tt = await CreateTaskTree(ali, org.Id);
+        var p = await ali.Task.Delete(new(org.Id, tt.P.Id, tt.B.Id));
+        Assert.Equal(tt.P.Id, p.Id);
+        Assert.Equal(3ul, p.ChildN);
+        Assert.Equal(7ul, p.DescN);
+        Assert.Equal(34ul, p.TimeSubEst);
+        Assert.Equal(34ul, p.CostSubEst);
+        await tt.Refresh();
+        // validate the structure
+        Assert.Null(tt.MaybeB);
+        Assert.Null(tt.P.NextSib);
+        Assert.Equal(tt.A.Id, tt.P.FirstChild);
+        Assert.Equal(tt.C.Id, tt.A.NextSib);
+        Assert.Equal(tt.D.Id, tt.C.NextSib);
+        Assert.Null(tt.D.NextSib);
+        Assert.Equal(tt.E.Id, tt.A.FirstChild);
+        Assert.Equal(tt.F.Id, tt.E.NextSib);
+        Assert.Equal(tt.G.Id, tt.F.NextSib);
+        Assert.Equal(tt.H.Id, tt.G.NextSib);
+        Assert.Null(tt.H.NextSib);
+    }
+
+    [Fact]
+    public async void Delete_A()
+    {
+        var (ali, bob, cat, dan, anon, org) = await Setup();
+        var tt = await CreateTaskTree(ali, org.Id);
+        var p = await ali.Task.Delete(new(org.Id, tt.P.Id, tt.A.Id));
+        Assert.Equal(tt.P.Id, p.Id);
+        Assert.Equal(3ul, p.ChildN);
+        Assert.Equal(3ul, p.DescN);
+        Assert.Equal(9ul, p.TimeSubEst);
+        Assert.Equal(9ul, p.CostSubEst);
+        await tt.Refresh();
+        // validate the structure
+        Assert.Null(tt.P.NextSib);
+        Assert.Equal(tt.B.Id, tt.P.FirstChild);
+        Assert.Equal(tt.C.Id, tt.B.NextSib);
+        Assert.Equal(tt.D.Id, tt.C.NextSib);
+        Assert.Null(tt.D.NextSib);
+        Assert.Null(tt.MaybeA);
+        Assert.Null(tt.MaybeE);
+        Assert.Null(tt.MaybeF);
+        Assert.Null(tt.MaybeG);
+        Assert.Null(tt.MaybeH);
+    }
 }

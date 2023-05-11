@@ -1,7 +1,9 @@
 ﻿using System.Net;
+using Amazon.S3;
 using Common.Server;
 using Common.Shared;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Oak.Api.Org;
 using Oak.Api.OrgMember;
 using Oak.Api.ProjectMember;
@@ -15,9 +17,16 @@ using Update = Oak.Api.Org.Update;
 
 namespace Oak.Eps;
 
-internal static class OrgEps
+public static class OrgEps
 {
     private const int MaxActiveOrgs = 10;
+    public const string FilesBucket = "taskfiles";
+
+    public static async Task InitApp(IServiceProvider sp)
+    {
+        using var sc = sp.GetRequiredService<IStoreClient>();
+        await sc.CreateBucket(FilesBucket, S3CannedACL.Private);
+    }
 
     public static IReadOnlyList<IRpcEndpoint> Eps { get; } =
         new List<IRpcEndpoint>()
@@ -130,7 +139,7 @@ internal static class OrgEps
                                 req.Id,
                                 OrgMemberRole.Owner
                             );
-                            await RawBatchDelete(db, new List<string>() { req.Id });
+                            await RawBatchDelete(ctx, db, new List<string>() { req.Id });
                             return Nothing.Inst;
                         }
                     )
@@ -157,7 +166,7 @@ internal static class OrgEps
         if (orgsWithSoleOwner.Any())
         {
             // we can auto delete all their orgs for which they are the sole owner
-            await RawBatchDelete(db, orgsWithSoleOwner);
+            await RawBatchDelete(ctx, db, orgsWithSoleOwner);
         }
         // all remaining orgs user is not the sole owner so just deactivate them.
         await RawBatchDeactivate(db, ses);
@@ -181,7 +190,7 @@ internal static class OrgEps
         );
     }
 
-    private static async Task RawBatchDelete(OakDb db, List<string> orgs)
+    private static async Task RawBatchDelete(IRpcCtx ctx, OakDb db, List<string> orgs)
     {
         await db.Orgs.Where(x => orgs.Contains(x.Id)).ExecuteDeleteAsync();
         await db.OrgMembers.Where(x => orgs.Contains(x.Org)).ExecuteDeleteAsync();
@@ -193,7 +202,11 @@ internal static class OrgEps
         await db.VItems.Where(x => orgs.Contains(x.Org)).ExecuteDeleteAsync();
         await db.Files.Where(x => orgs.Contains(x.Org)).ExecuteDeleteAsync();
         await db.Comments.Where(x => orgs.Contains(x.Org)).ExecuteDeleteAsync();
-        // TODO delete all files from S3 using IStoreClient.DeletePrefix(bucket, orgId);
+        using var store = ctx.Get<IStoreClient>();
+        foreach (var org in orgs)
+        {
+            await store.DeletePrefix(FilesBucket, org);
+        }
     }
 
     private static async Task RawBatchDeactivate(OakDb db, Session ses)

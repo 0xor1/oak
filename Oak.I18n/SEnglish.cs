@@ -127,6 +127,14 @@ public static partial class S
         },
         { TaskCantMoveRootProjectNode, new("Can't move root project node") },
         { TaskRecursiveLoopDetected, new("Move operation would result in recursive loop") },
-        { TaskMovePrevSibParentMismatch, new("Previous sibling and parent ids are mismatched") }
+        { TaskMovePrevSibParentMismatch, new("Previous sibling and parent ids are mismatched") },
+        {
+            TaskDeleteProjectAttempt,
+            new("Can't delete project node from tasks endpoint, use project delete endpoint")
+        },
+        {
+            TaskTooManyDescNToDelete,
+            new("Can't delete a task with {{Max}} or more descendant tasks")
+        }
     };
 }
