@@ -196,7 +196,7 @@ CREATE TABLE VItems(
     Org VARCHAR(22) NOT NULL,
     Project VARCHAR(22) NOT NULL,
     Task VARCHAR(22) NOT NULL,
-    Type VARCHAR(50) NOT NULL, # time, cost
+    Type INT NOT NULL, # time, cost
     Id VARCHAR(22) NOT NULL,
     CreatedBy VARCHAR(22) NOT NULL,
     CreatedOn DATETIME(3) NOT NULL,

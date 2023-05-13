@@ -9,7 +9,7 @@ public interface IVItemApi
     public Task<VItemRes> Create(Create arg);
     public Task<VItemRes> Update(Update arg);
     public Task<Task.Task> Delete(Exact arg);
-    public Task<NSet<VItem>> Get(Get arg);
+    public Task<SetRes<VItem>> Get(Get arg);
 }
 
 public class VItemApi : IVItemApi
@@ -27,7 +27,7 @@ public class VItemApi : IVItemApi
 
     public Task<Task.Task> Delete(Exact arg) => _client.Do(VItemRpcs.Delete, arg);
 
-    public Task<NSet<VItem>> Get(Get arg) => _client.Do(VItemRpcs.Get, arg);
+    public Task<SetRes<VItem>> Get(Get arg) => _client.Do(VItemRpcs.Get, arg);
 }
 
 public static class VItemRpcs
@@ -35,7 +35,7 @@ public static class VItemRpcs
     public static readonly Rpc<Create, VItemRes> Create = new("/vitem/create");
     public static readonly Rpc<Update, VItemRes> Update = new("/vitem/update");
     public static readonly Rpc<Exact, Task.Task> Delete = new("/vitem/delete");
-    public static readonly Rpc<Get, NSet<VItem>> Get = new("/vitem/get");
+    public static readonly Rpc<Get, SetRes<VItem>> Get = new("/vitem/get");
 }
 
 public record VItem(
@@ -90,6 +90,7 @@ public enum VItemType
     [EnumMember(Value = "time")]
     [Description("time")]
     Time,
+
     [EnumMember(Value = "cost")]
     [Description("cost")]
     Cost
