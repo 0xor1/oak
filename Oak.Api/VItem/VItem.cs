@@ -1,4 +1,6 @@
-﻿using Common.Shared;
+﻿using System.ComponentModel;
+using System.Runtime.Serialization;
+using Common.Shared;
 
 namespace Oak.Api.VItem;
 
@@ -85,6 +87,10 @@ public record VItemRes(Task.Task Task, VItem Item);
 
 public enum VItemType
 {
+    [EnumMember(Value = "time")]
+    [Description("time")]
     Time,
+    [EnumMember(Value = "cost")]
+    [Description("cost")]
     Cost
 }

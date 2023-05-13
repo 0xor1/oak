@@ -47,8 +47,7 @@ public enum ActivityItemType
     Project,
     Member,
     Task,
-    Time,
-    Cost,
+    VItem,
     File,
     Note
 }

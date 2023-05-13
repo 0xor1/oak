@@ -78,4 +78,8 @@ public static partial class S
     public const string TaskMovePrevSibParentMismatch = "task_move_prev_sib_parent_mismatch";
     public const string TaskDeleteProjectAttempt = "task_delete_project_attempt";
     public const string TaskTooManyDescNToDelete = "task_too_many_descn_to_delete";
+
+    // vitem
+    public const string VItemInvalidTimeInc = "vitem_invalid_time_inc";
+    public const string VItemInvalidCostInc = "vitem_invalid_cost_inc";
 }

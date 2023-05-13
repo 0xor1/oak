@@ -161,7 +161,7 @@ internal static class EpsUtil
         string item,
         ActivityItemType type,
         ActivityAction action,
-        string itemName,
+        string? itemName,
         object? extraInfo,
         object? fcmExtraInfo,
         List<string>? ancestors
