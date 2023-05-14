@@ -26,11 +26,7 @@ public class TestBase : IDisposable
             S.Inst,
             OakEps.Eps,
             c => new Api.Api(c),
-            async (sp) =>
-            {
-                using var sc = sp.GetRequiredService<IStoreClient>();
-                await sc.CreateBucket(OrgEps.FilesBucket, S3CannedACL.Private);
-            }
+            OrgEps.InitApp
         );
     }
 

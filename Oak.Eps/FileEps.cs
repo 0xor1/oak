@@ -95,6 +95,41 @@ internal static class FileEps
                             return new FileRes(t.ToApi(), f.ToApi());
                         }
                     )
+            ),
+            new RpcEndpoint<Download, HasStream>(
+                FileRpcs.Download,
+                async (ctx, req) =>
+                {
+                    var ses = ctx.GetSession();
+                    var db = ctx.Get<OakDb>();
+                    await EpsUtil.MustHaveProjectAccess(
+                        ctx,
+                        db,
+                        ses.Id,
+                        req.Org,
+                        req.Project,
+                        ProjectMemberRole.Reader
+                    );
+                    var f = await db.Files.SingleOrDefaultAsync(
+                        x =>
+                            x.Org == req.Org
+                            && x.Project == req.Project
+                            && x.Task == req.Task
+                            && x.Id == req.Id
+                    );
+                    ctx.NotFoundIf(f == null, model: new { Name = "File" });
+                    f.NotNull();
+                    var store = ctx.Get<IStoreClient>();
+                    var data = await store.Download(
+                        OrgEps.FilesBucket,
+                        string.Join("/", f.Org, f.Project, f.Task, f.Id)
+                    );
+
+                    return new HasStream()
+                    {
+                        Stream = new RpcStream(data, f.Name, f.Type, req.IsDownload, f.Size)
+                    };
+                }
             )
         };
 }
