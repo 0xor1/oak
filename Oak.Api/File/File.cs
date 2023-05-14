@@ -61,16 +61,7 @@ public record Get(
     MinMax<DateTime>? CreatedOn = null,
     string? CreatedBy = null,
     string? After = null,
-    bool Asc = true
+    bool Asc = false
 );
 
 public record FileRes(Task.Task Task, File File);
-
-public static class Size
-{
-    public const ulong KB = 1024;
-    public const ulong MB = KB * KB;
-    public const ulong GB = KB * MB;
-    public const ulong TB = KB * GB;
-    public const ulong PB = KB * TB;
-}

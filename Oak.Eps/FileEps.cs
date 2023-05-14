@@ -4,7 +4,6 @@ using Microsoft.EntityFrameworkCore;
 using Oak.Api;
 using Oak.Api.File;
 using Oak.Api.ProjectMember;
-using Oak.Api.VItem;
 using Oak.Db;
 using Upload = Oak.Api.File.Upload;
 using Download = Oak.Api.File.Download;
@@ -80,7 +79,6 @@ internal static class FileEps
                                 ActivityAction.Create,
                                 f.Name,
                                 new { f.Size, f.Type },
-                                null,
                                 ancestors
                             );
 
@@ -184,7 +182,6 @@ internal static class FileEps
                                 ActivityAction.Delete,
                                 f.Name,
                                 new { f.Size, f.Type },
-                                null,
                                 ancestors
                             );
 
@@ -235,7 +232,7 @@ internal static class FileEps
                         var after = await db.Files.SingleOrDefaultAsync(
                             x => x.Org == req.Org && x.Project == req.Project && x.Id == req.After
                         );
-                        ctx.NotFoundIf(after == null, model: new { Name = "File" });
+                        ctx.NotFoundIf(after == null, model: new { Name = "After" });
                         after.NotNull();
                         if (req.Asc)
                         {

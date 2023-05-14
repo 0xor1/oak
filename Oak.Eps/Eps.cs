@@ -23,6 +23,7 @@ public static class OakEps
                 eps.AddRange(TaskEps.Eps);
                 eps.AddRange(VItemEps.Eps);
                 eps.AddRange(FileEps.Eps);
+                eps.AddRange(CommentEps.Eps);
                 _eps = eps;
             }
             return _eps;

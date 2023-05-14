@@ -87,7 +87,6 @@ internal static class ProjectEps
                                 ActivityAction.Create,
                                 p.Name,
                                 null,
-                                null,
                                 null
                             );
                             return p.ToApi(t);
@@ -190,7 +189,7 @@ internal static class ProjectEps
                         var after = await db.Projects.SingleOrDefaultAsync(
                             x => x.Org == req.Org && x.Id == req.After
                         );
-                        ctx.NotFoundIf(after == null, model: new { Name = "Project" });
+                        ctx.NotFoundIf(after == null, model: new { Name = "After" });
                         after.NotNull();
                         qry = (req.OrderBy, req.Asc) switch
                         {
@@ -341,7 +340,6 @@ internal static class ProjectEps
                                 ActivityAction.Update,
                                 p.Name,
                                 req,
-                                null,
                                 null
                             );
                             return p.ToApi(t);
@@ -435,9 +433,8 @@ internal static class ProjectEps
                     qry = req.Asc
                         ? qry.OrderBy(x => x.OccurredOn)
                         : qry.OrderByDescending(x => x.OccurredOn);
-                    qry = qry.Take(101);
-                    var set = await qry.ToListAsync();
-                    return SetRes<Activity>.FromLimit(set.Select(x => x.ToApi()).ToList(), 101);
+                    var set = await qry.Take(101).Select(x => x.ToApi()).ToListAsync();
+                    return SetRes<Activity>.FromLimit(set, 101);
                 }
             )
         };

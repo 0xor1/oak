@@ -66,7 +66,6 @@ internal static class ProjectMemberEps
                                 ActivityAction.Create,
                                 mem.Name,
                                 null,
-                                null,
                                 null
                             );
                             return mem.ToApi(new ProjectMemberStats());
@@ -134,7 +133,7 @@ internal static class ProjectMemberEps
                         var after = await db.ProjectMembers.SingleOrDefaultAsync(
                             x => x.Org == req.Org && x.Project == req.Project && x.Id == req.After
                         );
-                        ctx.NotFoundIf(after == null, model: new { Name = "Project Member" });
+                        ctx.NotFoundIf(after == null, model: new { Name = "After" });
                         after.NotNull();
                         qry = (req.OrderBy, req.Asc) switch
                         {
@@ -242,7 +241,6 @@ internal static class ProjectMemberEps
                                 ActivityAction.Update,
                                 mem.Name,
                                 null,
-                                null,
                                 null
                             );
 
@@ -293,7 +291,6 @@ internal static class ProjectMemberEps
                                 ActivityItemType.Member,
                                 ActivityAction.Delete,
                                 mem.Name,
-                                null,
                                 null,
                                 null
                             );

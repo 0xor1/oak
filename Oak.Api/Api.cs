@@ -1,5 +1,6 @@
 ﻿using Common.Shared;
 using Common.Shared.Auth;
+using Oak.Api.Comment;
 using Oak.Api.File;
 using Oak.Api.Org;
 using Oak.Api.OrgMember;
@@ -19,6 +20,7 @@ public interface IApi : Common.Shared.Auth.IApi
     public ITaskApi Task { get; }
     public IVItemApi VItem { get; }
     public IFileApi File { get; }
+    public ICommentApi Comment { get; }
 }
 
 public class Api : IApi
@@ -33,6 +35,7 @@ public class Api : IApi
         Task = new TaskApi(client);
         VItem = new VItemApi(client);
         File = new FileApi(client);
+        Comment = new CommentApi(client);
     }
 
     public IAuthApi Auth { get; }
@@ -43,6 +46,7 @@ public class Api : IApi
     public ITaskApi Task { get; }
     public IVItemApi VItem { get; }
     public IFileApi File { get; }
+    public ICommentApi Comment { get; }
 }
 
 public enum ActivityItemType

@@ -1,39 +1,39 @@
-using System.Text;
 using Common.Shared;
-using Oak.Api.File;
 
 namespace Oak.Eps.Test;
 
-public class FileTests : TestBase
+public class CommentTests : TestBase
 {
     [Fact]
-    public async void Upload_Download_Delete_Success()
+    public async void Create_Success()
     {
         var (ali, bob, cat, dan, anon, org) = await Setup();
-        var tt = await CreateTaskTree(ali, org.Id);
-        var upload = new Upload(org.Id, tt.P.Id, tt.E.Id);
-        var test = "yolo baby!";
-        using var us = new MemoryStream(Encoding.UTF8.GetBytes(test));
-        upload.Stream = new RpcStream(us, "test", "text/plain", false, (ulong)us.Length);
-        var fileRes = await ali.File.Upload(upload);
-        var f = fileRes.File;
-        Assert.Equal(tt.E.Id, fileRes.Task.Id);
-        await tt.Refresh();
-        Assert.Equal(1ul, tt.P.FileSubN);
-        Assert.Equal(f.Size, tt.P.FileSubSize);
+        var aliSes = await ali.Auth.GetSession();
+        var p = await CreateProject(ali, org.Id);
+        var c = await ali.Comment.Create(new(org.Id, p.Id, p.Id, "a"));
+        Assert.Equal("a", c.Body);
+    }
 
-        var resp = await ali.File.Download(new(f.Org, f.Project, f.Task, f.Id, false));
-        using var sr = new StreamReader(resp.Stream.Data);
-        var res = await sr.ReadToEndAsync();
-        Assert.Equal(test, res);
+    [Fact]
+    public async void Update_Success()
+    {
+        var (ali, bob, cat, dan, anon, org) = await Setup();
+        var aliSes = await ali.Auth.GetSession();
+        var p = await CreateProject(ali, org.Id);
+        var c = await ali.Comment.Create(new(org.Id, p.Id, p.Id, "a"));
+        Assert.Equal("a", c.Body);
+        c = await ali.Comment.Update(new(org.Id, p.Id, p.Id, c.Id, "b"));
+        Assert.Equal("b", c.Body);
+    }
 
-        var e = await ali.File.Delete(new(org.Id, tt.P.Id, tt.E.Id, f.Id));
-        Assert.Equal(0ul, e.FileN);
-        Assert.Equal(0ul, e.FileSize);
-        await tt.Refresh();
-        Assert.Equal(tt.E, e);
-        Assert.Equal(0ul, tt.P.FileSubN);
-        Assert.Equal(0ul, tt.P.FileSubSize);
+    [Fact]
+    public async void Delete_Success()
+    {
+        var (ali, bob, cat, dan, anon, org) = await Setup();
+        var aliSes = await ali.Auth.GetSession();
+        var p = await CreateProject(ali, org.Id);
+        var c = await ali.Comment.Create(new(org.Id, p.Id, p.Id, "a"));
+        await ali.Comment.Delete(new(org.Id, p.Id, p.Id, c.Id));
     }
 
     [Fact]
@@ -41,23 +41,14 @@ public class FileTests : TestBase
     {
         var (ali, bob, cat, dan, anon, org) = await Setup();
         var aliSes = await ali.Auth.GetSession();
-        var tt = await CreateTaskTree(ali, org.Id);
+        var p = await CreateProject(ali, org.Id);
+        var a = await ali.Comment.Create(new(org.Id, p.Id, p.Id, "a"));
+        var b = await ali.Comment.Create(new(org.Id, p.Id, p.Id, "b"));
+        var c = await ali.Comment.Create(new(org.Id, p.Id, p.Id, "c"));
+        // delete c to ensure deleted items dont show up in search results
+        await ali.Comment.Delete(new(org.Id, p.Id, p.Id, c.Id));
 
-        var upload = new Upload(org.Id, tt.P.Id, tt.E.Id);
-        var test = "aaa yolo baby!";
-        using var aus = new MemoryStream(Encoding.UTF8.GetBytes(test));
-        upload.Stream = new RpcStream(aus, "a", "text/plain", false, (ulong)aus.Length);
-        var fileRes = await ali.File.Upload(upload);
-        var a = fileRes.File;
-
-        upload = new Upload(org.Id, tt.P.Id, tt.E.Id);
-        test = "bbb nolo baby!";
-        using var bus = new MemoryStream(Encoding.UTF8.GetBytes(test));
-        upload.Stream = new RpcStream(bus, "b", "text/plain", false, (ulong)bus.Length);
-        fileRes = await ali.File.Upload(upload);
-        var b = fileRes.File;
-
-        var getRes = await ali.File.Get(
+        var getRes = await ali.Comment.Get(
             new(
                 a.Org,
                 a.Project,
@@ -74,7 +65,7 @@ public class FileTests : TestBase
         Assert.Equal(b, @is[0]);
         Assert.Equal(a, @is[1]);
 
-        getRes = await ali.File.Get(
+        getRes = await ali.Comment.Get(
             new(
                 a.Org,
                 a.Project,
@@ -92,7 +83,7 @@ public class FileTests : TestBase
         Assert.Equal(a, @is[0]);
         Assert.Equal(b, @is[1]);
 
-        getRes = await ali.File.Get(
+        getRes = await ali.Comment.Get(
             new(
                 a.Org,
                 a.Project,
@@ -109,7 +100,7 @@ public class FileTests : TestBase
         Assert.Equal(1, @is.Count);
         Assert.Equal(a, @is[0]);
 
-        getRes = await ali.File.Get(
+        getRes = await ali.Comment.Get(
             new(
                 a.Org,
                 a.Project,

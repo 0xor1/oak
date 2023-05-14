@@ -85,7 +85,6 @@ internal static class VItemEps
                                 ActivityAction.Create,
                                 null,
                                 req,
-                                null,
                                 ancestors
                             );
                             return new VItemRes(t.ToApi(), vi.ToApi());
@@ -188,7 +187,6 @@ internal static class VItemEps
                                 ActivityAction.Update,
                                 null,
                                 req,
-                                null,
                                 ancestors
                             );
                             return new VItemRes(t.ToApi(), vi.ToApi());
@@ -263,10 +261,9 @@ internal static class VItemEps
                                 req.Task,
                                 vi.Id,
                                 ActivityItemType.VItem,
-                                ActivityAction.Update,
+                                ActivityAction.Delete,
                                 null,
                                 req,
-                                null,
                                 ancestors
                             );
                             return t.ToApi();
@@ -322,7 +319,7 @@ internal static class VItemEps
                                 && x.Type == req.Type
                                 && x.Id == req.After
                         );
-                        ctx.NotFoundIf(after == null, model: new { Name = req.Type.Humanize() });
+                        ctx.NotFoundIf(after == null, model: new { Name = "After" });
                         after.NotNull();
                         if (req.Asc)
                         {

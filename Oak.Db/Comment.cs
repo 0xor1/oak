@@ -12,4 +12,6 @@ public class Comment
     public string CreatedBy { get; set; }
     public DateTime CreatedOn { get; set; }
     public string Body { get; set; }
+
+    public Api.Comment.Comment ToApi() => new(Org, Project, Task, Id, CreatedBy, CreatedOn, Body);
 }

@@ -139,7 +139,6 @@ internal static class TaskEps
                                 ActivityAction.Create,
                                 t.Name,
                                 null,
-                                null,
                                 ancestors
                             );
                             var p = await db.Tasks.SingleAsync(
@@ -592,7 +591,6 @@ internal static class TaskEps
                                     ActivityAction.Update,
                                     t.Name,
                                     req,
-                                    null,
                                     ancestors
                                 );
                             }
@@ -703,6 +701,17 @@ internal static class TaskEps
                                         && allTaskIds.Contains(x.Task)
                                 )
                                 .ExecuteDeleteAsync();
+                            await db.Activities
+                                .Where(
+                                    x =>
+                                        x.Org == req.Org
+                                        && x.Project == req.Project & allTaskIds.Contains(x.Task)
+                                )
+                                .ExecuteUpdateAsync(
+                                    x =>
+                                        x.SetProperty(x => x.TaskDeleted, _ => true)
+                                            .SetProperty(x => x.ItemDeleted, _ => true)
+                                );
                             await db.SaveChangesAsync();
 
                             var ancestors = await db.SetAncestralChainAggregateValuesFromTask(
@@ -729,7 +738,6 @@ internal static class TaskEps
                                 ActivityAction.Delete,
                                 t.Name,
                                 extraInfo,
-                                null,
                                 ancestors
                             );
 

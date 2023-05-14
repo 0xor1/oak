@@ -93,7 +93,7 @@ internal static class OrgMemberEps
                         var after = await db.OrgMembers.SingleOrDefaultAsync(
                             x => x.Org == req.Org && x.Id == req.After
                         );
-                        ctx.NotFoundIf(after == null, model: new { Name = "Org Member" });
+                        ctx.NotFoundIf(after == null, model: new { Name = "After" });
                         after.NotNull();
                         qry = (req.OrderBy, req.Asc) switch
                         {
@@ -143,8 +143,8 @@ internal static class OrgMemberEps
                         (OrgMemberOrderBy.Name, false)
                             => qry.OrderByDescending(x => x.Name).ThenBy(x => x.Role),
                     };
-                    var set = await qry.Take(101).ToListAsync();
-                    return SetRes<OrgMember>.FromLimit(set.Select(x => x.ToApi()).ToList(), 101);
+                    var set = await qry.Take(101).Select(x => x.ToApi()).ToListAsync();
+                    return SetRes<OrgMember>.FromLimit(set, 101);
                 }
             ),
             new RpcEndpoint<Update, OrgMember>(

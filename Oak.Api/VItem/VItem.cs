@@ -80,7 +80,7 @@ public record Get(
     MinMax<DateTime>? CreatedOn = null,
     string? CreatedBy = null,
     string? After = null,
-    bool Asc = true
+    bool Asc = false
 );
 
 public record VItemRes(Task.Task Task, VItem Item);

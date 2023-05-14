@@ -222,6 +222,7 @@ CREATE TABLE Files(
     Type VARCHAR(250) NOT NULL,
     PRIMARY KEY(Org, Project, Task, CreatedOn, CreatedBy),
     UNIQUE INDEX(Org, Project, Task, Id),
+    UNIQUE INDEX(Org, Project, Id),
     UNIQUE INDEX(Org, Project, CreatedBy, CreatedOn, Task),
     UNIQUE INDEX(Org, Project, CreatedOn, CreatedBy, Task),
     UNIQUE INDEX(Org, Project, Name, CreatedOn, CreatedBy, Task)
@@ -238,6 +239,7 @@ CREATE TABLE Comments(
     Body VARCHAR(10000) NOT NULL,
     PRIMARY KEY(Org, Project, Task, CreatedOn, CreatedBy),
     UNIQUE INDEX(Org, Project, Task, Id),
+    UNIQUE INDEX(Org, Project, Id),
     UNIQUE INDEX(Org, Project, CreatedBy, CreatedOn, Task),
     UNIQUE INDEX(Org, Project, CreatedOn, CreatedBy, Task)
 );

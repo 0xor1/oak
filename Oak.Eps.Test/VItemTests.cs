@@ -135,25 +135,6 @@ public class VItemTests : TestBase
         );
         var @is = getRes.Set;
         Assert.Equal(2, @is.Count);
-        Assert.Equal(a, @is[0]);
-        Assert.Equal(b, @is[1]);
-
-        getRes = await ali.VItem.Get(
-            new(
-                a.Org,
-                a.Project,
-                a.Type,
-                a.Task,
-                new(
-                    DateTimeExt.UtcNowMilli().Add(TimeSpan.FromSeconds(-2)),
-                    DateTimeExt.UtcNowMilli().Add(TimeSpan.FromSeconds(2))
-                ),
-                aliSes.Id,
-                Asc: false
-            )
-        );
-        @is = getRes.Set;
-        Assert.Equal(2, @is.Count);
         Assert.Equal(b, @is[0]);
         Assert.Equal(a, @is[1]);
 
@@ -168,12 +149,13 @@ public class VItemTests : TestBase
                     DateTimeExt.UtcNowMilli().Add(TimeSpan.FromSeconds(2))
                 ),
                 aliSes.Id,
-                a.Id
+                Asc: true
             )
         );
         @is = getRes.Set;
-        Assert.Equal(1, @is.Count);
-        Assert.Equal(b, @is[0]);
+        Assert.Equal(2, @is.Count);
+        Assert.Equal(a, @is[0]);
+        Assert.Equal(b, @is[1]);
 
         getRes = await ali.VItem.Get(
             new(
@@ -186,12 +168,30 @@ public class VItemTests : TestBase
                     DateTimeExt.UtcNowMilli().Add(TimeSpan.FromSeconds(2))
                 ),
                 aliSes.Id,
-                b.Id,
-                false
+                b.Id
             )
         );
         @is = getRes.Set;
         Assert.Equal(1, @is.Count);
         Assert.Equal(a, @is[0]);
+
+        getRes = await ali.VItem.Get(
+            new(
+                a.Org,
+                a.Project,
+                a.Type,
+                a.Task,
+                new(
+                    DateTimeExt.UtcNowMilli().Add(TimeSpan.FromSeconds(-2)),
+                    DateTimeExt.UtcNowMilli().Add(TimeSpan.FromSeconds(2))
+                ),
+                aliSes.Id,
+                a.Id,
+                true
+            )
+        );
+        @is = getRes.Set;
+        Assert.Equal(1, @is.Count);
+        Assert.Equal(b, @is[0]);
     }
 }

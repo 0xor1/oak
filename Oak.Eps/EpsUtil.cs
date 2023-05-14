@@ -11,7 +11,7 @@ using Task = System.Threading.Tasks.Task;
 
 namespace Oak.Eps;
 
-internal static class EpsUtil
+public static class EpsUtil
 {
     public static void ValidStr(
         IRpcCtx ctx,
@@ -27,7 +27,7 @@ internal static class EpsUtil
             Name = name,
             Min = min,
             Max = max,
-            Regexes = regexes?.Select(x => x.ToString())
+            Regexes = regexes?.Select(x => x.ToString()).ToList()
         };
         ctx.BadRequestIf(val.Length < min || val.Length > max, S.StringValidation, m);
         if (regexes != null)
@@ -163,7 +163,6 @@ internal static class EpsUtil
         ActivityAction action,
         string? itemName,
         object? extraInfo,
-        object? fcmExtraInfo,
         List<string>? ancestors
     )
     {
@@ -231,10 +230,6 @@ internal static class EpsUtil
         }
 
         var sendAct = a.ToApi();
-        if (fcmExtraInfo != null)
-        {
-            sendAct = sendAct with { ExtraInfo = Json.From(fcmExtraInfo) };
-        }
         ancestors ??= new List<string>();
         var fcm = ctx.Get<IFcmClient>();
         await fcm.SendTopic(
