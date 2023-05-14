@@ -1,5 +1,7 @@
+using System.Text;
 using Common.Server.Test;
 using Common.Shared;
+using Oak.Api.File;
 using Oak.Api.ProjectMember;
 
 namespace Oak.Eps.Test;
@@ -603,6 +605,16 @@ public class TaskTests : TestBase
     {
         var (ali, bob, cat, dan, anon, org) = await Setup();
         var tt = await CreateTaskTree(ali, org.Id);
+        // upload a file so we know it has been deleted
+        var upload = new Upload(org.Id, tt.P.Id, tt.E.Id);
+        var test = "yolo baby!";
+        using var us = new MemoryStream(Encoding.UTF8.GetBytes(test));
+        upload.Stream = new RpcStream(us, "test", "text/plain", false, (ulong)us.Length);
+        var fileRes = await ali.File.Upload(upload);
+        Assert.Equal(tt.E.Id, fileRes.Task.Id);
+        await tt.Refresh();
+        Assert.Equal(1ul, tt.P.FileSubN);
+        Assert.Equal(fileRes.File.Size, tt.P.FileSubSize);
         var p = await ali.Task.Delete(new(org.Id, tt.P.Id, tt.A.Id));
         Assert.Equal(tt.P.Id, p.Id);
         Assert.Equal(3ul, p.ChildN);
@@ -621,5 +633,7 @@ public class TaskTests : TestBase
         Assert.Null(tt.MaybeF);
         Assert.Null(tt.MaybeG);
         Assert.Null(tt.MaybeH);
+        Assert.Equal(0ul, tt.P.FileSubN);
+        Assert.Equal(0ul, tt.P.FileSubSize);
     }
 }

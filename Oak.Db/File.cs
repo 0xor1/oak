@@ -14,4 +14,7 @@ public class File
     public DateTime CreatedOn { get; set; }
     public ulong Size { get; set; }
     public string Type { get; set; }
+
+    public Api.File.File ToApi() =>
+        new(Org, Project, Task, Id, Name, CreatedBy, CreatedOn, Size, Type);
 }

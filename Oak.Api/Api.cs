@@ -1,5 +1,6 @@
 ﻿using Common.Shared;
 using Common.Shared.Auth;
+using Oak.Api.File;
 using Oak.Api.Org;
 using Oak.Api.OrgMember;
 using Oak.Api.Project;
@@ -17,6 +18,7 @@ public interface IApi : Common.Shared.Auth.IApi
     public IProjectMemberApi ProjectMember { get; }
     public ITaskApi Task { get; }
     public IVItemApi VItem { get; }
+    public IFileApi File { get; }
 }
 
 public class Api : IApi
@@ -30,6 +32,7 @@ public class Api : IApi
         ProjectMember = new ProjectMemberApi(client);
         Task = new TaskApi(client);
         VItem = new VItemApi(client);
+        File = new FileApi(client);
     }
 
     public IAuthApi Auth { get; }
@@ -39,6 +42,7 @@ public class Api : IApi
     public IProjectMemberApi ProjectMember { get; }
     public ITaskApi Task { get; }
     public IVItemApi VItem { get; }
+    public IFileApi File { get; }
 }
 
 public enum ActivityItemType
@@ -49,7 +53,7 @@ public enum ActivityItemType
     Task,
     VItem,
     File,
-    Note
+    Comment
 }
 
 public enum ActivityAction
