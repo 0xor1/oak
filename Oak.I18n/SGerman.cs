@@ -147,6 +147,14 @@ public static partial class S
             new(
                 "Eine Aufgabe mit {{Max}} oder mehr untergeordneten Aufgaben kann nicht gelöscht werden"
             )
+        },
+        {
+            VItemInvalidTimeInc,
+            new("Der Zeiteintrag muss 1 bis 1440 Minuten betragen")
+        },
+        {
+            VItemInvalidCostInc,
+            new("Der Kosteneintrag muss größer als 0 sein")
         }
     };
 }

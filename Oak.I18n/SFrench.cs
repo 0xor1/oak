@@ -150,6 +150,14 @@ public static partial class S
         {
             TaskTooManyDescNToDelete,
             new("Impossible de supprimer une tâche avec {{Max}} ou plusieurs tâches descendantes")
+        },
+        {
+            VItemInvalidTimeInc,
+            new("L'entrée de temps doit être comprise entre 1 et 1440 minutes")
+        },
+        {
+            VItemInvalidCostInc,
+            new("L'entrée de coût doit être supérieure à 0")
         }
     };
 }

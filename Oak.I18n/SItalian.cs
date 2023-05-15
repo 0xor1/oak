@@ -146,6 +146,14 @@ public static partial class S
         {
             TaskTooManyDescNToDelete,
             new("Impossibile eliminare un'attività con {{Max}} o più attività discendenti")
+        },
+        {
+            VItemInvalidTimeInc,
+            new("L'inserimento dell'ora deve essere compreso tra 1 e 1440 minuti")
+        },
+        {
+            VItemInvalidCostInc,
+            new("La voce di costo deve essere maggiore di 0")
         }
     };
 }
