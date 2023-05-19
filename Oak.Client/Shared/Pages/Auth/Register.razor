@@ -46,6 +46,7 @@
 
 @inject IAuthService Auth;
 @inject L L;
+@inject NavigationManager Nav;
 @code{
 
     class Model
@@ -65,6 +66,10 @@
     protected override async Task OnInitializedAsync()
     {
         _session = await Auth.GetSession();
+        if (_session.IsAuthed)
+        {
+            Nav.NavigateTo("/");
+        }
     }
 
     private async Task Do()

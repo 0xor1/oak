@@ -9,10 +9,11 @@ public static partial class S
         TemplatableString
     >()
     {
+        { HomeHeader, new("Bienvenue à Chêne !") },
         {
-            Oak,
+            HomeBody,
             new(
-                "<h1>Bonjour, Oak !</h1><p>Bienvenue dans votre nouveau kit de démarrage dotnet.</p><p>Vous trouverez :</p><ul><li>Client : une application blazor wasm utilisant bibliothèque radzen ui</li><li>Serveur : aspnet avec grpc api et interface de base de données du cadre d'entité</li></ul>"
+                "Il s'agit d'une gestion de projet où vous organisez les tâches dans une arborescence comme un répertoire de fichiers. Chaque tâche donne un résumé des statistiques vitales des tâches en dessous, du temps et des coûts estimés et encourus, etc."
             )
         },
         { Invalid, new("Invalide") },
@@ -80,6 +81,7 @@ public static partial class S
         { Live, new("En direct:") },
         { On, new("Sur") },
         { Off, new("Désactivé") },
+        { Or, new("ou") },
         { Language, new("Langue") },
         { DateFmt, new("Format de date") },
         { TimeFmt, new("Format de l'heure") },
@@ -159,6 +161,7 @@ public static partial class S
             VItemInvalidTimeInc,
             new("L'entrée de temps doit être comprise entre 1 et 1440 minutes")
         },
-        { VItemInvalidCostInc, new("L'entrée de coût doit être supérieure à 0") }
+        { VItemInvalidCostInc, new("L'entrée de coût doit être supérieure à 0") },
+        { OrgMyOrgs, new("Mes organisations") }
     };
 }

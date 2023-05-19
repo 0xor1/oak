@@ -9,10 +9,11 @@ public static partial class S
         TemplatableString
     >()
     {
+        { HomeHeader, new("Willkommen in Oak!") },
         {
-            Oak,
+            HomeBody,
             new(
-                "<h1>Hallo, Oak!</h1><p>Willkommen bei Ihrem neuen dotnet-Starterkit.</p><p>Sie finden:</p><ul><li>Client: eine Blazor-Wasm-App, die verwendet radzen ui library</li><li>Server: aspnet mit grpc api und Entity Framework db interface</li></ul>"
+                "Dabei handelt es sich um eine Projektverwaltung, bei der Sie Aufgaben in einer Baumstruktur wie einem Dateiverzeichnis organisieren. Jede Aufgabe enthält eine Zusammenfassung der wichtigen Statistiken der darunter liegenden Aufgaben, der geschätzten und angefallenen Zeit und Kosten usw."
             )
         },
         { Invalid, new("Ungültig") },
@@ -80,6 +81,7 @@ public static partial class S
         { Live, new("Direkt:") },
         { On, new("An") },
         { Off, new("Aus") },
+        { Or, new("oder") },
         { Language, new("Sprache") },
         { DateFmt, new("Datumsformat") },
         { TimeFmt, new("Zeitformat") },
@@ -153,6 +155,7 @@ public static partial class S
             )
         },
         { VItemInvalidTimeInc, new("Der Zeiteintrag muss 1 bis 1440 Minuten betragen") },
-        { VItemInvalidCostInc, new("Der Kosteneintrag muss größer als 0 sein") }
+        { VItemInvalidCostInc, new("Der Kosteneintrag muss größer als 0 sein") },
+        { OrgMyOrgs, new("Meine Organisationen") }
     };
 }

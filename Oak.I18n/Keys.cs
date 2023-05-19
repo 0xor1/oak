@@ -33,13 +33,15 @@ public static partial class S
     public const string AuthFcmTopicInvalid = Common.Shared.S.AuthFcmTopicInvalid;
     public const string AuthFcmTokenInvalid = Common.Shared.S.AuthFcmTokenInvalid;
     public const string AuthFcmNotEnabled = Common.Shared.S.AuthFcmNotEnabled;
-    public const string Oak = "oak";
+    public const string HomeHeader = "home_header";
+    public const string HomeBody = "home_body";
     public const string Home = "home";
     public const string L10n = "l10n";
     public const string ToggleLiveUpdates = "toggle_live_updates";
     public const string Live = "live";
     public const string On = "on";
     public const string Off = "off";
+    public const string Or = "or";
     public const string Language = "language";
     public const string DateFmt = "date_fmt";
     public const string TimeFmt = "time_fmt";
@@ -86,4 +88,9 @@ public static partial class S
     // vitem
     public const string VItemInvalidTimeInc = "vitem_invalid_time_inc";
     public const string VItemInvalidCostInc = "vitem_invalid_cost_inc";
+
+    // UI
+
+    // orgs
+    public const string OrgMyOrgs = "org_my_orgs";
 }

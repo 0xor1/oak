@@ -1,6 +1,7 @@
 ﻿@using System.Text.RegularExpressions
 @using Common.Client
 @using Common.Shared
+@using Common.Shared.Auth
 @using S = Oak.I18n.S
 @using AuthValidator = Common.Client.AuthValidator
 <div class="root jc-c ai-c">
@@ -41,11 +42,22 @@
 @inject L L;
 @code{
 
+    private ISession _session = Session.Default(S.DefaultLang, S.DefaultDateFmt, S.DefaultTimeFmt);
+    
     class Model
     {
         public string Email { get; set; } = "";
         public string Pwd { get; set; } = "";
         public bool RememberMe { get; set; } = false;
+    }
+    
+    protected override async Task OnInitializedAsync()
+    {
+        _session = await Auth.GetSession();
+        if (_session.IsAuthed)
+        {
+            Nav.NavigateTo("/");
+        }
     }
 
     private Model _model = new ();

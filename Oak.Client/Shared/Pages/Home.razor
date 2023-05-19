@@ -2,12 +2,30 @@
 @using Common.Client
 @using Common.Shared.Auth
 <div class="root jc-c ai-c">
-    <RadzenCard class="p-3 w-25">
-        @(new MarkupString(L.S(S.Oak)))
+    <RadzenCard class="p-3 w-35 flx col ai-c">
+        <RadzenImage Path="/image/forest.png" class="res-h"></RadzenImage>
+        <RadzenText class="m-t-0" TextStyle="TextStyle.H2">@L.S(S.HomeHeader)</RadzenText>
+        <RadzenText class="txt j" TextStyle="TextStyle.Body1" >@L.S(S.HomeBody)</RadzenText>
+        <div class="flx m-t-0h ai-c g-1">
+            @if (Session.IsAuthed)
+            {
+                <RadzenButton ButtonStyle="ButtonStyle.Primary" Text="@L.S(S.OrgMyOrgs)" Click="@(() => Nav.NavigateTo("/orgs"))"/>
+            }
+            else
+            {
+                <RadzenButton ButtonStyle="ButtonStyle.Secondary" Text="@L.S(S.SignIn)" Click="@(() => Nav.NavigateTo("/sign_in"))"/>
+                <RadzenText TextStyle="TextStyle.Body1" class="m-0">@L.S(S.Or)</RadzenText>
+                <RadzenButton ButtonStyle="ButtonStyle.Primary" Text="@L.S(S.Register)" Click="@(() => Nav.NavigateTo("/register"))"/>
+            }
+        </div>
     </RadzenCard>
 </div>
 @inject L L;
+@inject NavigationManager Nav;
 @code{
+
+    const string RegisterPath = "/register";
+    const string SignInPath = "/sign_in";
 
     [CascadingParameter]
     public ISession Session { get; set; } = Common.Shared.Auth.Session.Default(S.DefaultLang, S.DefaultDateFmt, S.DefaultTimeFmt);

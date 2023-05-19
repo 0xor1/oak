@@ -9,10 +9,11 @@ public static partial class S
         TemplatableString
     >()
     {
+        { HomeHeader, new("¡Bienvenido a Roble!") },
         {
-            Oak,
+            HomeBody,
             new(
-                "<h1>¡Hola, Oak!</h1><p>Bienvenido a su nuevo kit de inicio de dotnet.</p><p>Encontrará:</p><ul><li>Cliente: una aplicación blazor wasm usando biblioteca radzen ui</li><li>Servidor: aspnet con grpc api e interfaz db del marco de la entidad</li></ul>"
+                "Esta es una gestión de proyectos en la que organiza tareas en una estructura de árbol como un directorio de archivos. Cada tarea brinda un resumen de las estadísticas vitales de las tareas debajo de ella, tiempo y costos estimados e incurridos, etc."
             )
         },
         { Invalid, new("Inválido") },
@@ -82,6 +83,7 @@ public static partial class S
         { Live, new("Vivo:") },
         { On, new("En") },
         { Off, new("De") },
+        { Or, new("o") },
         { Language, new("Idioma") },
         { DateFmt, new("Formato de fecha") },
         { TimeFmt, new("Formato de tiempo") },
@@ -153,6 +155,7 @@ public static partial class S
             new("No se puede eliminar una tarea con {{Max}} o más tareas descendientes")
         },
         { VItemInvalidTimeInc, new("La entrada de tiempo debe ser de 1 a 1440 minutos") },
-        { VItemInvalidCostInc, new("La entrada de costo debe ser mayor que 0") }
+        { VItemInvalidCostInc, new("La entrada de costo debe ser mayor que 0") },
+        { OrgMyOrgs, new("Mis organizaciones") }
     };
 }

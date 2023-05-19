@@ -9,10 +9,11 @@ public static partial class S
         TemplatableString
     >()
     {
+        { HomeHeader, new("Welcome to Oak!") },
         {
-            Oak,
+            HomeBody,
             new(
-                "<h1>Hello, Oak!</h1><p>Welcome to your new dotnet starter kit.</p><p>You will find:</p><ul><li>Client: a blazor wasm app using radzen ui library</li><li>Server: aspnet with grpc api and entity framework db interface</li></ul>"
+                "This is a project management where you organise tasks in a tree structure like a file directory. Each task gives a summary of the vital stats of the tasks beneath it, estimated and incurred time and costs etc."
             )
         },
         { Invalid, new("Invalid") },
@@ -80,6 +81,7 @@ public static partial class S
         { Live, new("Live:") },
         { On, new("On") },
         { Off, new("Off") },
+        { Or, new("Or") },
         { Language, new("Language") },
         { DateFmt, new("Date Format") },
         { TimeFmt, new("Time Format") },
@@ -141,6 +143,7 @@ public static partial class S
             new("Can't delete a task with {{Max}} or more descendant tasks")
         },
         { VItemInvalidTimeInc, new("Time entry must be 1 to 1440 minutes") },
-        { VItemInvalidCostInc, new("Cost entry must be more than 0") }
+        { VItemInvalidCostInc, new("Cost entry must be more than 0") },
+        { OrgMyOrgs, new("My Organisations") }
     };
 }

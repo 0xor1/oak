@@ -9,10 +9,11 @@ public static partial class S
         TemplatableString
     >()
     {
+        { HomeHeader, new("Benvenuti in Quercia!") },
         {
-            Oak,
+            HomeBody,
             new(
-                "<h1>Ciao, Oak!</h1><p>Benvenuto nel tuo nuovo starter kit dotnet.</p><p>Troverai:</p><ul><li>Client: un'app blazor wasm che utilizza Libreria radzen ui</li><li>Server: aspnet con interfaccia grpc api e entità framework db</li></ul>"
+                "Questa è una gestione del progetto in cui organizzi le attività in una struttura ad albero come una directory di file. Ogni attività fornisce un riepilogo delle statistiche vitali delle attività sottostanti, tempi e costi stimati e sostenuti, ecc."
             )
         },
         { Invalid, new("Non valido") },
@@ -80,6 +81,7 @@ public static partial class S
         { Live, new("Vivo:") },
         { On, new("SU") },
         { Off, new("Spento") },
+        { Or, new("O") },
         { Language, new("Lingua") },
         { DateFmt, new("Formato data") },
         { TimeFmt, new("Formato orario") },
@@ -155,6 +157,7 @@ public static partial class S
             VItemInvalidTimeInc,
             new("L'inserimento dell'ora deve essere compreso tra 1 e 1440 minuti")
         },
-        { VItemInvalidCostInc, new("La voce di costo deve essere maggiore di 0") }
+        { VItemInvalidCostInc, new("La voce di costo deve essere maggiore di 0") },
+        { OrgMyOrgs, new("Le mie organizzazioni") }
     };
 }
