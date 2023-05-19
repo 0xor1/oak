@@ -51,20 +51,21 @@
 
     private bool CanDo => _model != _initialValues && !_doing;
 
-    private ISession _session = Session.Default(S.DefaultLang, S.DefaultDateFmt, S.DefaultTimeFmt); 
+    [CascadingParameter]
+    public ISession Session { get; set; } = Common.Shared.Auth.Session.Default(S.DefaultLang, S.DefaultDateFmt, S.DefaultTimeFmt);
+    
     private Model _model = new (); 
     private Model _initialValues = new (); 
     private bool _doing = false;
 
     protected override async Task OnInitializedAsync()
     {
-        _session = await Auth.GetSession();
-        _model.Lang = _session.Lang;
-        _model.DateFmt = _session.DateFmt;
-        _model.TimeFmt = _session.TimeFmt;
-        _initialValues.Lang = _session.Lang;
-        _initialValues.DateFmt = _session.DateFmt;
-        _initialValues.TimeFmt = _session.TimeFmt;
+        _model.Lang = Session.Lang;
+        _model.DateFmt = Session.DateFmt;
+        _model.TimeFmt = Session.TimeFmt;
+        _initialValues.Lang = Session.Lang;
+        _initialValues.DateFmt = Session.DateFmt;
+        _initialValues.TimeFmt = Session.TimeFmt;
     }
 
     private async Task Do()

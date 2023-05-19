@@ -56,17 +56,17 @@
         public string ConfirmPwd { get; set; } = "";
     }
 
-    private bool CanDo => _session.IsAnon && !_doing && !_success;
+    private bool CanDo => Session.IsAnon && !_doing && !_success;
 
-    private ISession _session = Session.Default(S.DefaultLang, S.DefaultDateFmt, S.DefaultTimeFmt); 
+    [CascadingParameter]
+    public ISession Session { get; set; } = Common.Shared.Auth.Session.Default(S.DefaultLang, S.DefaultDateFmt, S.DefaultTimeFmt);
     private Model _model = new (); 
     private bool _doing = false;
     private bool _success = false;
 
-    protected override async Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
-        _session = await Auth.GetSession();
-        if (_session.IsAuthed)
+        if (Session.IsAuthed)
         {
             Nav.NavigateTo("/");
         }

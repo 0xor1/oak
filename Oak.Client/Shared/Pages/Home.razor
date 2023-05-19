@@ -9,7 +9,7 @@
         <div class="flx m-t-0h ai-c g-1">
             @if (Session.IsAuthed)
             {
-                <RadzenButton ButtonStyle="ButtonStyle.Primary" Text="@L.S(S.OrgMyOrgs)" Click="@(() => Nav.NavigateTo("/orgs"))"/>
+                <RadzenButton ButtonStyle="ButtonStyle.Primary" Text="@L.S(S.OrgMyOrgs)" Click="@(() => Nav.NavigateTo("/my_orgs"))"/>
             }
             else
             {
@@ -23,9 +23,6 @@
 @inject L L;
 @inject NavigationManager Nav;
 @code{
-
-    const string RegisterPath = "/register";
-    const string SignInPath = "/sign_in";
 
     [CascadingParameter]
     public ISession Session { get; set; } = Common.Shared.Auth.Session.Default(S.DefaultLang, S.DefaultDateFmt, S.DefaultTimeFmt);

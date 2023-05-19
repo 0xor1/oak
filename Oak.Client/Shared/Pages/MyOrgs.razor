@@ -1,0 +1,14 @@
+﻿@using Oak.I18n
+@using Common.Client
+@using Common.Shared.Auth
+<div class="root jc-c ai-c">
+    yolo
+</div>
+@inject L L;
+@inject NavigationManager Nav;
+@code{
+
+    [CascadingParameter]
+    public ISession Session { get; set; } = Common.Shared.Auth.Session.Default(S.DefaultLang, S.DefaultDateFmt, S.DefaultTimeFmt);
+
+}
