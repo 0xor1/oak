@@ -22,7 +22,7 @@ CREATE TABLE Auths (
     Lang VARCHAR(7) NOT NULL,
     DateFmt VARCHAR(20) NOT NULL,
     TimeFmt VARCHAR(10) NOT NULL,
-    Fcmenabled BOOLEAN NOT NULL,
+    FcmEnabled BOOLEAN NOT NULL,
     PwdVersion INT NOT NULL,
     PwdSalt    VARBINARY(16) NOT NULL,
     PwdHash    VARBINARY(32) NOT NULL,
@@ -41,7 +41,6 @@ ON SCHEDULE EVERY 24 HOUR
 STARTS CURRENT_TIMESTAMP + INTERVAL 1 HOUR
 DO DELETE FROM Auths WHERE ActivatedOn=CAST('0001-01-01 00:00:00.000' AS DATETIME(3)) AND VerifyEmailCodeCreatedOn < DATE_SUB(NOW(), INTERVAL 7 DAY);
 
-
 DROP TABLE IF EXISTS FcmRegs;
 CREATE TABLE FcmRegs (
      Topic VARCHAR(255) NOT NULL,
@@ -50,8 +49,9 @@ CREATE TABLE FcmRegs (
      Client VARCHAR(22) NOT NULL,
      CreatedOn DATETIME(3) NOT NULL,
      FcmEnabled BOOLEAN NOT NULL,
-     Primary KEY (User, Client),
+     Primary KEY (Topic, Token),
      UNIQUE INDEX (Client),
+     INDEX (User, CreatedOn),
      INDEX(Topic, FcmEnabled, Token),
      INDEX(CreatedOn)
 );

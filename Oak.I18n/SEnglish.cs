@@ -136,13 +136,7 @@ public static partial class S
             TaskTooManyDescNToDelete,
             new("Can't delete a task with {{Max}} or more descendant tasks")
         },
-        {
-            VItemInvalidTimeInc,
-            new("Time entry must be 1 to 1440 minutes")
-        },
-        {
-            VItemInvalidCostInc,
-            new("Cost entry must be more than 0")
-        }
+        { VItemInvalidTimeInc, new("Time entry must be 1 to 1440 minutes") },
+        { VItemInvalidCostInc, new("Cost entry must be more than 0") }
     };
 }

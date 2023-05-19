@@ -12,7 +12,7 @@ public class EpsUtilTests : TestBase
     public void ValidStr_Success()
     {
         EpsUtil.ValidStr(
-            new RpcTestCtx(null, null, S.Inst, null),
+            new RpcTestCtx(null, null, S.Inst, new Dictionary<string, string>(), null),
             "yolo",
             1,
             5,

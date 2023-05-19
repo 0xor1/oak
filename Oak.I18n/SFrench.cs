@@ -155,9 +155,6 @@ public static partial class S
             VItemInvalidTimeInc,
             new("L'entrée de temps doit être comprise entre 1 et 1440 minutes")
         },
-        {
-            VItemInvalidCostInc,
-            new("L'entrée de coût doit être supérieure à 0")
-        }
+        { VItemInvalidCostInc, new("L'entrée de coût doit être supérieure à 0") }
     };
 }
