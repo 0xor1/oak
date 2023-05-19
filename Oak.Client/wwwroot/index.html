@@ -11,16 +11,64 @@
     <link href="Oak.Client.styles.css" rel="stylesheet" />
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js';
-        import { getMessaging  } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-messaging.js";
-        const fbConfig = {
+        import { getMessaging, getToken, onMessage   } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-messaging.js";
+        const fcmConfig = {
             apiKey: "AIzaSyBXKrbcBBrq24chs44UlKmRGCH_lQ6L8Os",
             projectId: "oak-test-bfc55",
             messagingSenderId: "362923420806",
             appId: "1:362923420806:web:5204e48ad23c47f678b507",
         };
-        window.fbVapidKey = "BEflBNlcLmgwi_AMk6RFYf45eFzNa-1uWfarJ4STLWfI88kXQiYvHUU0xJdJv1LfDZGS8NjkTwLAXd4LQR6d0J8";
-        const fbApp = initializeApp(fbConfig);
-        window.fbMsg = getMessaging(fbApp);
+        const fcmVapidKey = "BPj_f1O2tz8ueAPiq1cbBPNVK7vqBD9X8v6XjL2UTk7Jlx7-MvsKliLPepsAW5V6Pt2LX3E72WY2Aamk6BggZU4";
+        const fcmApp = initializeApp(fcmConfig);
+        const fcmMsg = getMessaging(fcmApp);
+        const fcmTokenCallback = 'FcmTokenCallback';
+        const fcmOnMessage = 'FcmOnMessage';
+        const fcmNotificationPermissionRemoved = 'FcmNotificationPermissionRemoved';
+        let fcmToken = null;
+        let authService = null;
+        let lastNotificationPermission = Notification.permission;
+        let postPermissionRequest = () => {
+            if(Notification.permission === 'granted') {
+                if (fcmToken === null) {
+                    getToken(fcmMsg, {vapidKey: fcmVapidKey}).then((token) => {
+                        fcmToken = token;
+                        authService.invokeMethodAsync(fcmTokenCallback, token);
+                    });
+                } else {
+                    authService.invokeMethodAsync(fcmTokenCallback, fcmToken);
+                }
+            }
+        };
+
+        window.fcmInit = (dnObj) => {
+            authService = dnObj;
+            onMessage(fcmMsg, (msg) => {
+                authService.invokeMethodAsync(fcmOnMessage, msg);
+            });
+        };
+
+        window.fcmGetToken = () => {
+            if(Notification.permission === 'granted'){
+                postPermissionRequest();
+            } else {
+                Notification.requestPermission().then((p) => {
+                    postPermissionRequest();
+                }).catch((e)=>{
+                    console.log(e);
+                });
+            }
+        };
+
+        let pollNotificationPermission = null;
+        pollNotificationPermission = () => {
+            let currentNotificationPermission = Notification.permission;
+            if(authService !== null && lastNotificationPermission === 'granted' && currentNotificationPermission !== 'granted') {
+                lastNotificationPermission = currentNotificationPermission;
+                authService.invokeMethodAsync(fcmNotificationPermissionRemoved);
+            }
+            setTimeout(pollNotificationPermission, 1000);
+        };
+        pollNotificationPermission();
     </script>
     <script src="_content/Radzen.Blazor/Radzen.Blazor.js"></script>
     <script src="_framework/blazor.webassembly.js"></script>

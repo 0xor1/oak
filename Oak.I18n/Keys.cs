@@ -36,6 +36,10 @@ public static partial class S
     public const string Oak = "oak";
     public const string Home = "home";
     public const string L10n = "l10n";
+    public const string ToggleLiveUpdates = "toggle_live_updates";
+    public const string Live = "live";
+    public const string On = "on";
+    public const string Off = "off";
     public const string Language = "language";
     public const string DateFmt = "date_fmt";
     public const string TimeFmt = "time_fmt";

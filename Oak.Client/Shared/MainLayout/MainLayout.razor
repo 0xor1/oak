@@ -16,6 +16,31 @@
                         <RadzenProfileMenuItem Text="@L.S(S.SignIn)" Path="sign_in" Icon="account_circle"></RadzenProfileMenuItem>
                     }
                     <RadzenProfileMenuItem Text="@L.S(S.L10n)" Path="l10n" Icon="translate"></RadzenProfileMenuItem>
+                    @if (_session.IsAuthed)
+                    {
+                        // manually build a custom nav menu item to have full
+                        // control over the content
+                        <li class="rz-navigation-item" onclick="@ToggleLiveUI" title="@L.S(S.ToggleLiveUpdates)">
+                            <div class="rz-navigation-item-wrapper">
+                                <div class="rz-navigation-item-link">
+                                    @if (_session.FcmEnabled)
+                                        {
+                                            <i class="rzi rz-navigation-item-icon rz-color-success">monitor_heart</i>
+                                            <span class="rz-navigation-item-text">
+                                                @L.S(S.Live) <strong class="rz-color-success">@L.S(S.On)</strong>
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <i class="rzi rz-navigation-item-icon rz-color-danger">monitor_heart</i>
+                                            <span class="rz-navigation-item-text">
+                                                @L.S(S.Live) <strong class="rz-color-danger">@L.S(S.Off)</strong>
+                                            </span>
+                                        }
+                                </div>
+                            </div>
+                        </li>
+                    }
                 </ChildContent>
             </RadzenProfileMenu>
         </RadzenHeader>
@@ -37,7 +62,7 @@
 @using Common.Client
 @using Common.Shared.Auth
 @inherits LayoutComponentBase
-@inject IAuthService _auth;
+@inject IAuthService Auth;
 @inject L L;
 @code{
 
@@ -46,14 +71,19 @@
 
     protected override async Task OnInitializedAsync()
     {
-        _auth.RegisterRefreshUi(AuthStateChanged);
-        AuthStateChanged(await _auth.GetSession());
+        Auth.RegisterRefreshUi(AuthStateChanged);
+        AuthStateChanged(await Auth.GetSession());
     }
 
     private void AuthStateChanged(ISession s)
     {
         _session = s;
         StateHasChanged();
+    }
+
+    private async void ToggleLiveUI()
+    {
+        await Auth.FcmEnabled(!_session.FcmEnabled);
     }
 
 }
