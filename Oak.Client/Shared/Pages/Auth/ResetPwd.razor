@@ -4,6 +4,7 @@
 @using Oak.Api
 @using S = Oak.I18n.S
 @using AuthValidator = Common.Client.AuthValidator
+@using ISession = Common.Shared.Auth.ISession
 <div class="root jc-c ai-c">
     <RadzenCard class="p-3 w-25">
             <RadzenText TextStyle="TextStyle.H4" TagName="TagName.H2" class="m-t-0">
@@ -62,7 +63,17 @@
     private bool CanDo => !_doing && !_success;
     private bool _doing = false;
     private bool _success = false;
-
+    
+    [CascadingParameter]
+    public ISession Session { get; set; } = Common.Shared.Auth.Session.Default(S.DefaultLang, S.DefaultDateFmt, S.DefaultTimeFmt);
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (Session.IsAuthed)
+        {
+            Nav.NavigateTo("/");
+        }
+    }
+    
     private async Task Do()
     {
         _doing = true;
