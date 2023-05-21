@@ -158,6 +158,9 @@ public static partial class S
             new("L'inserimento dell'ora deve essere compreso tra 1 e 1440 minuti")
         },
         { VItemInvalidCostInc, new("La voce di costo deve essere maggiore di 0") },
-        { OrgMyOrgs, new("Le mie organizzazioni") }
+        { Name, new("Nome") },
+        { CreatedOn, new("Creato") },
+        { OrgMyOrgs, new("Le mie organizzazioni") },
+        { OrgNoOrgs, new("Nessuna organizzazione") }
     };
 }

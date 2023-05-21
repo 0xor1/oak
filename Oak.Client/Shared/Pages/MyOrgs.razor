@@ -1,14 +1,146 @@
-﻿@using Oak.I18n
-@using Common.Client
+﻿@using Common.Client
+@using Common.Shared
 @using Common.Shared.Auth
-<div class="root jc-c ai-c">
-    yolo
+@using Oak.Api.Org
+@using IApi = Oak.Api.IApi
+@using S = Oak.I18n.S
+
+<div class="root col">
+    <RadzenButton ButtonStyle="ButtonStyle.Success" Icon="add_circle_outline" class="mt-2 mb-4" Text="Add New Org" Click="@InsertRow" Disabled=@(toInsert != null || toUpdate != null) />
+    <RadzenDataGrid 
+        @ref="orgsGrid" 
+        Data="Orgs"
+        TItem="Org" 
+        EmptyText="@L.S(S.OrgNoOrgs)" 
+        EditMode="DataGridEditMode.Single" 
+        RowUpdate="@OnUpdateRow" 
+        RowCreate="@OnCreateRow">
+            <Columns>
+                <RadzenDataGridColumn TItem="Org" Property="Name" Title="@L.S(S.Name)">
+                    <EditTemplate Context="org">
+                        <RadzenTextBox Value="@org.Name" ValueChanged="@(
+                            (n) => { if (toInsert != null){ toInsert = toInsert with {Name = n};}else if(toUpdate != null){toUpdate = toUpdate with {Name = n};}})" Style="width:100%; display: block" Name="Name" />
+                    </EditTemplate>
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="Org" Property="CreatedOn" Title="@L.S(S.CreatedOn)">
+                    <Template Context="org">
+                        @L.D(org.CreatedOn)
+                    </Template>
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="Org" Context="org" Filterable="false" Sortable="false" TextAlign="TextAlign.Right" Width="156px">
+                    <Template Context="org">
+                        <RadzenButton Icon="edit" ButtonStyle="ButtonStyle.Light" Variant="Variant.Flat" Size="ButtonSize.Medium" Click="@(args => EditRow(org))" @onclick:stopPropagation="true">
+                        </RadzenButton>
+                        <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="delete" Variant="Variant.Flat" Shade="Shade.Lighter" Size="ButtonSize.Medium" class="my-1 ms-1" Click="@(args => DeleteRow(org))"  @onclick:stopPropagation="true">
+                        </RadzenButton>
+                    </Template>
+                    <EditTemplate Context="org">
+                        <RadzenButton Icon="check" ButtonStyle="ButtonStyle.Success" Variant="Variant.Flat" Size="ButtonSize.Medium" Click="@((args) => SaveRow(org))">
+                        </RadzenButton>
+                        <RadzenButton Icon="close" ButtonStyle="ButtonStyle.Light" Variant="Variant.Flat" Size="ButtonSize.Medium" class="my-1 ms-1" Click="@((args) => CancelEdit(org))">
+                        </RadzenButton>
+                        <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="delete" Variant="Variant.Flat" Shade="Shade.Lighter" Size="ButtonSize.Medium" class="my-1 ms-1" Click="@(args => DeleteRow(org))">
+                        </RadzenButton>
+                    </EditTemplate>
+                </RadzenDataGridColumn>
+            </Columns>
+        </RadzenDataGrid>
+    
 </div>
+
 @inject L L;
+@inject IApi Api;
 @inject NavigationManager Nav;
 @code{
 
     [CascadingParameter]
     public ISession Session { get; set; } = Common.Shared.Auth.Session.Default(S.DefaultLang, S.DefaultDateFmt, S.DefaultTimeFmt);
 
+    RadzenDataGrid<Org> orgsGrid;
+    List<Org> Orgs { get; set; } = new ();
+    Org? toInsert = null;
+    Org? toUpdate = null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        Orgs.AddRange(await Api.Org.Get(new ()));
+        await orgsGrid.Reload();
+    }
+
+    void Reset()
+    {
+        toInsert = null;
+        toUpdate = null;
+    }
+
+    async Task EditRow(Org org)
+    {
+        toUpdate = org;
+        await orgsGrid.EditRow(org);
+    }
+    
+    async Task OnUpdateRow(Org org)
+    {
+        if (org == toInsert)
+        {
+            toInsert = null;
+        }
+
+        toUpdate = null;
+
+        await Api.Org.Update(new(org.Id, org.Name));
+    }
+    
+    async Task SaveRow(Org org)
+    {
+        await orgsGrid.UpdateRow(org);
+    }
+    
+    void CancelEdit(Org org)
+    {
+        if (org == toInsert)
+        {
+            toInsert = null;
+        }
+
+        toUpdate = null;
+
+        orgsGrid.CancelEditRow(org);
+    }
+
+    async Task DeleteRow(Org org)
+    {
+        if (org == toInsert)
+        {
+            toInsert = null;
+        }
+
+        if (org == toUpdate)
+        {
+            toUpdate = null;
+        }
+
+        if (Orgs.Contains(org))
+        {
+            await Api.Org.Delete(new (org.Id));
+
+            await orgsGrid.Reload();
+        }
+        else
+        {
+            orgsGrid.CancelEditRow(org);
+            await orgsGrid.Reload();
+        }
+    }
+
+    async Task InsertRow()
+    {
+        toInsert = new Org("", "", DateTimeExt.UtcNowMilli());
+        await orgsGrid.InsertRow(toInsert);
+    }
+
+    async Task OnCreateRow(Org org)
+    {
+        await Api.Org.Create(new (org.Name, ""));
+    }
 }

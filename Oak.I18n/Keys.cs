@@ -91,6 +91,11 @@ public static partial class S
 
     // UI
 
+    // general
+    public const string Name = "name";
+    public const string CreatedOn = "created_on";
+
     // orgs
     public const string OrgMyOrgs = "org_my_orgs";
+    public const string OrgNoOrgs = "org_no_orgs";
 }

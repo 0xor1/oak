@@ -156,6 +156,9 @@ public static partial class S
         },
         { VItemInvalidTimeInc, new("La entrada de tiempo debe ser de 1 a 1440 minutos") },
         { VItemInvalidCostInc, new("La entrada de costo debe ser mayor que 0") },
-        { OrgMyOrgs, new("Mis organizaciones") }
+        { Name, new("Nombre") },
+        { CreatedOn, new("Creado en") },
+        { OrgMyOrgs, new("Mis organizaciones") },
+        { OrgNoOrgs, new("Sin organizaciones") }
     };
 }
