@@ -156,6 +156,7 @@ public static partial class S
         },
         { VItemInvalidTimeInc, new("Der Zeiteintrag muss 1 bis 1440 Minuten betragen") },
         { VItemInvalidCostInc, new("Der Kosteneintrag muss größer als 0 sein") },
+        { New, new("Neu") },
         { Name, new("Name") },
         { CreatedOn, new("Erstellt am") },
         { OrgMyOrgs, new("Meine Organisationen") },

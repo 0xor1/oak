@@ -144,6 +144,7 @@ public static partial class S
         },
         { VItemInvalidTimeInc, new("Time entry must be 1 to 1440 minutes") },
         { VItemInvalidCostInc, new("Cost entry must be more than 0") },
+        { New, new("New") },
         { Name, new("Name") },
         { CreatedOn, new("Created On") },
         { OrgMyOrgs, new("My Organisations") },

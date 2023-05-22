@@ -92,6 +92,7 @@ public static partial class S
     // UI
 
     // general
+    public const string New = "new";
     public const string Name = "name";
     public const string CreatedOn = "created_on";
 

@@ -3,7 +3,7 @@
 @using Common.Shared.Auth
 <div class="root jc-c ai-c">
     <RadzenCard class="p-3 w-35 flx col ai-c">
-        <RadzenImage Path="/image/forest.png" class="res-h"></RadzenImage>
+        <RadzenImage Path="/image/forest.png" class="res-t"></RadzenImage>
         <RadzenText class="m-t-0" TextStyle="TextStyle.H2">@L.S(S.HomeHeader)</RadzenText>
         <RadzenText class="txt j" TextStyle="TextStyle.Body1" >@L.S(S.HomeBody)</RadzenText>
         <div class="flx m-t-0h ai-c g-1">
@@ -26,5 +26,11 @@
 
     [CascadingParameter]
     public ISession Session { get; set; } = Common.Shared.Auth.Session.Default(S.DefaultLang, S.DefaultDateFmt, S.DefaultTimeFmt);
-
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (Session.IsAuthed)
+        {
+            Nav.NavigateTo("/my_orgs");
+        }
+    }
 }

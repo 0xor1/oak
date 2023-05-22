@@ -46,8 +46,15 @@
         </RadzenHeader>
         <RadzenSidebar @bind-Expanded="@_leftExpanded">
             <RadzenPanelMenu>
-                <RadzenPanelMenuItem Text="@L.S(S.Home)" Icon="home" Path="/"/>
-            </RadzenPanelMenu>
+                @if (_session.IsAnon)
+                {
+                    <RadzenPanelMenuItem Text="@L.S(S.Home)" Icon="home" Path="/"/>
+                }
+                else
+                {
+                    <RadzenPanelMenuItem Text="@L.S(S.OrgMyOrgs)" Icon="home" Path="/my_orgs"/>
+                }
+                </RadzenPanelMenu>
         </RadzenSidebar>
         <RadzenBody class="root rz-background-color-base-100">
             <CascadingValue Value="@_session">
@@ -55,6 +62,7 @@
             </CascadingValue>
         </RadzenBody>
         <RadzenNotification/>
+        <RadzenDialog/>
     </RadzenLayout>
 </div>
 
