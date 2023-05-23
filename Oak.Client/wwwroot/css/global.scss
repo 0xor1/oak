@@ -243,3 +243,9 @@ input.invalid:not(:disabled):not(.rz-state-disabled) {
 div.header > ul.rz-profile-menu > li.rz-navigation-item > div.rz-navigation-item-wrapper > div.rz-navigation-item-link > i.rz-navigation-item-icon-children {
     display: none;
 }
+
+.row-clickable{
+    .rz-data-row{
+        cursor: pointer;
+    }
+}

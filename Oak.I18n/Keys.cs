@@ -93,10 +93,14 @@ public static partial class S
 
     // general
     public const string New = "new";
+    public const string Create = "create";
     public const string Name = "name";
     public const string CreatedOn = "created_on";
 
     // orgs
     public const string OrgMyOrgs = "org_my_orgs";
     public const string OrgNoOrgs = "org_no_orgs";
+    public const string OrgNewOrg = "org_new_org";
+    public const string OrgName = "org_name";
+    public const string OrgYourName = "org_your_name";
 }

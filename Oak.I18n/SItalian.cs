@@ -159,9 +159,13 @@ public static partial class S
         },
         { VItemInvalidCostInc, new("La voce di costo deve essere maggiore di 0") },
         { New, new("Nuovo") },
+        { Create, new("Creare") },
         { Name, new("Nome") },
         { CreatedOn, new("Creato") },
         { OrgMyOrgs, new("Le mie organizzazioni") },
-        { OrgNoOrgs, new("Nessuna organizzazione") }
+        { OrgNoOrgs, new("Nessuna organizzazione") },
+        { OrgNewOrg, new("Nuova Organizzazione") },
+        { OrgName, new("Nome dell'Organizzazione") },
+        { OrgYourName, new("Il tuo nome") }
     };
 }

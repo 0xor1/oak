@@ -163,9 +163,13 @@ public static partial class S
         },
         { VItemInvalidCostInc, new("L'entrée de coût doit être supérieure à 0") },
         { New, new("Nouveau") },
+        { Create, new("Créer") },
         { Name, new("Nom") },
         { CreatedOn, new("Créé sur") },
         { OrgMyOrgs, new("Mes organisations") },
-        { OrgNoOrgs, new("Aucune organisation") }
+        { OrgNoOrgs, new("Aucune organisation") },
+        { OrgNewOrg, new("Nouvelle organisation") },
+        { OrgName, new("Nom de l'organisme") },
+        { OrgYourName, new("votre nom") }
     };
 }
