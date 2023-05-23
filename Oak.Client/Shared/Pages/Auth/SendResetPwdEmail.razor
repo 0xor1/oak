@@ -17,7 +17,7 @@
             <div class="flx col ai-stretch">
                 <RadzenLabel class="m-b-0q" Component="Email" Text="@L.S(S.Email)"/>
                 <RadzenTextBox Name="Email" @bind-Value="@_model.Email" Disabled="!CanDo"/>
-                <RadzenCustomValidator Validator="EmailValidator" Component="Email" Popup="true"></RadzenCustomValidator>
+                <CommonCustomValidator Validator="EmailValidator" Component="Email" Popup="true"></CommonCustomValidator>
             </div>
             @if (_success)
             {

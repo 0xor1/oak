@@ -12,26 +12,25 @@
         <RadzenText class="m-t-0" TextStyle="TextStyle.H2">@Org.Name</RadzenText>
         <RadzenText class="m-t-0" TextStyle="TextStyle.H2">@L.S(S.OrgProjects)</RadzenText>
         <RadzenButton class="m-b-1" ButtonStyle="ButtonStyle.Success" Icon="add_circle_outline" Text="@L.S(S.New)" Click="@OpenNewDialog"/>
-        <RadzenCard class="w-25">
-            <RadzenDataGrid
-                @ref="_grid"
-                Data="Items"
-                TItem="Project"
-                IsLoading="_isLoading"
-                EmptyText="@L.S(S.OrgNoProjects)"
-                EditMode="DataGridEditMode.Single"
-                RowClick="RowClick"
-                class="row-clickable">
-                <Columns>
-                    <RadzenDataGridColumn TItem="Project" Property="Name" Title="@L.S(S.Name)"/>
-                    <RadzenDataGridColumn Width="8em" TItem="Project" Property="CreatedOn" Title="@L.S(S.CreatedOn)">
-                        <Template Context="p">
-                            @L.D(p.CreatedOn)
-                        </Template>
-                    </RadzenDataGridColumn>
-                </Columns>
-            </RadzenDataGrid>
-        </RadzenCard>
+        <RadzenDataGrid
+            @ref="_grid"
+            Data="Items"
+            TItem="Project"
+            IsLoading="_isLoading"
+            EmptyText="@L.S(S.OrgNoProjects)"
+            EditMode="DataGridEditMode.Single"
+            RowClick="RowClick"
+            class="row-clickable"
+            Style="max-width: 30em">
+            <Columns>
+                <RadzenDataGridColumn Width="23em" TItem="Project" Property="Name" Title="@L.S(S.Name)"/>
+                <RadzenDataGridColumn Width="7em" TItem="Project" Property="CreatedOn" Title="@L.S(S.CreatedOn)">
+                    <Template Context="p">
+                        @L.D(p.CreatedOn)
+                    </Template>
+                </RadzenDataGridColumn>
+            </Columns>
+        </RadzenDataGrid>
     </div>
 </div>
 

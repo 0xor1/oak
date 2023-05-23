@@ -17,12 +17,12 @@
             <div class="flx col ai-stretch">
                 <RadzenLabel class="m-b-0q" Component="Email" Text="@L.S(S.Email)"/>
                 <RadzenTextBox Name="Email" @bind-Value="@_model.Email"/>
-                <RadzenCustomValidator Validator="EmailValidator" Component="Email" Popup="true"></RadzenCustomValidator>
+                <CommonCustomValidator Validator="EmailValidator" Component="Email" Popup="true"></CommonCustomValidator>
             </div>
             <div class="flx col ai-stretch">
                 <RadzenLabel class="m-b-0q" Component="Password" Text="@L.S(S.Pwd)"/>
                 <RadzenPassword Name="Password" @bind-Value="@_model.Pwd"/>
-                <RadzenCustomValidator Validator="PwdValidator" Component="Password" Popup="true"></RadzenCustomValidator>
+                <CommonCustomValidator Validator="PwdValidator" Component="Password" Popup="true"></CommonCustomValidator>
             </div>
             <div class="flx g-0h">
                 <RadzenCheckBox Name="RememberMe" @bind-Value="@_model.RememberMe"/>

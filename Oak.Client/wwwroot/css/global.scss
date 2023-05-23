@@ -27,7 +27,7 @@ $sub_divs: '', '.25', '.5', '.75';
     }
 }
 
-@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;800&display=swap');
 
 html, body, .fill {
     width: 100%;
@@ -248,4 +248,7 @@ div.header > ul.rz-profile-menu > li.rz-navigation-item > div.rz-navigation-item
     .rz-data-row{
         cursor: pointer;
     }
+}
+.rz-grid-table thead th .rz-column-title{
+    font-weight: 600;
 }

@@ -29,12 +29,12 @@
                     <div class="flx col ai-stretch">
                         <RadzenLabel class="m-b-0q" Component="Password" Text="@L.S(S.Pwd)"/>
                         <RadzenPassword Name="Password" @bind-Value="@_model.NewPwd" Disabled="!CanDo"/>
-                        <RadzenCustomValidator Validator="PwdValidator" Component="Password" Popup="true"></RadzenCustomValidator>
+                        <CommonCustomValidator Validator="PwdValidator" Component="Password" Popup="true"></CommonCustomValidator>
                     </div>
                     <div class="flx col ai-stretch">
                         <RadzenLabel class="m-b-0q" Component="ConfirmPassword" Text="@L.S(S.ConfirmPwd)"/>
                         <RadzenPassword Name="ConfirmPassword" @bind-Value="@_model.ConfirmNewPwd" Disabled="!CanDo"/>
-                        <RadzenCustomValidator Validator="ConfirmPasswordValidator" Component="ConfirmPassword" Popup="true"></RadzenCustomValidator>
+                        <CommonCustomValidator Validator="ConfirmPasswordValidator" Component="ConfirmPassword" Popup="true"></CommonCustomValidator>
                     </div>
                     <RadzenButton ButtonType="ButtonType.Submit" BusyText="@L.S(S.Resetting)" IsBusy="_doing" Text="@L.S(S.ResetPwd)" Disabled="!CanDo"/>
                 </RadzenTemplateForm>

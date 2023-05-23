@@ -1,7 +1,7 @@
 ﻿<div class="root">
     <RadzenLayout class="rz-shadow-3 fill">
         <RadzenHeader class="flx jc-sb">
-            <RadzenSidebarToggle class="sq-4t" Click="@(() => _leftExpanded = !_leftExpanded)" />
+            <RadzenSidebarToggle class="flx jc-c ai-c sq-4t" Click="@(() => _leftExpanded = !_leftExpanded)" />
             <RadzenProfileMenu class="m-t-0t">
                 <Template>
                     <RadzenIcon Icon="account_circle" IconStyle="@(_session.IsAuthed? IconStyle.Success: IconStyle.Danger)"></RadzenIcon>
