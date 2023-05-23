@@ -58,7 +58,7 @@
     private Model _initialValues = new (); 
     private bool _doing = false;
 
-    protected override async Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
         _model.Lang = Session.Lang;
         _model.DateFmt = Session.DateFmt;

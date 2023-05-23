@@ -1,0 +1,87 @@
+﻿@using Common.Client
+@using Common.Shared
+@using Common.Shared.Auth
+@using Oak.Api.Org
+@using Oak.Api.OrgMember
+@using Oak.Api.Project
+@using IApi = Oak.Api.IApi
+@using S = Oak.I18n.S
+
+<div class="root">
+    <div class="flx col p-0h g-0h jc-s ai-s">
+        <RadzenText class="m-t-0" TextStyle="TextStyle.H2">@Org.Name</RadzenText>
+        <RadzenText class="m-t-0" TextStyle="TextStyle.H2">@L.S(S.OrgMyOrgs)</RadzenText>
+        <RadzenButton class="m-b-1" ButtonStyle="ButtonStyle.Success" Icon="add_circle_outline" Text="@L.S(S.New)" Click="@OpenNewDialog"/>
+        <RadzenCard class="w-25">
+            <RadzenDataGrid
+                @ref="_grid"
+                Data="Items"
+                TItem="Project"
+                IsLoading="_isLoading"
+                EmptyText="@L.S(S.OrgNoOrgs)"
+                EditMode="DataGridEditMode.Single"
+                RowClick="RowClick"
+                class="row-clickable">
+                <Columns>
+                    <RadzenDataGridColumn TItem="Project" Property="Name" Title="@L.S(S.Name)"/>
+                    <RadzenDataGridColumn Width="8em" TItem="Project" Property="CreatedOn" Title="@L.S(S.CreatedOn)">
+                        <Template Context="p">
+                            @L.D(p.CreatedOn)
+                        </Template>
+                    </RadzenDataGridColumn>
+                </Columns>
+            </RadzenDataGrid>
+        </RadzenCard>
+    </div>
+</div>
+
+@inject L L;
+@inject IApi Api;
+@inject NavigationManager Nav;
+@inject DialogService DialogService;
+@code{
+
+    [CascadingParameter]
+    public ISession Session { get; set; } = Common.Shared.Auth.Session.Default(S.DefaultLang, S.DefaultDateFmt, S.DefaultTimeFmt);
+
+    [Parameter]
+    [EditorRequired]
+    public string OrgId { get; set; } = "";
+
+    private Org Org { get; set; } = new("", "", DateTimeExt.UtcNowMilli());
+    private OrgMember OrgMember { get; set; } = new OrgMember("", "", true, "", OrgMemberRole.PerProject);
+
+    RadzenDataGrid<Project> _grid = default!;
+    List<Project> Items { get; set; } = new ();
+    private bool _isLoading = false;
+
+    protected override async Task OnAfterRenderAsync(bool isFirst)
+    {
+        if (Org.Id == string.Empty)
+        {
+            _isLoading = true;
+            try
+            {
+                Org = await Api.Org.GetOne(new(OrgId));
+                var res = await Api.Project.Get(new(OrgId));
+                Items.AddRange(res.Set);
+                await _grid.Reload();
+            }
+            finally
+            {
+                _isLoading = false;
+            }
+        }
+    }
+
+    private void OpenNewDialog()
+    {
+        DialogService.Open<OrgNew>(L.S(S.OrgNewOrg));
+    }
+
+    private void RowClick(DataGridRowMouseEventArgs<Project> e)
+    {
+        Nav.NavigateTo($"/org/{OrgId}/project/{e.Data.Id}/task/{e.Data.Id}");
+    }
+
+}

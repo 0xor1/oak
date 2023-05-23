@@ -11,8 +11,8 @@
         <RadzenButton class="m-b-1" ButtonStyle="ButtonStyle.Success" Icon="add_circle_outline" Text="@L.S(S.New)" Click="@OpenNewDialog"/>
         <RadzenCard class="w-25">
             <RadzenDataGrid
-                @ref="_orgsGrid"
-                Data="Orgs"
+                @ref="_grid"
+                Data="Items"
                 TItem="Org"
                 IsLoading="_isLoading"
                 EmptyText="@L.S(S.OrgNoOrgs)"
@@ -21,7 +21,7 @@
                 class="row-clickable">
                 <Columns>
                     <RadzenDataGridColumn TItem="Org" Property="Name" Title="@L.S(S.Name)"/>
-                    <RadzenDataGridColumn Width="8rem" TItem="Org" Property="CreatedOn" Title="@L.S(S.CreatedOn)">
+                    <RadzenDataGridColumn Width="8em" TItem="Org" Property="CreatedOn" Title="@L.S(S.CreatedOn)">
                         <Template Context="org">
                             @L.D(org.CreatedOn)
                         </Template>
@@ -41,8 +41,8 @@
     [CascadingParameter]
     public ISession Session { get; set; } = Common.Shared.Auth.Session.Default(S.DefaultLang, S.DefaultDateFmt, S.DefaultTimeFmt);
 
-    RadzenDataGrid<Org> _orgsGrid = default!;
-    List<Org> Orgs { get; set; } = new ();
+    RadzenDataGrid<Org> _grid = default!;
+    List<Org> Items { get; set; } = new ();
     private bool _isLoading = false;
 
     protected override async Task OnInitializedAsync()
@@ -50,8 +50,8 @@
         _isLoading = true;
         try
         {
-            Orgs.AddRange(await Api.Org.Get(new()));
-            await _orgsGrid.Reload();
+            Items.AddRange(await Api.Org.Get(new()));
+            await _grid.Reload();
         }
         finally
         {
@@ -61,12 +61,12 @@
 
     private void OpenNewDialog()
     {
-        DialogService.Open<NewOrg>(L.S(S.OrgNewOrg));
+        DialogService.Open<OrgNew>(L.S(S.OrgNewOrg));
     }
 
     private void RowClick(DataGridRowMouseEventArgs<Org> e)
     {
-        Nav.NavigateTo($"/org/{e.Data.Id}");
+        Nav.NavigateTo($"/org/{e.Data.Id}/projects");
     }
 
 }

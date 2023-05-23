@@ -41,7 +41,7 @@
         try
         {
             var org = await Api.Org.Create(new(_model.OrgName, _model.OwnerName));
-            Nav.NavigateTo($"/org/{org.Id}");
+            Nav.NavigateTo($"/org/{org.Id}/projects");
         }
         catch
         {
