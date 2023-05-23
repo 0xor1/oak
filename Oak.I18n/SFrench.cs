@@ -170,6 +170,8 @@ public static partial class S
         { OrgNoOrgs, new("Aucune organisation") },
         { OrgNewOrg, new("Nouvelle organisation") },
         { OrgName, new("Nom de l'organisme") },
-        { OrgYourName, new("votre nom") }
+        { OrgYourName, new("votre nom") },
+        { OrgProjects, new("Projets") },
+        { OrgNoProjects, new("Aucune Projets") }
     };
 }

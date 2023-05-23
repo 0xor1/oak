@@ -103,4 +103,6 @@ public static partial class S
     public const string OrgNewOrg = "org_new_org";
     public const string OrgName = "org_name";
     public const string OrgYourName = "org_your_name";
+    public const string OrgProjects = "org_projects";
+    public const string OrgNoProjects = "org_no_projects";
 }

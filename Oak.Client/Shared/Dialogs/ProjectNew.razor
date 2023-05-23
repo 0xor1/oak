@@ -1,0 +1,52 @@
+﻿@using Common.Client
+@using Oak.Api
+@using Oak.I18n
+<div class="root col">
+    <RadzenTemplateForm
+        TItem="Model"
+        Data="_model"
+        Submit="Do"
+        class="flx col ai-stretch g-1">
+        <div class="flx col ai-stretch">
+            <RadzenLabel class="m-b-0q" Component="Name" Text="@L.S(S.OrgName)"/>
+            <RadzenTextBox Name="Name" @bind-Value="@_model.Name"/>
+            <RadzenRequiredValidator Component="Name" Popup="true"></RadzenRequiredValidator>
+        </div>
+        <RadzenButton ButtonType="ButtonType.Submit" IsBusy="_doing" Text="@L.S(S.Create)"/>
+    </RadzenTemplateForm>
+</div>
+
+@inject L L;
+@inject IApi Api;
+@inject NavigationManager Nav;
+@code {
+
+    [Parameter]
+    public string OrgId { get; set; }
+
+    public class Model
+    {
+        public string Name { get; set; } = "";
+    }
+
+    Model _model = new();
+    private bool _doing;
+
+    private async Task Do()
+    {
+        _doing = true;
+        try
+        {
+            var p = await Api.Project.Create(new(OrgId, true, _model.Name, "$", "USD", 8, 5, null, null, 0));
+            Nav.NavigateTo($"/org/{OrgId}/project/{p.Id}/task/{p.Id}");
+        }
+        catch
+        {
+            // use empty catch to avoid having to
+            // call StatHasChanged on errors
+        }
+        _doing = false;
+        
+    }
+
+}

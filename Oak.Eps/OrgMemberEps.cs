@@ -49,7 +49,7 @@ internal static class OrgMemberEps
                         }
                     )
             ),
-            new RpcEndpoint<Exact, OrgMember>(
+            new RpcEndpoint<Exact, Maybe<OrgMember>>(
                 OrgMemberRpcs.GetOne,
                 async (ctx, req) =>
                 {
@@ -59,8 +59,7 @@ internal static class OrgMemberEps
                     var mem = await db.OrgMembers.SingleOrDefaultAsync(
                         x => x.Org == req.Org && x.Id == req.Id
                     );
-                    ctx.NotFoundIf(mem == null, model: new { Name = "Org Member" });
-                    return mem.NotNull().ToApi();
+                    return new(mem?.ToApi());
                 }
             ),
             new RpcEndpoint<Get, SetRes<OrgMember>>(

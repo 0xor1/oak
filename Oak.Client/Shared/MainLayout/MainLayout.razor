@@ -58,7 +58,14 @@
         </RadzenSidebar>
         <RadzenBody class="root rz-background-color-base-100">
             <CascadingValue Value="@_session">
-                @Body
+                @if (_ready)
+                {
+                    @Body
+                }
+                else
+                {
+                    <p>Loading Session</p>
+                }
             </CascadingValue>
         </RadzenBody>
         <RadzenNotification/>
@@ -76,11 +83,12 @@
 
     private bool _leftExpanded;
     private ISession _session = Session.Default(S.DefaultLang, S.DefaultDateFmt, S.DefaultTimeFmt);
-
+    private bool _ready;
     protected override async Task OnInitializedAsync()
     {
         Auth.RegisterRefreshUi(AuthStateChanged);
         AuthStateChanged(await Auth.GetSession());
+        _ready = true;
     }
 
     private void AuthStateChanged(ISession s)

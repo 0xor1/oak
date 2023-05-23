@@ -10,7 +10,7 @@
 <div class="root">
     <div class="flx col p-0h g-0h jc-s ai-s">
         <RadzenText class="m-t-0" TextStyle="TextStyle.H2">@Org.Name</RadzenText>
-        <RadzenText class="m-t-0" TextStyle="TextStyle.H2">@L.S(S.OrgMyOrgs)</RadzenText>
+        <RadzenText class="m-t-0" TextStyle="TextStyle.H2">@L.S(S.OrgProjects)</RadzenText>
         <RadzenButton class="m-b-1" ButtonStyle="ButtonStyle.Success" Icon="add_circle_outline" Text="@L.S(S.New)" Click="@OpenNewDialog"/>
         <RadzenCard class="w-25">
             <RadzenDataGrid
@@ -18,7 +18,7 @@
                 Data="Items"
                 TItem="Project"
                 IsLoading="_isLoading"
-                EmptyText="@L.S(S.OrgNoOrgs)"
+                EmptyText="@L.S(S.OrgNoProjects)"
                 EditMode="DataGridEditMode.Single"
                 RowClick="RowClick"
                 class="row-clickable">
@@ -49,20 +49,21 @@
     public string OrgId { get; set; } = "";
 
     private Org Org { get; set; } = new("", "", DateTimeExt.UtcNowMilli());
-    private OrgMember OrgMember { get; set; } = new OrgMember("", "", true, "", OrgMemberRole.PerProject);
+    private OrgMember? OrgMember { get; set; }
 
     RadzenDataGrid<Project> _grid = default!;
     List<Project> Items { get; set; } = new ();
     private bool _isLoading = false;
 
-    protected override async Task OnAfterRenderAsync(bool isFirst)
+    protected override async Task OnInitializedAsync()
     {
-        if (Org.Id == string.Empty)
+        if (Org.Id == string.Empty || Org.Id != OrgId)
         {
             _isLoading = true;
             try
             {
                 Org = await Api.Org.GetOne(new(OrgId));
+                OrgMember = (await Api.OrgMember.GetOne(new(OrgId, Session.Id))).Item;
                 var res = await Api.Project.Get(new(OrgId));
                 Items.AddRange(res.Set);
                 await _grid.Reload();
@@ -76,7 +77,7 @@
 
     private void OpenNewDialog()
     {
-        DialogService.Open<OrgNew>(L.S(S.OrgNewOrg));
+        DialogService.Open<ProjectNew>(L.S(S.OrgNewOrg), new (){{"OrgId", OrgId}});
     }
 
     private void RowClick(DataGridRowMouseEventArgs<Project> e)
