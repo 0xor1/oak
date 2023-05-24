@@ -161,6 +161,7 @@ public static partial class S
         { New, new("Nuovo") },
         { Create, new("Creare") },
         { Name, new("Nome") },
+        { Currency, new("Valuta") },
         { CreatedOn, new("Creato") },
         { OrgMyOrgs, new("Le mie organizzazioni") },
         { OrgNoOrgs, new("Nessuna organizzazione") },

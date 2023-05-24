@@ -147,6 +147,7 @@ public static partial class S
         { New, new("New") },
         { Create, new("Create") },
         { Name, new("Name") },
+        { Currency, new("Currency") },
         { CreatedOn, new("Created On") },
         { OrgMyOrgs, new("My Organisations") },
         { OrgNoOrgs, new("No Organisations") },

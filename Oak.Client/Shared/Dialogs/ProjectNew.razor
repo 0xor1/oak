@@ -8,9 +8,13 @@
         Submit="Do"
         class="flx col ai-stretch g-1">
         <div class="flx col ai-stretch">
-            <RadzenLabel class="m-b-0q" Component="Name" Text="@L.S(S.OrgName)"/>
+            <RadzenLabel class="m-b-0q" Component="Name" Text="@L.S(S.Name)"/>
             <RadzenTextBox Name="Name" @bind-Value="@_model.Name"/>
             <RadzenRequiredValidator Component="Name" Popup="true"></RadzenRequiredValidator>
+        </div>
+        <div class="flx col ai-stretch">
+            <RadzenLabel class="m-b-0q" Component="Currency" Text="@L.S(S.Currency)"/>
+            <CurrencyPicker Name="Currency" Required="true" @bind-Value="@_model.Currency"/>
         </div>
         <RadzenButton ButtonType="ButtonType.Submit" IsBusy="_doing" Text="@L.S(S.Create)"/>
     </RadzenTemplateForm>
@@ -27,6 +31,8 @@
     public class Model
     {
         public string Name { get; set; } = "";
+        public bool IsPublic { get; set; }
+        public CurrencyPicker.Currency? Currency { get; set; }
     }
 
     Model _model = new();
@@ -46,7 +52,6 @@
             // call StatHasChanged on errors
         }
         _doing = false;
-        
     }
 
 }

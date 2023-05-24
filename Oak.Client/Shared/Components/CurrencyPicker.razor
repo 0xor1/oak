@@ -1,0 +1,152 @@
+﻿@using Common.Shared
+<RadzenDropDown Name="@Name" Value="Value" ValueChanged="InternalValueChanged" TValue="Currency?" Data="Currencies" AllowClear="true" AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" FilterOperator="StringFilterOperator.StartsWith"/>
+@if (Required)
+{
+    <RadzenRequiredValidator Component="Name" Popup="true"/>
+}
+
+
+@code {
+
+    public record Currency(string Code, string Symbol)
+    {
+        public override string ToString()
+            => $"{Code}, {Symbol}";
+    }
+
+    [Parameter]
+    public string? Name { get; set; }
+    [Parameter]
+    public bool Required { get; set; }
+    [Parameter]
+    public Currency? Value { get; set; }
+    [Parameter]
+    public EventCallback<Currency?>? ValueChanged { get; set; }
+    
+    private async Task InternalValueChanged(Currency? v)
+    {
+        Value = v;
+        if (ValueChanged != null)
+        {
+            await ValueChanged.NotNull().InvokeAsync(v);
+        }
+    }
+    
+    public static IReadOnlyList<Currency> Currencies = new List<Currency>()
+    {
+        // most common at top
+        new("USD", "$"),
+        new("EUR", "€"),
+        new("GBP", "£"),
+        // rest alphabetically
+        new("ALL", "Lek"),
+        new("AFN", "؋"),
+        new("ARS", "$"),
+        new("AWG", "ƒ"),
+        new("AUD", "$"),
+        new("AZN", "₼"),
+        new("BSD", "$"),
+        new("BBD", "$"),
+        new("BYN", "Br"),
+        new("BZD", "BZ$"),
+        new("BMD", "$"),
+        new("BOB", "$b"),
+        new("BAM", "KM"),
+        new("BWP", "P"),
+        new("BGN", "лв"),
+        new("BRL", "R$"),
+        new("BND", "$"),
+        new("KHR", "៛"),
+        new("CAD", "$"),
+        new("KYD", "$"),
+        new("CLP", "$"),
+        new("CNY", "¥"),
+        new("COP", "$"),
+        new("CRC", "₡"),
+        new("HRK", "kn"),
+        new("CUP", "₱"),
+        new("CZK", "Kč"),
+        new("DKK", "kr"),
+        new("DOP", "RD$"),
+        new("XCD", "$"),
+        new("EGP", "£"),
+        new("SVC", "$"),
+        new("FKP", "£"),
+        new("FJD", "$"),
+        new("GHS", "¢"),
+        new("GIP", "£"),
+        new("GTQ", "Q"),
+        new("GGP", "£"),
+        new("GYD", "$"),
+        new("HNL", "L"),
+        new("HKD", "$"),
+        new("HUF", "Ft"),
+        new("ISK", "kr"),
+        new("INR", "₹"),
+        new("IDR", "Rp"),
+        new("IRR", "﷼"),
+        new("IMP", "£"),
+        new("ILS", "₪"),
+        new("JMD", "J$"),
+        new("JPY", "¥"),
+        new("JEP", "£"),
+        new("KZT", "лв"),
+        new("KPW", "₩"),
+        new("KRW", "₩"),
+        new("KGS", "лв"),
+        new("LAK", "₭"),
+        new("LBP", "£"),
+        new("LRD", "$"),
+        new("MKD", "ден"),
+        new("MYR", "RM"),
+        new("MUR", "₨"),
+        new("MXN", "$"),
+        new("MNT", "₮"),
+        new("MNT", " د.إ"),
+        new("MZN", "MT"),
+        new("NAD", "$"),
+        new("NPR", "₨"),
+        new("ANG", "ƒ"),
+        new("NZD", "$"),
+        new("NIO", "C$"),
+        new("NGN", "₦"),
+        new("NOK", "kr"),
+        new("OMR", "﷼"),
+        new("PKR", "₨"),
+        new("PAB", "B/."),
+        new("PYG", "Gs"),
+        new("PEN", "S/."),
+        new("PHP", "₱"),
+        new("PLN", "zł"),
+        new("QAR", "﷼"),
+        new("RON", "lei"),
+        new("RUB", "₽"),
+        new("SHP", "£"),
+        new("SAR", "﷼"),
+        new("RSD", "Дин."),
+        new("SCR", "₨"),
+        new("SGD", "$"),
+        new("SBD", "$"),
+        new("SOS", "S"),
+        new("ZAR", "R"),
+        new("LKR", "₨"),
+        new("SEK", "kr"),
+        new("CHF", "CHF"),
+        new("SRD", "$"),
+        new("SYP", "£"),
+        new("TWD", "NT$"),
+        new("THB", "฿"),
+        new("TTD", "TT$"),
+        new("TRY", "₺"),
+        new("TVD", "$"),
+        new("UAH", "₴"),
+        new("AED", "د.إ"),
+        new("UYU", "$U"),
+        new("UZS", "лв"),
+        new("VEF", "Bs"),
+        new("VND", "₫"),
+        new("YER", "﷼"),
+        new("ZWD", "Z$")
+    };
+
+}

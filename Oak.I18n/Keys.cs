@@ -95,6 +95,7 @@ public static partial class S
     public const string New = "new";
     public const string Create = "create";
     public const string Name = "name";
+    public const string Currency = "currency";
     public const string CreatedOn = "created_on";
 
     // orgs
