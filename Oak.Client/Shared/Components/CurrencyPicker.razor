@@ -2,7 +2,7 @@
 <RadzenDropDown Name="@Name" Value="Value" ValueChanged="InternalValueChanged" TValue="Currency?" Data="Currencies" AllowClear="true" AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" FilterOperator="StringFilterOperator.StartsWith"/>
 @if (Required)
 {
-    <RadzenRequiredValidator Component="Name" Popup="true"/>
+    <RadzenRequiredValidator Component="@Name" Popup="true"/>
 }
 
 
