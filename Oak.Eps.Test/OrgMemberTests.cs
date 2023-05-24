@@ -58,7 +58,7 @@ public class OrgMemberTests : TestBase
         );
         // get one
         var one = await ali.OrgMember.GetOne(new(org.Id, aliMem.Id));
-        Assert.Equal(aliMem, one);
+        Assert.Equal(aliMem, one.Item);
         // get all by default ordering
         var res = (await ali.OrgMember.Get(new(org.Id, true))).Set;
         Assert.Equal(3, res.Count);
