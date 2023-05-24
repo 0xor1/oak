@@ -5,30 +5,28 @@
 @using IApi = Oak.Api.IApi
 @using S = Oak.I18n.S
 
-<div class="root">
-    <div class="flx col p-0h g-0h jc-s ai-s">
-        <RadzenText class="m-t-0" TextStyle="TextStyle.H2">@L.S(S.OrgMyOrgs)</RadzenText>
-        <RadzenButton class="m-b-1" ButtonStyle="ButtonStyle.Success" Icon="add_circle_outline" Text="@L.S(S.New)" Click="@OpenNewDialog"/>
-        <RadzenDataGrid
-            @ref="_grid"
-            Data="Items"
-            TItem="Org"
-            IsLoading="_isLoading"
-            EmptyText="@L.S(S.OrgNoOrgs)"
-            EditMode="DataGridEditMode.Single"
-            RowClick="RowClick"
-            class="row-clickable"
-            Style="max-width: 30em">
-            <Columns>
-                <RadzenDataGridColumn Width="23em" TItem="Org" Property="Name" Title="@L.S(S.Name)"/>
-                <RadzenDataGridColumn Width="7em" TItem="Org" Property="CreatedOn" Title="@L.S(S.CreatedOn)">
-                    <Template Context="org">
-                        @L.D(org.CreatedOn)
-                    </Template>
-                </RadzenDataGridColumn>
-            </Columns>
-        </RadzenDataGrid>
-    </div>
+<div class="root col p-0h g-0h jc-s ai-s">
+    <RadzenText class="m-t-0" TextStyle="TextStyle.H2">@L.S(S.OrgMyOrgs)</RadzenText>
+    <RadzenButton class="m-b-1" ButtonStyle="ButtonStyle.Success" Icon="add_circle_outline" Text="@L.S(S.New)" Click="@OpenNewDialog"/>
+    <RadzenDataGrid
+        @ref="_grid"
+        Data="Items"
+        TItem="Org"
+        IsLoading="_isLoading"
+        EmptyText="@L.S(S.OrgNoOrgs)"
+        EditMode="DataGridEditMode.Single"
+        RowClick="RowClick"
+        class="row-clickable"
+        Style="width: 31em">
+        <Columns>
+            <RadzenDataGridColumn Width="23em" TItem="Org" Property="Name" Title="@L.S(S.Name)"/>
+            <RadzenDataGridColumn Width="7em" TItem="Org" Property="CreatedOn" Title="@L.S(S.CreatedOn)">
+                <Template Context="org">
+                    @L.D(org.CreatedOn)
+                </Template>
+            </RadzenDataGridColumn>
+        </Columns>
+    </RadzenDataGrid>
 </div>
 
 @inject L L;
