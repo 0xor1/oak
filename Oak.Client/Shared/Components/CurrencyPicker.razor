@@ -1,10 +1,8 @@
 ﻿@using Common.Shared
-<RadzenDropDown Name="@Name" Value="Value" ValueChanged="InternalValueChanged" TValue="Currency?" Data="Currencies" AllowClear="true" AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" FilterOperator="StringFilterOperator.StartsWith"/>
-@if (Required)
-{
-    <RadzenRequiredValidator Component="@Name" Popup="true"/>
-}
 
+<RadzenDropDown @ref="@_ddRef" Name="@Name" Value="Value" ValueChanged="InternalValueChanged" TValue="Currency" Data="Currencies" AllowClear="true" AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" FilterOperator="StringFilterOperator.StartsWith"/>
+
+@implements IRadzenFormComponent
 
 @code {
 
@@ -15,7 +13,7 @@
     }
 
     [Parameter]
-    public string? Name { get; set; }
+    public string Name { get; set; } = "";
     [Parameter]
     public bool Required { get; set; }
     [Parameter]
@@ -149,4 +147,10 @@
         new("ZWD", "Z$")
     };
 
+    public object GetValue() => _ddRef.GetValue();
+
+    public bool IsBound => _ddRef.IsBound;
+    public bool HasValue => _ddRef.HasValue;
+    public FieldIdentifier FieldIdentifier => _ddRef.FieldIdentifier;
+    private RadzenDropDown<Currency> _ddRef = default!;
 }

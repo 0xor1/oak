@@ -15,6 +15,7 @@
         <div class="flx col ai-stretch">
             <RadzenLabel class="m-b-0q" Component="Currency" Text="@L.S(S.Currency)"/>
             <CurrencyPicker Name="Currency" Required="true" @bind-Value="@_model.Currency"/>
+            <RadzenRequiredValidator Component="Currency" Popup="true"/>
         </div>
         <RadzenButton ButtonType="ButtonType.Submit" IsBusy="_doing" Text="@L.S(S.Create)"/>
     </RadzenTemplateForm>
