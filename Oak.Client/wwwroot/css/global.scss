@@ -249,15 +249,26 @@ div.header > ul.rz-profile-menu > li.rz-navigation-item > div.rz-navigation-item
     display: none;
 }
 
+// allow making table row cursor a pointer
 .row-clickable{
     .rz-data-row{
         cursor: pointer;
     }
 }
+// I dont include 500 weight font so override to 600
 .rz-grid-table thead th .rz-column-title{
     font-weight: 600;
 }
 
+// data grid doesnt shrink with parent container without this
 .rz-data-grid{
     max-width: 100%;
+}
+
+
+// dialog header looks bad without this
+.rz-dialog-titlebar {
+    padding-bottom: 0.75em;
+    padding-top: 0.75em;
+    border-bottom: 1px solid gray;
 }
