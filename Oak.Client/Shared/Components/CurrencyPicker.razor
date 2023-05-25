@@ -1,9 +1,7 @@
 ﻿@using Common.Shared
-
 <RadzenDropDown @ref="@_ddRef" Name="@Name" Value="Value" ValueChanged="InternalValueChanged" TValue="Currency" Data="Currencies" AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" FilterOperator="StringFilterOperator.StartsWith"/>
 
 @implements IRadzenFormComponent
-
 @code {
 
     public record Currency(string Code, string Symbol)
@@ -19,11 +17,11 @@
     [Parameter]
     public bool Required { get; set; }
     [Parameter]
-    public Currency? Value { get; set; }
+    public Currency Value { get; set; }
     [Parameter]
-    public EventCallback<Currency?>? ValueChanged { get; set; }
+    public EventCallback<Currency>? ValueChanged { get; set; }
     
-    private async Task InternalValueChanged(Currency? v)
+    private async Task InternalValueChanged(Currency v)
     {
         Value = v;
         if (ValueChanged != null)

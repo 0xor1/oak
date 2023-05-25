@@ -1,6 +1,7 @@
 ﻿@using Common.Client
-@using Oak.Api
+@using Common.Shared.Auth
 @using Oak.I18n
+@using IApi = Oak.Api.IApi
 <div class="root col">
     <RadzenTemplateForm
         TItem="Model"
@@ -13,9 +14,33 @@
             <RadzenRequiredValidator Component="Name" Popup="true" Text="@L.S(S.Required)"></RadzenRequiredValidator>
         </div>
         <div class="flx col ai-stretch">
+            <RadzenLabel class="m-b-0q" Component="IsPublic" Text="@L.S(S.Public)"/>
+            <RadzenSwitch Name="Public" @bind-Value="@_model.IsPublic"/>
+        </div>
+        <div class="flx col ai-stretch">
             <RadzenLabel class="m-b-0q" Component="Currency" Text="@L.S(S.Currency)"/>
-            <CurrencyPicker Name="Currency" Required="true" @bind-Value="@_model.Currency"/>
-            <RadzenRequiredValidator Component="Currency" Popup="true" Text="@L.S(S.Required)"/>
+            <CurrencyPicker Name="Currency" @bind-Value="@_model.Currency"/>
+        </div>
+        <div class="flx col ai-stretch">
+            <RadzenLabel class="m-b-0q" Component="HoursPerDay" Text="@L.S(S.HoursPerDay)"/>
+            <RadzenNumeric TValue="uint?" Name="HoursPerDay" Min="1" Max="24"  @bind-Value="@_model.HoursPerDay"/>
+        </div>
+        <div class="flx col ai-stretch">
+            <RadzenLabel class="m-b-0q" Component="DaysPerWeek" Text="@L.S(S.DaysPerWeek)"/>
+            <RadzenNumeric TValue="uint?" Name="DaysPerWeek" Min="1" Max="7"  @bind-Value="@_model.DaysPerWeek"/>
+        </div>
+        <div class="flx col ai-stretch">
+            <RadzenLabel class="m-b-0q" Component="StartOn" Text="@L.S(S.StartOn)"/>
+            <RadzenDatePicker TValue="DateTime?" Name="StartOn" DateFormat="@Session.DateFmt"  @bind-Value="@_model.StartOn"/>
+        </div>
+        <div class="flx col ai-stretch">
+            <RadzenLabel class="m-b-0q" Component="EndOn" Text="@L.S(S.EndOn)"/>
+            <RadzenDatePicker TValue="DateTime?" Name="EndOn" DateFormat="@Session.DateFmt" @bind-Value="@_model.EndOn"/>
+        </div>
+        <div class="flx col ai-stretch">
+            <RadzenLabel class="m-b-0q" Component="FileLimit" Text="@L.S(S.FileLimit)"/>
+            <RadzenNumeric TValue="ulong" Min="0" Name="FileLimit" @bind-Value="@_model.FileLimit"/>
+            <RadzenRequiredValidator Component="FileLimit" Popup="true" Text="@L.S(S.Required)"></RadzenRequiredValidator>
         </div>
         <RadzenButton ButtonType="ButtonType.Submit" IsBusy="_doing" Text="@L.S(S.Create)"/>
     </RadzenTemplateForm>
@@ -29,11 +54,19 @@
     [Parameter]
     public string OrgId { get; set; }
 
+    [Parameter]
+    public ISession Session { get; set; }
+
     public class Model
     {
         public string Name { get; set; } = "";
         public bool IsPublic { get; set; }
         public CurrencyPicker.Currency Currency { get; set; } = CurrencyPicker.USD;
+        public uint? HoursPerDay { get; set; }
+        public uint? DaysPerWeek { get; set; }
+        public DateTime? StartOn { get; set; }
+        public DateTime? EndOn { get; set; }
+        public ulong FileLimit { get; set; }
     }
 
     Model _model = new();
@@ -44,7 +77,7 @@
         _doing = true;
         try
         {
-            var p = await Api.Project.Create(new(OrgId, _model.IsPublic, _model.Name, _model.Currency.Symbol, _model.Currency.Code, 8, 5, null, null, 0));
+            var p = await Api.Project.Create(new(OrgId, _model.IsPublic, _model.Name, _model.Currency.Symbol, _model.Currency.Code, _model.HoursPerDay, _model.DaysPerWeek, _model.StartOn, _model.EndOn, _model.FileLimit));
             Nav.NavigateTo($"/org/{OrgId}/project/{p.Id}/task/{p.Id}");
         }
         catch

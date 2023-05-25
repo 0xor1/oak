@@ -93,11 +93,17 @@ public static partial class S
 
     // general
     public const string Required = "required";
+    public const string Public = "public";
     public const string New = "new";
     public const string Create = "create";
     public const string Name = "name";
     public const string Currency = "currency";
     public const string CreatedOn = "created_on";
+    public const string HoursPerDay = "hours_per_day";
+    public const string DaysPerWeek = "days_per_week";
+    public const string StartOn = "start_on";
+    public const string EndOn = "end_on";
+    public const string FileLimit = "file_limit";
 
     // orgs
     public const string OrgMyOrgs = "org_my_orgs";
@@ -108,4 +114,6 @@ public static partial class S
     public const string OrgProjects = "org_projects";
     public const string OrgNoProjects = "org_no_projects";
     public const string OrgNewProject = "org_new_project";
+
+    // projects
 }
