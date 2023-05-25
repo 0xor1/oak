@@ -76,19 +76,50 @@
 @using Oak.I18n
 @using Common.Client
 @using Common.Shared.Auth
+@using System.Text.RegularExpressions
 @inherits LayoutComponentBase
 @inject IAuthService Auth;
+@inject NavigationManager Nav;
 @inject L L;
+@implements IDisposable;
 @code{
 
     private bool _leftExpanded;
     private ISession _session = Session.Default(S.DefaultLang, S.DefaultDateFmt, S.DefaultTimeFmt);
     private bool _ready;
+    private IDisposable? _eventReg;
+    
     protected override async Task OnInitializedAsync()
     {
         Auth.RegisterRefreshUi(AuthStateChanged);
         AuthStateChanged(await Auth.GetSession());
         _ready = true;
+        _eventReg = Nav.RegisterLocationChangingHandler(OnLocationChanging);
+    }
+
+    private async ValueTask OnLocationChanging(LocationChangingContext ctx)
+    {
+        var uri = ctx.TargetLocation;
+        // check for /org/{OrgId}/project/{ProjectId}/task/{TaskId}
+        var orgId = "";
+        var orgMatch = OrgId().Match(uri);
+        if (orgMatch.Success && orgMatch.Groups.Count == 2)
+        {
+            orgId = orgMatch.Groups[1].Value;
+        }
+        var projectId = "";
+        var projectMatch = ProjectId().Match(uri);
+        if (projectMatch.Success && projectMatch.Groups.Count == 2)
+        {
+            projectId = projectMatch.Groups[1].Value;
+        }
+        var taskId = "";
+        var taskMatch = TaskId().Match(uri);
+        if (taskMatch.Success && taskMatch.Groups.Count == 2)
+        {
+            taskId = taskMatch.Groups[1].Value;
+        }
+        await ValueTask.CompletedTask;
     }
 
     private void AuthStateChanged(ISession s)
@@ -100,6 +131,11 @@
     private async void ToggleLiveUI()
     {
         await Auth.FcmEnabled(!_session.FcmEnabled);
+    }
+
+    public void Dispose()
+    {
+        _eventReg?.Dispose();
     }
 
 }
