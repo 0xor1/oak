@@ -92,6 +92,7 @@ public static partial class S
     // UI
 
     // general
+    public const string Required = "required";
     public const string New = "new";
     public const string Create = "create";
     public const string Name = "name";
@@ -106,4 +107,5 @@ public static partial class S
     public const string OrgYourName = "org_your_name";
     public const string OrgProjects = "org_projects";
     public const string OrgNoProjects = "org_no_projects";
+    public const string OrgNewProject = "org_new_project";
 }

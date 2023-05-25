@@ -156,6 +156,7 @@ public static partial class S
         },
         { VItemInvalidTimeInc, new("La entrada de tiempo debe ser de 1 a 1440 minutos") },
         { VItemInvalidCostInc, new("La entrada de costo debe ser mayor que 0") },
+        { Required, new("Requerido") },
         { New, new("Nuevo") },
         { Create, new("Crear") },
         { Name, new("Nombre") },
@@ -167,6 +168,7 @@ public static partial class S
         { OrgName, new("nombre de la organización") },
         { OrgYourName, new("Su nombre") },
         { OrgProjects, new("Proyectos") },
-        { OrgNoProjects, new("Sin Proyectos") }
+        { OrgNoProjects, new("Sin Proyectos") },
+        { OrgNewProject, new("Nuevo proyecto") }
     };
 }

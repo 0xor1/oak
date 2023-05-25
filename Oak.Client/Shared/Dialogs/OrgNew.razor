@@ -10,12 +10,12 @@
         <div class="flx col ai-stretch">
             <RadzenLabel class="m-b-0q" Component="OrgName" Text="@L.S(S.OrgName)"/>
             <RadzenTextBox Name="OrgName" @bind-Value="@_model.OrgName"/>
-            <RadzenRequiredValidator Component="OrgName" Popup="true"></RadzenRequiredValidator>
+            <RadzenRequiredValidator Component="OrgName" Popup="true" Text="@L.S(S.Required)"></RadzenRequiredValidator>
         </div>
         <div class="flx col ai-stretch">
             <RadzenLabel class="m-b-0q" Component="OwnerName" Text="@L.S(S.OrgYourName)"/>
             <RadzenTextBox Name="OwnerName" @bind-Value="@_model.OwnerName"/>
-            <RadzenRequiredValidator Component="OwnerName" Popup="true"></RadzenRequiredValidator>
+            <RadzenRequiredValidator Component="OwnerName" Popup="true" Text="@L.S(S.Required)"></RadzenRequiredValidator>
         </div>
         <RadzenButton ButtonType="ButtonType.Submit" IsBusy="_doing" Text="@L.S(S.Create)"/>
     </RadzenTemplateForm>

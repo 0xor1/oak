@@ -74,7 +74,7 @@
 
     private void OpenNewDialog()
     {
-        DialogService.Open<ProjectNew>(L.S(S.OrgNewOrg), new (){{"OrgId", OrgId}});
+        DialogService.Open<ProjectNew>(L.S(S.OrgNewProject), new (){{"OrgId", OrgId}});
     }
 
     private void RowClick(DataGridRowMouseEventArgs<Project> e)

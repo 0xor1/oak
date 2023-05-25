@@ -162,6 +162,7 @@ public static partial class S
             new("L'entrée de temps doit être comprise entre 1 et 1440 minutes")
         },
         { VItemInvalidCostInc, new("L'entrée de coût doit être supérieure à 0") },
+        { Required, new("Requis") },
         { New, new("Nouveau") },
         { Create, new("Créer") },
         { Name, new("Nom") },
@@ -173,6 +174,7 @@ public static partial class S
         { OrgName, new("Nom de l'organisme") },
         { OrgYourName, new("votre nom") },
         { OrgProjects, new("Projets") },
-        { OrgNoProjects, new("Aucune Projets") }
+        { OrgNoProjects, new("Aucune Projets") },
+        { OrgNewProject, new("Nouveau projet") }
     };
 }

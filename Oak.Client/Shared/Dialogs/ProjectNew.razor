@@ -10,12 +10,12 @@
         <div class="flx col ai-stretch">
             <RadzenLabel class="m-b-0q" Component="Name" Text="@L.S(S.Name)"/>
             <RadzenTextBox Name="Name" @bind-Value="@_model.Name"/>
-            <RadzenRequiredValidator Component="Name" Popup="true"></RadzenRequiredValidator>
+            <RadzenRequiredValidator Component="Name" Popup="true" Text="@L.S(S.Required)"></RadzenRequiredValidator>
         </div>
         <div class="flx col ai-stretch">
             <RadzenLabel class="m-b-0q" Component="Currency" Text="@L.S(S.Currency)"/>
             <CurrencyPicker Name="Currency" Required="true" @bind-Value="@_model.Currency"/>
-            <RadzenRequiredValidator Component="Currency" Popup="true"/>
+            <RadzenRequiredValidator Component="Currency" Popup="true" Text="@L.S(S.Required)"/>
         </div>
         <RadzenButton ButtonType="ButtonType.Submit" IsBusy="_doing" Text="@L.S(S.Create)"/>
     </RadzenTemplateForm>
@@ -33,7 +33,7 @@
     {
         public string Name { get; set; } = "";
         public bool IsPublic { get; set; }
-        public CurrencyPicker.Currency? Currency { get; set; }
+        public CurrencyPicker.Currency Currency { get; set; } = CurrencyPicker.USD;
     }
 
     Model _model = new();
@@ -44,7 +44,7 @@
         _doing = true;
         try
         {
-            var p = await Api.Project.Create(new(OrgId, true, _model.Name, "$", "USD", 8, 5, null, null, 0));
+            var p = await Api.Project.Create(new(OrgId, _model.IsPublic, _model.Name, _model.Currency.Symbol, _model.Currency.Code, 8, 5, null, null, 0));
             Nav.NavigateTo($"/org/{OrgId}/project/{p.Id}/task/{p.Id}");
         }
         catch
