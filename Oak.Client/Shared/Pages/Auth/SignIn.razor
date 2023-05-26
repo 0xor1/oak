@@ -43,7 +43,7 @@
 @code{
     
     [CascadingParameter]
-    public ISession Session { get; set; } = Common.Shared.Auth.Session.Default(S.DefaultLang, S.DefaultDateFmt, S.DefaultTimeFmt);
+    public ISession Session { get; set; } = default!;
     protected override void OnInitialized()
     {
         if (Session.IsAuthed)

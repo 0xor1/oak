@@ -1,0 +1,16 @@
+﻿@page "/org/{OrgId}/project/{ProjectId}/task/{TaskId}"
+@using Oak.I18n
+@using Common.Client
+@inject L L;
+<PageTitle>@L.S(S.OrgMyOrgs)</PageTitle>
+<TaskView OrgId="@OrgId" ProjectId="@ProjectId" TaskId="@TaskId"/>
+
+@code{
+    [Parameter]
+    public string OrgId { get; set; }
+    [Parameter]
+    public string ProjectId { get; set; }
+    [Parameter]
+    public string TaskId { get; set; }
+
+}

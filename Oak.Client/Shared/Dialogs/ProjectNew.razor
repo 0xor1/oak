@@ -9,13 +9,13 @@
         Submit="Do"
         class="flx col ai-stretch g-1">
         <div class="flx col ai-stretch">
+            <RadzenLabel class="m-b-0q" Component="IsPublic" Text="@L.S(S.Public)"/>
+            <RadzenSwitch Name="Public" @bind-Value="@_model.IsPublic"/>
+        </div>
+        <div class="flx col ai-stretch">
             <RadzenLabel class="m-b-0q" Component="Name" Text="@L.S(S.Name)"/>
             <RadzenTextBox Name="Name" @bind-Value="@_model.Name"/>
             <RadzenRequiredValidator Component="Name" Popup="true" Text="@L.S(S.Required)"></RadzenRequiredValidator>
-        </div>
-        <div class="flx col ai-stretch">
-            <RadzenLabel class="m-b-0q" Component="IsPublic" Text="@L.S(S.Public)"/>
-            <RadzenSwitch Name="Public" @bind-Value="@_model.IsPublic"/>
         </div>
         <div class="flx col ai-stretch">
             <RadzenLabel class="m-b-0q" Component="Currency" Text="@L.S(S.Currency)"/>
@@ -59,8 +59,8 @@
 
     public class Model
     {
-        public string Name { get; set; } = "";
         public bool IsPublic { get; set; }
+        public string Name { get; set; } = "";
         public CurrencyPicker.Currency Currency { get; set; } = CurrencyPicker.USD;
         public uint? HoursPerDay { get; set; }
         public uint? DaysPerWeek { get; set; }

@@ -52,7 +52,7 @@
     private bool CanDo => _model != _initialValues && !_doing;
 
     [CascadingParameter]
-    public ISession Session { get; set; } = Common.Shared.Auth.Session.Default(S.DefaultLang, S.DefaultDateFmt, S.DefaultTimeFmt);
+    public ISession Session { get; set; } = default!;
     
     private Model _model = new (); 
     private Model _initialValues = new (); 

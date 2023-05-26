@@ -1,0 +1,21 @@
+﻿@using Oak.I18n
+@using Common.Client
+@using Common.Shared.Auth
+<div class="root col p-0h g-0h jc-s ai-s">
+    yolo
+</div>
+@inject L L;
+@inject NavigationManager Nav;
+@code{
+    [CascadingParameter]
+    public ISession Session { get; set; } = default!;
+    [Parameter]
+    [EditorRequired]
+    public string OrgId { get; set; } = "";
+    [Parameter]
+    [EditorRequired]
+    public string ProjectId { get; set; } = "";
+    [Parameter]
+    [EditorRequired]
+    public string TaskId { get; set; } = "";
+}

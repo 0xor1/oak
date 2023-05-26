@@ -41,4 +41,8 @@
     <ProjectReference Include="..\Oak.I18n\Oak.I18n.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <AdditionalFiles Include="Shared\Pages\TaskView.razor" />
+  </ItemGroup>
+
 </Project>
