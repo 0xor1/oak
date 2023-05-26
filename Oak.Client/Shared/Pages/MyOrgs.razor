@@ -17,9 +17,9 @@
         EditMode="DataGridEditMode.Single"
         RowClick="RowClick"
         class="row-clickable"
-        Style="width: 31em">
+        Style="width: 27em">
         <Columns>
-            <RadzenDataGridColumn Width="23em" TItem="Org" Property="Name" Title="@L.S(S.Name)"/>
+            <RadzenDataGridColumn Width="18em" TItem="Org" Property="Name" Title="@L.S(S.Name)"/>
             <RadzenDataGridColumn Width="7em" TItem="Org" Property="CreatedOn" Title="@L.S(S.CreatedOn)">
                 <Template Context="org">
                     @L.D(org.CreatedOn)

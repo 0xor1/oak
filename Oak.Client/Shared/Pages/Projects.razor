@@ -19,10 +19,25 @@
         EditMode="DataGridEditMode.Single"
         RowClick="RowClick"
         class="row-clickable"
-        Style="width: 31em">
+        Style="width: 45em">
         <Columns>
-            <RadzenDataGridColumn Width="23em" TItem="Project" Property="Name" Title="@L.S(S.Name)"/>
-            <RadzenDataGridColumn Width="7em" TItem="Project" Property="CreatedOn" Title="@L.S(S.CreatedOn)">
+            <RadzenDataGridColumn Width="18em" TItem="Project" Property="Name" Title="@L.S(S.Name)"/>
+            <RadzenDataGridColumn Width="7em" TItem="Project" Title="@L.S(S.TimeEst)">
+                <Template Context="p">
+                    @(p.Task.TimeEst)
+                </Template>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn Width="7em" TItem="Project" Title="@L.S(S.StartOn)">
+                <Template Context="p">
+                    @(p.StartOn == null? "--": L.D(p.StartOn.Value))
+                </Template>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn Width="7em" TItem="Project" Title="@L.S(S.EndOn)">
+                <Template Context="p">
+                    @(p.EndOn == null ? "--" : L.D(p.EndOn.Value))
+                </Template>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn Width="7em" TItem="Project" Title="@L.S(S.CreatedOn)">
                 <Template Context="p">
                     @L.D(p.CreatedOn)
                 </Template>

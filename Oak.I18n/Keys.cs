@@ -103,6 +103,12 @@ public static partial class S
     public const string DaysPerWeek = "days_per_week";
     public const string StartOn = "start_on";
     public const string EndOn = "end_on";
+    public const string TimeEst = "time_est";
+    public const string TimeInc = "time_inc";
+    public const string CostEst = "cost_est";
+    public const string CostInc = "cost_inc";
+    public const string FileN = "file_n";
+    public const string FileSize = "file_size";
     public const string FileLimit = "file_limit";
 
     // orgs
