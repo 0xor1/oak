@@ -79,10 +79,12 @@ public class ProjectTests : TestBase
         var one = await ali.Project.GetOne(new(org.Id, b.Id));
         Assert.Equal(b, one);
 
-        // get all private projects
+        // get all projects
         var res = (await ali.Project.Get(new(org.Id))).Set;
-        Assert.Equal(1, res.Count);
-        Assert.Equal(b, res[0]);
+        Assert.Equal(3, res.Count);
+        Assert.Equal(a, res[0]);
+        Assert.Equal(b, res[1]);
+        Assert.Equal(c, res[2]);
 
         // get all public projects
         res = (await ali.Project.Get(new(org.Id, IsPublic: true))).Set;
@@ -108,7 +110,9 @@ public class ProjectTests : TestBase
 
         // get private projects as perProject permission user
         res = (await dan.Project.Get(new(org.Id))).Set;
-        Assert.Equal(0, res.Count);
+        Assert.Equal(2, res.Count);
+        Assert.Equal(a, res[0]);
+        Assert.Equal(c, res[1]);
 
         // get all public projects ordered By Name
         res = (
@@ -265,6 +269,13 @@ public class ProjectTests : TestBase
         ).Set;
         Assert.Equal(1, res.Count);
         Assert.Equal(c, res[0]);
+
+        // get as non org member
+        var (edd, _, _) = await Rig.NewApi("edd");
+        res = (await edd.Project.Get(new(org.Id))).Set;
+        Assert.Equal(2, res.Count);
+        Assert.Equal(a, res[0]);
+        Assert.Equal(c, res[1]);
     }
 
     [Fact]

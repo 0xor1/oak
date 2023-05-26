@@ -78,7 +78,7 @@ public record Create(
 
 public record Get(
     string Org,
-    bool IsPublic = false,
+    bool? IsPublic = null,
     string? NameStartsWith = null,
     MinMax<DateTime>? CreatedOn = null,
     MinMax<DateTime>? StartOn = null,

@@ -127,14 +127,18 @@ internal static class ProjectEps
                     var db = ctx.Get<OakDb>();
 
                     var orgMemRole = await EpsUtil.OrgRole(db, ses.Id, req.Org);
-                    ctx.InsufficientPermissionsIf(!req.IsPublic && orgMemRole == null);
+                    if (orgMemRole == null && req.IsPublic != true)
+                    {
+                        req = req with { IsPublic = true };
+                    }
 
                     var qry = db.Projects.Where(
-                        x =>
-                            x.Org == req.Org
-                            && x.IsArchived == req.IsArchived
-                            && x.IsPublic == req.IsPublic
+                        x => x.Org == req.Org && x.IsArchived == req.IsArchived
                     );
+                    if (req.IsPublic != null)
+                    {
+                        qry = qry.Where(x => x.IsPublic == req.IsPublic);
+                    }
                     if (!req.NameStartsWith.IsNullOrWhiteSpace())
                     {
                         qry = qry.Where(x => x.Name.StartsWith(req.NameStartsWith));
@@ -173,7 +177,7 @@ internal static class ProjectEps
                         }
                     }
 
-                    if (!req.IsPublic && orgMemRole > OrgMemberRole.ReadAllProjects)
+                    if (req.IsPublic != true && orgMemRole > OrgMemberRole.ReadAllProjects)
                     {
                         // req is for private projects and the user has per project permissions access
                         var projectIds = await db.ProjectMembers
@@ -181,7 +185,7 @@ internal static class ProjectEps
                             .Select(x => x.Project)
                             .Distinct()
                             .ToListAsync();
-                        qry = qry.Where(x => projectIds.Contains(x.Id));
+                        qry = qry.Where(x => projectIds.Contains(x.Id) || x.IsPublic);
                     }
                     if (req.After != null)
                     {
