@@ -1,0 +1,51 @@
+﻿@using Common.Shared
+@using Common.Client
+@using S = Oak.I18n.S
+<div class="root">
+    <div class="flx col p-0h g-0h">
+        <div class="flx g-0h">
+            <RadzenCheckBox TValue="bool" Value="True" ValueChanged="TrueValueChanged" Name="True"/><RadzenLabel Component="True">@L.S(S.True)</RadzenLabel>
+        </div>
+        <div class="flx g-0h">
+            <RadzenCheckBox TValue="bool" Value="False" ValueChanged="FalseValueChanged" Name="False"/><RadzenLabel Component="False">@L.S(S.False)</RadzenLabel>
+        </div>
+    </div>
+</div>
+
+@inject L L;
+@code {
+
+    private bool True { get; set; } = false;
+    private bool False { get; set; } = false;
+
+    [Parameter]
+    public bool? Value { get; set; }
+    [Parameter]
+    public EventCallback<bool?>? ValueChanged { get; set; }
+    
+    private async Task TrueValueChanged(bool v)
+    {
+        True = v;
+        if (True)
+        {
+            False = false;
+        }
+        if (ValueChanged != null)
+        {
+            await ValueChanged.NotNull().InvokeAsync(True? true: False? false : null);
+        }
+    }
+    
+    private async Task FalseValueChanged(bool v)
+    {
+        False = v;
+        if (False)
+        {
+            True = false;
+        }
+        if (ValueChanged != null)
+        {
+            await ValueChanged.NotNull().InvokeAsync(True? true: False? false : null);
+        }
+    }
+}

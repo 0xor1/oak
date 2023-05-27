@@ -96,6 +96,8 @@ public static partial class S
     // UI
 
     // general
+    public const string True = "true";
+    public const string False = "false";
     public const string Required = "required";
     public const string Public = "public";
     public const string New = "new";

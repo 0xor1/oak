@@ -158,6 +158,8 @@ public static partial class S
         },
         { VItemInvalidTimeInc, new("La entrada de tiempo debe ser de 1 a 1440 minutos") },
         { VItemInvalidCostInc, new("La entrada de costo debe ser mayor que 0") },
+        { True, new("Verdadero") },
+        { False, new("Falso") },
         { Required, new("Requerido") },
         { Public, new("Público") },
         { New, new("Nuevo") },

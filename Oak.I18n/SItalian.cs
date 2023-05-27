@@ -163,6 +163,8 @@ public static partial class S
             new("L'inserimento dell'ora deve essere compreso tra 1 e 1440 minuti")
         },
         { VItemInvalidCostInc, new("La voce di costo deve essere maggiore di 0") },
+        { True, new("Vero") },
+        { False, new("Falso") },
         { Required, new("Necessario") },
         { Public, new("Pubblico") },
         { New, new("Nuovo") },

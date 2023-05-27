@@ -158,6 +158,8 @@ public static partial class S
         },
         { VItemInvalidTimeInc, new("Der Zeiteintrag muss 1 bis 1440 Minuten betragen") },
         { VItemInvalidCostInc, new("Der Kosteneintrag muss größer als 0 sein") },
+        { True, new("Wahr") },
+        { False, new("Falsch") },
         { Required, new("Erforderlich") },
         { Public, new("Öffentlich") },
         { New, new("Neu") },
