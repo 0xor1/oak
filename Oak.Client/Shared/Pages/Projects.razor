@@ -4,6 +4,7 @@
 @using Oak.Api.Org
 @using Oak.Api.OrgMember
 @using Oak.Api.Project
+@using Oak.Client.Lib
 @using IApi = Oak.Api.IApi
 @using S = Oak.I18n.S
 
@@ -18,25 +19,45 @@
         EmptyText="@L.S(S.OrgNoProjects)"
         RowClick="RowClick"
         class="row-clickable"
-        Style="width: 45em">
+        Style="width: 80em">
         <Columns>
             <RadzenDataGridColumn Width="18em" TItem="Project" Property="Name" Title="@L.S(S.Name)"/>
-            <RadzenDataGridColumn Width="7em" TItem="Project" Title="@L.S(S.TimeEst)">
+            <RadzenDataGridColumn TextAlign="TextAlign.Center" Width="7em" TItem="Project" Title="@L.S(S.Public)">
                 <Template Context="p">
-                    @(p.Task.TimeEst)
+                    <RadzenCheckBox Disabled="true" Value="p.IsPublic"></RadzenCheckBox>
                 </Template>
             </RadzenDataGridColumn>
-            <RadzenDataGridColumn Width="7em" TItem="Project" Title="@L.S(S.StartOn)">
+            <RadzenDataGridColumn TextAlign="TextAlign.Center" Width="7em" TItem="Project" Title="@L.S(S.TimeEst)">
+                <Template Context="p">
+                    @(Util.Time(p.Task.TimeEst, p.HoursPerDay, p.DaysPerWeek))
+                </Template>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn TextAlign="TextAlign.Center" Width="7em" TItem="Project" Title="@L.S(S.TimeInc)">
+                <Template Context="p">
+                    @(Util.Time(p.Task.TimeInc, p.HoursPerDay, p.DaysPerWeek))
+                </Template>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn TextAlign="TextAlign.Center" Width="7em" TItem="Project" Title="@L.S(S.CostEst)">
+                <Template Context="p">
+                    @(Util.Cost(p.Task.CostEst, p.CurrencySymbol))
+                </Template>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn TextAlign="TextAlign.Center" Width="7em" TItem="Project" Title="@L.S(S.CostInc)">
+                <Template Context="p">
+                    @(Util.Cost(p.Task.CostInc, p.CurrencySymbol))
+                </Template>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn TextAlign="TextAlign.Center" Width="7em" TItem="Project" Title="@L.S(S.StartOn)">
                 <Template Context="p">
                     @(p.StartOn == null? "--": L.D(p.StartOn.Value))
                 </Template>
             </RadzenDataGridColumn>
-            <RadzenDataGridColumn Width="7em" TItem="Project" Title="@L.S(S.EndOn)">
+            <RadzenDataGridColumn TextAlign="TextAlign.Center" Width="7em" TItem="Project" Title="@L.S(S.EndOn)">
                 <Template Context="p">
                     @(p.EndOn == null ? "--" : L.D(p.EndOn.Value))
                 </Template>
             </RadzenDataGridColumn>
-            <RadzenDataGridColumn Width="7em" TItem="Project" Title="@L.S(S.CreatedOn)">
+            <RadzenDataGridColumn TextAlign="TextAlign.Center" Width="7em" TItem="Project" Title="@L.S(S.CreatedOn)">
                 <Template Context="p">
                     @L.D(p.CreatedOn)
                 </Template>
