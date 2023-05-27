@@ -131,6 +131,14 @@ public static partial class S
         },
         { OrgTooMany, new("Vous êtes déjà membre d'un trop grand nombre d'organisations") },
         {
+            ProjectInvalidHoursPerDay,
+            new("Les heures par jour doivent être comprises entre 1 et 24")
+        },
+        {
+            ProjectInvalidDaysPerWeek,
+            new("Les jours par semaine doivent être compris entre 1 et 7")
+        },
+        {
             TaskTooManyDescN,
             new(
                 "Trop de descendants pour tous les obtenir, valide uniquement sur les tâches avec 1000 descendants ou moins"

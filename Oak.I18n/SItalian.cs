@@ -125,6 +125,11 @@ public static partial class S
             new("Stringa non valida {{Name}}, Min {{Min}}, Max {{Max}}, Regexes {{Regexes}}")
         },
         { OrgTooMany, new("Sei già membro di troppe org") },
+        { ProjectInvalidHoursPerDay, new("Le ore giornaliere devono essere comprese tra 1 e 24") },
+        {
+            ProjectInvalidDaysPerWeek,
+            new("I giorni della settimana devono essere compresi tra 1 e 7")
+        },
         {
             TaskTooManyDescN,
             new(

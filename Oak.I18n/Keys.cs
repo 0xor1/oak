@@ -77,6 +77,10 @@ public static partial class S
     // org
     public const string OrgTooMany = "org_too_many";
 
+    // project
+    public const string ProjectInvalidHoursPerDay = "project_invalid_hours_per_day";
+    public const string ProjectInvalidDaysPerWeek = "project_invalid_days_per_week";
+
     // task
     public const string TaskTooManyDescN = "task_too_many_descn";
     public const string TaskCantMoveRootProjectNode = "task_cant_move_root_project_node";

@@ -129,6 +129,8 @@ public static partial class S
             new("Cadena no válida {{Nombre}}, Min {{Min}}, Max {{Max}}, Regexes {{Regexes}}")
         },
         { OrgTooMany, new("Ya eres miembro de demasiadas organizaciones") },
+        { ProjectInvalidHoursPerDay, new("Las horas por día deben estar entre 1 y 24") },
+        { ProjectInvalidDaysPerWeek, new("Los días de la semana deben estar entre 1 y 7") },
         {
             TaskTooManyDescN,
             new(

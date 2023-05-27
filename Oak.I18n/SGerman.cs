@@ -127,6 +127,8 @@ public static partial class S
             new("Ungültiger String {{Name}}, Min. {{Min}}, Max. {{Max}}, Regexes {{Regexes}}")
         },
         { OrgTooMany, new("Sie sind bereits Mitglied in zu vielen Orgs") },
+        { ProjectInvalidHoursPerDay, new("Die Stunden pro Tag müssen zwischen 1 und 24 liegen") },
+        { ProjectInvalidDaysPerWeek, new("Die Tage pro Woche müssen zwischen 1 und 7 liegen") },
         {
             TaskTooManyDescN,
             new(

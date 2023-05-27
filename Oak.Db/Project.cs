@@ -13,8 +13,8 @@ public class Project
     public DateTime CreatedOn { get; set; }
     public string CurrencySymbol { get; set; } = "$";
     public string CurrencyCode { get; set; } = "USD";
-    public uint? HoursPerDay { get; set; }
-    public uint? DaysPerWeek { get; set; }
+    public uint HoursPerDay { get; set; } = 8;
+    public uint DaysPerWeek { get; set; } = 5;
     public DateTime? StartOn { get; set; }
     public DateTime? EndOn { get; set; }
     public ulong FileLimit { get; set; }

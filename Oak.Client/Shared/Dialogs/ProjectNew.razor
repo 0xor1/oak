@@ -23,11 +23,11 @@
         </div>
         <div class="flx col ai-stretch">
             <RadzenLabel class="m-b-0q" Component="HoursPerDay" Text="@L.S(S.HoursPerDay)"/>
-            <RadzenNumeric TValue="uint?" Name="HoursPerDay" Min="1" Max="24"  @bind-Value="@_model.HoursPerDay"/>
+            <RadzenNumeric TValue="uint" Name="HoursPerDay" Min="1" Max="24"  @bind-Value="@_model.HoursPerDay"/>
         </div>
         <div class="flx col ai-stretch">
             <RadzenLabel class="m-b-0q" Component="DaysPerWeek" Text="@L.S(S.DaysPerWeek)"/>
-            <RadzenNumeric TValue="uint?" Name="DaysPerWeek" Min="1" Max="7"  @bind-Value="@_model.DaysPerWeek"/>
+            <RadzenNumeric TValue="uint" Name="DaysPerWeek" Min="1" Max="7"  @bind-Value="@_model.DaysPerWeek"/>
         </div>
         <div class="flx col ai-stretch">
             <RadzenLabel class="m-b-0q" Component="StartOn" Text="@L.S(S.StartOn)"/>
@@ -62,8 +62,8 @@
         public bool IsPublic { get; set; }
         public string Name { get; set; } = "";
         public CurrencyPicker.Currency Currency { get; set; } = CurrencyPicker.USD;
-        public uint? HoursPerDay { get; set; }
-        public uint? DaysPerWeek { get; set; }
+        public uint HoursPerDay { get; set; } = 8;
+        public uint DaysPerWeek { get; set; } = 5;
         public DateTime? StartOn { get; set; }
         public DateTime? EndOn { get; set; }
         public ulong FileLimit { get; set; }

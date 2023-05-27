@@ -12,6 +12,7 @@ using Exact = Oak.Api.Project.Exact;
 using Get = Oak.Api.Project.Get;
 using Project = Oak.Api.Project.Project;
 using Update = Oak.Api.Project.Update;
+using S = Oak.I18n.S;
 
 namespace Oak.Eps;
 
@@ -32,6 +33,14 @@ internal static class ProjectEps
                                 ses.Id,
                                 req.Org,
                                 OrgMemberRole.Admin
+                            );
+                            ctx.BadRequestIf(
+                                req.HoursPerDay < 1 || req.HoursPerDay > 24,
+                                S.ProjectInvalidHoursPerDay
+                            );
+                            ctx.BadRequestIf(
+                                req.DaysPerWeek < 1 || req.DaysPerWeek > 7,
+                                S.ProjectInvalidDaysPerWeek
                             );
                             var p = new Db.Project()
                             {
@@ -313,6 +322,14 @@ internal static class ProjectEps
                                 req.Org,
                                 req.Id,
                                 ProjectMemberRole.Admin
+                            );
+                            ctx.BadRequestIf(
+                                req.HoursPerDay < 1 || req.HoursPerDay > 24,
+                                S.ProjectInvalidHoursPerDay
+                            );
+                            ctx.BadRequestIf(
+                                req.DaysPerWeek < 1 || req.DaysPerWeek > 7,
+                                S.ProjectInvalidDaysPerWeek
                             );
                             var p = await db.Projects.SingleOrDefaultAsync(
                                 x => x.Org == req.Org && x.Id == req.Id
