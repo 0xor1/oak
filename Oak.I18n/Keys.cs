@@ -109,6 +109,7 @@ public static partial class S
     public const string DaysPerWeek = "days_per_week";
     public const string StartOn = "start_on";
     public const string EndOn = "end_on";
+    public const string TimeMin = "time_min";
     public const string TimeEst = "time_est";
     public const string TimeInc = "time_inc";
     public const string CostEst = "cost_est";

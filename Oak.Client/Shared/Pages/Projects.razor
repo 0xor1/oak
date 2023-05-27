@@ -25,14 +25,14 @@
         AllowFiltering="true"
         LoadData="LoadData"
         class="row-clickable"
-        Style="width: 86em">
+        Style="width: 93em">
         <Columns>
             <RadzenDataGridColumn Sortable="true" Width="18em" TItem="Project" Property="@nameof(Project.Name)" Title="@L.S(S.Name)" FilterValue="@NameStartsWith">
                 <FilterTemplate>
                     <RadzenTextBox @bind-Value="@NameStartsWith" Style="width:100%"/>
                 </FilterTemplate>
             </RadzenDataGridColumn>
-            <RadzenDataGridColumn TextAlign="TextAlign.Center" Width="8em" TItem="Project" Property="@nameof(Project.IsPublic)" Title="@L.S(S.Public)" FilterValue="@IsPublic">
+            <RadzenDataGridColumn Sortable="false" TextAlign="TextAlign.Center" Width="8em" TItem="Project" Property="@nameof(Project.IsPublic)" Title="@L.S(S.Public)" FilterValue="@IsPublic">
                 <Template Context="p">
                     <RadzenCheckBox Disabled="true" Value="p.IsPublic"></RadzenCheckBox>
                 </Template>
@@ -40,24 +40,29 @@
                     <BoolDataGridFilter @bind-Value="@IsPublic" />
                 </FilterTemplate>
             </RadzenDataGridColumn>
+            <RadzenDataGridColumn Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Width="7em" TItem="Project" Property="@nameof(Project.Task.TimeSubMin)" Title="@L.S(S.TimeMin)">
+                <Template Context="p">
+                    @(Util.Time(p.Task.TimeEst + p.Task.TimeSubMin, p.HoursPerDay, p.DaysPerWeek))
+                </Template>
+            </RadzenDataGridColumn>
             <RadzenDataGridColumn Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Width="7em" TItem="Project" Property="@nameof(Project.Task.TimeEst)" Title="@L.S(S.TimeEst)">
                 <Template Context="p">
-                    @(Util.Time(p.Task.TimeEst, p.HoursPerDay, p.DaysPerWeek))
+                    @(Util.Time(p.Task.TimeEst + p.Task.TimeSubEst, p.HoursPerDay, p.DaysPerWeek))
                 </Template>
             </RadzenDataGridColumn>
             <RadzenDataGridColumn Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Width="7em" TItem="Project" Property="@nameof(Project.Task.TimeInc)" Title="@L.S(S.TimeInc)">
                 <Template Context="p">
-                    @(Util.Time(p.Task.TimeInc, p.HoursPerDay, p.DaysPerWeek))
+                    @(Util.Time(p.Task.TimeInc + p.Task.TimeSubInc, p.HoursPerDay, p.DaysPerWeek))
                 </Template>
             </RadzenDataGridColumn>
             <RadzenDataGridColumn Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Width="7em" TItem="Project" Property="@nameof(Project.Task.CostEst)" Title="@L.S(S.CostEst)">
                 <Template Context="p">
-                    @(Util.Cost(p.Task.CostEst, p.CurrencySymbol))
+                    @(Util.Cost(p.Task.CostEst + p.Task.CostSubEst, p.CurrencySymbol))
                 </Template>
             </RadzenDataGridColumn>
             <RadzenDataGridColumn Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Width="7em" TItem="Project" Property="@nameof(Project.Task.CostInc)" Title="@L.S(S.CostInc)">
                 <Template Context="p">
-                    @(Util.Cost(p.Task.CostInc, p.CurrencySymbol))
+                    @(Util.Cost(p.Task.CostInc + p.Task.CostSubInc, p.CurrencySymbol))
                 </Template>
             </RadzenDataGridColumn>
             <RadzenDataGridColumn Sortable="true" TextAlign="TextAlign.Center" Width="10em" TItem="Project" Property="@nameof(Project.StartOn)" Title="@L.S(S.StartOn)">

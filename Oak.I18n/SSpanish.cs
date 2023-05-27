@@ -171,6 +171,7 @@ public static partial class S
         { DaysPerWeek, new("Días por semana") },
         { StartOn, new("Comienza en") },
         { EndOn, new("Finalizará el") },
+        { TimeMin, new("Tiempo mín.") },
         { TimeEst, new("Tiempo estimado") },
         { TimeInc, new("Tiempo incurrido") },
         { CostEst, new("Costo estimado") },

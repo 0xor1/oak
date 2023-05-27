@@ -159,6 +159,7 @@ public static partial class S
         { DaysPerWeek, new("Days per Week") },
         { StartOn, new("Start On") },
         { EndOn, new("End On") },
+        { TimeMin, new("Time Min.") },
         { TimeEst, new("Time Est.") },
         { TimeInc, new("Time Inc.") },
         { CostEst, new("Cost Est.") },
