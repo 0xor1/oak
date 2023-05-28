@@ -2,10 +2,49 @@
 @using Common.Client
 @using Common.Shared.Auth
 @using IApi = Oak.Api.IApi
-<div class="root col jc-s ai-stretch">
+<div class="root col jc-s ai-s">
     @if (_ready)
     {
-        <div class="flx row rev jc-e ai-c p-x-0h g-0h ov-a">
+        <div class="flx row rev ai-c p-x-0h g-0h ov-a child-no-shrink mw-100">
+            
+                <RadzenLink class="ellip m-y-0h">yolo a</RadzenLink>
+                <span>></span>
+                <RadzenLink class="ellip m-y-0h">yolo</RadzenLink>
+                <span>></span>
+                <RadzenLink class="ellip m-y-0h">yolo</RadzenLink>
+                <span>></span>
+                <RadzenLink class="ellip m-y-0h">yolo</RadzenLink>
+                <span>></span>
+                <RadzenLink class="ellip m-y-0h">yolo</RadzenLink>
+                <span>></span>
+                <RadzenLink class="ellip m-y-0h">yolo</RadzenLink>
+                <span>></span>
+                <RadzenLink class="ellip m-y-0h">yolo</RadzenLink>
+                <span>></span>
+                <RadzenLink class="ellip m-y-0h">yolo</RadzenLink>
+                <span>></span>
+                <RadzenLink class="ellip m-y-0h">yolo</RadzenLink>
+                <span>></span>
+                <RadzenLink class="ellip m-y-0h">yolo</RadzenLink>
+                <span>></span>
+                <RadzenLink class="ellip m-y-0h">yolo</RadzenLink>
+                <span>></span>
+                <RadzenLink class="ellip m-y-0h">yolo</RadzenLink>
+                <span>></span>
+                <RadzenLink class="ellip m-y-0h">yolo</RadzenLink>
+                <span>></span>
+                <RadzenLink class="ellip m-y-0h">yolo</RadzenLink>
+                <span>></span>
+                <RadzenLink class="ellip m-y-0h">yolo</RadzenLink>
+                <span>></span>
+                <RadzenLink class="ellip m-y-0h">yolo</RadzenLink>
+                <span>></span>
+                <RadzenLink class="ellip m-y-0h">yolo</RadzenLink>
+                <span>></span>
+                <RadzenLink class="ellip m-y-0h">yolo</RadzenLink>
+                <span>></span>
+                <RadzenLink class="ellip m-y-0h">yolo b</RadzenLink>
+                <span>></span>
             @foreach (var a in Ancestors)
             {
                 <RadzenLink Path="@($"/org/{a.Org}/project/{a.Project}/task/{a.Id}")" class="ellip m-y-0h">@a.Name</RadzenLink>
