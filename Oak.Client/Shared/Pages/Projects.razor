@@ -65,20 +65,29 @@
                     @(Util.Cost(p.Task.CostInc + p.Task.CostSubInc, p.CurrencySymbol))
                 </Template>
             </RadzenDataGridColumn>
-            <RadzenDataGridColumn Sortable="true" TextAlign="TextAlign.Center" Width="10em" TItem="Project" Property="@nameof(Project.StartOn)" Title="@L.S(S.StartOn)">
+            <RadzenDataGridColumn Sortable="true" TextAlign="TextAlign.Center" Width="10em" TItem="Project" Property="@nameof(Project.StartOn)" Title="@L.S(S.StartOn)" FilterValue="@StartOn">
                 <Template Context="p">
                     @(p.StartOn == null? "--": L.D(p.StartOn.Value))
                 </Template>
+                <FilterTemplate>
+                    <MinMaxDateDataGridFilter @bind-Value="@StartOn" />
+                </FilterTemplate>
             </RadzenDataGridColumn>
-            <RadzenDataGridColumn Sortable="true" TextAlign="TextAlign.Center" Width="10em" TItem="Project" Property="@nameof(Project.EndOn)" Title="@L.S(S.EndOn)">
+            <RadzenDataGridColumn Sortable="true" TextAlign="TextAlign.Center" Width="10em" TItem="Project" Property="@nameof(Project.EndOn)" Title="@L.S(S.EndOn)" FilterValue="@EndOn">
                 <Template Context="p">
                     @(p.EndOn == null ? "--" : L.D(p.EndOn.Value))
                 </Template>
+                <FilterTemplate>
+                    <MinMaxDateDataGridFilter @bind-Value="@EndOn" />
+                </FilterTemplate>
             </RadzenDataGridColumn>
-            <RadzenDataGridColumn Sortable="true" TextAlign="TextAlign.Center" Width="10em" TItem="Project" Property="@nameof(Project.CreatedOn)" Title="@L.S(S.CreatedOn)">
+            <RadzenDataGridColumn Sortable="true" TextAlign="TextAlign.Center" Width="10em" TItem="Project" Property="@nameof(Project.CreatedOn)" Title="@L.S(S.CreatedOn)" FilterValue="@CreatedOn">
                 <Template Context="p">
                     @L.D(p.CreatedOn)
                 </Template>
+                <FilterTemplate>
+                    <MinMaxDateDataGridFilter @bind-Value="@CreatedOn" />
+                </FilterTemplate>
             </RadzenDataGridColumn>
         </Columns>
     </RadzenDataGrid>
@@ -97,8 +106,11 @@
     [EditorRequired]
     public string OrgId { get; set; } = "";
 
-    private bool? IsPublic { get; set; }
     private string? NameStartsWith { get; set; }
+    private bool? IsPublic { get; set; }
+    private MinMax<DateTime>? StartOn { get; set; }
+    private MinMax<DateTime>? EndOn { get; set; }
+    private MinMax<DateTime>? CreatedOn { get; set; }
     RadzenDataGrid<Project> _grid = default!;
     private int Count => Items.Count; 
     private List<Project> Items { get; set; } = new ();
@@ -156,7 +168,7 @@
             {
                 NameStartsWith = null;
             }
-            var res = await Api.Project.Get(new(OrgId, NameStartsWith: NameStartsWith, IsPublic: IsPublic, OrderBy: orderBy, Asc: asc));
+            var res = await Api.Project.Get(new(OrgId, IsPublic, NameStartsWith, CreatedOn, StartOn, EndOn, false, null, orderBy, asc));
             Items = res.Set.ToList();
         }
         finally

@@ -1,0 +1,59 @@
+﻿@using Common.Shared
+@using Common.Client
+@using Common.Shared.Auth
+@using S = Oak.I18n.S
+<div class="root">
+    <div class="flx col p-0h g-0h">
+        <div class="flx col ai-stretch">
+            <RadzenLabel class="m-b-0q" Component="Min" Text="@L.S(S.Min)"/>
+            <RadzenDatePicker TValue="DateTime?" AllowClear="true" Max="@Max" Name="Min" DateFormat="@Session.DateFmt" Value="Value?.Min" ValueChanged="MinValueChanged"/>
+        </div>
+        <div class="flx col ai-stretch">
+            <RadzenLabel class="m-b-0q" Component="Max" Text="@L.S(S.Max)"/>
+            <RadzenDatePicker TValue="DateTime?" AllowClear="true" Min="@Min" Name="Max" DateFormat="@Session.DateFmt" Value="Value?.Max" ValueChanged="MaxValueChanged"/>
+        </div>
+    </div>
+</div>
+
+@inject L L;
+@code {
+
+    private DateTime? Min { get; set; }
+    private DateTime? Max { get; set; }
+
+    [CascadingParameter]
+    public ISession Session { get; set; } = default!;
+
+    [Parameter]
+    [EditorRequired]
+    public MinMax<DateTime>? Value { get; set; }
+
+    [Parameter]
+    [EditorRequired]
+    public EventCallback<MinMax<DateTime>?> ValueChanged { get; set; } = default!;
+    
+    private async Task MinValueChanged(DateTime? v)
+    {
+        Min = v;
+        await InternalValueChanged();
+    }
+
+    private async Task MaxValueChanged(DateTime? v)
+    {
+        Max = v;
+        await InternalValueChanged();
+    }
+
+    private async Task InternalValueChanged()
+    {
+        if (Min == null && Max == null)
+        {
+            Value = null;
+        }
+        else
+        {
+            Value = new(Min, Max);
+        }
+        await ValueChanged.InvokeAsync(Value);
+    }
+}

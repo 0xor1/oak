@@ -18,8 +18,8 @@
   </PropertyGroup>
   
   <ItemGroup>
-    <PackageReference Include="0xor1.Common.Client" Version="2.1.34" />
-    <PackageReference Include="0xor1.Common.Shared" Version="2.1.32" />
+    <PackageReference Include="0xor1.Common.Client" Version="2.1.35" />
+    <PackageReference Include="0xor1.Common.Shared" Version="2.1.35" />
     <PackageReference Include="CSharpier.MsBuild" Version="0.22.1">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -42,6 +42,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <AdditionalFiles Include="Shared\Components\MinMaxDateDataGridFilter.razor" />
     <AdditionalFiles Include="Shared\Pages\TaskView.razor" />
   </ItemGroup>
 
