@@ -21,7 +21,7 @@ public class ProjectMemberTests : TestBase
         var (ali, bob, cat, dan, anon, org) = await Setup();
         var p = await CreateProject(ali, org.Id);
         var aliId = (await ali.Auth.GetSession()).Id;
-        var aliPm = await ali.ProjectMember.GetOne(new(org.Id, p.Id, aliId));
+        var aliPm = (await ali.ProjectMember.GetOne(new(org.Id, p.Id, aliId))).Item;
         Assert.Equal(aliId, aliPm.Id);
         Assert.Equal("ali", aliPm.Name);
     }
@@ -35,7 +35,8 @@ public class ProjectMemberTests : TestBase
         var bobId = (await bob.Auth.GetSession()).Id;
         var catId = (await cat.Auth.GetSession()).Id;
         var danId = (await dan.Auth.GetSession()).Id;
-        var aliPm = await ali.ProjectMember.GetOne(new(org.Id, p.Id, aliId));
+        Assert.Null((await bob.ProjectMember.GetOne(new(org.Id, p.Id, bobId))).Item);
+        var aliPm = (await ali.ProjectMember.GetOne(new(org.Id, p.Id, aliId))).Item;
         var mems = await SetProjectMembers(
             ali,
             org.Id,
@@ -172,7 +173,7 @@ public class ProjectMemberTests : TestBase
             p.Id,
             new() { (bobId, ProjectMemberRole.Admin), }
         );
-        var aliPm = await ali.ProjectMember.GetOne(new(org.Id, p.Id, aliId));
+        var aliPm = (await ali.ProjectMember.GetOne(new(org.Id, p.Id, aliId))).Item;
         var bobPm = mems[0];
 
         await ali.ProjectMember.Remove(new(org.Id, p.Id, bobPm.Id));

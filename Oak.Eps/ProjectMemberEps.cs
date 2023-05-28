@@ -72,7 +72,7 @@ internal static class ProjectMemberEps
                         }
                     )
             ),
-            new RpcEndpoint<Exact, ProjectMember>(
+            new RpcEndpoint<Exact, Maybe<ProjectMember>>(
                 ProjectMemberRpcs.GetOne,
                 async (ctx, req) =>
                 {
@@ -89,15 +89,19 @@ internal static class ProjectMemberEps
                     var mem = await db.ProjectMembers.SingleOrDefaultAsync(
                         x => x.Org == req.Org && x.Project == req.Project && x.Id == req.Id
                     );
-                    ctx.NotFoundIf(mem == null, model: new { Name = "Project Member" });
-                    mem.NotNull();
+                    if (mem == null)
+                    {
+                        return new Maybe<ProjectMember>(null);
+                    }
                     var stats = await GetStats(
                         db,
                         req.Org,
                         req.Project,
                         new List<string>() { mem.Id }
                     );
-                    return mem.ToApi(stats.SingleOrDefault() ?? new ProjectMemberStats());
+                    return new Maybe<ProjectMember>(
+                        mem.ToApi(stats.SingleOrDefault() ?? new ProjectMemberStats())
+                    );
                 }
             ),
             new RpcEndpoint<Get, SetRes<ProjectMember>>(
