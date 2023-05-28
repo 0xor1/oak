@@ -96,6 +96,7 @@ public static partial class S
     // UI
 
     // general
+    public const string Loading = "loading";
     public const string Min = "min";
     public const string Max = "max";
     public const string True = "true";

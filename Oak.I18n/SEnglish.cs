@@ -146,6 +146,7 @@ public static partial class S
         },
         { VItemInvalidTimeInc, new("Time entry must be 1 to 1440 minutes") },
         { VItemInvalidCostInc, new("Cost entry must be more than 0") },
+        { Loading, new("Loading") },
         { Min, new("Min") },
         { Max, new("Max") },
         { True, new("True") },

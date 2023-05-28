@@ -103,6 +103,12 @@ img{
     overflow: visible;
 }
 
+.ellip{
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 // flex rules
 .root, .flx {
     display: flex;

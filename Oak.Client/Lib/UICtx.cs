@@ -14,8 +14,7 @@ public record UICtx(
     Org? Org = null,
     OrgMember? OrgMember = null,
     Project? Project = null,
-    ProjectMember? ProjectMember = null,
-    Api.Task.InitView? TaskInitView = null
+    ProjectMember? ProjectMember = null
 );
 
 public interface IUICtxService
@@ -37,7 +36,6 @@ public partial class UICtxService : IUICtxService
     private OrgMember? OrgMember { get; set; }
     private Project? Project { get; set; }
     private ProjectMember? ProjectMember { get; set; }
-    private Api.Task.InitView? TaskInitView { get; set; }
 
     public UICtxService(IApi api, IAuthService auth, NavigationManager nav)
     {
@@ -85,11 +83,6 @@ public partial class UICtxService : IUICtxService
                 ProjectMember = null;
             }
 
-            if (TaskId == null)
-            {
-                TaskInitView = null;
-            }
-
             if (orgChanged && OrgId != null)
             {
                 Org = await _api.Org.GetOne(new(OrgId));
@@ -103,20 +96,13 @@ public partial class UICtxService : IUICtxService
                     await _api.ProjectMember.GetOne(new(OrgId, ProjectId, sesId))
                 ).Item;
             }
-
-            if (taskChanged && TaskId != null)
-            {
-                TaskInitView = await _api.Task.GetInitView(
-                    new(OrgId.NotNull(), ProjectId.NotNull(), TaskId)
-                );
-            }
         }
         finally
         {
             _ss.Release();
         }
 
-        return new(Org, OrgMember, Project, ProjectMember, TaskInitView);
+        return new(Org, OrgMember, Project, ProjectMember);
     }
 
     private (string? orgId, string? projectId, string? taskId) GetIdsFromUrl()

@@ -1,10 +1,34 @@
 ﻿@using Oak.I18n
 @using Common.Client
 @using Common.Shared.Auth
-<div class="root col p-0h g-0h jc-s ai-s">
-    yolo
+@using IApi = Oak.Api.IApi
+<div class="root col jc-s ai-stretch">
+    @if (_ready)
+    {
+        <div class="flx row rev jc-e p-0q g-0q">
+                <span class="ellip">yolo a</span>
+                <span>></span>
+                <span class="ellip">solo b</span>
+                <span>></span>
+                <span class="ellip">nolo c</span>
+            @foreach (var a in Ancestors)
+            {
+                <span class="ellip">@a.Name</span>
+                <span>></span>
+            }
+        </div>
+    }
+    else
+    {
+        @L.S(S.Loading)
+    }
+    <div class="flx col p-0h g-0h jc-s ai-stretch">
+        
+    </div>
 </div>
+
 @inject L L;
+@inject IApi Api;
 @inject NavigationManager Nav;
 @code{
     [CascadingParameter]
@@ -18,4 +42,20 @@
     [Parameter]
     [EditorRequired]
     public string TaskId { get; set; } = "";
+
+    private bool _ready;
+    private List<Oak.Api.Task.Task> Ancestors { get; set; } = new();
+    private Oak.Api.Task.Task Task { get; set; }
+    private List<Oak.Api.Task.Task> Children { get; set; } = new();
+
+    
+    
+    protected override async Task OnInitializedAsync()
+    {
+        var res = await Api.Task.GetInitView(new (OrgId, ProjectId, TaskId));
+        Ancestors.AddRange(res.Ancestors);
+        Task = res.Task;
+        Children.AddRange(res.Children);
+        _ready = true;
+    }
 }
