@@ -5,15 +5,10 @@
 <div class="root col jc-s ai-stretch">
     @if (_ready)
     {
-        <div class="flx row rev jc-e p-0q g-0q">
-                <span class="ellip">yolo a</span>
-                <span>></span>
-                <span class="ellip">solo b</span>
-                <span>></span>
-                <span class="ellip">nolo c</span>
+        <div class="flx row rev jc-e ai-c p-x-0h g-0h ov-a">
             @foreach (var a in Ancestors)
             {
-                <span class="ellip">@a.Name</span>
+                <RadzenLink Path="@($"/org/{a.Org}/project/{a.Project}/task/{a.Id}")" class="ellip m-y-0h">@a.Name</RadzenLink>
                 <span>></span>
             }
         </div>
