@@ -1,62 +1,35 @@
 ﻿@using Oak.I18n
 @using Common.Client
 @using Common.Shared.Auth
+@using Oak.Client.Lib
 @using IApi = Oak.Api.IApi
-<div class="root col jc-s ai-s">
+<div class="root col p-0h g-0h jc-s ai-s">
     @if (_ready)
     {
-        <div class="flx row rev ai-c p-x-0h g-0h ov-a child-no-shrink mw-100">
+        <div class="flx row rev g-0h ai-c ov-a child-no-shrink mw-100">
             
-                <RadzenLink class="ellip m-y-0h">yolo a</RadzenLink>
+                <RadzenLink class="ellip">yolo a</RadzenLink>
                 <span>></span>
-                <RadzenLink class="ellip m-y-0h">yolo</RadzenLink>
+                <RadzenLink class="ellip">yolo</RadzenLink>
                 <span>></span>
-                <RadzenLink class="ellip m-y-0h">yolo</RadzenLink>
+                <RadzenLink class="ellip">yolo</RadzenLink>
                 <span>></span>
-                <RadzenLink class="ellip m-y-0h">yolo</RadzenLink>
+                <RadzenLink class="ellip">yolo b</RadzenLink>
                 <span>></span>
-                <RadzenLink class="ellip m-y-0h">yolo</RadzenLink>
-                <span>></span>
-                <RadzenLink class="ellip m-y-0h">yolo</RadzenLink>
-                <span>></span>
-                <RadzenLink class="ellip m-y-0h">yolo</RadzenLink>
-                <span>></span>
-                <RadzenLink class="ellip m-y-0h">yolo</RadzenLink>
-                <span>></span>
-                <RadzenLink class="ellip m-y-0h">yolo</RadzenLink>
-                <span>></span>
-                <RadzenLink class="ellip m-y-0h">yolo</RadzenLink>
-                <span>></span>
-                <RadzenLink class="ellip m-y-0h">yolo</RadzenLink>
-                <span>></span>
-                <RadzenLink class="ellip m-y-0h">yolo</RadzenLink>
-                <span>></span>
-                <RadzenLink class="ellip m-y-0h">yolo</RadzenLink>
-                <span>></span>
-                <RadzenLink class="ellip m-y-0h">yolo</RadzenLink>
-                <span>></span>
-                <RadzenLink class="ellip m-y-0h">yolo</RadzenLink>
-                <span>></span>
-                <RadzenLink class="ellip m-y-0h">yolo</RadzenLink>
-                <span>></span>
-                <RadzenLink class="ellip m-y-0h">yolo</RadzenLink>
-                <span>></span>
-                <RadzenLink class="ellip m-y-0h">yolo</RadzenLink>
-                <span>></span>
-                <RadzenLink class="ellip m-y-0h">yolo b</RadzenLink>
-                <span>></span>
+               
             @foreach (var a in Ancestors)
             {
                 <RadzenLink Path="@($"/org/{a.Org}/project/{a.Project}/task/{a.Id}")" class="ellip m-y-0h">@a.Name</RadzenLink>
                 <span>></span>
             }
+            <RadzenLink class="ellip" Path="@($"/org/{Ctx.Org.Id}/projects")">@Ctx.Org.Name</RadzenLink>
         </div>
     }
     else
     {
         @L.S(S.Loading)
     }
-    <div class="flx col p-0h g-0h jc-s ai-stretch">
+    <div class="flx col jc-s ai-stretch">
         
     </div>
 </div>
@@ -64,6 +37,7 @@
 @inject L L;
 @inject IApi Api;
 @inject NavigationManager Nav;
+@inject IUICtxService UICtx;
 @code{
     [CascadingParameter]
     public ISession Session { get; set; } = default!;
@@ -77,6 +51,8 @@
     [EditorRequired]
     public string TaskId { get; set; } = "";
 
+    private UICtx Ctx { get; set; } = new ();
+
     private bool _ready;
     private List<Oak.Api.Task.Task> Ancestors { get; set; } = new();
     private Oak.Api.Task.Task Task { get; set; }
@@ -86,6 +62,7 @@
     
     protected override async Task OnInitializedAsync()
     {
+        Ctx = await UICtx.Get();
         var res = await Api.Task.GetInitView(new (OrgId, ProjectId, TaskId));
         Ancestors.AddRange(res.Ancestors);
         Task = res.Task;
