@@ -9,6 +9,7 @@ await Client.Run<App, Oak.Api.IApi>(
     (client) => new Oak.Api.Api(client),
     (sc) =>
     {
+        sc.AddSingleton<UIDisplay>();
         sc.AddSingleton<IUICtxService, UICtxService>();
     }
 );

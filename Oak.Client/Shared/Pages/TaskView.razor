@@ -29,40 +29,40 @@
                 FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
                 KeyProperty="Id"
                 class="row-clickable"
-                Style="width: 100em">
+                Style="@($"width: {GridWidth}")">
                 <Columns>
                     <RadzenDataGridColumn Width="18em" TItem="ATask" Property="@nameof(ATask.Name)" Title="@L.S(S.Name)"/>
-                    <RadzenDataGridColumn TextAlign="TextAlign.Center" Width="7em" TItem="ATask" Property="@nameof(ATask.TimeSubMin)" Title="@L.S(S.TimeMin)">
+                    <RadzenDataGridColumn Visible="UIDisplay.Time" TextAlign="TextAlign.Center" Width="7em" TItem="ATask" Property="@nameof(ATask.TimeSubMin)" Title="@L.S(S.TimeMin)">
                         <Template Context="t">
                             @(Util.Time(t.TimeEst + t.TimeSubMin, Ctx.Project.HoursPerDay, Ctx.Project.DaysPerWeek))
                         </Template>
                     </RadzenDataGridColumn>
-                    <RadzenDataGridColumn TextAlign="TextAlign.Center" Width="7em" TItem="ATask" Property="@nameof(ATask.TimeEst)" Title="@L.S(S.TimeEst)">
+                    <RadzenDataGridColumn Visible="UIDisplay.Time" TextAlign="TextAlign.Center" Width="7em" TItem="ATask" Property="@nameof(ATask.TimeEst)" Title="@L.S(S.TimeEst)">
                         <Template Context="t">
                             @(Util.Time(t.TimeEst + t.TimeSubEst, Ctx.Project.HoursPerDay, Ctx.Project.DaysPerWeek))
                         </Template>
                     </RadzenDataGridColumn>
-                    <RadzenDataGridColumn TextAlign="TextAlign.Center" Width="7em" TItem="ATask" Property="@nameof(ATask.TimeInc)" Title="@L.S(S.TimeInc)">
+                    <RadzenDataGridColumn Visible="UIDisplay.Time" TextAlign="TextAlign.Center" Width="7em" TItem="ATask" Property="@nameof(ATask.TimeInc)" Title="@L.S(S.TimeInc)">
                         <Template Context="t">
                             @(Util.Time(t.TimeInc + t.TimeSubInc, Ctx.Project.HoursPerDay, Ctx.Project.DaysPerWeek))
                         </Template>
                     </RadzenDataGridColumn>
-                    <RadzenDataGridColumn TextAlign="TextAlign.Center" Width="7em" TItem="ATask" Property="@nameof(ATask.CostEst)" Title="@L.S(S.CostEst)">
+                    <RadzenDataGridColumn Visible="UIDisplay.Cost" TextAlign="TextAlign.Center" Width="7em" TItem="ATask" Property="@nameof(ATask.CostEst)" Title="@L.S(S.CostEst)">
                         <Template Context="t">
                             @(Util.Cost(t.CostEst + t.CostSubEst, Ctx.Project.CurrencySymbol))
                         </Template>
                     </RadzenDataGridColumn>
-                    <RadzenDataGridColumn TextAlign="TextAlign.Center" Width="7em" TItem="ATask" Property="@nameof(ATask.CostInc)" Title="@L.S(S.CostInc)">
+                    <RadzenDataGridColumn Visible="UIDisplay.Cost" TextAlign="TextAlign.Center" Width="7em" TItem="ATask" Property="@nameof(ATask.CostInc)" Title="@L.S(S.CostInc)">
                         <Template Context="t">
                             @(Util.Cost(t.CostInc + t.CostSubInc, Ctx.Project.CurrencySymbol))
                         </Template>
                     </RadzenDataGridColumn>
-                    <RadzenDataGridColumn Sortable="false" TextAlign="TextAlign.Center" Width="7em" TItem="ATask" Property="@nameof(ATask.FileSize)" Title="@L.S(S.FileSize)">
+                    <RadzenDataGridColumn Visible="UIDisplay.File" Sortable="false" TextAlign="TextAlign.Center" Width="7em" TItem="ATask" Property="@nameof(ATask.FileSize)" Title="@L.S(S.FileSize)">
                         <Template Context="t">
                             @(Util.Size(t.FileSize + t.FileSubSize))
                         </Template>
                     </RadzenDataGridColumn>
-                    <RadzenDataGridColumn Sortable="false" TextAlign="TextAlign.Center" Width="7em" TItem="ATask" Property="@nameof(ATask.FileN)" Title="@L.S(S.FileN)">
+                    <RadzenDataGridColumn Visible="UIDisplay.File" Sortable="false" TextAlign="TextAlign.Center" Width="7em" TItem="ATask" Property="@nameof(ATask.FileN)" Title="@L.S(S.FileN)">
                         <Template Context="t">
                             @(t.FileN + t.FileSubN)
                         </Template>
@@ -84,6 +84,7 @@
 
 @inject L L;
 @inject IApi Api;
+@inject UIDisplay UIDisplay;
 @inject NavigationManager Nav;
 @inject IUICtxService UICtx;
 @code{
@@ -112,6 +113,27 @@
     private List<ATask> Items { get; set; } = new ();
     private bool _isLoading = false;
     
+    private string GridWidth
+    {
+        get
+        {
+            var width = 30;
+            if (UIDisplay.Time)
+            {
+                width += 21;
+            }
+            if (UIDisplay.Cost)
+            {
+                width += 14;
+            }
+            if (UIDisplay.File)
+            {
+                width += 14;
+            }
+            return $"{width}em";
+        }
+    }
+
     protected override async Task OnInitializedAsync()
     {
         Ctx = await UICtx.Get();

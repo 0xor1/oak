@@ -295,3 +295,8 @@ div.header > ul.rz-profile-menu > li.rz-navigation-item > div.rz-navigation-item
     padding-top: 0.75em;
     border-bottom: 1px solid gray;
 }
+
+// hide
+.rz-navigation-item.display-none{
+    display: none;
+}

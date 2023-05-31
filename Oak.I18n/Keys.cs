@@ -96,6 +96,10 @@ public static partial class S
     // UI
 
     // general
+    public const string Display = "display";
+    public const string Time = "time";
+    public const string Cost = "cost";
+    public const string File = "file";
     public const string Loading = "loading";
     public const string Min = "min";
     public const string Max = "max";

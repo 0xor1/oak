@@ -170,6 +170,10 @@ public static partial class S
             new("L'entrée de temps doit être comprise entre 1 et 1440 minutes")
         },
         { VItemInvalidCostInc, new("L'entrée de coût doit être supérieure à 0") },
+        { Display, new("Afficher") },
+        { Time, new("Temps") },
+        { Cost, new("Coût") },
+        { File, new("Dossier") },
         { Loading, new("Chargement") },
         { Min, new("Min") },
         { Max, new("Max") },

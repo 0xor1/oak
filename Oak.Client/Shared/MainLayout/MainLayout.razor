@@ -52,9 +52,25 @@
                 }
                 else
                 {
-                    <RadzenPanelMenuItem Text="@L.S(S.OrgMyOrgs)" Icon="home" Path="/my_orgs"/>
+                    <RadzenPanelMenuItem Text="@L.S(S.Display)" Icon="visibility">
+                    <RadzenPanelMenuItem class="display-none"/>
+                        <div class="flx col p-0t p-l-3h g-0t">
+                            <div class="flx g-0h">
+                                <RadzenCheckBox Name="Time" TValue="bool" @bind-Value="UIDisplay.Time"/>
+                                <RadzenLabel Component="Time">@L.S(S.Time)</RadzenLabel>
+                            </div>
+                            <div class="flx g-0h">
+                                <RadzenCheckBox Name="Cost" TValue="bool" @bind-Value="UIDisplay.Cost"/>
+                                <RadzenLabel Component="Cost">@L.S(S.Cost)</RadzenLabel>
+                            </div>
+                            <div class="flx g-0h">
+                                <RadzenCheckBox Name="File" TValue="bool" @bind-Value="UIDisplay.File"/>
+                                <RadzenLabel Component="File">@L.S(S.File)</RadzenLabel>
+                            </div>
+                        </div>
+                    </RadzenPanelMenuItem><RadzenPanelMenuItem Text="@L.S(S.OrgMyOrgs)" Icon="home" Path="/my_orgs"/>
                 }
-                </RadzenPanelMenu>
+            </RadzenPanelMenu>
         </RadzenSidebar>
         <RadzenBody class="root rz-background-color-base-100">
             <CascadingValue Value="@_session">
@@ -76,8 +92,10 @@
 @using Oak.I18n
 @using Common.Client
 @using Common.Shared.Auth
+@using Oak.Client.Lib
 @inherits LayoutComponentBase
 @inject IAuthService Auth;
+@inject UIDisplay UIDisplay;
 @inject L L;
 @implements IDisposable;
 @code{
