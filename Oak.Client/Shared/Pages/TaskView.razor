@@ -3,35 +3,83 @@
 @using Common.Shared.Auth
 @using Oak.Client.Lib
 @using IApi = Oak.Api.IApi
+@using ATask = Oak.Api.Task.Task;
 <div class="root col p-0h g-0h jc-s ai-s">
     @if (_ready)
     {
-        <div class="flx row rev g-0h ai-c ov-a child-no-shrink mw-100">
-            
-                <RadzenLink class="ellip">yolo a</RadzenLink>
-                <span>></span>
-                <RadzenLink class="ellip">yolo</RadzenLink>
-                <span>></span>
-                <RadzenLink class="ellip">yolo</RadzenLink>
-                <span>></span>
-                <RadzenLink class="ellip">yolo b</RadzenLink>
-                <span>></span>
-               
-            @foreach (var a in Ancestors)
-            {
-                <RadzenLink Path="@($"/org/{a.Org}/project/{a.Project}/task/{a.Id}")" class="ellip m-y-0h">@a.Name</RadzenLink>
-                <span>></span>
-            }
-            <RadzenLink class="ellip" Path="@($"/org/{Ctx.Org.Id}/projects")">@Ctx.Org.Name</RadzenLink>
+        if (Ancestors.Count > 0)
+        {
+            <div class="flx row rev g-0h ai-c ov-a child-no-shrink mw-100">
+                @foreach (var a in Ancestors)
+                {
+                    <RadzenLink Path="@($"/org/{a.Org}/project/{a.Project}/task/{a.Id}")" class="ellip m-y-0h">@a.Name</RadzenLink>
+                    <span>></span>
+                }
+            </div>
+        }
+        <div class="flx col jc-s ai-s mw-100">
+            <RadzenDataGrid
+                Count="Count"
+                Data="Items"
+                TItem="ATask"
+                IsLoading="_isLoading"
+                EmptyText="@L.S(S.OrgNoProjects)"
+                RowClick="RowClick"
+                FilterPopupRenderMode="PopupRenderMode.OnDemand" 
+                FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                KeyProperty="Id"
+                class="row-clickable"
+                Style="width: 100em">
+                <Columns>
+                    <RadzenDataGridColumn Width="18em" TItem="ATask" Property="@nameof(ATask.Name)" Title="@L.S(S.Name)"/>
+                    <RadzenDataGridColumn TextAlign="TextAlign.Center" Width="7em" TItem="ATask" Property="@nameof(ATask.TimeSubMin)" Title="@L.S(S.TimeMin)">
+                        <Template Context="t">
+                            @(Util.Time(t.TimeEst + t.TimeSubMin, Ctx.Project.HoursPerDay, Ctx.Project.DaysPerWeek))
+                        </Template>
+                    </RadzenDataGridColumn>
+                    <RadzenDataGridColumn TextAlign="TextAlign.Center" Width="7em" TItem="ATask" Property="@nameof(ATask.TimeEst)" Title="@L.S(S.TimeEst)">
+                        <Template Context="t">
+                            @(Util.Time(t.TimeEst + t.TimeSubEst, Ctx.Project.HoursPerDay, Ctx.Project.DaysPerWeek))
+                        </Template>
+                    </RadzenDataGridColumn>
+                    <RadzenDataGridColumn TextAlign="TextAlign.Center" Width="7em" TItem="ATask" Property="@nameof(ATask.TimeInc)" Title="@L.S(S.TimeInc)">
+                        <Template Context="t">
+                            @(Util.Time(t.TimeInc + t.TimeSubInc, Ctx.Project.HoursPerDay, Ctx.Project.DaysPerWeek))
+                        </Template>
+                    </RadzenDataGridColumn>
+                    <RadzenDataGridColumn TextAlign="TextAlign.Center" Width="7em" TItem="ATask" Property="@nameof(ATask.CostEst)" Title="@L.S(S.CostEst)">
+                        <Template Context="t">
+                            @(Util.Cost(t.CostEst + t.CostSubEst, Ctx.Project.CurrencySymbol))
+                        </Template>
+                    </RadzenDataGridColumn>
+                    <RadzenDataGridColumn TextAlign="TextAlign.Center" Width="7em" TItem="ATask" Property="@nameof(ATask.CostInc)" Title="@L.S(S.CostInc)">
+                        <Template Context="t">
+                            @(Util.Cost(t.CostInc + t.CostSubInc, Ctx.Project.CurrencySymbol))
+                        </Template>
+                    </RadzenDataGridColumn>
+                    <RadzenDataGridColumn Sortable="false" TextAlign="TextAlign.Center" Width="7em" TItem="ATask" Property="@nameof(ATask.FileSize)" Title="@L.S(S.FileSize)">
+                        <Template Context="t">
+                            @(Util.Size(t.FileSize + t.FileSubSize))
+                        </Template>
+                    </RadzenDataGridColumn>
+                    <RadzenDataGridColumn Sortable="false" TextAlign="TextAlign.Center" Width="7em" TItem="ATask" Property="@nameof(ATask.FileN)" Title="@L.S(S.FileN)">
+                        <Template Context="t">
+                            @(t.FileN + t.FileSubN)
+                        </Template>
+                    </RadzenDataGridColumn>
+                    <RadzenDataGridColumn TextAlign="TextAlign.Center" Width="10em" TItem="ATask" Property="@nameof(ATask.CreatedOn)" Title="@L.S(S.CreatedOn)">
+                        <Template Context="t">
+                            @L.D(t.CreatedOn)
+                        </Template>
+                    </RadzenDataGridColumn>
+                </Columns>
+            </RadzenDataGrid>
         </div>
     }
     else
     {
         @L.S(S.Loading)
     }
-    <div class="flx col jc-s ai-stretch">
-        
-    </div>
 </div>
 
 @inject L L;
@@ -39,14 +87,18 @@
 @inject NavigationManager Nav;
 @inject IUICtxService UICtx;
 @code{
+    
     [CascadingParameter]
     public ISession Session { get; set; } = default!;
+    
     [Parameter]
     [EditorRequired]
     public string OrgId { get; set; } = "";
+    
     [Parameter]
     [EditorRequired]
     public string ProjectId { get; set; } = "";
+    
     [Parameter]
     [EditorRequired]
     public string TaskId { get; set; } = "";
@@ -54,11 +106,11 @@
     private UICtx Ctx { get; set; } = new ();
 
     private bool _ready;
-    private List<Oak.Api.Task.Task> Ancestors { get; set; } = new();
-    private Oak.Api.Task.Task Task { get; set; }
-    private List<Oak.Api.Task.Task> Children { get; set; } = new();
-
-    
+    private List<ATask> Ancestors { get; set; } = new();
+    private ATask Task { get; set; }
+    private int Count => Items.Count; 
+    private List<ATask> Items { get; set; } = new ();
+    private bool _isLoading = false;
     
     protected override async Task OnInitializedAsync()
     {
@@ -66,7 +118,13 @@
         var res = await Api.Task.GetInitView(new (OrgId, ProjectId, TaskId));
         Ancestors.AddRange(res.Ancestors);
         Task = res.Task;
-        Children.AddRange(res.Children);
+        Items.Add(Task);
+        Items.AddRange(res.Children);
         _ready = true;
+    }
+
+    private void RowClick(DataGridRowMouseEventArgs<ATask> e)
+    {
+        Nav.NavigateTo($"/org/{OrgId}/project/{e.Data.Project}/task/{e.Data.Id}");
     }
 }

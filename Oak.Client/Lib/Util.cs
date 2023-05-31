@@ -2,6 +2,7 @@
 
 namespace Oak.Client.Lib;
 
+// TODO i18n/l10n this content
 public static class Util
 {
     public static string Time(ulong val, uint hoursPerDay, uint daysPerWeek)
@@ -13,7 +14,6 @@ public static class Util
         var minsPerWeek = minsPerDay * daysPerWeek;
         var minsPerYear = minsPerWeek * weeksPerYear;
 
-        // TODO i18n/l10n this content
         if (val >= minsPerYear)
         {
             return $"{((decimal)val / minsPerYear).ToString("F1")}y";
@@ -56,5 +56,36 @@ public static class Util
             return $"{symbol}{((decimal)val / k).ToString("F")}K";
         }
         return $"{symbol}{val}";
+    }
+
+    public static string Size(ulong val)
+    {
+        const ulong k = 1024ul;
+        const ulong m = k * k;
+        const ulong g = k * m;
+        const ulong t = k * g;
+        const ulong p = k * t;
+
+        if (val >= p)
+        {
+            return $"{((decimal)val / p).ToString("F")}PB";
+        }
+        if (val >= t)
+        {
+            return $"{((decimal)val / t).ToString("F")}TB";
+        }
+        if (val >= g)
+        {
+            return $"{((decimal)val / g).ToString("F")}GB";
+        }
+        if (val >= m)
+        {
+            return $"{((decimal)val / m).ToString("F")}MB";
+        }
+        if (val >= k)
+        {
+            return $"{((decimal)val / m).ToString("F")}KB";
+        }
+        return $"{val}B";
     }
 }

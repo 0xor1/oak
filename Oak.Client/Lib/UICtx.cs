@@ -49,26 +49,22 @@ public partial class UICtxService : IUICtxService
         await _ss.WaitAsync();
         try
         {
-            var (orgId, projectId, taskId) = GetIdsFromUrl();
+            var (orgId, projectId) = GetIdsFromUrl();
 
             // no white space shenanigans
             orgId = orgId.IsNullOrWhiteSpace() ? null : orgId;
             projectId = projectId.IsNullOrWhiteSpace() ? null : projectId;
-            taskId = taskId.IsNullOrWhiteSpace() ? null : taskId;
 
             Throw.DataIf(
-                (taskId != null && (orgId == null || projectId == null))
-                    || (projectId != null && orgId == null),
+                projectId != null && orgId == null,
                 "if taskId is given the projectId must be given and if projectId is given the orgId must be given"
             );
 
             var orgChanged = OrgId != orgId;
             var projectChanged = TaskId != projectId;
-            var taskChanged = TaskId != taskId;
 
             OrgId = orgId;
             ProjectId = projectId;
-            TaskId = taskId;
             var sesId = (await _auth.GetSession()).Id;
 
             if (OrgId == null)
@@ -105,7 +101,7 @@ public partial class UICtxService : IUICtxService
         return new(Org, OrgMember, Project, ProjectMember);
     }
 
-    private (string? orgId, string? projectId, string? taskId) GetIdsFromUrl()
+    private (string? orgId, string? projectId) GetIdsFromUrl()
     {
         var uri = _nav.Uri;
         // check for /org/{OrgId}/project/{ProjectId}/task/{TaskId}
@@ -121,14 +117,8 @@ public partial class UICtxService : IUICtxService
         {
             projectId = projectMatch.Groups[1].Value;
         }
-        string? taskId = null;
-        var taskMatch = TaskIdRx().Match(uri);
-        if (taskMatch.Success && taskMatch.Groups.Count == 2)
-        {
-            taskId = taskMatch.Groups[1].Value;
-        }
 
-        return (orgId, projectId, taskId);
+        return (orgId, projectId);
     }
 
     [GeneratedRegex(@"/org/([^/\s]+)")]
@@ -136,7 +126,4 @@ public partial class UICtxService : IUICtxService
 
     [GeneratedRegex(@"/project/([^/\s]+)")]
     private static partial Regex ProjectIdRx();
-
-    [GeneratedRegex(@"/task/([^/\s]+)")]
-    private static partial Regex TaskIdRx();
 }

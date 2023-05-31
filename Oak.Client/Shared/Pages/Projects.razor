@@ -12,7 +12,6 @@
     <RadzenText class="m-t-0" TextStyle="TextStyle.H2">@L.S(S.OrgProjects)</RadzenText>
     <RadzenButton class="m-b-1" ButtonStyle="ButtonStyle.Success" Icon="add_circle_outline" Text="@L.S(S.New)" Click="@OpenNewDialog"/>
     <RadzenDataGrid
-        @ref="_grid"
         Count="Count"
         Data="Items"
         TItem="Project"
@@ -66,6 +65,16 @@
                     @(Util.Cost(p.Task.CostInc + p.Task.CostSubInc, p.CurrencySymbol))
                 </Template>
             </RadzenDataGridColumn>
+            <RadzenDataGridColumn Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Width="7em" TItem="Project" Property="@nameof(Project.Task.FileSize)" Title="@L.S(S.FileSize)">
+                <Template Context="p">
+                    @(Util.Size(p.Task.FileSize + p.Task.FileSubSize))
+                </Template>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Width="7em" TItem="Project" Property="@nameof(Project.Task.FileN)" Title="@L.S(S.FileN)">
+                <Template Context="p">
+                    @(p.Task.FileN + p.Task.FileSubN)
+                </Template>
+            </RadzenDataGridColumn>
             <RadzenDataGridColumn Sortable="true" TextAlign="TextAlign.Center" Width="10em" TItem="Project" Property="@nameof(Project.StartOn)" Title="@L.S(S.StartOn)" FilterValue="@StartOn">
                 <Template Context="p">
                     @(p.StartOn == null? "--": L.D(p.StartOn.Value))
@@ -112,7 +121,6 @@
     private MinMax<DateTime>? StartOn { get; set; }
     private MinMax<DateTime>? EndOn { get; set; }
     private MinMax<DateTime>? CreatedOn { get; set; }
-    RadzenDataGrid<Project> _grid = default!;
     private int Count => Items.Count; 
     private List<Project> Items { get; set; } = new ();
     private bool _isLoading = false;
