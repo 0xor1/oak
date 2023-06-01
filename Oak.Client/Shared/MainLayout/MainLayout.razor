@@ -52,8 +52,9 @@
                 }
                 else
                 {
+                    <RadzenPanelMenuItem Text="@L.S(S.OrgMyOrgs)" Icon="home" Path="/my_orgs"/>
                     <RadzenPanelMenuItem Text="@L.S(S.Display)" Icon="visibility">
-                    <RadzenPanelMenuItem class="display-none"/>
+                        <RadzenPanelMenuItem class="display-none"/>
                         <div class="flx col p-0t p-l-3h g-0t">
                             <div class="flx g-0h">
                                 <RadzenCheckBox Name="Time" TValue="bool" @bind-Value="UIDisplay.Time"/>
@@ -68,7 +69,7 @@
                                 <RadzenLabel Component="File">@L.S(S.File)</RadzenLabel>
                             </div>
                         </div>
-                    </RadzenPanelMenuItem><RadzenPanelMenuItem Text="@L.S(S.OrgMyOrgs)" Icon="home" Path="/my_orgs"/>
+                    </RadzenPanelMenuItem>
                 }
             </RadzenPanelMenu>
         </RadzenSidebar>

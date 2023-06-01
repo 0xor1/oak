@@ -100,6 +100,9 @@ public static partial class S
     public const string Time = "time";
     public const string Cost = "cost";
     public const string File = "file";
+    public const string Task = "task";
+    public const string Comment = "comment";
+    public const string Description = "description";
     public const string Loading = "loading";
     public const string Min = "min";
     public const string Max = "max";
