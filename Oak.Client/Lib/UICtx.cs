@@ -7,6 +7,7 @@ using Oak.Api.Org;
 using Oak.Api.OrgMember;
 using Oak.Api.Project;
 using Oak.Api.ProjectMember;
+using Task = Oak.Api.Task.Task;
 
 namespace Oak.Client.Lib;
 
@@ -15,7 +16,31 @@ public record UICtx(
     OrgMember? OrgMember = null,
     Project? Project = null,
     ProjectMember? ProjectMember = null
-);
+)
+{
+    public bool HasOrgOwnerPerm => OrgMember is { Role: OrgMemberRole.Owner };
+
+    public bool HasOrgAdminPerm => OrgMember is { Role: <= OrgMemberRole.Admin };
+
+    public bool HasProjectAdminPerm =>
+        OrgMember is { Role: <= OrgMemberRole.Admin }
+        || ProjectMember is { Role: ProjectMemberRole.Admin };
+    public bool HasProjectWritePerm =>
+        OrgMember is { Role: <= OrgMemberRole.WriteAllProjects }
+        || ProjectMember is { Role: <= ProjectMemberRole.Writer };
+
+    public bool CanDeleteTask(Task t) =>
+        Project?.Id != t.Id
+        && t.DescN <= 20
+        && (
+            (
+                HasProjectWritePerm
+                && t.CreatedBy == ProjectMember?.Id
+                && t.DescN == 0
+                && t.CreatedOn.Add(TimeSpan.FromHours(1)) > DateTime.UtcNow
+            ) || HasProjectAdminPerm
+        );
+}
 
 public interface IUICtxService
 {

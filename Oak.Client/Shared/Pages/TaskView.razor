@@ -39,7 +39,21 @@
                             RowRender="RowRender"
                             Style="@($"width: {GridWidth}")">
                             <Columns>
-                                <RadzenDataGridColumn Width="18em" TItem="ATask" Property="@nameof(ATask.Name)" Title="@L.S(S.Name)"/>
+                                <RadzenDataGridColumn Width="22em" TItem="ATask" Property="@nameof(ATask.Name)" Title="@L.S(S.Name)">
+                                    <Template Context="t">
+                                        <div class="flx jc-sb w-100 mw-100 p-rel">
+                                            <span>@t.Name</span>
+                                            @if (Ctx.HasProjectWritePerm)
+                                            {
+                                                <div class="flx g-0q p-abs show-on-row-mouse-over" style="right: -1em;">
+                                                    <RadzenButton Icon="arrow_upward" ButtonStyle="ButtonStyle.Success" Size="ButtonSize.ExtraSmall" Disabled="t == Task"/>
+                                                    <RadzenButton Icon="arrow_downward" ButtonStyle="ButtonStyle.Success" Size="ButtonSize.ExtraSmall"/>
+                                                    <RadzenButton Icon="delete" ButtonStyle="ButtonStyle.Danger" Size="ButtonSize.ExtraSmall" Disabled="!Ctx.CanDeleteTask(t)"/>
+                                                </div>
+                                            }
+                                        </div>
+                                    </Template>
+                                </RadzenDataGridColumn>
                                 <RadzenDataGridColumn Visible="UIDisplay.Time" TextAlign="TextAlign.Center" Width="7em" TItem="ATask" Property="@nameof(ATask.TimeSubMin)" Title="@L.S(S.TimeMin)">
                                     <Template Context="t">
                                         @(Util.Time(t.TimeEst + t.TimeSubMin, Ctx.Project.HoursPerDay, Ctx.Project.DaysPerWeek))
@@ -159,7 +173,7 @@
     {
         get
         {
-            var width = 30;
+            var width = 34;
             if (UIDisplay.Time)
             {
                 width += 21;

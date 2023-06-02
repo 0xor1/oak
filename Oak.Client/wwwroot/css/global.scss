@@ -84,6 +84,12 @@ html, body, .fill {
     .h-100{
         height: 100%;
     }
+    .p-rel{
+        position: relative;
+    }
+    .p-abs{
+        position: absolute;
+    }
 }
 
 img{
@@ -123,6 +129,12 @@ img{
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+
+tr:not(:hover){
+    .show-on-row-mouse-over{
+        display: none;
+    }
 }
 
 // flex rules
@@ -280,8 +292,10 @@ div.header > ul.rz-profile-menu > li.rz-navigation-item > div.rz-navigation-item
 
 // allow making table row cursor a pointer
 .row-clickable{
-    .rz-data-row{
-        cursor: pointer;
+    tbody {
+        tr {
+            cursor: pointer;
+        }
     }
 }
 // I dont include 500 weight font so override to 600
