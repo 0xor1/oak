@@ -22,7 +22,7 @@
             </div>
         }
         <div class="flx col jc-s ai-s g-0t w-100 mw-100">
-            <RadzenTabs RenderMode="TabRenderMode.Client" class="w-100 no-x-pad" >
+            <RadzenTabs class="w-100 no-x-pad" >
                 <Tabs>
                     <RadzenTabsItem Text="@L.S(S.Task)">
                         <RadzenDataGrid
@@ -84,7 +84,14 @@
                         </RadzenDataGrid>
                     </RadzenTabsItem>
                     <RadzenTabsItem Text="@L.S(S.Description)">
-                        <RadzenText TextStyle="TextStyle.Body1" Text="@Task.Description"></RadzenText>
+                        @if (Task.Description.IsNullOrWhiteSpace())
+                        {
+                            <RadzenText TextStyle="TextStyle.Body1" Text="@L.S(S.NothingToSeeHere)"></RadzenText>
+                        }
+                        else
+                        {
+                            <RadzenText TextStyle="TextStyle.Body1" Text="@Task.Description"></RadzenText>
+                        }
                     </RadzenTabsItem>
                     <RadzenTabsItem Text="@L.S(S.Time)" Visible="UIDisplay.Time">
                         <RadzenText TextStyle="TextStyle.Body1" Text="TODO TIME"></RadzenText>

@@ -170,6 +170,7 @@ public static partial class S
         { Task, new("Compito") },
         { Comment, new("Commento") },
         { Description, new("Descrizione") },
+        { NothingToSeeHere, new("Niente da vedere quì.") },
         { Loading, new("Caricamento") },
         { Min, new("Minimo") },
         { Max, new("Massimo") },

@@ -165,6 +165,7 @@ public static partial class S
         { Task, new("Tarea") },
         { Comment, new("Comentario") },
         { Description, new("Descripción") },
+        { NothingToSeeHere, new("Nada que ver aqui.") },
         { Loading, new("Cargando") },
         { Min, new("Mínimo") },
         { Max, new("Máx.") },

@@ -177,6 +177,7 @@ public static partial class S
         { Task, new("Tâche") },
         { Comment, new("Commentaire") },
         { Description, new("Description") },
+        { NothingToSeeHere, new("Rien à voir ici.") },
         { Loading, new("Chargement") },
         { Min, new("Min") },
         { Max, new("Max") },

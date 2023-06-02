@@ -153,6 +153,7 @@ public static partial class S
         { Task, new("Task") },
         { Comment, new("Comment") },
         { Description, new("Description") },
+        { NothingToSeeHere, new("Nothing to see here.") },
         { Loading, new("Loading") },
         { Min, new("Min") },
         { Max, new("Max") },
