@@ -222,7 +222,10 @@
 
     private void RowClick(DataGridRowMouseEventArgs<ATask> e)
     {
-        Nav.NavigateTo($"/org/{OrgId}/project/{e.Data.Project}/task/{e.Data.Id}");
+        if (e.Data != Task)
+        {
+            Nav.NavigateTo($"/org/{OrgId}/project/{e.Data.Project}/task/{e.Data.Id}");
+        }
     }
 
     private void RowRender(RowRenderEventArgs<ATask> obj)

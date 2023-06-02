@@ -293,7 +293,7 @@ div.header > ul.rz-profile-menu > li.rz-navigation-item > div.rz-navigation-item
 // allow making table row cursor a pointer
 .row-clickable{
     tbody {
-        tr {
+        tr:not(.task-row) {
             cursor: pointer;
         }
     }
