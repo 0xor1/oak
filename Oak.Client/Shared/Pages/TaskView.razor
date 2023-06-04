@@ -41,7 +41,19 @@
                             <Columns>
                                 <RadzenDataGridColumn Width="22em" TItem="ATask" Property="@nameof(ATask.Name)" Title="@L.S(S.Name)">
                                     <Template Context="t">
-                                        <div class="flx jc-sb w-100 mw-100 p-rel">
+                                        <div class="flx jc-s ai-c g-0h w-100 mw-100 p-rel">
+                                            @if (t != TheTask)
+                                            {
+                                                <div class="w-1h"></div>
+                                            }
+                                            @if (t.IsParallel)
+                                            {
+                                                <RadzenImage class="w-1h" Path="/image/para.svg"></RadzenImage>
+                                            }
+                                            else
+                                            {
+                                                <RadzenImage class="w-1h" Path="/image/seq.svg"></RadzenImage>
+                                            }
                                             <span>@t.Name</span>
                                             @if (Ctx.HasProjectWritePerm)
                                             {
