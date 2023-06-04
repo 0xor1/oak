@@ -1,0 +1,86 @@
+﻿@using Common.Client
+@using Common.Shared.Auth
+@using Oak.I18n
+@using IApi = Oak.Api.IApi
+<div class="root col ov-v">
+    <RadzenTemplateForm
+        TItem="Model"
+        Data="_model"
+        Submit="Do"
+        class="flx col ai-stretch g-1">
+        <div class="flx col ai-stretch">
+            <RadzenLabel class="m-b-0q" Component="Name" Text="@L.S(S.Name)"/>
+            <RadzenTextBox Name="Name" @bind-Value="@_model.Name"/>
+            <RadzenRequiredValidator Component="Name" Popup="true" Text="@L.S(S.Required)"></RadzenRequiredValidator>
+        </div>
+        <div class="flx col ai-stretch">
+            <RadzenLabel class="m-b-0q" Component="Description" Text="@L.S(S.Description)"/>
+            <RadzenTextArea Name="Description" @bind-Value="@_model.Description" Rows="4"/>
+        </div>
+        <div class="flx col ai-stretch">
+            <RadzenLabel class="m-b-0q" Component="IsParallel" Text="@L.S(S.Parallel)"/>
+            <RadzenCheckBox Name="IsParallel" @bind-Value="@_model.IsParallel"/>
+        </div>
+        <!-- TODO create project user picker -->
+        <div class="flx col ai-stretch">
+            <RadzenLabel class="m-b-0q" Component="TimeEst" Text="@L.S(S.TimeEst)"/>
+            <RadzenNumeric TValue="ulong" Name="TimeEst" Min="0" @bind-Value="@_model.TimeEst"/>
+        </div>
+        <div class="flx col ai-stretch">
+            <RadzenLabel class="m-b-0q" Component="CostEst" Text="@L.S(S.CostEst)"/>
+            <RadzenNumeric TValue="ulong" Name="CostEst" Min="0" @bind-Value="@_model.CostEst"/>
+        </div>
+        <RadzenButton ButtonType="ButtonType.Submit" IsBusy="_doing" Text="@L.S(S.Create)"/>
+    </RadzenTemplateForm>
+</div>
+
+@inject L L;
+@inject IApi Api;
+@inject NavigationManager Nav;
+@code {
+
+    [Parameter]
+    [EditorRequired]
+    public string OrgId { get; set; }
+
+    [Parameter]
+    [EditorRequired]
+    public string ProjectId { get; set; }
+
+    [Parameter]
+    [EditorRequired]
+    public string ParentId { get; set; }
+
+    [Parameter]
+    public string? PrevSibId { get; set; }
+
+    public class Model
+    {
+        public string Name { get; set; } = "";
+        public string Description { get; set; } = "";
+        public bool IsParallel { get; set; }
+        public string? User { get; set; }
+        public ulong TimeEst { get; set; }
+        public ulong CostEst { get; set; }
+    }
+
+    Model _model = new();
+    private bool _doing;
+
+    private async Task Do()
+    {
+        _doing = true;
+        try
+        {
+            var res = await Api.Task.Create(new(OrgId, ProjectId, ParentId, PrevSibId, _model.Name, _model.Description, _model.IsParallel, _model.User, _model.TimeEst, _model.CostEst));
+            Nav.NavigateTo($"/org/{OrgId}/project/{ProjectId}/task/{res.New.Id}");
+        }
+        catch
+        {
+            // use empty catch to avoid having to
+            // call StatHasChanged on errors
+        }
+        _doing = false;
+    }
+
+}

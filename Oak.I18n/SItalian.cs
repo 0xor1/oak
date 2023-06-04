@@ -168,6 +168,7 @@ public static partial class S
         { Cost, new("Costo") },
         { File, new("File") },
         { Task, new("Compito") },
+        { Parallel, new("Parallelo") },
         { Comment, new("Commento") },
         { Description, new("Descrizione") },
         { NothingToSeeHere, new("Niente da vedere quì.") },
@@ -180,6 +181,7 @@ public static partial class S
         { Public, new("Pubblico") },
         { New, new("Nuovo") },
         { Create, new("Creare") },
+        { Delete, new("Eliminare") },
         { Name, new("Nome") },
         { Currency, new("Valuta") },
         { CreatedOn, new("Creato") },
@@ -202,6 +204,7 @@ public static partial class S
         { OrgYourName, new("Il tuo nome") },
         { OrgProjects, new("Progetti") },
         { OrgNoProjects, new("Nessuna Progetti") },
-        { OrgNewProject, new("Nuovo progetto") }
+        { OrgNewProject, new("Nuovo progetto") },
+        { TaskNewTask, new("Nuovo compito") }
     };
 }

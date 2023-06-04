@@ -46,9 +46,8 @@
                                             @if (Ctx.HasProjectWritePerm)
                                             {
                                                 <div class="flx g-0q p-abs show-on-row-mouse-over" style="right: -1em;">
-                                                    <RadzenButton Icon="arrow_upward" ButtonStyle="ButtonStyle.Success" Size="ButtonSize.ExtraSmall" Disabled="t == Task"/>
-                                                    <RadzenButton Icon="arrow_downward" ButtonStyle="ButtonStyle.Success" Size="ButtonSize.ExtraSmall"/>
-                                                    <RadzenButton Icon="delete" ButtonStyle="ButtonStyle.Danger" Size="ButtonSize.ExtraSmall" Disabled="!Ctx.CanDeleteTask(t)"/>
+                                                    <RadzenButton @onclick:stopPropagation="true" Icon="add" ButtonStyle="ButtonStyle.Success" Size="ButtonSize.ExtraSmall" Click="_ => CreateAfter(t)"/>
+                                                    <RadzenButton @onclick:stopPropagation="true" Icon="delete" ButtonStyle="ButtonStyle.Danger" Size="ButtonSize.ExtraSmall" Disabled="!Ctx.CanDeleteTask(t)" Click="_ => Delete(t)"/>
                                                 </div>
                                             }
                                         </div>
@@ -98,13 +97,13 @@
                         </RadzenDataGrid>
                     </RadzenTabsItem>
                     <RadzenTabsItem Text="@L.S(S.Description)">
-                        @if (Task.Description.IsNullOrWhiteSpace())
+                        @if (TheTask.Description.IsNullOrWhiteSpace())
                         {
                             <RadzenText TextStyle="TextStyle.Body1" Text="@L.S(S.NothingToSeeHere)"></RadzenText>
                         }
                         else
                         {
-                            <RadzenText TextStyle="TextStyle.Body1" Text="@Task.Description"></RadzenText>
+                            <RadzenText TextStyle="TextStyle.Body1" Text="@TheTask.Description"></RadzenText>
                         }
                     </RadzenTabsItem>
                     <RadzenTabsItem Text="@L.S(S.Time)" Visible="UIDisplay.Time">
@@ -131,6 +130,7 @@
 
 @inject L L;
 @inject IApi Api;
+@inject DialogService DialogService;
 @inject UIDisplay UIDisplay;
 @inject NavigationManager Nav;
 @inject IUICtxService UICtx;
@@ -155,7 +155,7 @@
 
     private bool _ready;
     private List<ATask> Ancestors { get; set; } = new();
-    private ATask Task { get; set; }
+    private ATask TheTask { get; set; }
     private int Count => Items.Count; 
     private List<ATask> Items { get; set; } = new ();
     public bool ChildrenMore => Items.Count > 1 && !Items.Last().NextSib.IsNullOrWhiteSpace();
@@ -190,39 +190,39 @@
         }
     }
 
-    protected override async Task OnInitializedAsync()
+    protected override async Task OnParametersSetAsync()
     {
         Ctx = await UICtx.Get();
         var res = await Api.Task.GetInitView(new (OrgId, ProjectId, TaskId));
-        Ancestors.AddRange(res.Ancestors);
-        Task = res.Task;
-        Items.Add(Task);
-        Items.AddRange(res.Children);
-        if (Task.TimeInc > 0)
+        Ancestors = res.Ancestors.ToList();
+        TheTask = res.Task;
+        Items = res.Children.Prepend(TheTask).ToList();
+        if (TheTask.TimeInc > 0)
         {
             var timesRes = await Api.VItem.Get(new(OrgId, ProjectId, VItemType.Time, TaskId));
-            Times.AddRange(timesRes.Set);
+            Times = timesRes.Set.ToList();
             TimesMore = timesRes.More;
         }
-        if (Task.CostInc > 0)
+        if (TheTask.CostInc > 0)
         {
             var costsRes = await Api.VItem.Get(new(OrgId, ProjectId, VItemType.Cost, TaskId));
-            Costs.AddRange(costsRes.Set);
+            Costs = costsRes.Set.ToList();
             CostsMore = costsRes.More;
         }
-        if (Task.FileN > 0)
+        if (TheTask.FileN > 0)
         {
             var fileRes = await Api.File.Get(new(OrgId, ProjectId, TaskId));
-            Files.AddRange(fileRes.Set);
+            Files = fileRes.Set.ToList();
             FilesMore = fileRes.More;
         }
-        Comments.AddRange((await Api.Comment.Get(new(OrgId, ProjectId, TaskId))).Set);
+        Comments = (await Api.Comment.Get(new(OrgId, ProjectId, TaskId))).Set.ToList();
         _ready = true;
+        await base.OnParametersSetAsync();
     }
 
     private void RowClick(DataGridRowMouseEventArgs<ATask> e)
     {
-        if (e.Data != Task)
+        if (e.Data != TheTask)
         {
             Nav.NavigateTo($"/org/{OrgId}/project/{e.Data.Project}/task/{e.Data.Id}");
         }
@@ -230,10 +230,22 @@
 
     private void RowRender(RowRenderEventArgs<ATask> obj)
     {
-        if (obj.Data == Task)
+        if (obj.Data == TheTask)
         {
             obj.Attributes.Add("class", "task-row");
         }
+    }
+
+    private Task CreateAfter(ATask t)
+    {
+        DialogService.Open<TaskNew>(L.S(S.TaskNewTask), new (){{"OrgId", OrgId}, {"ProjectId", ProjectId}, {"ParentId", TheTask.Id}, {"PrevSibId", t == TheTask? null: t.Id}});
+        return Task.CompletedTask;
+    }
+
+    private Task Delete(ATask t)
+    {
+        //DialogService.Open<TaskDelete>(L.S(S.TaskDeleteTask), new (){{"Task", t}});
+        return Task.CompletedTask;
     }
 
 }
