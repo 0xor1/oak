@@ -1,13 +1,18 @@
 Oak
 ===
 
-A Project management app built with:
+A project management app where tasks are organised in a tree structure.
+This gives the benefit of enabling the aggregation of task stats like time
+and cost estimates up the tree structure such that each tasks is a summary of all
+the sub tasks beneath it.
 
-* Client - Blazor WASM with Radzen component library
-* Server - Aspnet core with Rpc pattern
-* DB - Ef core
-
+To build and run unit tests:
 ```bash
 ./bin/pre
 ```
-to start docker containers
+To build and run the app:
+```bash
+./bin/run
+```
+You can pass parameter `nuke` to either `./bin/pre` or `./bin/run` to delete
+docker containers and rebuild them, this is typically useful if there has been a db schema change.
