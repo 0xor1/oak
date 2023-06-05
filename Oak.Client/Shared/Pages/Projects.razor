@@ -40,6 +40,11 @@
                     <BoolDataGridFilter @bind-Value="@IsPublic" />
                 </FilterTemplate>
             </RadzenDataGridColumn>
+            <RadzenDataGridColumn Visible="UIDisplay.User" Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Width="10em" TItem="Project" Property="@nameof(Project.Task.User)" Title="@L.S(S.User)">
+                <Template Context="p">
+                    todo - add user component
+                </Template>
+            </RadzenDataGridColumn>
             <RadzenDataGridColumn Visible="UIDisplay.Time" Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Width="7em" TItem="Project" Property="@nameof(Project.Task.TimeSubMin)" Title="@L.S(S.TimeMin)">
                 <Template Context="p">
                     @(Util.Time(p.Task.TimeEst + p.Task.TimeSubMin, p.HoursPerDay, p.DaysPerWeek))
@@ -75,6 +80,16 @@
                     @(p.Task.FileN + p.Task.FileSubN)
                 </Template>
             </RadzenDataGridColumn>
+            <RadzenDataGridColumn Visible="UIDisplay.SubCounts" Sortable="false" Filterable="false" TextAlign="TextAlign.Center" Width="7em" TItem="Project" Property="@nameof(Project.Task.ChildN)" Title="@L.S(S.ChildN)">
+                <Template Context="p">
+                    @(p.Task.ChildN)
+                </Template>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn Visible="UIDisplay.SubCounts" Sortable="false" Filterable="false" TextAlign="TextAlign.Center" Width="7em" TItem="Project" Property="@nameof(Project.Task.DescN)" Title="@L.S(S.DescN)">
+                <Template Context="p">
+                    @(p.Task.DescN)
+                </Template>
+            </RadzenDataGridColumn>
             <RadzenDataGridColumn Sortable="true" TextAlign="TextAlign.Center" Width="10em" TItem="Project" Property="@nameof(Project.StartOn)" Title="@L.S(S.StartOn)" FilterValue="@StartOn">
                 <Template Context="p">
                     @(p.StartOn == null? "--": L.D(p.StartOn.Value))
@@ -91,7 +106,7 @@
                     <MinMaxDateDataGridFilter @bind-Value="@EndOn" />
                 </FilterTemplate>
             </RadzenDataGridColumn>
-            <RadzenDataGridColumn Sortable="true" TextAlign="TextAlign.Center" Width="10em" TItem="Project" Property="@nameof(Project.CreatedOn)" Title="@L.S(S.CreatedOn)" FilterValue="@CreatedOn">
+            <RadzenDataGridColumn Visible="UIDisplay.CreatedOn" Sortable="true" TextAlign="TextAlign.Center" Width="10em" TItem="Project" Property="@nameof(Project.CreatedOn)" Title="@L.S(S.CreatedOn)" FilterValue="@CreatedOn">
                 <Template Context="p">
                     @L.D(p.CreatedOn)
                 </Template>
@@ -130,7 +145,11 @@
     {
         get
         {
-            var width = 57;
+            var width = 50;
+            if (UIDisplay.User)
+            {
+                width += 10;
+            }
             if (UIDisplay.Time)
             {
                 width += 21;
@@ -142,6 +161,14 @@
             if (UIDisplay.File)
             {
                 width += 14;
+            }
+            if (UIDisplay.SubCounts)
+            {
+                width += 14;
+            }
+            if (UIDisplay.CreatedOn)
+            {
+                width += 7;
             }
             return $"{width}em";
         }

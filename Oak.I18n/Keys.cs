@@ -97,9 +97,11 @@ public static partial class S
 
     // general
     public const string Display = "display";
+    public const string User = "user";
     public const string Time = "time";
     public const string Cost = "cost";
     public const string File = "file";
+    public const string SubCounts = "sub_counts";
     public const string Task = "task";
     public const string Parallel = "parallel";
     public const string Sequential = "sequential";
@@ -132,6 +134,8 @@ public static partial class S
     public const string CostInc = "cost_inc";
     public const string FileN = "file_n";
     public const string FileSize = "file_size";
+    public const string ChildN = "child_n";
+    public const string DescN = "desc_n";
     public const string FileLimit = "file_limit";
 
     // orgs

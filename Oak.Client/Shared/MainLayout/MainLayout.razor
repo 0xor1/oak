@@ -57,6 +57,10 @@
                         <RadzenPanelMenuItem class="display-none"/>
                         <div class="flx col p-0t p-l-4 g-0t">
                             <div class="flx g-0h">
+                                <RadzenCheckBox Name="User" TValue="bool" @bind-Value="UIDisplay.User"/>
+                                <RadzenLabel Component="User">@L.S(S.User)</RadzenLabel>
+                            </div>
+                            <div class="flx g-0h">
                                 <RadzenCheckBox Name="Time" TValue="bool" @bind-Value="UIDisplay.Time"/>
                                 <RadzenLabel Component="Time">@L.S(S.Time)</RadzenLabel>
                             </div>
@@ -67,6 +71,14 @@
                             <div class="flx g-0h">
                                 <RadzenCheckBox Name="File" TValue="bool" @bind-Value="UIDisplay.File"/>
                                 <RadzenLabel Component="File">@L.S(S.File)</RadzenLabel>
+                            </div>
+                            <div class="flx g-0h">
+                                <RadzenCheckBox Name="SubCounts" TValue="bool" @bind-Value="UIDisplay.SubCounts"/>
+                                <RadzenLabel Component="SubCounts">@L.S(S.SubCounts)</RadzenLabel>
+                            </div>
+                            <div class="flx g-0h">
+                                <RadzenCheckBox Name="CreatedOn" TValue="bool" @bind-Value="UIDisplay.CreatedOn"/>
+                                <RadzenLabel Component="CreatedOn">@L.S(S.CreatedOn)</RadzenLabel>
                             </div>
                         </div>
                     </RadzenPanelMenuItem>

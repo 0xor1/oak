@@ -3,6 +3,7 @@
 @using Oak.Api.Task
 @using Oak.I18n
 @using IApi = Oak.Api.IApi
+@using ATask = Oak.Api.Task.Task
 @using Task = System.Threading.Tasks.Task
 <div class="root col ov-v">
     <RadzenTemplateForm
@@ -38,6 +39,7 @@
 
 @inject L L;
 @inject IApi Api;
+@inject DialogService DialogService;
 @code {
 
     [Parameter]
@@ -53,10 +55,10 @@
     public string ParentId { get; set; }
 
     [Parameter]
-    public string? PrevSibId { get; set; }
+    public ATask? PrevSib { get; set; }
 
     [Parameter]
-    public Func<CreateRes, Task>? OnCreated { get; set; }
+    public Func<CreateRes, ATask?, Task>? OnCreated { get; set; }
 
     public class Model
     {
@@ -76,10 +78,11 @@
         _doing = true;
         try
         {
-            var res = await Api.Task.Create(new(OrgId, ProjectId, ParentId, PrevSibId, _model.Name, _model.Description, _model.IsParallel, _model.User, _model.TimeEst, _model.CostEst));
+            var res = await Api.Task.Create(new(OrgId, ProjectId, ParentId, PrevSib?.Id, _model.Name, _model.Description, _model.IsParallel, _model.User, _model.TimeEst, _model.CostEst));
             if (OnCreated != null)
             {
-                await OnCreated(res);
+                await OnCreated(res, PrevSib);
+                DialogService.Close();
             }
         }
         catch
@@ -87,6 +90,7 @@
             // use empty catch to avoid having to
             // call StatHasChanged on errors
         }
+        
         _doing = false;
     }
 

@@ -3,11 +3,13 @@
 @using Common.Shared.Auth
 @using Oak.Api.Comment
 @using Oak.Api.File
+@using Oak.Api.Task
 @using Oak.Api.VItem
 @using Oak.Client.Lib
 @using IApi = Oak.Api.IApi
 @using ATask = Oak.Api.Task.Task;
 @using S = Oak.I18n.S
+@using Task = System.Threading.Tasks.Task
 <div class="root col p-0h g-0h jc-s ai-s">
     @if (_ready)
     {
@@ -66,6 +68,11 @@
                                         </div>
                                     </Template>
                                 </RadzenDataGridColumn>
+                                <RadzenDataGridColumn Visible="UIDisplay.User" Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Width="10em" TItem="ATask" Property="@nameof(ATask.User)" Title="@L.S(S.User)">
+                                    <Template Context="p">
+                                        todo - add user component
+                                    </Template>
+                                </RadzenDataGridColumn>
                                 <RadzenDataGridColumn Visible="UIDisplay.Time" TextAlign="TextAlign.Center" Width="7em" TItem="ATask" Property="@nameof(ATask.TimeSubMin)" Title="@L.S(S.TimeMin)">
                                     <Template Context="t">
                                         @(Util.Time(t.TimeEst + t.TimeSubMin, Ctx.Project.HoursPerDay, Ctx.Project.DaysPerWeek))
@@ -101,7 +108,9 @@
                                         @(t.FileN + t.FileSubN)
                                     </Template>
                                 </RadzenDataGridColumn>
-                                <RadzenDataGridColumn TextAlign="TextAlign.Center" Width="10em" TItem="ATask" Property="@nameof(ATask.CreatedOn)" Title="@L.S(S.CreatedOn)">
+                                <RadzenDataGridColumn Visible="UIDisplay.SubCounts" Sortable="false" TextAlign="TextAlign.Center" Width="7em" TItem="ATask" Property="@nameof(ATask.ChildN)" Title="@L.S(S.ChildN)"/>
+                                <RadzenDataGridColumn Visible="UIDisplay.SubCounts" Sortable="false" TextAlign="TextAlign.Center" Width="7em" TItem="ATask" Property="@nameof(ATask.DescN)" Title="@L.S(S.DescN)"/>
+                                <RadzenDataGridColumn Visible="UIDisplay.CreatedOn" TextAlign="TextAlign.Center" Width="10em" TItem="ATask" Property="@nameof(ATask.CreatedOn)" Title="@L.S(S.CreatedOn)">
                                     <Template Context="t">
                                         @L.D(t.CreatedOn)
                                     </Template>
@@ -188,6 +197,10 @@
         get
         {
             var width = 34;
+            if (UIDisplay.User)
+            {
+                width += 10;
+            }
             if (UIDisplay.Time)
             {
                 width += 21;
@@ -199,6 +212,14 @@
             if (UIDisplay.File)
             {
                 width += 14;
+            }
+            if (UIDisplay.SubCounts)
+            {
+                width += 14;
+            }
+            if (UIDisplay.CreatedOn)
+            {
+                width += 7;
             }
             return $"{width}em";
         }
@@ -250,10 +271,27 @@
         }
     }
 
-    private Task CreateAfter(ATask t)
+    private async Task CreateAfter(ATask t)
+        => await DialogService.OpenAsync<TaskNew>(L.S(S.TaskNewTask), new (){{"OrgId", OrgId}, {"ProjectId", ProjectId}, {"ParentId", TheTask.Id}, {"PrevSib", t == TheTask? null: t}, {"OnCreated", OnCreated}});
+
+    private async Task OnCreated(CreateRes res, ATask? prevSib)
     {
-        DialogService.Open<TaskNew>(L.S(S.TaskNewTask), new (){{"OrgId", OrgId}, {"ProjectId", ProjectId}, {"ParentId", TheTask.Id}, {"PrevSibId", t == TheTask? null: t.Id}});
-        return Task.CompletedTask;
+        // a new task was created
+        // so refresh TheTask and insert new task in appropriate index
+        Items.Remove(TheTask);
+        TheTask = res.Parent;
+        Items.Insert(0, TheTask);
+        if (prevSib == null)
+        {
+            Items.Insert(1, res.New);
+        }
+        else
+        {
+            var i = Items.IndexOf(prevSib);
+            Items[i] = prevSib with {NextSib = res.New.Id};
+            Items.Insert(i+1, res.New);
+        }
+        await _gridRef.Reload();
     }
 
     private async Task Delete(ATask t)
