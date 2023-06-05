@@ -152,6 +152,7 @@ public static partial class S
         { File, new("File") },
         { Task, new("Task") },
         { Parallel, new("Parallel") },
+        { Sequential, new("Sequential") },
         { Comment, new("Comment") },
         { Description, new("Description") },
         { NothingToSeeHere, new("Nothing to see here.") },
@@ -165,6 +166,8 @@ public static partial class S
         { New, new("New") },
         { Create, new("Create") },
         { Delete, new("Delete") },
+        { Cancel, new("Cancel") },
+        { Confirm, new("Confirm") },
         { Name, new("Name") },
         { Currency, new("Currency") },
         { CreatedOn, new("Created On") },
@@ -188,6 +191,12 @@ public static partial class S
         { OrgProjects, new("Projects") },
         { OrgNoProjects, new("No Projects") },
         { OrgNewProject, new("New Project") },
-        { TaskNewTask, new("New Task") }
+        { TaskNewTask, new("New Task") },
+        {
+            TaskConfirmDeleteTask,
+            new(
+                "<p>Are you sure you want to delete the task <strong>{{Name}}</strong>?</p><p>This can not be undone.</p>"
+            )
+        }
     };
 }

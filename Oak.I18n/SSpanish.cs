@@ -164,6 +164,7 @@ public static partial class S
         { File, new("Archivo") },
         { Task, new("Tarea") },
         { Parallel, new("Paralelo") },
+        { Sequential, new("Secuencial") },
         { Comment, new("Comentario") },
         { Description, new("Descripción") },
         { NothingToSeeHere, new("Nada que ver aqui.") },
@@ -177,6 +178,8 @@ public static partial class S
         { New, new("Nuevo") },
         { Create, new("Crear") },
         { Delete, new("Borrar") },
+        { Cancel, new("Cancelar") },
+        { Confirm, new("Confirmar") },
         { Name, new("Nombre") },
         { Currency, new("Divisa") },
         { CreatedOn, new("Creado en") },
@@ -200,6 +203,12 @@ public static partial class S
         { OrgProjects, new("Proyectos") },
         { OrgNoProjects, new("Sin Proyectos") },
         { OrgNewProject, new("Nuevo proyecto") },
-        { TaskNewTask, new("Nueva tarea") }
+        { TaskNewTask, new("Nueva tarea") },
+        {
+            TaskConfirmDeleteTask,
+            new(
+                "<p>¿Está seguro de que desea eliminar la tarea <strong>{{Name}}</strong>?</p><p>Esto no se puede deshacer.</p>"
+            )
+        }
     };
 }

@@ -26,6 +26,7 @@
                 <Tabs>
                     <RadzenTabsItem Text="@L.S(S.Task)">
                         <RadzenDataGrid
+                            @ref="_gridRef"
                             Count="Count"
                             Data="Items"
                             TItem="ATask"
@@ -41,20 +42,20 @@
                             <Columns>
                                 <RadzenDataGridColumn Width="22em" TItem="ATask" Property="@nameof(ATask.Name)" Title="@L.S(S.Name)">
                                     <Template Context="t">
-                                        <div class="flx jc-s ai-c g-0h w-100 mw-100 p-rel">
+                                        <div class="flx child-no-shrink jc-s ai-c g-0h w-100 mw-100 p-rel">
                                             @if (t != TheTask)
                                             {
                                                 <div class="w-1h"></div>
                                             }
                                             @if (t.IsParallel)
                                             {
-                                                <RadzenImage class="w-1h" Path="/image/para.svg"></RadzenImage>
+                                                <RadzenImage title="@L.S(S.Parallel)" class="w-1h" Path="/image/para.svg"></RadzenImage>
                                             }
                                             else
                                             {
-                                                <RadzenImage class="w-1h" Path="/image/seq.svg"></RadzenImage>
+                                                <RadzenImage title="@L.S(S.Sequential)" class="w-1h" Path="/image/seq.svg"></RadzenImage>
                                             }
-                                            <span>@t.Name</span>
+                                            <span title="@($"{t.Name}\n\n{t.Description}")" class="shrink-1 ellip">@t.Name</span>
                                             @if (Ctx.HasProjectWritePerm)
                                             {
                                                 <div class="flx g-0q p-abs show-on-row-mouse-over" style="right: -1em;">
@@ -180,7 +181,8 @@
     public List<Comment> Comments { get; set; } = new();
     public bool CommentsMore { get; set; }
     private bool _isLoading = false;
-    
+    private RadzenDataGrid<ATask> _gridRef;
+
     private string GridWidth
     {
         get
@@ -254,10 +256,27 @@
         return Task.CompletedTask;
     }
 
-    private Task Delete(ATask t)
+    private async Task Delete(ATask t)
     {
-        //DialogService.Open<TaskDelete>(L.S(S.TaskDeleteTask), new (){{"Task", t}});
-        return Task.CompletedTask;
+        var confirmed = await DialogService.Confirm(L.S(S.TaskConfirmDeleteTask, t), L.S(S.Confirm), new ConfirmOptions() { OkButtonText = L.S(S.Delete), CancelButtonText = L.S(S.Cancel) });
+        if (confirmed == true)
+        {
+            var parent = await Api.Task.Delete(new(t.Org, t.Project, t.Id));
+            if (t == TheTask)
+            {
+                // if we deleted the task we're looking at then move up to parent,
+                Nav.NavigateTo($"/org/{t.Org}/project/{t.Project}/task/{t.Parent.NotNull()}");
+            }
+            else
+            {
+                // else just refresh the current view
+                Items.Remove(TheTask);
+                Items.Remove(t);
+                TheTask = parent;
+                Items.Insert(0, TheTask);
+                await _gridRef.Reload();
+            }
+        }
     }
 
 }

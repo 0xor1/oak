@@ -169,6 +169,7 @@ public static partial class S
         { File, new("File") },
         { Task, new("Compito") },
         { Parallel, new("Parallelo") },
+        { Sequential, new("Sequenziale") },
         { Comment, new("Commento") },
         { Description, new("Descrizione") },
         { NothingToSeeHere, new("Niente da vedere quì.") },
@@ -182,6 +183,8 @@ public static partial class S
         { New, new("Nuovo") },
         { Create, new("Creare") },
         { Delete, new("Eliminare") },
+        { Cancel, new("Annulla") },
+        { Confirm, new("Confermare") },
         { Name, new("Nome") },
         { Currency, new("Valuta") },
         { CreatedOn, new("Creato") },
@@ -205,6 +208,12 @@ public static partial class S
         { OrgProjects, new("Progetti") },
         { OrgNoProjects, new("Nessuna Progetti") },
         { OrgNewProject, new("Nuovo progetto") },
-        { TaskNewTask, new("Nuovo compito") }
+        { TaskNewTask, new("Nuovo compito") },
+        {
+            TaskConfirmDeleteTask,
+            new(
+                "<p>Sei sicuro di voler eliminare l'attività <strong>{{Name}}</strong>?</p><p>L'operazione non può essere annullata.</p>"
+            )
+        }
     };
 }

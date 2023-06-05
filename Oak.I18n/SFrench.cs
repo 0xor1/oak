@@ -176,6 +176,7 @@ public static partial class S
         { File, new("Dossier") },
         { Task, new("Tâche") },
         { Parallel, new("Parallèle") },
+        { Sequential, new("Séquentiel") },
         { Comment, new("Commentaire") },
         { Description, new("Description") },
         { NothingToSeeHere, new("Rien à voir ici.") },
@@ -189,6 +190,8 @@ public static partial class S
         { New, new("Nouveau") },
         { Create, new("Créer") },
         { Delete, new("Supprimer") },
+        { Cancel, new("Annuler") },
+        { Confirm, new("Confirmer") },
         { Name, new("Nom") },
         { Currency, new("Monnaie") },
         { CreatedOn, new("Créé sur") },
@@ -212,6 +215,12 @@ public static partial class S
         { OrgProjects, new("Projets") },
         { OrgNoProjects, new("Aucune Projets") },
         { OrgNewProject, new("Nouveau projet") },
-        { TaskNewTask, new("Nouvelle tâche") }
+        { TaskNewTask, new("Nouvelle tâche") },
+        {
+            TaskConfirmDeleteTask,
+            new(
+                "<p>Êtes-vous sûr de vouloir supprimer la tâche <strong>{{Name}}</strong>?</p><p>Cette opération est irréversible.</p>"
+            )
+        }
     };
 }

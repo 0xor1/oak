@@ -102,6 +102,7 @@ public static partial class S
     public const string File = "file";
     public const string Task = "task";
     public const string Parallel = "parallel";
+    public const string Sequential = "sequential";
     public const string Comment = "comment";
     public const string Description = "description";
     public const string NothingToSeeHere = "nothing_to_see_here";
@@ -115,6 +116,8 @@ public static partial class S
     public const string New = "new";
     public const string Create = "create";
     public const string Delete = "delete";
+    public const string Cancel = "cancel";
+    public const string Confirm = "confirm";
     public const string Name = "name";
     public const string Currency = "currency";
     public const string CreatedOn = "created_on";
@@ -145,4 +148,5 @@ public static partial class S
 
     // tasks
     public const string TaskNewTask = "task_new_task";
+    public const string TaskConfirmDeleteTask = "task_confirm_delete_task";
 }

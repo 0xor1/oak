@@ -1,7 +1,9 @@
 ﻿@using Common.Client
 @using Common.Shared.Auth
+@using Oak.Api.Task
 @using Oak.I18n
 @using IApi = Oak.Api.IApi
+@using Task = System.Threading.Tasks.Task
 <div class="root col ov-v">
     <RadzenTemplateForm
         TItem="Model"
@@ -36,7 +38,6 @@
 
 @inject L L;
 @inject IApi Api;
-@inject NavigationManager Nav;
 @code {
 
     [Parameter]
@@ -53,6 +54,9 @@
 
     [Parameter]
     public string? PrevSibId { get; set; }
+
+    [Parameter]
+    public Func<CreateRes, Task>? OnCreated { get; set; }
 
     public class Model
     {
@@ -73,7 +77,10 @@
         try
         {
             var res = await Api.Task.Create(new(OrgId, ProjectId, ParentId, PrevSibId, _model.Name, _model.Description, _model.IsParallel, _model.User, _model.TimeEst, _model.CostEst));
-            Nav.NavigateTo($"/org/{OrgId}/project/{ProjectId}/task/{res.New.Id}");
+            if (OnCreated != null)
+            {
+                await OnCreated(res);
+            }
         }
         catch
         {

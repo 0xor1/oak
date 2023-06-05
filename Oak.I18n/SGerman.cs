@@ -164,6 +164,7 @@ public static partial class S
         { File, new("Datei") },
         { Task, new("Aufgabe") },
         { Parallel, new("Parallel") },
+        { Sequential, new("Sequentiell") },
         { Comment, new("Kommentar") },
         { Description, new("Beschreibung") },
         { NothingToSeeHere, new("Es gibt hier nichts zu sehen.") },
@@ -177,6 +178,8 @@ public static partial class S
         { New, new("Neu") },
         { Create, new("Erstellen") },
         { Delete, new("Löschen") },
+        { Cancel, new("Stornieren") },
+        { Confirm, new("Bestätigen") },
         { Name, new("Name") },
         { Currency, new("Währung") },
         { CreatedOn, new("Erstellt am") },
@@ -200,6 +203,12 @@ public static partial class S
         { OrgProjects, new("Projekte") },
         { OrgNoProjects, new("Keine Projekte") },
         { OrgNewProject, new("Neues Projekt") },
-        { TaskNewTask, new("Neue Aufgabe") }
+        { TaskNewTask, new("Neue Aufgabe") },
+        {
+            TaskConfirmDeleteTask,
+            new(
+                "<p>Sind Sie sicher, dass Sie die Aufgabe <strong>{{Name}}</strong> löschen möchten?</p><p>Dies kann nicht rückgängig gemacht werden.</p>"
+            )
+        }
     };
 }
