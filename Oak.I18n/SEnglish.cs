@@ -166,6 +166,7 @@ public static partial class S
         { Required, new("Required") },
         { Public, new("Public") },
         { New, new("New") },
+        { Edit, new("Edit") },
         { Create, new("Create") },
         { Delete, new("Delete") },
         { Cancel, new("Cancel") },
@@ -196,6 +197,7 @@ public static partial class S
         { OrgNoProjects, new("No Projects") },
         { OrgNewProject, new("New Project") },
         { TaskNewTask, new("New Task") },
+        { TaskEditTask, new("Edit Task") },
         {
             TaskConfirmDeleteTask,
             new(

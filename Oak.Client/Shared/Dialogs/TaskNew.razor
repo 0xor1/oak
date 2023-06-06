@@ -33,7 +33,10 @@
             <RadzenLabel class="m-b-0q" Component="CostEst" Text="@L.S(S.CostEst)"/>
             <RadzenNumeric TValue="ulong" Name="CostEst" Min="0" @bind-Value="@_model.CostEst"/>
         </div>
-        <RadzenButton ButtonType="ButtonType.Submit" IsBusy="_doing" Text="@L.S(S.Create)"/>
+        <div class="flx g-1 jc-stretch">
+            <RadzenButton class="grow-1" ButtonType="ButtonType.Submit" IsBusy="_doing" Text="@(UpdateTask != null? L.S(S.Edit): L.S(S.Create))"/>
+            <RadzenButton class="grow-1" ButtonStyle="ButtonStyle.Secondary" IsBusy="_doing" Text="@L.S(S.Cancel)" Click="@(_ => DialogService.Close())"/>
+        </div>
     </RadzenTemplateForm>
 </div>
 
@@ -58,7 +61,13 @@
     public ATask? PrevSib { get; set; }
 
     [Parameter]
+    public ATask? UpdateTask { get; set; }
+
+    [Parameter]
     public Func<CreateRes, ATask?, Task>? OnCreated { get; set; }
+
+    [Parameter]
+    public Func<UpdateRes, Task>? OnUpdated { get; set; }
 
     public class Model
     {
@@ -73,17 +82,42 @@
     Model _model = new();
     private bool _doing;
 
+    protected override Task OnInitializedAsync()
+    {
+        if (UpdateTask != null)
+        {
+            _model.Name = UpdateTask.Name;
+            _model.Description = UpdateTask.Description;
+            _model.IsParallel = UpdateTask.IsParallel;
+            _model.User = UpdateTask.User;
+            _model.TimeEst = UpdateTask.TimeEst;
+            _model.CostEst = UpdateTask.CostEst;
+        }
+        return Task.CompletedTask;
+    }
+
     private async Task Do()
     {
         _doing = true;
         try
         {
-            var res = await Api.Task.Create(new(OrgId, ProjectId, ParentId, PrevSib?.Id, _model.Name, _model.Description, _model.IsParallel, _model.User, _model.TimeEst, _model.CostEst));
-            if (OnCreated != null)
+            if (UpdateTask == null)
             {
-                await OnCreated(res, PrevSib);
-                DialogService.Close();
+                var res = await Api.Task.Create(new(OrgId, ProjectId, ParentId, PrevSib?.Id, _model.Name, _model.Description, _model.IsParallel, _model.User, _model.TimeEst, _model.CostEst));
+                if (OnCreated != null)
+                {
+                    await OnCreated(res, PrevSib);
+                }
             }
+            else
+            {
+                var res = await Api.Task.Update(new(OrgId, ProjectId, UpdateTask.Id, ParentId, null, _model.Name, _model.Description, _model.IsParallel, new(_model.User), _model.TimeEst, _model.CostEst));
+                if (OnUpdated != null)
+                {
+                    await OnUpdated(res);
+                }
+            }
+            DialogService.Close();
         }
         catch
         {

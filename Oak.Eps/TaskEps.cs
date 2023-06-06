@@ -594,6 +594,14 @@ internal static class TaskEps
                                     ancestors
                                 );
                             }
+
+                            if (treeUpdateRequired && oldParent == null && t.Parent != null)
+                            {
+                                oldParent = await db.Tasks.SingleOrDefaultAsync(
+                                    x =>
+                                        x.Org == t.Org && x.Project == t.Project && x.Id == t.Parent
+                                );
+                            }
                             return new UpdateRes(t.ToApi(), oldParent?.ToApi(), newParent?.ToApi());
                         }
                     )

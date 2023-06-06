@@ -178,6 +178,7 @@ public static partial class S
         { Required, new("Erforderlich") },
         { Public, new("Öffentlich") },
         { New, new("Neu") },
+        { Edit, new("Bearbeiten") },
         { Create, new("Erstellen") },
         { Delete, new("Löschen") },
         { Cancel, new("Stornieren") },
@@ -208,6 +209,7 @@ public static partial class S
         { OrgNoProjects, new("Keine Projekte") },
         { OrgNewProject, new("Neues Projekt") },
         { TaskNewTask, new("Neue Aufgabe") },
+        { TaskEditTask, new("Aufgabe bearbeiten") },
         {
             TaskConfirmDeleteTask,
             new(

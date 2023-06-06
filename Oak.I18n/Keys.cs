@@ -116,6 +116,7 @@ public static partial class S
     public const string Required = "required";
     public const string Public = "public";
     public const string New = "new";
+    public const string Edit = "edit";
     public const string Create = "create";
     public const string Delete = "delete";
     public const string Cancel = "cancel";
@@ -152,5 +153,6 @@ public static partial class S
 
     // tasks
     public const string TaskNewTask = "task_new_task";
+    public const string TaskEditTask = "task_edit_task";
     public const string TaskConfirmDeleteTask = "task_confirm_delete_task";
 }

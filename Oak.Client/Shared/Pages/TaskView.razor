@@ -62,6 +62,7 @@
                                             {
                                                 <div class="flx g-0q p-abs show-on-row-mouse-over" style="right: -1em;">
                                                     <RadzenButton @onclick:stopPropagation="true" Icon="add" ButtonStyle="ButtonStyle.Success" Size="ButtonSize.ExtraSmall" Click="_ => CreateAfter(t)"/>
+                                                    <RadzenButton @onclick:stopPropagation="true" Icon="edit" ButtonStyle="ButtonStyle.Info" Size="ButtonSize.ExtraSmall" Click="_ => Edit(t)"/>
                                                     <RadzenButton @onclick:stopPropagation="true" Icon="delete" ButtonStyle="ButtonStyle.Danger" Size="ButtonSize.ExtraSmall" Disabled="!Ctx.CanDeleteTask(t)" Click="_ => Delete(t)"/>
                                                 </div>
                                             }
@@ -274,6 +275,10 @@
     private async Task CreateAfter(ATask t)
         => await DialogService.OpenAsync<TaskNew>(L.S(S.TaskNewTask), new (){{"OrgId", OrgId}, {"ProjectId", ProjectId}, {"ParentId", TheTask.Id}, {"PrevSib", t == TheTask? null: t}, {"OnCreated", OnCreated}});
 
+
+    private async Task Edit(ATask t)
+        => await DialogService.OpenAsync<TaskNew>(L.S(S.TaskEditTask), new (){{"OrgId", OrgId}, {"ProjectId", ProjectId}, {"ParentId", TheTask.Id}, {"PrevSib", t == TheTask? null: t}, {"UpdateTask", t}, {"OnUpdated", OnUpdated}});
+
     private async Task OnCreated(CreateRes res, ATask? prevSib)
     {
         // a new task was created
@@ -290,6 +295,27 @@
             var i = Items.IndexOf(prevSib);
             Items[i] = prevSib with {NextSib = res.New.Id};
             Items.Insert(i+1, res.New);
+        }
+        await _gridRef.Reload();
+    }
+    
+    private async Task OnUpdated(UpdateRes res)
+    {
+        if (TheTask.Id == res.Task.Id)
+        {
+            TheTask = res.Task;
+            Items[0] = res.Task;
+        }
+        else
+        {
+            if (res.OldParent != null)
+            {
+                TheTask = res.OldParent;
+                Items[0] = res.OldParent;
+            }
+            var t = Items.Single(x => x.Id == res.Task.Id);
+            var i = Items.IndexOf(t);
+            Items[i] = res.Task;
         }
         await _gridRef.Reload();
     }
