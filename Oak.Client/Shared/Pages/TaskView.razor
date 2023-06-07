@@ -118,11 +118,9 @@
                                 </RadzenDataGridColumn>
                             </Columns>
                         </RadzenDataGrid>
-                    </RadzenTabsItem>
-                    <RadzenTabsItem Text="@L.S(S.Description)">
                         @if (TheTask.Description.IsNullOrWhiteSpace())
                         {
-                            <RadzenText TextStyle="TextStyle.Body1" Text="@L.S(S.NothingToSeeHere)"></RadzenText>
+                            <RadzenText TextStyle="TextStyle.Body1" Text="@L.S(S.NoDescription)"></RadzenText>
                         }
                         else
                         {

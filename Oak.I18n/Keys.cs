@@ -107,6 +107,7 @@ public static partial class S
     public const string Sequential = "sequential";
     public const string Comment = "comment";
     public const string Description = "description";
+    public const string NoDescription = "no_description";
     public const string NothingToSeeHere = "nothing_to_see_here";
     public const string Loading = "loading";
     public const string Min = "min";

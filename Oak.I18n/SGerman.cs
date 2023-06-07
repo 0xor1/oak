@@ -169,6 +169,7 @@ public static partial class S
         { Sequential, new("Sequentiell") },
         { Comment, new("Kommentar") },
         { Description, new("Beschreibung") },
+        { NoDescription, new("Keine Beschreibung") },
         { NothingToSeeHere, new("Es gibt hier nichts zu sehen.") },
         { Loading, new("Wird geladen") },
         { Min, new("Min") },
