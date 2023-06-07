@@ -209,7 +209,7 @@ public static partial class S
         { OrgNoProjects, new("Sin Proyectos") },
         { OrgNewProject, new("Nuevo proyecto") },
         { TaskNewTask, new("Nueva tarea") },
-        { TaskEditTask, new("Editar tarea") },
+        { TaskUpdateTask, new("Actualizar tarea") },
         {
             TaskConfirmDeleteTask,
             new(

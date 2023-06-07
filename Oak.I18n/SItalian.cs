@@ -214,7 +214,7 @@ public static partial class S
         { OrgNoProjects, new("Nessuna Progetti") },
         { OrgNewProject, new("Nuovo progetto") },
         { TaskNewTask, new("Nuovo compito") },
-        { TaskEditTask, new("Modifica attività") },
+        { TaskUpdateTask, new("Attività di aggiornamento") },
         {
             TaskConfirmDeleteTask,
             new(

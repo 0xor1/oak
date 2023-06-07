@@ -197,7 +197,7 @@ public static partial class S
         { OrgNoProjects, new("No Projects") },
         { OrgNewProject, new("New Project") },
         { TaskNewTask, new("New Task") },
-        { TaskEditTask, new("Edit Task") },
+        { TaskUpdateTask, new("Update Task") },
         {
             TaskConfirmDeleteTask,
             new(

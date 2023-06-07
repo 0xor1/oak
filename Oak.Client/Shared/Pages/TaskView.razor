@@ -273,11 +273,11 @@
     }
 
     private async Task CreateAfter(ATask t)
-        => await DialogService.OpenAsync<TaskNew>(L.S(S.TaskNewTask), new (){{"OrgId", OrgId}, {"ProjectId", ProjectId}, {"ParentId", TheTask.Id}, {"PrevSib", t == TheTask? null: t}, {"OnCreated", OnCreated}});
+        => await DialogService.OpenAsync<TaskNewOrUpdate>(L.S(S.TaskNewTask), new (){{"OrgId", OrgId}, {"ProjectId", ProjectId}, {"ParentId", TheTask.Id}, {"PrevSib", t == TheTask? null: t}, {"OnCreated", OnCreated}});
 
 
     private async Task Edit(ATask t)
-        => await DialogService.OpenAsync<TaskNew>(L.S(S.TaskEditTask), new (){{"OrgId", OrgId}, {"ProjectId", ProjectId}, {"ParentId", TheTask.Id}, {"PrevSib", t == TheTask? null: t}, {"UpdateTask", t}, {"OnUpdated", OnUpdated}});
+        => await DialogService.OpenAsync<TaskNewOrUpdate>(L.S(S.TaskUpdateTask), new (){{"OrgId", OrgId}, {"ProjectId", ProjectId}, {"ParentId", TheTask.Id}, {"PrevSib", t == TheTask? null: t}, {"UpdateTask", t}, {"OnUpdated", OnUpdated}});
 
     private async Task OnCreated(CreateRes res, ATask? prevSib)
     {

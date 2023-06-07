@@ -1,7 +1,7 @@
 ﻿@using Common.Client
-@using Common.Shared.Auth
+@using Common.Shared
 @using Oak.Api.Task
-@using Oak.I18n
+@using S = Oak.I18n.S
 @using IApi = Oak.Api.IApi
 @using ATask = Oak.Api.Task.Task
 @using Task = System.Threading.Tasks.Task
@@ -34,7 +34,7 @@
             <RadzenNumeric TValue="ulong" Name="CostEst" Min="0" @bind-Value="@_model.CostEst"/>
         </div>
         <div class="flx g-1 jc-stretch">
-            <RadzenButton class="grow-1" ButtonType="ButtonType.Submit" IsBusy="_doing" Text="@(UpdateTask != null? L.S(S.Edit): L.S(S.Create))"/>
+            <RadzenButton class="grow-1" ButtonType="ButtonType.Submit" IsBusy="_doing" Text="@(UpdateTask != null? L.S(S.Update): L.S(S.Create))"/>
             <RadzenButton class="grow-1" ButtonStyle="ButtonStyle.Secondary" IsBusy="_doing" Text="@L.S(S.Cancel)" Click="@(_ => DialogService.Close())"/>
         </div>
     </RadzenTemplateForm>
@@ -46,16 +46,13 @@
 @code {
 
     [Parameter]
-    [EditorRequired]
-    public string OrgId { get; set; }
+    public string? OrgId { get; set; }
 
     [Parameter]
-    [EditorRequired]
-    public string ProjectId { get; set; }
+    public string? ProjectId { get; set; }
 
     [Parameter]
-    [EditorRequired]
-    public string ParentId { get; set; }
+    public string? ParentId { get; set; }
 
     [Parameter]
     public ATask? PrevSib { get; set; }
@@ -103,7 +100,7 @@
         {
             if (UpdateTask == null)
             {
-                var res = await Api.Task.Create(new(OrgId, ProjectId, ParentId, PrevSib?.Id, _model.Name, _model.Description, _model.IsParallel, _model.User, _model.TimeEst, _model.CostEst));
+                var res = await Api.Task.Create(new(OrgId.NotNull(), ProjectId.NotNull(), ParentId.NotNull(), PrevSib?.Id, _model.Name, _model.Description, _model.IsParallel, _model.User, _model.TimeEst, _model.CostEst));
                 if (OnCreated != null)
                 {
                     await OnCreated(res, PrevSib);
@@ -111,7 +108,7 @@
             }
             else
             {
-                var res = await Api.Task.Update(new(OrgId, ProjectId, UpdateTask.Id, ParentId, null, _model.Name, _model.Description, _model.IsParallel, new(_model.User), _model.TimeEst, _model.CostEst));
+                var res = await Api.Task.Update(new(UpdateTask.Org, UpdateTask.Project, UpdateTask.Id, UpdateTask.Parent, null, _model.Name, _model.Description, _model.IsParallel, new(_model.User), _model.TimeEst, _model.CostEst));
                 if (OnUpdated != null)
                 {
                     await OnUpdated(res);
