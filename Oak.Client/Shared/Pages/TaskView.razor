@@ -28,7 +28,7 @@
                 <Tabs>
                     <RadzenTabsItem Text="@L.S(S.Task)">
                         <RadzenDataGrid
-                            @ref="_gridRef"
+                            @ref="_grid"
                             Count="Count"
                             Data="Items"
                             TItem="ATask"
@@ -189,7 +189,7 @@
     public List<Comment> Comments { get; set; } = new();
     public bool CommentsMore { get; set; }
     private bool _isLoading = false;
-    private RadzenDataGrid<ATask> _gridRef;
+    private RadzenDataGrid<ATask> _grid;
 
     private string GridWidth
     {
@@ -294,7 +294,7 @@
             Items[i] = prevSib with {NextSib = res.New.Id};
             Items.Insert(i+1, res.New);
         }
-        await _gridRef.Reload();
+        await _grid.Reload();
     }
     
     private async Task OnUpdated(UpdateRes res)
@@ -314,7 +314,7 @@
             var i = Items.FindIndex(x => x.Id == res.Task.Id);
             Items[i] = res.Task;
         }
-        await _gridRef.Reload();
+        await _grid.Reload();
     }
 
     private async Task Delete(ATask t)
@@ -335,7 +335,7 @@
                 Items.Remove(t);
                 TheTask = parent;
                 Items.Insert(0, TheTask);
-                await _gridRef.Reload();
+                await _grid.Reload();
             }
         }
     }

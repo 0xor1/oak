@@ -12,7 +12,7 @@
     <RadzenText class="m-t-0" TextStyle="TextStyle.H2">@L.S(S.OrgProjects)</RadzenText>
     <RadzenButton class="m-b-1" ButtonStyle="ButtonStyle.Success" Icon="add_circle_outline" Text="@L.S(S.New)" Click="@OpenNewDialog"/>
     <RadzenDataGrid
-        @ref="_gridRef"
+        @ref="_grid"
         Count="Count"
         Data="Items"
         TItem="Project"
@@ -156,7 +156,7 @@
     private int Count => Items.Count; 
     private List<Project> Items { get; set; } = new ();
     private bool _isLoading = false;
-    private RadzenDataGrid<Project> _gridRef;
+    private RadzenDataGrid<Project> _grid;
 
     private string GridWidth
     {
@@ -269,7 +269,7 @@
         {
             await Api.Project.Delete(new(p.Org, p.Id));
             Items.Remove(p);
-            await _gridRef.Reload();
+            await _grid.Reload();
         }
     }
 }
