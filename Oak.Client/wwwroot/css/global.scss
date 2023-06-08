@@ -42,6 +42,10 @@ html, body, .fill {
     font-family: 'Open Sans', sans-serif;
 }
 
+textarea{
+    font-family: 'Open Sans', sans-serif;
+}
+
 .root{
     @include genVars(a, rem);
     @include genVars(r, em);
@@ -124,6 +128,10 @@ img{
 
 .ov-a{
     overflow: auto;
+}
+
+.d-none{
+    display: none;
 }
 
 .ellip{
@@ -315,11 +323,6 @@ div.header > ul.rz-profile-menu > li.rz-navigation-item > div.rz-navigation-item
     padding-bottom: 0.75em;
     padding-top: 0.75em;
     border-bottom: 1px solid gray;
-}
-
-// hide
-.rz-navigation-item.display-none{
-    display: none;
 }
 
 // remove x padding from tab view
