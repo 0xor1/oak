@@ -230,6 +230,7 @@ public static partial class S
             new(
                 "<p>Sind Sie sicher, dass Sie die Aufgabe <strong>{{Name}}</strong> löschen möchten?</p><p>Dies kann nicht rückgängig gemacht werden.</p>"
             )
-        }
+        },
+        { TaskMovingTask, new("Umzugsaufgabe: <strong>{{Name}}</strong>") }
     };
 }

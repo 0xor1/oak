@@ -49,8 +49,11 @@ textarea{
 .root{
     @include genVars(a, rem);
     @include genVars(r, em);
+    @include genVars(px, px);
     @include genVars(r, em, $min_size: 10, $max_size: 50, $step_size: 5, $sub_sufs: [""]);
     @include genProps(f, font-size, false, a);
+    @include genProps(br, border-radius);
+    @include genProps(bw, border-width, false, px);
     @include genProps(w, width);
     @include genProps(w, width, $min_size: 10, $max_size: 50, $step_size: 5, $sub_sufs: [""]);
     @include genProps(h, height);
@@ -132,6 +135,10 @@ img{
 
 .d-none{
     display: none;
+}
+
+.bs-solid{
+    border-style: solid;
 }
 
 .ellip{
@@ -306,6 +313,10 @@ div.header > ul.rz-profile-menu > li.rz-navigation-item > div.rz-navigation-item
             cursor: pointer;
         }
     }
+}
+
+tr.moving-task td{
+    background-color: var(--rz-secondary-lighter) !important;
 }
 // I dont include 500 weight font so override to 600
 .rz-grid-table thead th .rz-column-title{

@@ -13,6 +13,13 @@
 <div class="root col p-0h g-0h jc-s ai-s">
     @if (_ready)
     {
+        @if (MovingTask != null)
+        {
+            <div class="flx ai-c p-0h g-0h w-100 br-0q bw-0q bs-solid rz-color-secondary-darker rz-background-color-secondary-lighter rz-border-color-secondary-dark b-">
+                <RadzenButton title="@L.S(S.Cancel)" @onclick:stopPropagation="true" Icon="cancel" ButtonStyle="ButtonStyle.Secondary" Size="ButtonSize.ExtraSmall" Click="_ => CancelMovingTask()"/>
+                <span class="ellip">@L.H(S.TaskMovingTask, MovingTask)</span>
+            </div>
+        }
         if (Ancestors.Count > 0)
         {
             <div class="flx row rev g-0h ai-c ov-a child-no-shrink mw-100">
@@ -61,9 +68,19 @@
                                             @if (Ctx.HasProjectWritePerm)
                                             {
                                                 <div class="flx g-0q p-abs show-on-row-mouse-over" style="right: -1em;">
-                                                    <RadzenButton @onclick:stopPropagation="true" Icon="add" ButtonStyle="ButtonStyle.Success" Size="ButtonSize.ExtraSmall" Click="_ => CreateAfter(t)"/>
-                                                    <RadzenButton @onclick:stopPropagation="true" Icon="edit" ButtonStyle="ButtonStyle.Info" Size="ButtonSize.ExtraSmall" Click="_ => Update(t)"/>
-                                                    <RadzenButton @onclick:stopPropagation="true" Icon="delete" ButtonStyle="ButtonStyle.Danger" Size="ButtonSize.ExtraSmall" Disabled="!Ctx.CanDeleteTask(t)" Click="_ => Delete(t)"/>
+                                                    @if (MovingTask == null)
+                                                    {
+                                                        <RadzenButton @onclick:stopPropagation="true" Icon="keyboard_arrow_down" ButtonStyle="ButtonStyle.Success" Size="ButtonSize.ExtraSmall" Click="_ => CreateAfter(t)"/>
+                                                        <RadzenButton @onclick:stopPropagation="true" Icon="edit" ButtonStyle="ButtonStyle.Info" Size="ButtonSize.ExtraSmall" Click="_ => Update(t)"/>
+                                                        <RadzenButton @onclick:stopPropagation="true" Disabled="@(t.Project == t.Id)" Icon="open_with" ButtonStyle="ButtonStyle.Secondary" Size="ButtonSize.ExtraSmall" Click="_ => Pickup(t)"/>
+                                                        <RadzenButton @onclick:stopPropagation="true" Icon="delete" ButtonStyle="ButtonStyle.Danger" Size="ButtonSize.ExtraSmall" Disabled="!Ctx.CanDeleteTask(t)" Click="_ => Delete(t)"/>
+                                                    }
+                                                    else
+                                                    {
+                                                        <RadzenButton @onclick:stopPropagation="true" Icon="keyboard_arrow_left" Disabled="@(TheTask.Id == t.Id || MovingTask.Id == t.Id)" ButtonStyle="ButtonStyle.Secondary" Size="ButtonSize.ExtraSmall" Click="_ => DropIn(t)"/>
+                                                        <RadzenButton @onclick:stopPropagation="true" Icon="keyboard_arrow_down" Disabled="@(MovingTask.Id == t.Id)" ButtonStyle="ButtonStyle.Secondary" Size="ButtonSize.ExtraSmall" Click="_ => DropAfter(t)"/>
+                                                        <RadzenButton title="@L.S(S.Cancel)" @onclick:stopPropagation="true" Icon="cancel" ButtonStyle="ButtonStyle.Secondary" Size="ButtonSize.ExtraSmall" Click="_ => CancelMovingTask()"/>
+                                                    }
                                                 </div>
                                             }
                                         </div>
@@ -190,6 +207,7 @@
     public bool CommentsMore { get; set; }
     private bool _isLoading = false;
     private RadzenDataGrid<ATask> _grid;
+    private ATask? MovingTask { get; set; }
 
     private string GridWidth
     {
@@ -268,6 +286,10 @@
         {
             obj.Attributes.Add("class", "task-row");
         }
+        if (obj.Data == MovingTask)
+        {
+            obj.Attributes.Add("class", "moving-task");
+        }
     }
 
     private async Task CreateAfter(ATask t)
@@ -276,6 +298,48 @@
 
     private async Task Update(ATask t)
         => await DialogService.OpenAsync<TaskNewOrUpdate>(L.S(S.TaskUpdateTask), new (){{"OrgId", OrgId}, {"ProjectId", ProjectId}, {"ParentId", TheTask.Id}, {"PrevSib", t == TheTask? null: t}, {"UpdateTask", t}, {"OnUpdated", OnUpdated}});
+
+    private void CancelMovingTask()
+        => MovingTask = null;
+    
+    private void Pickup(ATask t)
+        => MovingTask = t;
+
+    private async Task DropIn(ATask t)
+    {
+        if (MovingTask != null)
+        {
+            var res = await Api.Task.Update(new(t.Org, t.Project, MovingTask.Id, t.Id, new(null)));
+            if (res.OldParent?.Id == TheTask.Id)
+            {
+                TheTask = res.OldParent;
+                Items[0] = res.OldParent;
+            }
+            Items.Remove(MovingTask);
+            var newParentI = Items.FindIndex(x => x.Id == t.Id);
+            Items[newParentI] = res.NewParent.NotNull();
+            MovingTask = null;
+            await _grid.Reload();
+        }
+    }
+
+    private async Task DropAfter(ATask t)
+    {
+        if (MovingTask != null)
+        {
+            var res = await Api.Task.Update(new(t.Org, t.Project, MovingTask.Id, TheTask.Id, TheTask.Id == t.Id ? new(null) : new(t.Id)));
+            if (res.OldParent?.Id == TheTask.Id)
+            {
+                TheTask = res.OldParent;
+                Items[0] = res.OldParent;
+            }
+            Items.Remove(MovingTask);
+            var prevI = Items.FindIndex(x => x.Id == t.Id);
+            Items.Insert(prevI + 1, res.Task);
+            MovingTask = null;
+            await _grid.Reload();
+        }
+    }
 
     private async Task OnCreated(CreateRes res, ATask? prevSib)
     {

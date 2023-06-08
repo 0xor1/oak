@@ -235,6 +235,7 @@ public static partial class S
             new(
                 "<p>Sei sicuro di voler eliminare l'attività <strong>{{Name}}</strong>?</p><p>L'operazione non può essere annullata.</p>"
             )
-        }
+        },
+        { TaskMovingTask, new("Attività in movimento: <strong>{{Name}}</strong>") }
     };
 }

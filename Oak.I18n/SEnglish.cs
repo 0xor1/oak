@@ -218,6 +218,7 @@ public static partial class S
             new(
                 "<p>Are you sure you want to delete the task <strong>{{Name}}</strong>?</p><p>This can not be undone.</p>"
             )
-        }
+        },
+        { TaskMovingTask, new("Moving Task: <strong>{{Name}}</strong>") }
     };
 }

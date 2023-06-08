@@ -160,4 +160,5 @@ public static partial class S
     public const string TaskNewTask = "task_new_task";
     public const string TaskUpdateTask = "task_edit_task";
     public const string TaskConfirmDeleteTask = "task_confirm_delete_task";
+    public const string TaskMovingTask = "task_moving_task";
 }

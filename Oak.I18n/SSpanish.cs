@@ -230,6 +230,7 @@ public static partial class S
             new(
                 "<p>¿Está seguro de que desea eliminar la tarea <strong>{{Name}}</strong>?</p><p>Esto no se puede deshacer.</p>"
             )
-        }
+        },
+        { TaskMovingTask, new("Tarea en movimiento: <strong>{{Name}}</strong>") }
     };
 }

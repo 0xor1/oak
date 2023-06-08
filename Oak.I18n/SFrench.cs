@@ -242,6 +242,7 @@ public static partial class S
             new(
                 "<p>Êtes-vous sûr de vouloir supprimer la tâche <strong>{{Name}}</strong>?</p><p>Cette opération est irréversible.</p>"
             )
-        }
+        },
+        { TaskMovingTask, new("Tâche de déplacement: <strong>{{Name}}</strong>") }
     };
 }
