@@ -337,6 +337,11 @@
                 TheTask = res.OldParent;
                 Items[0] = res.OldParent;
             }
+            if (res.NewParent?.Id == TheTask.Id)
+            {
+                TheTask = res.NewParent;
+                Items[0] = res.NewParent;
+            }
             Items.Remove(MovingTask);
             var prevI = Items.FindIndex(x => x.Id == t.Id);
             Items.Insert(prevI + 1, res.Task);
