@@ -209,6 +209,13 @@ public static partial class S
         { OrgProjects, new("Projekte") },
         { OrgNoProjects, new("Keine Projekte") },
         { OrgNewProject, new("Neues Projekt") },
+        { OrgUpdateProject, new("Projekt aktualisieren") },
+        {
+            OrgConfirmDeleteProject,
+            new(
+                "<p>Sind Sie sicher, dass Sie das Projekt <strong>{{Name}}</strong> löschen möchten?</p><p>Dies kann nicht rückgängig gemacht werden.</p>"
+            )
+        },
         { TaskNewTask, new("Neue Aufgabe") },
         { TaskUpdateTask, new("Update-Aufgabe") },
         {

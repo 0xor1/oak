@@ -197,6 +197,13 @@ public static partial class S
         { OrgProjects, new("Projects") },
         { OrgNoProjects, new("No Projects") },
         { OrgNewProject, new("New Project") },
+        { OrgUpdateProject, new("Update Project") },
+        {
+            OrgConfirmDeleteProject,
+            new(
+                "<p>Are you sure you want to delete the project <strong>{{Name}}</strong>?</p><p>This can not be undone.</p>"
+            )
+        },
         { TaskNewTask, new("New Task") },
         { TaskUpdateTask, new("Update Task") },
         {

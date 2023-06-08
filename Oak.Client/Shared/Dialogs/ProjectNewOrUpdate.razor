@@ -1,5 +1,6 @@
 ﻿@using Common.Client
 @using Common.Shared.Auth
+@using Oak.Api.Project
 @using Oak.I18n
 @using IApi = Oak.Api.IApi
 <div class="root col ov-v">
@@ -9,13 +10,13 @@
         Submit="Do"
         class="flx col ai-stretch g-1">
         <div class="flx col ai-stretch">
-            <RadzenLabel class="m-b-0q" Component="IsPublic" Text="@L.S(S.Public)"/>
-            <RadzenCheckBox Name="Public" @bind-Value="@_model.IsPublic"/>
-        </div>
-        <div class="flx col ai-stretch">
             <RadzenLabel class="m-b-0q" Component="Name" Text="@L.S(S.Name)"/>
             <RadzenTextBox Name="Name" @bind-Value="@_model.Name"/>
             <RadzenRequiredValidator Component="Name" Popup="true" Text="@L.S(S.Required)"></RadzenRequiredValidator>
+        </div>
+        <div class="flx col ai-stretch">
+            <RadzenLabel class="m-b-0q" Component="IsPublic" Text="@L.S(S.Public)"/>
+            <RadzenCheckBox Name="Public" @bind-Value="@_model.IsPublic"/>
         </div>
         <div class="flx col ai-stretch">
             <RadzenLabel class="m-b-0q" Component="Currency" Text="@L.S(S.Currency)"/>
@@ -42,13 +43,17 @@
             <RadzenNumeric TValue="ulong" Min="0" Name="FileLimit" @bind-Value="@_model.FileLimit"/>
             <RadzenRequiredValidator Component="FileLimit" Popup="true" Text="@L.S(S.Required)"></RadzenRequiredValidator>
         </div>
-        <RadzenButton ButtonType="ButtonType.Submit" IsBusy="_doing" Text="@L.S(S.Create)"/>
+        <div class="flx g-1 jc-stretch">
+            <RadzenButton class="grow-1" ButtonType="ButtonType.Submit" IsBusy="_doing" Text="@(UpdateProject != null? L.S(S.Update): L.S(S.Create))"/>
+            <RadzenButton class="grow-1" ButtonStyle="ButtonStyle.Secondary" IsBusy="_doing" Text="@L.S(S.Cancel)" Click="@(_ => DialogService.Close())"/>
+        </div>
     </RadzenTemplateForm>
 </div>
 
 @inject L L;
 @inject IApi Api;
 @inject NavigationManager Nav;
+@inject DialogService DialogService;
 @code {
 
     [Parameter]
@@ -57,10 +62,16 @@
     [Parameter]
     public ISession Session { get; set; }
 
+    [Parameter]
+    public Project? UpdateProject { get; set; }
+
+    [Parameter]
+    public Func<Project, Task>? OnUpdated { get; set; }
+
     public class Model
     {
-        public bool IsPublic { get; set; }
         public string Name { get; set; } = "";
+        public bool IsPublic { get; set; }
         public CurrencyPicker.Currency Currency { get; set; } = CurrencyPicker.USD;
         public uint HoursPerDay { get; set; } = 8;
         public uint DaysPerWeek { get; set; } = 5;
@@ -72,13 +83,41 @@
     Model _model = new();
     private bool _doing;
 
+    protected override Task OnInitializedAsync()
+    {
+        if (UpdateProject != null)
+        {
+            _model.Name = UpdateProject.Name;
+            _model.IsPublic = UpdateProject.IsPublic;
+            _model.Currency = CurrencyPicker.Currencies.Single(x => x.Code == UpdateProject.CurrencyCode);
+            _model.HoursPerDay = UpdateProject.HoursPerDay;
+            _model.DaysPerWeek = UpdateProject.DaysPerWeek;
+            _model.StartOn = UpdateProject.StartOn;
+            _model.EndOn = UpdateProject.EndOn;
+            _model.FileLimit = UpdateProject.FileLimit;
+        }
+        return Task.CompletedTask;
+    }
+
     private async Task Do()
     {
         _doing = true;
         try
         {
-            var p = await Api.Project.Create(new(OrgId, _model.IsPublic, _model.Name, _model.Currency.Symbol, _model.Currency.Code, _model.HoursPerDay, _model.DaysPerWeek, _model.StartOn, _model.EndOn, _model.FileLimit));
-            Nav.NavigateTo($"/org/{OrgId}/project/{p.Id}/task/{p.Id}");
+            if (UpdateProject == null)
+            {
+                var p = await Api.Project.Create(new(OrgId, _model.IsPublic, _model.Name, _model.Currency.Symbol, _model.Currency.Code, _model.HoursPerDay, _model.DaysPerWeek, _model.StartOn, _model.EndOn, _model.FileLimit));
+                Nav.NavigateTo($"/org/{OrgId}/project/{p.Id}/task/{p.Id}");
+            }
+            else
+            {
+                var p = await Api.Project.Update(new(UpdateProject.Org, UpdateProject.Id, _model.IsPublic, _model.Name, _model.Currency.Symbol, _model.Currency.Code, _model.HoursPerDay, _model.DaysPerWeek, _model.StartOn, _model.EndOn, _model.FileLimit));
+                if (OnUpdated != null)
+                {
+                    await OnUpdated(p);
+                    DialogService.Close();
+                }
+            }
         }
         catch
         {

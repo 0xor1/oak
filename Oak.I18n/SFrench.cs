@@ -221,6 +221,13 @@ public static partial class S
         { OrgProjects, new("Projets") },
         { OrgNoProjects, new("Aucune Projets") },
         { OrgNewProject, new("Nouveau projet") },
+        { OrgUpdateProject, new("Mettre à jour le projet") },
+        {
+            OrgConfirmDeleteProject,
+            new(
+                "<p>Voulez-vous vraiment supprimer le projet <strong>{{Name}}</strong>?</p><p>Cette opération est irréversible.</p>"
+            )
+        },
         { TaskNewTask, new("Nouvelle tâche") },
         { TaskUpdateTask, new("Mettre à jour la tâche") },
         {

@@ -149,6 +149,8 @@ public static partial class S
     public const string OrgProjects = "org_projects";
     public const string OrgNoProjects = "org_no_projects";
     public const string OrgNewProject = "org_new_project";
+    public const string OrgUpdateProject = "org_update_project";
+    public const string OrgConfirmDeleteProject = "org_confirm_delete_project";
 
     // projects
 

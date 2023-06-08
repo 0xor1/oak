@@ -12,6 +12,7 @@
     <RadzenText class="m-t-0" TextStyle="TextStyle.H2">@L.S(S.OrgProjects)</RadzenText>
     <RadzenButton class="m-b-1" ButtonStyle="ButtonStyle.Success" Icon="add_circle_outline" Text="@L.S(S.New)" Click="@OpenNewDialog"/>
     <RadzenDataGrid
+        @ref="_gridRef"
         Count="Count"
         Data="Items"
         TItem="Project"
@@ -28,6 +29,18 @@
         Style="@($"width: {GridWidth}")">
         <Columns>
             <RadzenDataGridColumn Sortable="true" Width="18em" TItem="Project" Property="@nameof(Project.Name)" Title="@L.S(S.Name)" FilterValue="@NameStartsWith">
+                <Template Context="p">
+                    <div class="flx child-no-shrink jc-s ai-c g-0h w-100 mw-100 p-rel">
+                        <span title="@($"{p.Name}\n\n{p.Task.Description}")" class="shrink-1 ellip">@p.Name</span>
+                        @if (Ctx.HasOrgAdminPerm)
+                        {
+                            <div class="flx g-0q p-abs show-on-row-mouse-over" style="right: -1em;">
+                                <RadzenButton @onclick:stopPropagation="true" Icon="edit" ButtonStyle="ButtonStyle.Info" Size="ButtonSize.ExtraSmall" Click="_ => Edit(p)"/>
+                                <RadzenButton @onclick:stopPropagation="true" Icon="delete" ButtonStyle="ButtonStyle.Danger" Size="ButtonSize.ExtraSmall" Click="_ => Delete(p)"/>
+                            </div>
+                        }
+                    </div>
+                </Template>
                 <FilterTemplate>
                     <RadzenTextBox @bind-Value="@NameStartsWith" Style="width:100%"/>
                 </FilterTemplate>
@@ -123,6 +136,7 @@
 @inject UIDisplay UIDisplay;
 @inject NavigationManager Nav;
 @inject DialogService DialogService;
+@inject IUICtxService UICtx;
 @code{
 
     [CascadingParameter]
@@ -131,6 +145,8 @@
     [Parameter]
     [EditorRequired]
     public string OrgId { get; set; } = "";
+    
+    private UICtx Ctx { get; set; } = new ();
 
     private string? NameStartsWith { get; set; }
     private bool? IsPublic { get; set; }
@@ -140,7 +156,8 @@
     private int Count => Items.Count; 
     private List<Project> Items { get; set; } = new ();
     private bool _isLoading = false;
-    
+    private RadzenDataGrid<Project> _gridRef;
+
     private string GridWidth
     {
         get
@@ -174,11 +191,12 @@
         }
     }
     
-    protected override async Task OnInitializedAsync()
+    protected override async Task OnParametersSetAsync()
     {
         _isLoading = true;
         try
         {
+            Ctx = await UICtx.Get();
             var res = await Api.Project.Get(new(OrgId));
             Items = res.Set.ToList();
         }
@@ -190,7 +208,7 @@
 
     private void OpenNewDialog()
     {
-        DialogService.Open<ProjectNew>(L.S(S.OrgNewProject), new (){{"OrgId", OrgId}, {"Session", Session}});
+        DialogService.Open<ProjectNewOrUpdate>(L.S(S.OrgNewProject), new (){{"OrgId", OrgId}, {"Session", Session}});
     }
 
     private void RowClick(DataGridRowMouseEventArgs<Project> e)
@@ -234,5 +252,24 @@
             _isLoading = false;
         }
     }
+    
+    private async Task Edit(Project p)
+        => await DialogService.OpenAsync<ProjectNewOrUpdate>(L.S(S.OrgUpdateProject), new (){{"OrgId", OrgId}, {"UpdateProject", p}, {"Session", Session}, {"OnUpdated", OnUpdated}});
 
+    private async Task OnUpdated(Project p)
+    {
+        var i = Items.FindIndex(x => x.Id == p.Id);
+        Items[i] = p;
+    }
+
+    private async Task Delete(Project p)
+    {
+        var confirmed = await DialogService.Confirm(L.S(S.OrgConfirmDeleteProject, p), L.S(S.Confirm), new ConfirmOptions() { OkButtonText = L.S(S.Delete), CancelButtonText = L.S(S.Cancel) });
+        if (confirmed == true)
+        {
+            await Api.Project.Delete(new(p.Org, p.Id));
+            Items.Remove(p);
+            await _gridRef.Reload();
+        }
+    }
 }

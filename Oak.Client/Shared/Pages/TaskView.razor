@@ -311,8 +311,7 @@
                 TheTask = res.OldParent;
                 Items[0] = res.OldParent;
             }
-            var t = Items.Single(x => x.Id == res.Task.Id);
-            var i = Items.IndexOf(t);
+            var i = Items.FindIndex(x => x.Id == res.Task.Id);
             Items[i] = res.Task;
         }
         await _gridRef.Reload();

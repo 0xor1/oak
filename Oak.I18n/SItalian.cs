@@ -214,6 +214,13 @@ public static partial class S
         { OrgProjects, new("Progetti") },
         { OrgNoProjects, new("Nessuna Progetti") },
         { OrgNewProject, new("Nuovo progetto") },
+        { OrgUpdateProject, new("Aggiorna progetto") },
+        {
+            OrgConfirmDeleteProject,
+            new(
+                "<p>Sei sicuro di voler eliminare il progetto <strong>{{Name}}</strong>?</p><p>L'operazione non può essere annullata.</p>"
+            )
+        },
         { TaskNewTask, new("Nuovo compito") },
         { TaskUpdateTask, new("Attività di aggiornamento") },
         {
