@@ -144,6 +144,8 @@ public static partial class S
     public const string OrgMyOrgs = "org_my_orgs";
     public const string OrgNoOrgs = "org_no_orgs";
     public const string OrgNewOrg = "org_new_org";
+    public const string OrgUpdateOrg = "org_update_org";
+    public const string OrgConfirmDeleteOrg = "org_confirm_delete_org";
     public const string OrgName = "org_name";
     public const string OrgYourName = "org_your_name";
     public const string OrgProjects = "org_projects";

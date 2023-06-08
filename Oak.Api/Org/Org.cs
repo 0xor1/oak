@@ -40,7 +40,7 @@ public static class OrgRpcs
     public static readonly Rpc<Exact, Nothing> Delete = new("/org/delete");
 }
 
-public record Org(string Id, string Name, DateTime CreatedOn);
+public record Org(string Id, string Name, DateTime CreatedOn, OrgMember.OrgMember? Member);
 
 public record Create(string Name, string OwnerMemberName);
 

@@ -216,6 +216,13 @@ public static partial class S
         { OrgMyOrgs, new("Mes organisations") },
         { OrgNoOrgs, new("Aucune organisation") },
         { OrgNewOrg, new("Nouvelle organisation") },
+        { OrgUpdateOrg, new("Mettre à jour l'organisation") },
+        {
+            OrgConfirmDeleteOrg,
+            new(
+                "<p>Voulez-vous vraiment supprimer l'organisation <strong>{{Name}}</strong>?</p><p>Cette opération est irréversible.</p>"
+            )
+        },
         { OrgName, new("Nom de l'organisme") },
         { OrgYourName, new("votre nom") },
         { OrgProjects, new("Projets") },

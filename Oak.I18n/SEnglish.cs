@@ -192,6 +192,13 @@ public static partial class S
         { OrgMyOrgs, new("My Organisations") },
         { OrgNoOrgs, new("No Organisations") },
         { OrgNewOrg, new("New Organisation") },
+        { OrgUpdateOrg, new("Update Organisation") },
+        {
+            OrgConfirmDeleteOrg,
+            new(
+                "<p>Are you sure you want to delete the organisation <strong>{{Name}}</strong>?</p><p>This can not be undone.</p>"
+            )
+        },
         { OrgName, new("Organisation Name") },
         { OrgYourName, new("Your Name") },
         { OrgProjects, new("Projects") },

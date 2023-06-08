@@ -2,6 +2,8 @@
 @using Common.Shared
 @using Common.Shared.Auth
 @using Oak.Api.Org
+@using Oak.Api.OrgMember
+@using Oak.Client.Lib
 @using IApi = Oak.Api.IApi
 @using S = Oak.I18n.S
 
@@ -20,8 +22,21 @@
         class="row-clickable"
         Style="width: 27em">
         <Columns>
-            <RadzenDataGridColumn Width="18em" TItem="Org" Property="@nameof(Org.Name)" Title="@L.S(S.Name)"/>
-            <RadzenDataGridColumn Width="7em" TItem="Org" Property="@nameof(Org.CreatedOn)" Title="@L.S(S.CreatedOn)">
+            <RadzenDataGridColumn Width="18em" TItem="Org" Property="@nameof(Org.Name)" Title="@L.S(S.Name)">
+                <Template Context="o">
+                    <div class="flx child-no-shrink jc-s ai-c g-0h w-100 mw-100 p-rel">
+                        <span title="@o.Name" class="shrink-1 ellip">@o.Name</span>
+                        @if (o.Member?.Role == OrgMemberRole.Owner)
+                        {
+                            <div class="flx g-0q p-abs show-on-row-mouse-over" style="right: -1em;">
+                                <RadzenButton @onclick:stopPropagation="true" Icon="edit" ButtonStyle="ButtonStyle.Info" Size="ButtonSize.ExtraSmall" Click="_ => Update(o)"/>
+                                <RadzenButton @onclick:stopPropagation="true" Icon="delete" ButtonStyle="ButtonStyle.Danger" Size="ButtonSize.ExtraSmall" Click="_ => Delete(o)"/>
+                            </div>
+                        }
+                    </div>
+                </Template>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn Visible="UIDisplay.CreatedOn" Width="7em" TItem="Org" Property="@nameof(Org.CreatedOn)" Title="@L.S(S.CreatedOn)">
                 <Template Context="org">
                     @L.D(org.CreatedOn)
                 </Template>
@@ -34,6 +49,7 @@
 @inject IApi Api;
 @inject NavigationManager Nav;
 @inject DialogService DialogService;
+@inject UIDisplay UIDisplay;
 @code{
 
     [CascadingParameter]
@@ -59,12 +75,33 @@
 
     private void OpenNewDialog()
     {
-        DialogService.Open<OrgNew>(L.S(S.OrgNewOrg));
+        DialogService.Open<OrgNewOrUpdate>(L.S(S.OrgNewOrg));
     }
 
     private void RowClick(DataGridRowMouseEventArgs<Org> e)
     {
         Nav.NavigateTo($"/org/{e.Data.Id}/projects");
+    }
+    
+    private async Task Update(Org o)
+        => await DialogService.OpenAsync<OrgNewOrUpdate>(L.S(S.OrgUpdateOrg), new (){{"UpdateOrg", o}, {"OnUpdated", OnUpdated}});
+
+    private async Task OnUpdated(Org o)
+    {
+        var i = Items.FindIndex(x => x.Id == o.Id);
+        Items[i] = o;
+        await _grid.Reload();
+    }
+
+    private async Task Delete(Org o)
+    {
+        var confirmed = await DialogService.Confirm(L.S(S.OrgConfirmDeleteOrg, o), L.S(S.Confirm), new ConfirmOptions() { OkButtonText = L.S(S.Delete), CancelButtonText = L.S(S.Cancel) });
+        if (confirmed == true)
+        {
+            await Api.Org.Delete(new(o.Id));
+            Items.Remove(o);
+            await _grid.Reload();
+        }
     }
 
 }

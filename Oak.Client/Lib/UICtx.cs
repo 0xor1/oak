@@ -18,15 +18,15 @@ public record UICtx(
     ProjectMember? ProjectMember = null
 )
 {
-    public bool HasOrgOwnerPerm => OrgMember is { Role: OrgMemberRole.Owner };
+    public bool HasOrgOwnerPerm => OrgMember is { Role: OrgMemberRole.Owner, IsActive: true };
 
-    public bool HasOrgAdminPerm => OrgMember is { Role: <= OrgMemberRole.Admin };
+    public bool HasOrgAdminPerm => OrgMember is { Role: <= OrgMemberRole.Admin, IsActive: true };
 
     public bool HasProjectAdminPerm =>
-        OrgMember is { Role: <= OrgMemberRole.Admin }
+        OrgMember is { Role: <= OrgMemberRole.Admin, IsActive: true }
         || ProjectMember is { Role: ProjectMemberRole.Admin };
     public bool HasProjectWritePerm =>
-        OrgMember is { Role: <= OrgMemberRole.WriteAllProjects }
+        OrgMember is { Role: <= OrgMemberRole.WriteAllProjects, IsActive: true }
         || ProjectMember is { Role: <= ProjectMemberRole.Writer };
 
     public bool CanDeleteTask(Task t) =>

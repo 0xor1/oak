@@ -53,17 +53,16 @@ public static class OrgEps
                                 CreatedOn = DateTimeExt.UtcNowMilli()
                             };
                             await db.Orgs.AddAsync(newOrg);
-                            await db.OrgMembers.AddAsync(
-                                new()
-                                {
-                                    Org = newOrg.Id,
-                                    Id = ses.Id,
-                                    IsActive = true,
-                                    Name = req.OwnerMemberName,
-                                    Role = OrgMemberRole.Owner
-                                }
-                            );
-                            return newOrg.ToApi();
+                            var m = new Db.OrgMember()
+                            {
+                                Org = newOrg.Id,
+                                Id = ses.Id,
+                                IsActive = true,
+                                Name = req.OwnerMemberName,
+                                Role = OrgMemberRole.Owner
+                            };
+                            await db.OrgMembers.AddAsync(m);
+                            return newOrg.ToApi(m);
                         }
                     )
             ),
@@ -83,7 +82,10 @@ public static class OrgEps
 
                     var org = await db.Orgs.SingleOrDefaultAsync(x => x.Id == req.Id);
                     ctx.NotFoundIf(org == null, model: new { Name = "Org" });
-                    return org.NotNull().ToApi();
+                    var m = await db.OrgMembers.SingleOrDefaultAsync(
+                        x => x.Org == req.Id && x.Id == ses.Id
+                    );
+                    return org.NotNull().ToApi(m);
                 }
             ),
             new RpcEndpoint<Get, IReadOnlyList<Org>>(
@@ -92,11 +94,11 @@ public static class OrgEps
                 {
                     var ses = ctx.GetAuthedSession();
                     var db = ctx.Get<OakDb>();
-                    var orgs = await db.OrgMembers
+                    var ms = await db.OrgMembers
                         .Where(x => x.IsActive && x.Id == ses.Id)
-                        .Select(x => x.Org)
                         .ToListAsync();
-                    var qry = db.Orgs.Where(x => orgs.Contains(x.Id));
+                    var oIds = ms.Select(x => x.Org);
+                    var qry = db.Orgs.Where(x => oIds.Contains(x.Id));
                     qry = req switch
                     {
                         (OrgOrderBy.Name, true) => qry.OrderBy(x => x.Name),
@@ -104,7 +106,8 @@ public static class OrgEps
                         (OrgOrderBy.Name, false) => qry.OrderByDescending(x => x.Name),
                         (OrgOrderBy.CreatedOn, false) => qry.OrderByDescending(x => x.CreatedOn),
                     };
-                    return await qry.Select(x => x.ToApi()).ToListAsync();
+                    var os = await qry.ToListAsync();
+                    return os.Select(x => x.ToApi(ms.Single(y => y.Org == x.Id))).ToList();
                 }
             ),
             new RpcEndpoint<Update, Org>(
@@ -113,16 +116,13 @@ public static class OrgEps
                     await ctx.DbTx<OakDb, Org>(
                         async (db, ses) =>
                         {
-                            await EpsUtil.MustHaveOrgAccess(
-                                ctx,
-                                db,
-                                ses.Id,
-                                req.Id,
-                                OrgMemberRole.Owner
+                            var m = await db.OrgMembers.SingleOrDefaultAsync(
+                                x => x.Org == req.Id && x.Id == ses.Id && x.IsActive
                             );
+                            ctx.InsufficientPermissionsIf(m?.Role != OrgMemberRole.Owner);
                             var org = await db.Orgs.SingleAsync(x => x.Id == req.Id);
                             org.Name = req.Name;
-                            return org.ToApi();
+                            return org.ToApi(m);
                         }
                     )
             ),

@@ -35,7 +35,7 @@
                         @if (Ctx.HasOrgAdminPerm)
                         {
                             <div class="flx g-0q p-abs show-on-row-mouse-over" style="right: -1em;">
-                                <RadzenButton @onclick:stopPropagation="true" Icon="edit" ButtonStyle="ButtonStyle.Info" Size="ButtonSize.ExtraSmall" Click="_ => Edit(p)"/>
+                                <RadzenButton @onclick:stopPropagation="true" Icon="edit" ButtonStyle="ButtonStyle.Info" Size="ButtonSize.ExtraSmall" Click="_ => Update(p)"/>
                                 <RadzenButton @onclick:stopPropagation="true" Icon="delete" ButtonStyle="ButtonStyle.Danger" Size="ButtonSize.ExtraSmall" Click="_ => Delete(p)"/>
                             </div>
                         }
@@ -253,13 +253,14 @@
         }
     }
     
-    private async Task Edit(Project p)
+    private async Task Update(Project p)
         => await DialogService.OpenAsync<ProjectNewOrUpdate>(L.S(S.OrgUpdateProject), new (){{"OrgId", OrgId}, {"UpdateProject", p}, {"Session", Session}, {"OnUpdated", OnUpdated}});
 
     private async Task OnUpdated(Project p)
     {
         var i = Items.FindIndex(x => x.Id == p.Id);
         Items[i] = p;
+        await _grid.Reload();
     }
 
     private async Task Delete(Project p)
