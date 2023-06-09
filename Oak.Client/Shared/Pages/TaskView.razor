@@ -341,6 +341,13 @@
             {
                 TheTask = res.NewParent;
                 Items[0] = res.NewParent;
+                // old parent might be in this list
+                res.OldParent.NotNull();
+                var oldParentI = Items.FindIndex(x => x.Id == res.OldParent.Id);
+                if (oldParentI > -1)
+                {
+                    Items[oldParentI] = res.OldParent;
+                }
             }
             Items.Remove(MovingTask);
             var prevI = Items.FindIndex(x => x.Id == t.Id);
