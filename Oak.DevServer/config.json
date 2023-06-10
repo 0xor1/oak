@@ -1,0 +1,6 @@
+﻿{
+  "devServer": {
+    "listen": "https://localhost:9501",
+    "rpcHost": "https://localhost:9500"
+  }
+}
