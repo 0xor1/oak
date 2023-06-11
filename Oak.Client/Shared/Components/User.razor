@@ -1,0 +1,29 @@
+﻿@using Common.Client
+@using Oak.Api.OrgMember
+@using Oak.Client.Lib
+@using S = Oak.I18n.S
+
+<span class="mw-100 ellip">
+    @(OrgMember != null? OrgMember.Name: L.S(S.Unassigned))
+</span>
+
+@inject L L;
+@inject IUserService UserService;
+@code {
+
+    [Parameter]
+    public string OrgId { get; set; } = "";
+    [Parameter]
+    public string? UserId { get; set; }
+
+    private OrgMember? OrgMember { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (UserId != null)
+        {
+            OrgMember = await UserService.Get(OrgId, UserId);
+        }
+    }
+
+}

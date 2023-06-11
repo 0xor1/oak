@@ -181,6 +181,7 @@ public static partial class S
         { Days, new("Jours") },
         { Weeks, new("Semaines") },
         { Years, new("Ans") },
+        { Unassigned, new("Non attribué") },
         { Task, new("Tâche") },
         { Parallel, new("Parallèle") },
         { Sequential, new("Séquentiel") },

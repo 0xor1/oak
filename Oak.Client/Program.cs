@@ -11,5 +11,6 @@ await Client.Run<App, Oak.Api.IApi>(
     {
         sc.AddSingleton<UIDisplay>();
         sc.AddSingleton<IUICtxService, UICtxService>();
+        sc.AddSingleton<IUserService, UserService>();
     }
 );

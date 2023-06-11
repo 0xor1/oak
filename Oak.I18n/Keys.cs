@@ -107,6 +107,7 @@ public static partial class S
     public const string Days = "days";
     public const string Weeks = "weeks";
     public const string Years = "years";
+    public const string Unassigned = "unassigned";
     public const string Task = "task";
     public const string Parallel = "parallel";
     public const string Sequential = "sequential";

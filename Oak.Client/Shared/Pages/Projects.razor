@@ -55,7 +55,7 @@
             </RadzenDataGridColumn>
             <RadzenDataGridColumn Visible="UIDisplay.User" Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Width="10em" TItem="Project" Property="@nameof(Project.Task.User)" Title="@L.S(S.User)">
                 <Template Context="p">
-                    todo - add user component
+                    <User OrgId="@p.Org" UserId="@p.Task.User"/>
                 </Template>
             </RadzenDataGridColumn>
             <RadzenDataGridColumn Visible="UIDisplay.Time" Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Width="7em" TItem="Project" Property="@nameof(Project.Task.TimeSubMin)" Title="@L.S(S.TimeMin)">

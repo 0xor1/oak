@@ -28,7 +28,7 @@
     private List<TimeUnit> TimeUnits = new();
     private string Format => SelectedTimeUnit.Resolution == Resolution.Minutes? "F0" : "F1";
 
-    protected async override Task OnInitializedAsync()
+    protected override async Task OnInitializedAsync()
     {
         TimeUnits = new List<TimeUnit>()
         {
