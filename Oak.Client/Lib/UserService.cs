@@ -30,12 +30,12 @@ public class UserService : IUserService
 
     public async Task<OrgMember> Get(string orgId, string userId)
     {
-        if (!OrgMembers.ContainsKey(orgId) && !OrgMembers[orgId].ContainsKey(userId))
+        if (!OrgMembers.ContainsKey(orgId) || !OrgMembers[orgId].ContainsKey(userId))
         {
             await _ss.WaitAsync();
             try
             {
-                if (!OrgMembers.ContainsKey(orgId) && !OrgMembers[orgId].ContainsKey(userId))
+                if (!OrgMembers.ContainsKey(orgId) || !OrgMembers[orgId].ContainsKey(userId))
                 {
                     var mo = await _api.OrgMember.GetOne(new(orgId, userId));
                     if (!OrgMembers.ContainsKey(orgId))
