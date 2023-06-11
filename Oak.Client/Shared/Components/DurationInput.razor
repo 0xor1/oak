@@ -1,0 +1,118 @@
+﻿@using Common.Client
+@using Oak.Client.Lib
+@using S = Oak.I18n.S
+<div class="root jc-stretch">
+    <div class="flx g-0h jc-stretch">
+        <RadzenNumeric Name="@Name" TValue="decimal" Value="InternalVal" Format="@Format" ValueChanged="InternalValueChanged" ShowUpDown="false" Min="0"/>
+        <RadzenDropDown @ref="_ddRef" TValue="TimeUnit" @bind-Value="SelectedTimeUnit" Data="TimeUnits"></RadzenDropDown>
+    </div>
+</div>
+
+@inject L L;
+@implements IRadzenFormComponent
+@code {
+
+    [Parameter]
+    public string Name { get; set; } = "";
+    [Parameter]
+    [EditorRequired]
+    public UICtx UICtx { get; set; } = default!;
+    [Parameter]
+    public ulong Value { get; set; }
+    [Parameter]
+    [EditorRequired]
+    public EventCallback<ulong> ValueChanged { get; set; }
+
+    private decimal InternalVal { get; set; }
+    private TimeUnit SelectedTimeUnit { get; set; }
+    private List<TimeUnit> TimeUnits = new();
+    private string Format => SelectedTimeUnit.Resolution == Resolution.Minutes? "F0" : "F1";
+
+    protected async override Task OnInitializedAsync()
+    {
+        TimeUnits = new List<TimeUnit>()
+        {
+            new (Resolution.Minutes, L),
+            new (Resolution.Hours, L),
+            new (Resolution.Days, L),
+            new (Resolution.Weeks, L)
+        };
+        await SetInternalValueAndSelectedTimeUnitAndUpdateValue();
+    }
+
+    private async Task SetInternalValueAndSelectedTimeUnitAndUpdateValue()
+    {
+        var (mph, mpd, mpw) = getMinsPerUnit();
+        if (Value == 0 || (Value < mpd && Value >= mph))
+        {
+            InternalVal = (decimal)Value / mph;
+            SelectedTimeUnit = TimeUnits[1];
+        }
+        else if (Value < mph)
+        {
+            InternalVal = Value;
+            SelectedTimeUnit = TimeUnits[0];
+        }
+        else if (Value < mpw)
+        {
+            InternalVal = (decimal)Value / mpd;
+            SelectedTimeUnit = TimeUnits[2];
+        }
+        else
+        {
+            InternalVal = (decimal)Value / mpw;
+            SelectedTimeUnit = TimeUnits[3];
+        }
+        await ValueChanged.InvokeAsync(Value);
+    }
+
+    private async Task InternalValueChanged(decimal v)
+    {
+        var (mph, mpd, mpw) = getMinsPerUnit();
+        var tmp = SelectedTimeUnit.Resolution switch {
+            Resolution.Minutes => v,
+            Resolution.Hours => v * mph,
+            Resolution.Days => v * mpd,
+            Resolution.Weeks => v * mpw 
+        };
+        Value = (ulong)tmp;
+        await SetInternalValueAndSelectedTimeUnitAndUpdateValue();
+    }
+
+    private (ulong mph, ulong mpd, ulong mpw) getMinsPerUnit()
+    {
+        var mph = 60ul;
+        var mpd = UICtx.Project.HoursPerDay * mph;
+        var mpw = UICtx.Project.DaysPerWeek * mpd;
+        return (mph, mpd, mpw);
+    }
+    
+    public object GetValue()
+    {
+        return Value;
+    }
+
+    public bool IsBound { get; }
+    public bool HasValue { get; }
+    public FieldIdentifier FieldIdentifier { get; }
+    private RadzenDropDown<TimeUnit> _ddRef;
+
+    public record TimeUnit(Resolution Resolution, L L)
+    {
+        public override string ToString()
+            => Resolution switch {
+                Resolution.Minutes => L.S(S.Minutes),
+                Resolution.Hours => L.S(S.Hours),
+                Resolution.Days => L.S(S.Days),
+                Resolution.Weeks => L.S(S.Weeks),
+            };
+    }
+
+    public enum Resolution
+    {
+        Minutes,
+        Hours,
+        Days,
+        Weeks
+    }
+}

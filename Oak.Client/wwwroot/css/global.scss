@@ -199,6 +199,9 @@ tr:not(:hover){
     }
     &.jc-stretch{
         justify-content: stretch;
+        > * {
+            flex-grow: 1;
+        }
     }
     &.ai-s{
         align-items: flex-start;

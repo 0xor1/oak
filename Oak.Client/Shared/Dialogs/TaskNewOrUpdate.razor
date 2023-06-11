@@ -1,6 +1,7 @@
 ﻿@using Common.Client
 @using Common.Shared
 @using Oak.Api.Task
+@using Oak.Client.Lib
 @using S = Oak.I18n.S
 @using IApi = Oak.Api.IApi
 @using ATask = Oak.Api.Task.Task
@@ -27,15 +28,15 @@
         <!-- TODO create project user picker -->
         <div class="flx col ai-stretch">
             <RadzenLabel class="m-b-0q" Component="TimeEst" Text="@L.S(S.TimeEst)"/>
-            <RadzenNumeric TValue="ulong" Name="TimeEst" Min="0" @bind-Value="@_model.TimeEst"/>
+            <DurationInput Name="TimeEst" UICtx="UICtx" @bind-Value="@_model.TimeEst"/>
         </div>
         <div class="flx col ai-stretch">
             <RadzenLabel class="m-b-0q" Component="CostEst" Text="@L.S(S.CostEst)"/>
             <RadzenNumeric TValue="ulong" Name="CostEst" Min="0" @bind-Value="@_model.CostEst"/>
         </div>
-        <div class="flx g-1 jc-stretch">
-            <RadzenButton class="grow-1" ButtonType="ButtonType.Submit" IsBusy="_doing" Text="@(UpdateTask != null? L.S(S.Update): L.S(S.Create))"/>
-            <RadzenButton class="grow-1" ButtonStyle="ButtonStyle.Secondary" IsBusy="_doing" Text="@L.S(S.Cancel)" Click="@(_ => DialogService.Close())"/>
+        <div class="flx g-0h jc-stretch">
+            <RadzenButton ButtonType="ButtonType.Submit" IsBusy="_doing" Text="@(UpdateTask != null? L.S(S.Update): L.S(S.Create))"/>
+            <RadzenButton ButtonStyle="ButtonStyle.Secondary" IsBusy="_doing" Text="@L.S(S.Cancel)" Click="@(_ => DialogService.Close())"/>
         </div>
     </RadzenTemplateForm>
 </div>
@@ -65,6 +66,10 @@
 
     [Parameter]
     public Func<UpdateRes, Task>? OnUpdated { get; set; }
+
+    [Parameter]
+    [EditorRequired]
+    public UICtx UICtx { get; set; }
 
     public class Model
     {

@@ -21,9 +21,9 @@
                 <RadzenRequiredValidator Component="OwnerName" Popup="true" Text="@L.S(S.Required)"></RadzenRequiredValidator>
             </div>
         }
-        <div class="flx g-1 jc-stretch">
-            <RadzenButton class="grow-1" ButtonType="ButtonType.Submit" IsBusy="_doing" Text="@(UpdateOrg != null? L.S(S.Update): L.S(S.Create))"/>
-            <RadzenButton class="grow-1" ButtonStyle="ButtonStyle.Secondary" IsBusy="_doing" Text="@L.S(S.Cancel)" Click="@(_ => DialogService.Close())"/>
+        <div class="flx g-0h jc-stretch">
+            <RadzenButton ButtonType="ButtonType.Submit" IsBusy="_doing" Text="@(UpdateOrg != null? L.S(S.Update): L.S(S.Create))"/>
+            <RadzenButton ButtonStyle="ButtonStyle.Secondary" IsBusy="_doing" Text="@L.S(S.Cancel)" Click="@(_ => DialogService.Close())"/>
         </div>
     </RadzenTemplateForm>
 </div>

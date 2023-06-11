@@ -102,6 +102,11 @@ public static partial class S
     public const string Cost = "cost";
     public const string File = "file";
     public const string SubCounts = "sub_counts";
+    public const string Minutes = "minutes";
+    public const string Hours = "hours";
+    public const string Days = "days";
+    public const string Weeks = "weeks";
+    public const string Years = "years";
     public const string Task = "task";
     public const string Parallel = "parallel";
     public const string Sequential = "sequential";
