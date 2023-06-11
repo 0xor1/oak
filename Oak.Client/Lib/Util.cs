@@ -24,7 +24,7 @@ public static class Util
         }
         if (val >= minsPerDay)
         {
-            return $"{((decimal)val / minsPerWeek).ToString("F1")}d";
+            return $"{((decimal)val / minsPerDay).ToString("F1")}d";
         }
         if (val >= minsPerHour)
         {
