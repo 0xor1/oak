@@ -1,4 +1,5 @@
 ﻿using Common.Shared;
+using Oak.Api.OrgMember;
 
 namespace Oak.Api.ProjectMember;
 
@@ -46,6 +47,8 @@ public record ProjectMember(
     string Org,
     string Project,
     string Id,
+    bool IsActive,
+    OrgMemberRole OrgRole,
     string Name,
     ProjectMemberRole Role,
     ulong TimeEst,
@@ -69,6 +72,7 @@ public record Add(string Org, string Project, string Id, ProjectMemberRole Role)
 public record Get(
     string Org,
     string Project,
+    bool? IsActive = null,
     ProjectMemberRole? Role = null,
     string? NameStartsWith = null,
     string? After = null,

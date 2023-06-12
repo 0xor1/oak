@@ -33,7 +33,7 @@ internal static class ProjectMemberEps
                                 ProjectMemberRole.Admin
                             );
                             var orgMem = await db.OrgMembers.SingleOrDefaultAsync(
-                                x => x.Org == req.Org && x.Id == req.Id
+                                x => x.Org == req.Org && x.Id == req.Id && x.IsActive
                             );
                             ctx.NotFoundIf(orgMem == null, model: new { Name = "Org Member" });
                             orgMem.NotNull();
@@ -50,6 +50,8 @@ internal static class ProjectMemberEps
                                 Org = req.Org,
                                 Project = req.Project,
                                 Id = req.Id,
+                                IsActive = orgMem.IsActive,
+                                OrgRole = orgMem.Role,
                                 Name = orgMem.Name,
                                 Role = req.Role
                             };

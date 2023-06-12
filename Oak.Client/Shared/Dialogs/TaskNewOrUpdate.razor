@@ -1,6 +1,7 @@
 ﻿@using Common.Client
 @using Common.Shared
 @using Oak.Api.OrgMember
+@using Oak.Api.ProjectMember
 @using Oak.Api.Task
 @using Oak.Client.Lib
 @using S = Oak.I18n.S
@@ -28,7 +29,7 @@
         </div>
         <div class="flx col ai-stretch">
             <RadzenLabel class="m-b-0q" Component="User" Text="@L.S(S.User)"/>
-            <RadzenDropDown Name="User" @bind-Value="_model.User" TextProperty="Name" TValue="OrgMember?" Data="Users" LoadData="LoadOrgMembers" AllowClear="true" AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" FilterOperator="StringFilterOperator.StartsWith"/>
+            <RadzenDropDown Name="User" @bind-Value="_model.User" TextProperty="Name" TValue="ProjectMember?" Data="Users" LoadData="LoadProjectMembers" AllowClear="true" AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" FilterOperator="StringFilterOperator.StartsWith"/>
         </div>
         <div class="flx col ai-stretch">
             <RadzenLabel class="m-b-0q" Component="TimeEst" Text="@L.S(S.TimeEst)"/>
@@ -81,7 +82,7 @@
         public string Name { get; set; } = "";
         public string Description { get; set; } = "";
         public bool IsParallel { get; set; }
-        public OrgMember? User { get; set; }
+        public ProjectMember? User { get; set; }
         public ulong TimeEst { get; set; }
         public ulong CostEst { get; set; }
     }
@@ -96,11 +97,11 @@
             _model.Name = UpdateTask.Name;
             _model.Description = UpdateTask.Description;
             _model.IsParallel = UpdateTask.IsParallel;
-            _model.User = await UserService.Get(OrgId, UpdateTask.User);
+            _model.User = await UserService.Get(OrgId, ProjectId, UpdateTask.User);
             _model.TimeEst = UpdateTask.TimeEst;
             _model.CostEst = UpdateTask.CostEst;
         }
-        await LoadOrgMembers(new());
+        await LoadProjectMembers(new());
     }
 
     private async Task Do()
@@ -135,11 +136,11 @@
         _doing = false;
     }
 
-    private List<OrgMember> Users { get; set; } = new();
+    private List<ProjectMember> Users { get; set; } = new();
 
-    private async Task LoadOrgMembers(LoadDataArgs args)
+    private async Task LoadProjectMembers(LoadDataArgs args)
     {
-        Users = await UserService.Search(OrgId, true,
+        Users = await UserService.Search(OrgId, ProjectId, true,
             args.Filter);
     }
 

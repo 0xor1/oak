@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Oak.Api.OrgMember;
 using Oak.Api.ProjectMember;
 
 namespace Oak.Db;
@@ -9,6 +10,8 @@ public class ProjectMember
     public string Org { get; set; }
     public string Project { get; set; }
     public string Id { get; set; }
+    public bool IsActive { get; set; }
+    public OrgMemberRole OrgRole { get; set; }
     public string Name { get; set; }
     public ProjectMemberRole Role { get; set; }
 
@@ -18,6 +21,8 @@ public class ProjectMember
             Org,
             Project,
             Id,
+            IsActive,
+            OrgRole,
             Name,
             Role,
             stats.TimeEst,

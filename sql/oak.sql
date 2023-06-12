@@ -81,7 +81,7 @@ DROP TABLE IF EXISTS OrgMembers;
 CREATE TABLE OrgMembers(
     Org VARCHAR(22) NOT NULL,
     Id VARCHAR(22) NOT NULL,
-    IsActive BOOL NOT NULL DEFAULT 1,
+    IsActive BOOL NOT NULL,
     Name VARCHAR(250) NOT NULL,
     Role INT NOT NULL, # 'owner', 'admin', 'write_all_projects', 'read_all_projects', 'per_project'
     PRIMARY KEY (Org, Id),
@@ -125,11 +125,13 @@ CREATE TABLE ProjectMembers(
     Org VARCHAR(22) NOT NULL,
     Project VARCHAR(22) NOT NULL,
     Id VARCHAR(22) NOT NULL,
+    IsActive BOOL NOT NULL,
     Name VARCHAR(250) NOT NULL,
+    OrgRole INT NOT NULL, # 'owner', 'admin', 'write_all_projects', 'read_all_projects', 'per_project'
     Role INT NOT NULL, # 'admin', 'writer', 'reader'
     PRIMARY KEY (Org, Project, Id),
-    UNIQUE INDEX (Org, Project, Role, Name, Id),
-    UNIQUE INDEX (Org, Project, Name, Role, Id),
+    UNIQUE INDEX (Org, Project, IsActive, Role, Name, Id),
+    UNIQUE INDEX (Org, Project, IsActive, Name, Role, Id),
     INDEX (Org, Id)
 );
 

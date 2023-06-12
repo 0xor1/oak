@@ -75,7 +75,10 @@ internal static class OrgMemberEps
                     ctx.InsufficientPermissionsIf(!isActiveMember);
                     var qry = db.OrgMembers.Where(x => x.Org == req.Org);
                     // filters
-                    qry = qry.Where(x => x.IsActive == req.IsActive);
+                    if (req.IsActive != null)
+                    {
+                        qry = qry.Where(x => x.IsActive == req.IsActive);
+                    }
                     if (req.Role != null)
                     {
                         qry = qry.Where(x => x.Role == req.Role);
@@ -194,15 +197,25 @@ internal static class OrgMemberEps
                                 ctx.InsufficientPermissionsIf(ownerCount == 1);
                             }
                             var nameUpdated = req.Name != null && updateMem.Name != req.Name;
+                            var isActiveUpdated =
+                                req.IsActive != null && updateMem.IsActive != req.IsActive;
+                            var roleUpdated = req.Role != null && updateMem.Role != req.Role;
                             updateMem.IsActive = req.IsActive ?? updateMem.IsActive;
                             updateMem.Name = req.Name ?? updateMem.Name;
                             updateMem.Role = req.Role ?? updateMem.Role;
-                            if (nameUpdated)
+                            if (nameUpdated || isActiveUpdated || roleUpdated)
                             {
+                                // copy values over to denormalized duplicates in projectMembers
                                 await db.ProjectMembers
                                     .Where(x => x.Org == req.Org && x.Id == req.Id)
                                     .ExecuteUpdateAsync(
-                                        x => x.SetProperty(x => x.Name, _ => req.Name)
+                                        x =>
+                                            x.SetProperty(x => x.Name, _ => updateMem.Name)
+                                                .SetProperty(x => x.OrgRole, x => updateMem.Role)
+                                                .SetProperty(
+                                                    x => x.IsActive,
+                                                    x => updateMem.IsActive
+                                                )
                                     );
                             }
                             return updateMem.NotNull().ToApi();

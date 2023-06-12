@@ -42,7 +42,7 @@ public record Add(string Org, string Id, string Name, OrgMemberRole Role);
 
 public record Get(
     string Org,
-    bool IsActive,
+    bool? IsActive = null,
     string? NameStartsWith = null,
     OrgMemberRole? Role = null,
     string? After = null,
