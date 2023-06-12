@@ -18,12 +18,9 @@
 
     private OrgMember? OrgMember { get; set; }
 
-    protected override async Task OnInitializedAsync()
+    protected override async Task OnParametersSetAsync()
     {
-        if (UserId != null)
-        {
-            OrgMember = await UserService.Get(OrgId, UserId);
-        }
+        OrgMember = await UserService.Get(OrgId, UserId);
     }
 
 }

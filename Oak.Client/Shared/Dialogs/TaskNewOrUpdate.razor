@@ -1,5 +1,6 @@
 ﻿@using Common.Client
 @using Common.Shared
+@using Oak.Api.OrgMember
 @using Oak.Api.Task
 @using Oak.Client.Lib
 @using S = Oak.I18n.S
@@ -25,7 +26,10 @@
             <RadzenLabel class="m-b-0q" Component="IsParallel" Text="@L.S(S.Parallel)"/>
             <RadzenCheckBox Name="IsParallel" @bind-Value="@_model.IsParallel"/>
         </div>
-        <!-- TODO create project user picker -->
+        <div class="flx col ai-stretch">
+            <RadzenLabel class="m-b-0q" Component="User" Text="@L.S(S.User)"/>
+            <RadzenDropDown Name="User" @bind-Value="_model.User" TextProperty="Name" TValue="OrgMember?" Data="Users" LoadData="LoadOrgMembers" AllowClear="true" AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" FilterOperator="StringFilterOperator.StartsWith"/>
+        </div>
         <div class="flx col ai-stretch">
             <RadzenLabel class="m-b-0q" Component="TimeEst" Text="@L.S(S.TimeEst)"/>
             <DurationInput Name="TimeEst" UICtx="UICtx" @bind-Value="@_model.TimeEst"/>
@@ -44,6 +48,7 @@
 @inject L L;
 @inject IApi Api;
 @inject DialogService DialogService;
+@inject IUserService UserService;
 @code {
 
     [Parameter]
@@ -76,7 +81,7 @@
         public string Name { get; set; } = "";
         public string Description { get; set; } = "";
         public bool IsParallel { get; set; }
-        public string? User { get; set; }
+        public OrgMember? User { get; set; }
         public ulong TimeEst { get; set; }
         public ulong CostEst { get; set; }
     }
@@ -84,18 +89,18 @@
     Model _model = new();
     private bool _doing;
 
-    protected override Task OnInitializedAsync()
+    protected override async Task OnInitializedAsync()
     {
         if (UpdateTask != null)
         {
             _model.Name = UpdateTask.Name;
             _model.Description = UpdateTask.Description;
             _model.IsParallel = UpdateTask.IsParallel;
-            _model.User = UpdateTask.User;
+            _model.User = await UserService.Get(OrgId, UpdateTask.User);
             _model.TimeEst = UpdateTask.TimeEst;
             _model.CostEst = UpdateTask.CostEst;
         }
-        return Task.CompletedTask;
+        await LoadOrgMembers(new());
     }
 
     private async Task Do()
@@ -105,7 +110,7 @@
         {
             if (UpdateTask == null)
             {
-                var res = await Api.Task.Create(new(OrgId.NotNull(), ProjectId.NotNull(), ParentId.NotNull(), PrevSib?.Id, _model.Name, _model.Description, _model.IsParallel, _model.User, _model.TimeEst, _model.CostEst));
+                var res = await Api.Task.Create(new(OrgId.NotNull(), ProjectId.NotNull(), ParentId.NotNull(), PrevSib?.Id, _model.Name, _model.Description, _model.IsParallel, _model.User?.Id, _model.TimeEst, _model.CostEst));
                 if (OnCreated != null)
                 {
                     await OnCreated(res, PrevSib);
@@ -113,7 +118,7 @@
             }
             else
             {
-                var res = await Api.Task.Update(new(UpdateTask.Org, UpdateTask.Project, UpdateTask.Id, UpdateTask.Parent, null, _model.Name, _model.Description, _model.IsParallel, new(_model.User), _model.TimeEst, _model.CostEst));
+                var res = await Api.Task.Update(new(UpdateTask.Org, UpdateTask.Project, UpdateTask.Id, UpdateTask.Parent, null, _model.Name, _model.Description, _model.IsParallel, new(_model.User?.Id), _model.TimeEst, _model.CostEst));
                 if (OnUpdated != null)
                 {
                     await OnUpdated(res);
@@ -128,6 +133,14 @@
         }
         
         _doing = false;
+    }
+
+    private List<OrgMember> Users { get; set; } = new();
+
+    private async Task LoadOrgMembers(LoadDataArgs args)
+    {
+        Users = await UserService.Search(OrgId, true,
+            args.Filter);
     }
 
 }
