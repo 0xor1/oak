@@ -80,6 +80,8 @@ internal static class ProjectEps
                                     Org = req.Org,
                                     Project = p.Id,
                                     Id = ses.Id,
+                                    IsActive = mem.IsActive,
+                                    OrgRole = mem.Role,
                                     Name = mem.Name,
                                     Role = ProjectMemberRole.Admin
                                 }
