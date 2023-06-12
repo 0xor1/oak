@@ -54,7 +54,7 @@ public class ProjectMemberTests : TestBase
 
         // all filters
         var res = (
-            await ali.ProjectMember.Get(new(org.Id, p.Id, null, ProjectMemberRole.Admin, "a"))
+            await ali.ProjectMember.Get(new(org.Id, p.Id, true, ProjectMemberRole.Admin, "a"))
         ).Set;
         Assert.Equal(1, res.Count);
         Assert.Equal(aliPm, res[0]);

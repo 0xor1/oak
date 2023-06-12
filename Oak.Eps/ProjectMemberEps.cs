@@ -123,6 +123,10 @@ internal static class ProjectMemberEps
                     var qry = db.ProjectMembers.Where(
                         x => x.Org == req.Org && x.Project == req.Project
                     );
+                    if (req.IsActive != null)
+                    {
+                        qry = qry.Where(x => x.IsActive == req.IsActive);
+                    }
                     if (req.Role != null)
                     {
                         qry = qry.Where(x => x.Role == req.Role);
