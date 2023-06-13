@@ -108,12 +108,12 @@
                                 </RadzenDataGridColumn>
                                 <RadzenDataGridColumn Visible="UIDisplay.Cost" TextAlign="TextAlign.Center" Width="7em" TItem="ATask" Property="@nameof(ATask.CostEst)" Title="@L.S(S.CostEst)">
                                     <Template Context="t">
-                                        @(Util.Cost(t.CostEst + t.CostSubEst, UICtx.Project.CurrencySymbol))
+                                        @(Util.Cost(UICtx.Project, t.CostEst + t.CostSubEst, UICtx.Project.CurrencySymbol))
                                     </Template>
                                 </RadzenDataGridColumn>
                                 <RadzenDataGridColumn Visible="UIDisplay.Cost" TextAlign="TextAlign.Center" Width="7em" TItem="ATask" Property="@nameof(ATask.CostInc)" Title="@L.S(S.CostInc)">
                                     <Template Context="t">
-                                        @(Util.Cost(t.CostInc + t.CostSubInc, UICtx.Project.CurrencySymbol))
+                                        @(Util.Cost(UICtx.Project, t.CostInc + t.CostSubInc, UICtx.Project.CurrencySymbol))
                                     </Template>
                                 </RadzenDataGridColumn>
                                 <RadzenDataGridColumn Visible="UIDisplay.File" Sortable="false" TextAlign="TextAlign.Center" Width="7em" TItem="ATask" Property="@nameof(ATask.FileSize)" Title="@L.S(S.FileSize)">
