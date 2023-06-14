@@ -13,21 +13,19 @@
 <div class="root col p-0h g-0h jc-s ai-s">
     @if (_ready)
     {
+        <div class="flx row rev g-0h ai-c ov-a child-no-shrink mw-100">
+            @foreach (var a in Ancestors)
+            {
+                <RadzenLink Path="@($"/org/{a.Org}/project/{a.Project}/task/{a.Id}")" class="ellip m-y-0h">@a.Name</RadzenLink>
+                <span>></span>
+            }
+            <RadzenLink Path="@($"/org/{OrgId}/projects")" class="ellip m-y-0h">@UICtx.Org.Name</RadzenLink>
+        </div>
         @if (MovingTask != null)
         {
             <div class="flx ai-c p-0h g-0h w-100 br-0q bw-0q bs-solid rz-color-secondary-darker rz-background-color-secondary-lighter rz-border-color-secondary-dark b-">
                 <RadzenButton title="@L.S(S.Cancel)" @onclick:stopPropagation="true" Icon="cancel" ButtonStyle="ButtonStyle.Secondary" Size="ButtonSize.ExtraSmall" Click="_ => CancelMovingTask()"/>
                 <span class="ellip">@L.H(S.TaskMovingTask, MovingTask)</span>
-            </div>
-        }
-        if (Ancestors.Count > 0)
-        {
-            <div class="flx row rev g-0h ai-c ov-a child-no-shrink mw-100">
-                @foreach (var a in Ancestors)
-                {
-                    <RadzenLink Path="@($"/org/{a.Org}/project/{a.Project}/task/{a.Id}")" class="ellip m-y-0h">@a.Name</RadzenLink>
-                    <span>></span>
-                }
             </div>
         }
         <div class="flx col jc-s ai-s g-0t w-100 mw-100">
