@@ -15,7 +15,8 @@ public record UICtx(
     Org? Org = null,
     OrgMember? OrgMember = null,
     Project? Project = null,
-    ProjectMember? ProjectMember = null
+    ProjectMember? ProjectMember = null,
+    Task? Task = null
 )
 {
     public bool HasOrgOwnerPerm => OrgMember is { Role: OrgMemberRole.Owner, IsActive: true };
@@ -61,6 +62,7 @@ public partial class UICtxService : IUICtxService
     private OrgMember? OrgMember { get; set; }
     private Project? Project { get; set; }
     private ProjectMember? ProjectMember { get; set; }
+    private Task? Task { get; set; }
 
     public UICtxService(IApi api, IAuthService auth, NavigationManager nav)
     {
@@ -74,22 +76,25 @@ public partial class UICtxService : IUICtxService
         await _ss.WaitAsync();
         try
         {
-            var (orgId, projectId) = GetIdsFromUrl();
+            var (orgId, projectId, taskId) = GetIdsFromUrl();
 
             // no white space shenanigans
             orgId = orgId.IsNullOrWhiteSpace() ? null : orgId;
             projectId = projectId.IsNullOrWhiteSpace() ? null : projectId;
+            taskId = taskId.IsNullOrWhiteSpace() ? null : taskId;
 
             Throw.DataIf(
-                projectId != null && orgId == null,
-                "if taskId is given the projectId must be given and if projectId is given the orgId must be given"
+                (taskId != null && (projectId == null || orgId == null)) || (projectId != null && orgId == null),
+                "if taskId is given the projectId and orgId must be given, and if projectId is given the orgId must be given"
             );
 
             var orgChanged = OrgId != orgId;
-            var projectChanged = TaskId != projectId;
+            var projectChanged = ProjectId != projectId;
+            var taskChanged = TaskId != taskId;
 
             OrgId = orgId;
             ProjectId = projectId;
+            TaskId = taskId;
             var sesId = (await _auth.GetSession()).Id;
 
             if (OrgId == null)
@@ -102,6 +107,11 @@ public partial class UICtxService : IUICtxService
             {
                 Project = null;
                 ProjectMember = null;
+            }
+
+            if (TaskId == null)
+            {
+                Task = null;
             }
 
             if (orgChanged && OrgId != null)
@@ -117,16 +127,21 @@ public partial class UICtxService : IUICtxService
                     await _api.ProjectMember.GetOne(new(OrgId, ProjectId, sesId))
                 ).Item;
             }
+
+            if (taskChanged && TaskId != null)
+            {
+                Task = await _api.Task.GetOne(new(OrgId, ProjectId, TaskId));
+            }
         }
         finally
         {
             _ss.Release();
         }
 
-        return new(Org, OrgMember, Project, ProjectMember);
+        return new(Org, OrgMember, Project, ProjectMember, Task);
     }
 
-    private (string? orgId, string? projectId) GetIdsFromUrl()
+    private (string? orgId, string? projectId, string? taskId) GetIdsFromUrl()
     {
         var uri = _nav.Uri;
         // check for /org/{OrgId}/project/{ProjectId}/task/{TaskId}
@@ -142,8 +157,14 @@ public partial class UICtxService : IUICtxService
         {
             projectId = projectMatch.Groups[1].Value;
         }
+        string? taskId = null;
+        var taskMatch = TaskIdRx().Match(uri);
+        if (taskMatch.Success && taskMatch.Groups.Count == 2)
+        {
+            taskId = taskMatch.Groups[1].Value;
+        }
 
-        return (orgId, projectId);
+        return (orgId, projectId, taskId);
     }
 
     [GeneratedRegex(@"/org/([^/\s]+)")]
@@ -151,4 +172,7 @@ public partial class UICtxService : IUICtxService
 
     [GeneratedRegex(@"/project/([^/\s]+)")]
     private static partial Regex ProjectIdRx();
+
+    [GeneratedRegex(@"/task/([^/\s]+)")]
+    private static partial Regex TaskIdRx();
 }

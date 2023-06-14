@@ -1,0 +1,23 @@
+﻿@using Oak.Client.Lib
+@using Oak.Api.VItem
+<div class="flx col jc-s ai-s g-0t w-100 mw-100">
+    
+</div>
+
+@code {
+
+    [Parameter]
+    [EditorRequired]
+    public VItemType Type { get; set; }
+
+    [Parameter]
+    [EditorRequired]
+    public UICtx UICtx { get; set; }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+    }
+    
+    
+}
