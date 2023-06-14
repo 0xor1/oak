@@ -1,0 +1,72 @@
+﻿@using Common.Client
+@using Oak.Api.Project
+@using Oak.Client.Lib
+@using S = Oak.I18n.S
+
+@if (Currency?.Divisions == 1)
+{
+    <RadzenNumeric @ref="_ulongRef" Format="@($"{Currency.Symbol}{0:N0}")" TValue="ulong" Name="@Name" Min="0" Value="@Value" ValueChanged="ULongValueChanged" ShowUpDown="false"/>
+}
+else
+{
+    <RadzenNumeric @ref="_decimalRef" Format="@($"{Currency?.Symbol ?? "$"}{0:N2}")" TValue="decimal" Name="@Name" Min="0" Value="@InternalVal" ValueChanged="@DecimalValueChanged" ShowUpDown="false"/>
+}
+
+@inject L L;
+@implements IRadzenFormComponent
+@code {
+
+    [Parameter]
+    public string Name { get; set; } = "";
+
+    [Parameter]
+    [EditorRequired]
+    public Project Project { get; set; } = default!;
+    
+    [Parameter]
+    public ulong Value { get; set; }
+    
+    [Parameter]
+    public EventCallback<ulong> ValueChanged { get; set; }
+
+    private CurrencyPicker.Currency Currency => CurrencyPicker.Currencies.Single(x => x.Code == Project.CurrencyCode);
+
+    private decimal InternalVal { get; set; }
+    
+    protected override async Task OnInitializedAsync()
+    {
+        InternalVal = (decimal)Value / 100;
+    }
+
+    private async Task ULongValueChanged(ulong v)
+    {
+        Value = v;
+        await ValueChanged.InvokeAsync(Value);
+    }
+
+    private async Task DecimalValueChanged(decimal v)
+    {
+        InternalVal = v;
+        
+        if (Currency?.Divisions != 1)
+        {
+            Value = (ulong)(InternalVal * 100);
+        }
+        else
+        {
+            Value = (ulong)(InternalVal);
+        }
+        await ValueChanged.InvokeAsync(Value);
+    }
+
+    public object GetValue()
+    {
+        return Value;
+    }
+
+    public bool IsBound => _decimalRef?.IsBound ?? _ulongRef.IsBound;
+    public bool HasValue => _decimalRef?.HasValue ?? _ulongRef.HasValue;
+    public FieldIdentifier FieldIdentifier => _decimalRef?.FieldIdentifier ?? _ulongRef.FieldIdentifier;
+    RadzenNumeric<ulong>? _ulongRef;
+    RadzenNumeric<decimal>? _decimalRef;
+}

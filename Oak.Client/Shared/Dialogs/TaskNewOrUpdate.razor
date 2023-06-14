@@ -37,14 +37,7 @@
         </div>
         <div class="flx col ai-stretch">
             <RadzenLabel class="m-b-0q" Component="CostEst" Text="@L.S(S.CostEst)"/>
-            @if (Currency?.Divisions == 1)
-            {
-                <RadzenNumeric Format="@($"{Currency.Symbol}{0:N0}")" TValue="ulong" Name="CostEst" Min="0" @bind-Value="@_model.CostEst" ShowUpDown="false"/>
-            }
-            else
-            {
-                <RadzenNumeric Format="@($"{Currency?.Symbol ?? "$"}{0:N2}")" TValue="decimal" Name="CostEst" Min="0" @bind-Value="@_model.TmpCostEst" ShowUpDown="false"/>
-            }
+            <CurrencyInput Name="CostEst" Project="UICtx.Project" @bind-Value="_model.CostEst"/>
         </div>
         <div class="flx g-0h jc-stretch">
             <RadzenButton ButtonType="ButtonType.Submit" IsBusy="_doing" Text="@(UpdateTask != null? L.S(S.Update): L.S(S.Create))"/>
@@ -94,7 +87,6 @@
         public ProjectMember? User { get; set; }
         public ulong TimeEst { get; set; }
         public ulong CostEst { get; set; }
-        public decimal TmpCostEst { get; set; }
     }
 
     Model _model = new();
@@ -110,7 +102,6 @@
             _model.User = await UserService.Get(OrgId, ProjectId, UpdateTask.User);
             _model.TimeEst = UpdateTask.TimeEst;
             _model.CostEst = UpdateTask.CostEst;
-            _model.TmpCostEst = (decimal)UpdateTask.CostEst / 100;
         }
         Currency = CurrencyPicker.Currencies.SingleOrDefault(x => x.Code == UICtx.Project.CurrencyCode);
         await LoadProjectMembers(new());
@@ -121,10 +112,6 @@
         _doing = true;
         try
         {
-            if (Currency?.Divisions != 1)
-            {
-                _model.CostEst = (ulong)(_model.TmpCostEst * 100);
-            }
             if (UpdateTask == null)
             {
                 var res = await Api.Task.Create(new(OrgId.NotNull(), ProjectId.NotNull(), ParentId.NotNull(), PrevSib?.Id, _model.Name, _model.Description, _model.IsParallel, _model.User?.Id, _model.TimeEst, _model.CostEst));
