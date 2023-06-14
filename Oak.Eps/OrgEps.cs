@@ -70,16 +70,8 @@ public static class OrgEps
                 OrgRpcs.GetOne,
                 async (ctx, req) =>
                 {
-                    var ses = ctx.GetAuthedSession();
+                    var ses = ctx.GetSession();
                     var db = ctx.Get<OakDb>();
-                    await EpsUtil.MustHaveOrgAccess(
-                        ctx,
-                        db,
-                        ses.Id,
-                        req.Id,
-                        OrgMemberRole.PerProject
-                    );
-
                     var org = await db.Orgs.SingleOrDefaultAsync(x => x.Id == req.Id);
                     ctx.NotFoundIf(org == null, model: new { Name = "Org" });
                     var m = await db.OrgMembers.SingleOrDefaultAsync(

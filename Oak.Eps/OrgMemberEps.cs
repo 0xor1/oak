@@ -53,9 +53,7 @@ internal static class OrgMemberEps
                 OrgMemberRpcs.GetOne,
                 async (ctx, req) =>
                 {
-                    var ses = ctx.GetAuthedSession();
                     var db = ctx.Get<OakDb>();
-                    await EpsUtil.MustBeActiveOrgMember(ctx, db, ses.Id, req.Org);
                     var mem = await db.OrgMembers.SingleOrDefaultAsync(
                         x => x.Org == req.Org && x.Id == req.Id
                     );
@@ -66,13 +64,8 @@ internal static class OrgMemberEps
                 OrgMemberRpcs.Get,
                 async (ctx, req) =>
                 {
-                    var ses = ctx.GetAuthedSession();
+                    var ses = ctx.GetSession();
                     var db = ctx.Get<OakDb>();
-                    // check current member has sufficient permissions
-                    var isActiveMember = await db.OrgMembers.AnyAsync(
-                        x => x.Org == req.Org && x.IsActive && x.Id == ses.Id
-                    );
-                    ctx.InsufficientPermissionsIf(!isActiveMember);
                     var qry = db.OrgMembers.Where(x => x.Org == req.Org);
                     // filters
                     if (req.IsActive != null)

@@ -78,7 +78,7 @@ internal static class ProjectMemberEps
                 ProjectMemberRpcs.GetOne,
                 async (ctx, req) =>
                 {
-                    var ses = ctx.GetAuthedSession();
+                    var ses = ctx.GetSession();
                     var db = ctx.Get<OakDb>();
                     await EpsUtil.MustHaveProjectAccess(
                         ctx,
@@ -110,7 +110,7 @@ internal static class ProjectMemberEps
                 ProjectMemberRpcs.Get,
                 async (ctx, req) =>
                 {
-                    var ses = ctx.GetAuthedSession();
+                    var ses = ctx.GetSession();
                     var db = ctx.Get<OakDb>();
                     await EpsUtil.MustHaveProjectAccess(
                         ctx,

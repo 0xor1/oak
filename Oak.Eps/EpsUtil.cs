@@ -39,16 +39,6 @@ public static class EpsUtil
         }
     }
 
-    public static async Task<bool> IsActiveOrgMember(OakDb db, string user, string org) =>
-        await OrgRole(db, user, org) != null;
-
-    public static async Task MustBeActiveOrgMember(
-        IRpcCtx ctx,
-        OakDb db,
-        string user,
-        string org
-    ) => ctx.InsufficientPermissionsIf(!await IsActiveOrgMember(db, user, org));
-
     public static async Task<OrgMemberRole?> OrgRole(OakDb db, string user, string org)
     {
         var orgMem = await db.OrgMembers.SingleOrDefaultAsync(
