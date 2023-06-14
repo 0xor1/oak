@@ -4,6 +4,12 @@ using Common.Shared;
 
 namespace Oak.Api.VItem;
 
+public interface ICreatable
+{
+    public string CreatedBy { get; }
+    public DateTime CreatedOn { get; }
+}
+
 public interface IVItemApi
 {
     public Task<VItemRes> Create(Create arg);
@@ -48,7 +54,7 @@ public record VItem(
     DateTime CreatedOn,
     ulong Inc,
     string Note
-);
+) : ICreatable;
 
 public record Create(
     string Org,

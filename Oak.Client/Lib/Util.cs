@@ -21,12 +21,15 @@ public static class Util
     const ulong TB = KB * GB;
     const ulong PB = KB * TB;
 
-    public static string Time(ulong val, uint hoursPerDay, uint daysPerWeek)
+    public static string Duration(Project p, ulong val)
     {
-        Throw.OpIf(hoursPerDay == 0 || daysPerWeek == 0, "hoursPerDay and daysPerWeek must be > 0");
+        Throw.OpIf(
+            p.HoursPerDay == 0 || p.DaysPerWeek == 0,
+            "hoursPerDay and daysPerWeek must be > 0"
+        );
 
-        var minsPerDay = MinsPerHour * hoursPerDay;
-        var minsPerWeek = minsPerDay * daysPerWeek;
+        var minsPerDay = MinsPerHour * p.HoursPerDay;
+        var minsPerWeek = minsPerDay * p.DaysPerWeek;
         var minsPerYear = minsPerWeek * WeeksPerYear;
 
         if (val >= minsPerYear)
@@ -48,7 +51,7 @@ public static class Util
         return $"{val}m";
     }
 
-    public static string Cost(Project p, ulong val, string symbol)
+    public static string Cost(Project p, ulong val)
     {
         var divs =
             CurrencyPicker.Currencies.SingleOrDefault(x => x.Code == p.CurrencyCode)?.Divisions
@@ -56,21 +59,21 @@ public static class Util
         var dVal = (decimal)val / divs;
         if (dVal >= T)
         {
-            return $"{symbol}{(dVal / T).ToString("N1")}T";
+            return $"{p.CurrencySymbol}{(dVal / T).ToString("N1")}T";
         }
         if (dVal >= B)
         {
-            return $"{symbol}{(dVal / B).ToString("N1")}B";
+            return $"{p.CurrencySymbol}{(dVal / B).ToString("N1")}B";
         }
         if (dVal >= M)
         {
-            return $"{symbol}{(dVal / M).ToString("N1")}M";
+            return $"{p.CurrencySymbol}{(dVal / M).ToString("N1")}M";
         }
         if (dVal >= K)
         {
-            return $"{symbol}{(dVal / K).ToString("N1")}K";
+            return $"{p.CurrencySymbol}{(dVal / K).ToString("N1")}K";
         }
-        return $"{symbol}{dVal.ToString(divs == 100 ? "N2" : "N0")}";
+        return $"{p.CurrencySymbol}{dVal.ToString(divs == 100 ? "N2" : "N0")}";
     }
 
     public static string Size(ulong val)

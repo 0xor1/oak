@@ -197,6 +197,7 @@ public static partial class S
         { DaysPerWeek, new("Días por semana") },
         { StartOn, new("Comienza en") },
         { EndOn, new("Finalizará el") },
+        { Note, new("Nota") },
         { TimeMin, new("Tiempo mín.") },
         { TimeEst, new("Tiempo estimado") },
         { TimeInc, new("Tiempo incurrido") },
@@ -237,6 +238,16 @@ public static partial class S
                 "<p>¿Está seguro de que desea eliminar la tarea <strong>{{Name}}</strong>?</p><p>Esto no se puede deshacer.</p>"
             )
         },
-        { TaskMovingTask, new("Tarea en movimiento: <strong>{{Name}}</strong>") }
+        { TaskMovingTask, new("Tarea en movimiento: <strong>{{Name}}</strong>") },
+        { TaskNewTime, new("Nuevo tiempo") },
+        { TaskNewCost, new("Nuevo costo") },
+        { TaskUpdateTime, new("Tiempo de actualizacion") },
+        { TaskUpdateCost, new("Costo de actualización") },
+        { TaskNoTimes, new("sin tiempos") },
+        { TaskNoCosts, new("Sin Costos") },
+        {
+            TaskConfirmDeleteVItem,
+            new("<p>¿Está seguro de que desea eliminar <strong>{{Value}}</strong>?</p>")
+        }
     };
 }

@@ -202,6 +202,7 @@ public static partial class S
         { DaysPerWeek, new("Giorni alla settimana") },
         { StartOn, new("Inizia") },
         { EndOn, new("Fine su") },
+        { Note, new("Nota") },
         { TimeMin, new("Tempo min.") },
         { TimeEst, new("Stima del tempo") },
         { TimeInc, new("Tempo impiegato") },
@@ -242,6 +243,16 @@ public static partial class S
                 "<p>Sei sicuro di voler eliminare l'attività <strong>{{Name}}</strong>?</p><p>L'operazione non può essere annullata.</p>"
             )
         },
-        { TaskMovingTask, new("Attività in movimento: <strong>{{Name}}</strong>") }
+        { TaskMovingTask, new("Attività in movimento: <strong>{{Name}}</strong>") },
+        { TaskNewTime, new("Nuovo tempo") },
+        { TaskNewCost, new("Nuovo costo") },
+        { TaskUpdateTime, new("Tempo di aggiornamento") },
+        { TaskUpdateCost, new("Aggiorna costo") },
+        { TaskNoTimes, new("Nessun tempo") },
+        { TaskNoCosts, new("Nessun costo") },
+        {
+            TaskConfirmDeleteVItem,
+            new("<p>Sei sicuro di voler eliminare <strong>{{Value}}</strong>?</p>")
+        }
     };
 }

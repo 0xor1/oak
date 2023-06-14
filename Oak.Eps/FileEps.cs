@@ -134,14 +134,6 @@ internal static class FileEps
                     await ctx.DbTx<OakDb, Api.Task.Task>(
                         async (db, ses) =>
                         {
-                            await EpsUtil.MustHaveProjectAccess(
-                                ctx,
-                                db,
-                                ses.Id,
-                                req.Org,
-                                req.Project,
-                                ProjectMemberRole.Writer
-                            );
                             var f = await db.Files.SingleOrDefaultAsync(
                                 x =>
                                     x.Org == req.Org
@@ -151,6 +143,23 @@ internal static class FileEps
                             );
                             ctx.NotFoundIf(f == null, model: new { Name = "File" });
                             f.NotNull();
+                            var requiredRole = ProjectMemberRole.Admin;
+                            if (
+                                f.CreatedBy == ses.Id
+                                && f.CreatedOn.Add(TimeSpan.FromHours(1)) > DateTime.UtcNow
+                            )
+                            {
+                                // if i created it in the last hour I only need to be a writer
+                                requiredRole = ProjectMemberRole.Writer;
+                            }
+                            await EpsUtil.MustHaveProjectAccess(
+                                ctx,
+                                db,
+                                ses.Id,
+                                req.Org,
+                                req.Project,
+                                requiredRole
+                            );
                             db.Files.Remove(f);
                             var t = await db.Tasks.SingleOrDefaultAsync(
                                 x =>

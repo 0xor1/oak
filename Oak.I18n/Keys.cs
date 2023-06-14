@@ -135,6 +135,7 @@ public static partial class S
     public const string DaysPerWeek = "days_per_week";
     public const string StartOn = "start_on";
     public const string EndOn = "end_on";
+    public const string Note = "note";
     public const string TimeMin = "time_min";
     public const string TimeEst = "time_est";
     public const string TimeInc = "time_inc";
@@ -167,4 +168,11 @@ public static partial class S
     public const string TaskUpdateTask = "task_edit_task";
     public const string TaskConfirmDeleteTask = "task_confirm_delete_task";
     public const string TaskMovingTask = "task_moving_task";
+    public const string TaskNewTime = "task_new_time";
+    public const string TaskNewCost = "task_new_cost";
+    public const string TaskUpdateTime = "task_update_time";
+    public const string TaskUpdateCost = "task_update_cost";
+    public const string TaskNoTimes = "task_no_times";
+    public const string TaskNoCosts = "task_no_costs";
+    public const string TaskConfirmDeleteVItem = "task_confirm_delete_vitem";
 }

@@ -3,10 +3,12 @@ using Common.Client;
 using Common.Shared;
 using Microsoft.AspNetCore.Components;
 using Oak.Api;
+using Oak.Api.Comment;
 using Oak.Api.Org;
 using Oak.Api.OrgMember;
 using Oak.Api.Project;
 using Oak.Api.ProjectMember;
+using Oak.Api.VItem;
 using Task = Oak.Api.Task.Task;
 
 namespace Oak.Client.Lib;
@@ -24,23 +26,40 @@ public record UICtx(
     public bool HasOrgAdminPerm => OrgMember is { Role: <= OrgMemberRole.Admin, IsActive: true };
 
     public bool HasProjectAdminPerm =>
-        OrgMember is { Role: <= OrgMemberRole.Admin, IsActive: true }
-        || ProjectMember is { Role: ProjectMemberRole.Admin };
-    public bool HasProjectWritePerm =>
-        OrgMember is { Role: <= OrgMemberRole.WriteAllProjects, IsActive: true }
-        || ProjectMember is { Role: <= ProjectMemberRole.Writer };
+        OrgMember?.IsActive == true
+        && (
+            OrgMember.Role <= OrgMemberRole.Admin || ProjectMember?.Role <= ProjectMemberRole.Admin
+        );
 
-    public bool CanDeleteTask(Task t) =>
-        Project?.Id != t.Id
-        && t.DescN <= 20
+    public bool HasProjectWritePerm =>
+        OrgMember?.IsActive == true
+        && (
+            OrgMember.Role <= OrgMemberRole.WriteAllProjects
+            || ProjectMember?.Role <= ProjectMemberRole.Writer
+        );
+
+    public bool CanDeleteTask =>
+        Project.NotNull().Id != Task.NotNull().Id
+        && Task.DescN <= 20
         && (
             (
                 HasProjectWritePerm
-                && t.CreatedBy == ProjectMember?.Id
-                && t.DescN == 0
-                && t.CreatedOn.Add(TimeSpan.FromHours(1)) > DateTime.UtcNow
+                && Task.CreatedBy == ProjectMember?.Id
+                && Task.DescN == 0
+                && Task.CreatedOn.Add(TimeSpan.FromHours(1)) > DateTime.UtcNow
             ) || HasProjectAdminPerm
         );
+
+    public bool CanDeleteVItemOrFile(ICreatable i) =>
+        HasProjectAdminPerm
+        || (
+            HasProjectWritePerm
+            && i.CreatedBy == OrgMember.Id
+            && i.CreatedOn.Add(TimeSpan.FromHours(1)) > DateTime.UtcNow
+        );
+
+    public bool CanDeleteOorUpdateComment(Comment c) =>
+        HasProjectAdminPerm || (HasProjectWritePerm && c.CreatedBy == OrgMember.Id);
 }
 
 public interface IUICtxService
@@ -84,7 +103,8 @@ public partial class UICtxService : IUICtxService
             taskId = taskId.IsNullOrWhiteSpace() ? null : taskId;
 
             Throw.DataIf(
-                (taskId != null && (projectId == null || orgId == null)) || (projectId != null && orgId == null),
+                (taskId != null && (projectId == null || orgId == null))
+                    || (projectId != null && orgId == null),
                 "if taskId is given the projectId and orgId must be given, and if projectId is given the orgId must be given"
             );
 

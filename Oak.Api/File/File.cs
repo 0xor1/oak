@@ -1,4 +1,5 @@
 ﻿using Common.Shared;
+using Oak.Api.VItem;
 
 namespace Oak.Api.File;
 
@@ -46,7 +47,7 @@ public record File(
     DateTime CreatedOn,
     ulong Size,
     string Type
-);
+) : ICreatable;
 
 public record Upload(string Org, string Project, string Task) : HasStream;
 

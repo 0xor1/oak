@@ -197,6 +197,7 @@ public static partial class S
         { DaysPerWeek, new("Tage pro Woche") },
         { StartOn, new("Beginnen am") },
         { EndOn, new("Endet am") },
+        { Note, new("Notiz") },
         { TimeMin, new("Zeitminimum") },
         { TimeEst, new("Zeitschätzung") },
         { TimeInc, new("Angefallene Zeit") },
@@ -237,6 +238,16 @@ public static partial class S
                 "<p>Sind Sie sicher, dass Sie die Aufgabe <strong>{{Name}}</strong> löschen möchten?</p><p>Dies kann nicht rückgängig gemacht werden.</p>"
             )
         },
-        { TaskMovingTask, new("Umzugsaufgabe: <strong>{{Name}}</strong>") }
+        { TaskMovingTask, new("Umzugsaufgabe: <strong>{{Name}}</strong>") },
+        { TaskNewTime, new("Neue Zeit") },
+        { TaskNewCost, new("Neue Kosten") },
+        { TaskUpdateTime, new("Updatezeit") },
+        { TaskUpdateCost, new("Aktualisierungskosten") },
+        { TaskNoTimes, new("Keine Zeiten") },
+        { TaskNoCosts, new("Keine Kosten") },
+        {
+            TaskConfirmDeleteVItem,
+            new("<p>Sind Sie sicher, dass Sie <strong>{{Value}}</strong>?</p>")
+        }
     };
 }

@@ -60,27 +60,27 @@
             </RadzenDataGridColumn>
             <RadzenDataGridColumn Visible="UIDisplay.Time" Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Width="7em" TItem="Project" Property="@nameof(Project.Task.TimeSubMin)" Title="@L.S(S.TimeMin)">
                 <Template Context="p">
-                    @(Util.Time(p.Task.TimeEst + p.Task.TimeSubMin, p.HoursPerDay, p.DaysPerWeek))
+                    @(Util.Duration(p, p.Task.TimeEst + p.Task.TimeSubMin))
                 </Template>
             </RadzenDataGridColumn>
             <RadzenDataGridColumn Visible="UIDisplay.Time" Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Width="7em" TItem="Project" Property="@nameof(Project.Task.TimeEst)" Title="@L.S(S.TimeEst)">
                 <Template Context="p">
-                    @(Util.Time(p.Task.TimeEst + p.Task.TimeSubEst, p.HoursPerDay, p.DaysPerWeek))
+                    @(Util.Duration(p, p.Task.TimeEst + p.Task.TimeSubEst))
                 </Template>
             </RadzenDataGridColumn>
             <RadzenDataGridColumn Visible="UIDisplay.Time" Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Width="7em" TItem="Project" Property="@nameof(Project.Task.TimeInc)" Title="@L.S(S.TimeInc)">
                 <Template Context="p">
-                    @(Util.Time(p.Task.TimeInc + p.Task.TimeSubInc, p.HoursPerDay, p.DaysPerWeek))
+                    @(Util.Duration(p, p.Task.TimeInc + p.Task.TimeSubInc))
                 </Template>
             </RadzenDataGridColumn>
             <RadzenDataGridColumn Visible="UIDisplay.Cost" Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Width="7em" TItem="Project" Property="@nameof(Project.Task.CostEst)" Title="@L.S(S.CostEst)">
                 <Template Context="p">
-                    @(Util.Cost(p, p.Task.CostEst + p.Task.CostSubEst, p.CurrencySymbol))
+                    @(Util.Cost(p, p.Task.CostEst + p.Task.CostSubEst))
                 </Template>
             </RadzenDataGridColumn>
             <RadzenDataGridColumn Visible="UIDisplay.Cost" Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Width="7em" TItem="Project" Property="@nameof(Project.Task.CostInc)" Title="@L.S(S.CostInc)">
                 <Template Context="p">
-                    @(Util.Cost(p, p.Task.CostInc + p.Task.CostSubInc, p.CurrencySymbol))
+                    @(Util.Cost(p, p.Task.CostInc + p.Task.CostSubInc))
                 </Template>
             </RadzenDataGridColumn>
             <RadzenDataGridColumn Visible="UIDisplay.File" Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Width="7em" TItem="Project" Property="@nameof(Project.Task.FileSize)" Title="@L.S(S.FileSize)">
@@ -206,10 +206,8 @@
         }
     }
 
-    private void OpenNewDialog()
-    {
-        DialogService.Open<ProjectNewOrUpdate>(L.S(S.OrgNewProject), new (){{"OrgId", OrgId}, {"Session", Session}});
-    }
+    private async Task OpenNewDialog()
+        => await DialogService.OpenAsync<ProjectNewOrUpdate>(L.S(S.OrgNewProject), new (){{"OrgId", OrgId}, {"Session", Session}});
 
     private void RowClick(DataGridRowMouseEventArgs<Project> e)
     {

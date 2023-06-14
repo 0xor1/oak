@@ -209,6 +209,7 @@ public static partial class S
         { DaysPerWeek, new("Jours par semaine") },
         { StartOn, new("Démarrer") },
         { EndOn, new("Fin le") },
+        { Note, new("Note") },
         { TimeMin, new("Durée min.") },
         { TimeEst, new("Temps estimée.") },
         { TimeInc, new("Temps engagé") },
@@ -249,6 +250,16 @@ public static partial class S
                 "<p>Êtes-vous sûr de vouloir supprimer la tâche <strong>{{Name}}</strong>?</p><p>Cette opération est irréversible.</p>"
             )
         },
-        { TaskMovingTask, new("Tâche de déplacement: <strong>{{Name}}</strong>") }
+        { TaskMovingTask, new("Tâche de déplacement: <strong>{{Name}}</strong>") },
+        { TaskNewTime, new("Nouvelle heure") },
+        { TaskNewCost, new("Nouveau coût") },
+        { TaskUpdateTime, new("Temps de mise à jour") },
+        { TaskUpdateCost, new("Coût de mise à jour") },
+        { TaskNoTimes, new("Pas de temps") },
+        { TaskNoCosts, new("Aucun frais") },
+        {
+            TaskConfirmDeleteVItem,
+            new("<p>Êtes-vous sûr de vouloir supprimer <strong>{{Valeur}}</strong>?</p>")
+        }
     };
 }

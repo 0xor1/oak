@@ -73,10 +73,8 @@
         }
     }
 
-    private void OpenNewDialog()
-    {
-        DialogService.Open<OrgNewOrUpdate>(L.S(S.OrgNewOrg));
-    }
+    private async Task OpenNewDialog() 
+        => await DialogService.OpenAsync<OrgNewOrUpdate>(L.S(S.OrgNewOrg));
 
     private void RowClick(DataGridRowMouseEventArgs<Org> e)
     {

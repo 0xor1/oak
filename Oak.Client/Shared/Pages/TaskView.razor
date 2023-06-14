@@ -71,7 +71,7 @@
                                                         <RadzenButton @onclick:stopPropagation="true" Icon="keyboard_arrow_down" ButtonStyle="ButtonStyle.Success" Size="ButtonSize.ExtraSmall" Click="_ => CreateAfter(t)"/>
                                                         <RadzenButton @onclick:stopPropagation="true" Icon="edit" ButtonStyle="ButtonStyle.Info" Size="ButtonSize.ExtraSmall" Click="_ => Update(t)"/>
                                                         <RadzenButton @onclick:stopPropagation="true" Disabled="@(t.Project == t.Id)" Icon="open_with" ButtonStyle="ButtonStyle.Secondary" Size="ButtonSize.ExtraSmall" Click="_ => Pickup(t)"/>
-                                                        <RadzenButton @onclick:stopPropagation="true" Icon="delete" ButtonStyle="ButtonStyle.Danger" Size="ButtonSize.ExtraSmall" Disabled="!UICtx.CanDeleteTask(t)" Click="_ => Delete(t)"/>
+                                                        <RadzenButton @onclick:stopPropagation="true" Icon="delete" ButtonStyle="ButtonStyle.Danger" Size="ButtonSize.ExtraSmall" Disabled="!UICtx.CanDeleteTask" Click="_ => Delete(t)"/>
                                                     }
                                                     else
                                                     {
@@ -91,27 +91,27 @@
                                 </RadzenDataGridColumn>
                                 <RadzenDataGridColumn Visible="UIDisplay.Time" TextAlign="TextAlign.Center" Width="7em" TItem="ATask" Property="@nameof(ATask.TimeSubMin)" Title="@L.S(S.TimeMin)">
                                     <Template Context="t">
-                                        @(Util.Time(t.TimeEst + t.TimeSubMin, UICtx.Project.HoursPerDay, UICtx.Project.DaysPerWeek))
+                                        @(Util.Duration(UICtx.Project, t.TimeEst + t.TimeSubMin))
                                     </Template>
                                 </RadzenDataGridColumn>
                                 <RadzenDataGridColumn Visible="UIDisplay.Time" TextAlign="TextAlign.Center" Width="7em" TItem="ATask" Property="@nameof(ATask.TimeEst)" Title="@L.S(S.TimeEst)">
                                     <Template Context="t">
-                                        @(Util.Time(t.TimeEst + t.TimeSubEst, UICtx.Project.HoursPerDay, UICtx.Project.DaysPerWeek))
+                                        @(Util.Duration(UICtx.Project, t.TimeEst + t.TimeSubEst))
                                     </Template>
                                 </RadzenDataGridColumn>
                                 <RadzenDataGridColumn Visible="UIDisplay.Time" TextAlign="TextAlign.Center" Width="7em" TItem="ATask" Property="@nameof(ATask.TimeInc)" Title="@L.S(S.TimeInc)">
                                     <Template Context="t">
-                                        @(Util.Time(t.TimeInc + t.TimeSubInc, UICtx.Project.HoursPerDay, UICtx.Project.DaysPerWeek))
+                                        @(Util.Duration(UICtx.Project, t.TimeInc + t.TimeSubInc))
                                     </Template>
                                 </RadzenDataGridColumn>
                                 <RadzenDataGridColumn Visible="UIDisplay.Cost" TextAlign="TextAlign.Center" Width="7em" TItem="ATask" Property="@nameof(ATask.CostEst)" Title="@L.S(S.CostEst)">
                                     <Template Context="t">
-                                        @(Util.Cost(UICtx.Project, t.CostEst + t.CostSubEst, UICtx.Project.CurrencySymbol))
+                                        @(Util.Cost(UICtx.Project, t.CostEst + t.CostSubEst))
                                     </Template>
                                 </RadzenDataGridColumn>
                                 <RadzenDataGridColumn Visible="UIDisplay.Cost" TextAlign="TextAlign.Center" Width="7em" TItem="ATask" Property="@nameof(ATask.CostInc)" Title="@L.S(S.CostInc)">
                                     <Template Context="t">
-                                        @(Util.Cost(UICtx.Project, t.CostInc + t.CostSubInc, UICtx.Project.CurrencySymbol))
+                                        @(Util.Cost(UICtx.Project, t.CostInc + t.CostSubInc))
                                     </Template>
                                 </RadzenDataGridColumn>
                                 <RadzenDataGridColumn Visible="UIDisplay.File" Sortable="false" TextAlign="TextAlign.Center" Width="7em" TItem="ATask" Property="@nameof(ATask.FileSize)" Title="@L.S(S.FileSize)">

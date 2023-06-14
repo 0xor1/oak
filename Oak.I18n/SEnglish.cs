@@ -185,6 +185,7 @@ public static partial class S
         { DaysPerWeek, new("Days per Week") },
         { StartOn, new("Start On") },
         { EndOn, new("End On") },
+        { Note, new("Note") },
         { TimeMin, new("Time Min.") },
         { TimeEst, new("Time Est.") },
         { TimeInc, new("Time Inc.") },
@@ -225,6 +226,16 @@ public static partial class S
                 "<p>Are you sure you want to delete the task <strong>{{Name}}</strong>?</p><p>This can not be undone.</p>"
             )
         },
-        { TaskMovingTask, new("Moving Task: <strong>{{Name}}</strong>") }
+        { TaskMovingTask, new("Moving Task: <strong>{{Name}}</strong>") },
+        { TaskNewTime, new("New Time") },
+        { TaskNewCost, new("New Cost") },
+        { TaskUpdateTime, new("Update Time") },
+        { TaskUpdateCost, new("Update Cost") },
+        { TaskNoTimes, new("No Times") },
+        { TaskNoCosts, new("No Costs") },
+        {
+            TaskConfirmDeleteVItem,
+            new("<p>Are you sure you want to delete <strong>{{Value}}</strong>?</p>")
+        }
     };
 }
