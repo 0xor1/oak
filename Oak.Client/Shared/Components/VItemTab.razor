@@ -4,7 +4,6 @@
 @using Oak.Api
 @using Oak.I18n
 <div class="flx col jc-s ai-s g-0t w-100 mw-100">
-    
     <RadzenButton class="m-b-1" ButtonStyle="ButtonStyle.Success" Icon="add_circle_outline" Text="@L.S(S.New)" Click="@OpenNewDialog"/>
     <RadzenDataGrid
         @ref="_grid"
@@ -32,7 +31,7 @@
                     </div>
                 </Template>
             </RadzenDataGridColumn>
-            <RadzenDataGridColumn TextAlign="TextAlign.Center" Width="7em" TItem="VItem" Property="@nameof(VItem.Inc)" Title="@L.S(S.TimeInc)">
+            <RadzenDataGridColumn TextAlign="TextAlign.Center" Width="7em" TItem="VItem" Property="@nameof(VItem.Inc)" Title="@L.S(Type == VItemType.Time? S.TimeInc: S.CostInc)">
                 <Template Context="i">
                     @Fmt(i)
                 </Template>
@@ -84,11 +83,11 @@
     }
 
     private async Task OpenNewDialog()
-        => await DialogService.OpenAsync</*VItemNewOrUpdate*/Projects>(L.S(Type == VItemType.Time? S.TaskNewTime : S.TaskNewCost), new (){{"UICtx", UICtx}, {"Type", Type}, /*{"OnCreated", OnCreated}*/});
+        => await DialogService.OpenAsync<VItemNewOrUpdate>(L.S(Type == VItemType.Time? S.TaskNewTime : S.TaskNewCost), new (){{"UICtx", UICtx}, {"Type", Type}, {"OnCreated", OnCreated}});
 
 
     private async Task Update(VItem i)
-        => await DialogService.OpenAsync</*VItemNewOrUpdate*/Projects>(L.S(Type == VItemType.Time? S.TaskUpdateTime : S.TaskUpdateCost), new (){{"UICtx", UICtx}, {"Type", Type}, /*{"OnUpdated", OnUpdated}*/});
+        => await DialogService.OpenAsync<VItemNewOrUpdate>(L.S(Type == VItemType.Time? S.TaskUpdateTime : S.TaskUpdateCost), new (){{"UICtx", UICtx}, {"Type", Type}, {"OnUpdated", OnUpdated}});
 
 
     private async Task Delete(VItem i)
@@ -101,6 +100,16 @@
             await _grid.Reload();
             // todo pass updated parent task back to parent component so it can update TheTask
         }
+    }
+
+    private async Task OnCreated(VItemRes res)
+    {
+        await Task.CompletedTask;
+    }
+
+    private async Task OnUpdated(VItemRes res)
+    {
+        await Task.CompletedTask;
     }
 
     private RadzenDataGrid<VItem> _grid;

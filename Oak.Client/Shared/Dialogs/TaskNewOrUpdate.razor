@@ -1,6 +1,5 @@
 ﻿@using Common.Client
 @using Common.Shared
-@using Oak.Api.OrgMember
 @using Oak.Api.ProjectMember
 @using Oak.Api.Task
 @using Oak.Client.Lib
@@ -37,7 +36,7 @@
         </div>
         <div class="flx col ai-stretch">
             <RadzenLabel class="m-b-0q" Component="CostEst" Text="@L.S(S.CostEst)"/>
-            <CurrencyInput Name="CostEst" Project="UICtx.Project" @bind-Value="_model.CostEst"/>
+            <CurrencyInput Name="CostEst" UICtx="UICtx" @bind-Value="_model.CostEst"/>
         </div>
         <div class="flx g-0h jc-stretch">
             <RadzenButton ButtonType="ButtonType.Submit" IsBusy="_doing" Text="@(UpdateTask != null? L.S(S.Update): L.S(S.Create))"/>

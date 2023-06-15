@@ -1,0 +1,109 @@
+﻿@using Common.Client
+@using Common.Shared
+@using Oak.Api
+@using Oak.Api.VItem
+@using Oak.Client.Lib
+@using S = Oak.I18n.S
+<div class="root col">
+    <RadzenTemplateForm
+        TItem="Model"
+        Data="_model"
+        Submit="Do"
+        class="flx col ai-stretch g-1">
+        <div class="flx col ai-stretch">
+            <RadzenLabel class="m-b-0q" Component="Note" Text="@L.S(S.Note)"/>
+            <RadzenTextBox Name="Note" @bind-Value="@_model.Note"/>
+            <RadzenRequiredValidator Component="OrgName" Popup="true" Text="@L.S(S.Required)"></RadzenRequiredValidator>
+        </div>
+        <div class="flx col ai-stretch">
+            <RadzenLabel class="m-b-0q" Component="Inc" Text="@L.S(InternalType == VItemType.Time? S.TimeInc: S.CostInc)"/>
+            @if (InternalType == VItemType.Time)
+            {
+                <DurationInput Name="Inc" UICtx="UICtx" @bind-Value="_model.Inc"/>
+            }
+            else
+            {
+                <CurrencyInput Name="Inc" UICtx="UICtx" @bind-Value="_model.Inc"/>
+            }
+        </div>
+        <div class="flx g-0h jc-stretch">
+            <RadzenButton ButtonType="ButtonType.Submit" IsBusy="_doing" Text="@(UpdateVItem != null? L.S(S.Update): L.S(S.Create))"/>
+            <RadzenButton ButtonStyle="ButtonStyle.Secondary" IsBusy="_doing" Text="@L.S(S.Cancel)" Click="@(_ => DialogService.Close())"/>
+        </div>
+    </RadzenTemplateForm>
+</div>
+
+@inject L L;
+@inject IApi Api;
+@inject DialogService DialogService;
+@code {
+    
+    [Parameter]
+    public UICtx UICtx { get; set; }
+
+    [Parameter]
+    public VItemType? Type { get; set; }
+    
+    [Parameter]
+    public VItem? UpdateVItem { get; set; }
+
+    [Parameter]
+    public Func<VItemRes, Task>? OnCreated { get; set; }
+
+    [Parameter]
+    public Func<VItemRes, Task>? OnUpdated { get; set; }
+
+    private VItemType InternalType => Type ?? UpdateVItem.NotNull().Type;
+
+    public class Model
+    {
+        public string Note { get; set; } = "";
+        public ulong Inc { get; set; }
+    }
+
+    Model _model = new();
+    private bool _doing;
+
+    protected override Task OnInitializedAsync()
+    {
+        if (UpdateVItem != null)
+        {
+            _model.Note = UpdateVItem.Note;
+            _model.Inc = UpdateVItem.Inc;
+        }
+        return Task.CompletedTask;
+    }
+    
+    private async Task Do()
+    {
+        _doing = true;
+        try
+        {
+            if (UpdateVItem == null)
+            {
+                var res = await Api.VItem.Create(new(UICtx.Org.Id, UICtx.Project.Id, UICtx.Task.Id, Type.NotNull(), null, _model.Inc, _model.Note));
+                if (OnCreated != null)
+                {
+                    await OnCreated(res);
+                }
+            }
+            else
+            {
+                var res = await Api.VItem.Update(new(UpdateVItem.Org, UpdateVItem.Project, UpdateVItem.Task, UpdateVItem.Type, UpdateVItem.Id, _model.Inc, _model.Note));
+                if (OnUpdated != null)
+                {
+                    await OnUpdated(res);
+                }
+            }
+            DialogService.Close();
+        }
+        catch
+        {
+            // use empty catch to avoid having to
+            // call StatHasChanged on errors
+        }
+        _doing = false;
+        
+    }
+
+}

@@ -21,7 +21,7 @@ else
 
     [Parameter]
     [EditorRequired]
-    public Project Project { get; set; } = default!;
+    public UICtx UICtx { get; set; } = default!;
     
     [Parameter]
     public ulong Value { get; set; }
@@ -29,7 +29,7 @@ else
     [Parameter]
     public EventCallback<ulong> ValueChanged { get; set; }
 
-    private CurrencyPicker.Currency Currency => CurrencyPicker.Currencies.Single(x => x.Code == Project.CurrencyCode);
+    private CurrencyPicker.Currency Currency => CurrencyPicker.Currencies.Single(x => x.Code == UICtx.Project.CurrencyCode);
 
     private decimal InternalVal { get; set; }
     
