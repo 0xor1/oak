@@ -13,7 +13,7 @@
         <div class="flx col ai-stretch">
             <RadzenLabel class="m-b-0q" Component="Note" Text="@L.S(S.Note)"/>
             <RadzenTextBox Name="Note" @bind-Value="@_model.Note"/>
-            <RadzenRequiredValidator Component="OrgName" Popup="true" Text="@L.S(S.Required)"></RadzenRequiredValidator>
+            <RadzenRequiredValidator Component="Note" Popup="true" Text="@L.S(S.Required)"></RadzenRequiredValidator>
         </div>
         <div class="flx col ai-stretch">
             <RadzenLabel class="m-b-0q" Component="Inc" Text="@L.S(InternalType == VItemType.Time? S.TimeInc: S.CostInc)"/>

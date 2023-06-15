@@ -143,10 +143,10 @@
                         }
                     </RadzenTabsItem>
                     <RadzenTabsItem Text="@L.S(S.Time)" Visible="UIDisplay.Time">
-                        <VItemTab Type="VItemType.Time" UICtx="UICtx"></VItemTab>
+                        <VItemTab Type="VItemType.Time" UICtx="UICtx" OnChange="OnSubItemChange"></VItemTab>
                     </RadzenTabsItem>
                     <RadzenTabsItem Text="@L.S(S.Cost)" Visible="UIDisplay.Cost">
-                        <VItemTab Type="VItemType.Cost" UICtx="UICtx"></VItemTab>
+                        <VItemTab Type="VItemType.Cost" UICtx="UICtx" OnChange="OnSubItemChange"></VItemTab>
                     </RadzenTabsItem>
                     <RadzenTabsItem Text="@L.S(S.File)" Visible="UIDisplay.File">
                         <RadzenText TextStyle="TextStyle.Body1" Text="TODO FILE"></RadzenText>
@@ -416,6 +416,12 @@
                 await _grid.Reload();
             }
         }
+    }
+
+    private async Task OnSubItemChange(ATask t)
+    {
+        TheTask = t;
+        Items[0] = t;
     }
 
 }

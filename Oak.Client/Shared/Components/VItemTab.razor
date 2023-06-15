@@ -3,6 +3,7 @@
 @using Common.Client
 @using Oak.Api
 @using Oak.I18n
+@using ATask = Oak.Api.Task.Task;
 <div class="flx col jc-s ai-s g-0t w-100 mw-100">
     <RadzenButton class="m-b-1" ButtonStyle="ButtonStyle.Success" Icon="add_circle_outline" Text="@L.S(S.New)" Click="@OpenNewDialog"/>
     <RadzenDataGrid
@@ -59,6 +60,10 @@
     [EditorRequired]
     public UICtx UICtx { get; set; }
 
+    [Parameter]
+    [EditorRequired]
+    public Func<ATask, Task> OnChange { get; set; }
+
     private int Count => Items.Count;
     private List<VItem> Items { get; set; } = new();
     private bool _isLoading = false;
@@ -79,6 +84,10 @@
 
     protected override async Task OnParametersSetAsync()
     {
+        Items.Clear();
+        var res = await Api.VItem.Get(new(UICtx.Org.Id, UICtx.Project.Id, Type, UICtx.Task.Id));
+        Items.AddRange(res.Set);
+        await _grid.Reload();
         await base.OnParametersSetAsync();
     }
 
@@ -98,18 +107,23 @@
             var parent = await Api.VItem.Delete(new(i.Org, i.Project, i.Task, i.Type, i.Id));
             Items.Remove(i);
             await _grid.Reload();
-            // todo pass updated parent task back to parent component so it can update TheTask
+            await OnChange(parent);
         }
     }
 
     private async Task OnCreated(VItemRes res)
     {
-        await Task.CompletedTask;
+        Items.Add(res.Item);
+        await _grid.Reload();
+        await OnChange(res.Task);
     }
 
     private async Task OnUpdated(VItemRes res)
     {
-        await Task.CompletedTask;
+        var i = Items.FindIndex(x => x.Id == res.Item.Id);
+        Items[i] = res.Item;
+        await _grid.Reload();
+        await OnChange(res.Task);
     }
 
     private RadzenDataGrid<VItem> _grid;
