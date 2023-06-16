@@ -53,52 +53,52 @@
                     <BoolDataGridFilter @bind-Value="@IsPublic" />
                 </FilterTemplate>
             </RadzenDataGridColumn>
-            <RadzenDataGridColumn Visible="UIDisplay.User" Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Width="10em" TItem="Project" Property="@nameof(Project.Task.User)" Title="@L.S(S.User)">
+            <RadzenDataGridColumn Visible="Ctx.Display.User" Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Width="10em" TItem="Project" Property="@nameof(Project.Task.User)" Title="@L.S(S.User)">
                 <Template Context="p">
                     <User OrgId="@p.Org" UserId="@p.Task.User"/>
                 </Template>
             </RadzenDataGridColumn>
-            <RadzenDataGridColumn Visible="UIDisplay.Time" Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Width="7em" TItem="Project" Property="@nameof(Project.Task.TimeSubMin)" Title="@L.S(S.TimeMin)">
+            <RadzenDataGridColumn Visible="Ctx.Display.Time" Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Width="7em" TItem="Project" Property="@nameof(Project.Task.TimeSubMin)" Title="@L.S(S.TimeMin)">
                 <Template Context="p">
                     @(Util.Duration(p, p.Task.TimeEst + p.Task.TimeSubMin))
                 </Template>
             </RadzenDataGridColumn>
-            <RadzenDataGridColumn Visible="UIDisplay.Time" Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Width="7em" TItem="Project" Property="@nameof(Project.Task.TimeEst)" Title="@L.S(S.TimeEst)">
+            <RadzenDataGridColumn Visible="Ctx.Display.Time" Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Width="7em" TItem="Project" Property="@nameof(Project.Task.TimeEst)" Title="@L.S(S.TimeEst)">
                 <Template Context="p">
                     @(Util.Duration(p, p.Task.TimeEst + p.Task.TimeSubEst))
                 </Template>
             </RadzenDataGridColumn>
-            <RadzenDataGridColumn Visible="UIDisplay.Time" Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Width="7em" TItem="Project" Property="@nameof(Project.Task.TimeInc)" Title="@L.S(S.TimeInc)">
+            <RadzenDataGridColumn Visible="Ctx.Display.Time" Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Width="7em" TItem="Project" Property="@nameof(Project.Task.TimeInc)" Title="@L.S(S.TimeInc)">
                 <Template Context="p">
                     @(Util.Duration(p, p.Task.TimeInc + p.Task.TimeSubInc))
                 </Template>
             </RadzenDataGridColumn>
-            <RadzenDataGridColumn Visible="UIDisplay.Cost" Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Width="7em" TItem="Project" Property="@nameof(Project.Task.CostEst)" Title="@L.S(S.CostEst)">
+            <RadzenDataGridColumn Visible="Ctx.Display.Cost" Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Width="7em" TItem="Project" Property="@nameof(Project.Task.CostEst)" Title="@L.S(S.CostEst)">
                 <Template Context="p">
                     @(Util.Cost(p, p.Task.CostEst + p.Task.CostSubEst))
                 </Template>
             </RadzenDataGridColumn>
-            <RadzenDataGridColumn Visible="UIDisplay.Cost" Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Width="7em" TItem="Project" Property="@nameof(Project.Task.CostInc)" Title="@L.S(S.CostInc)">
+            <RadzenDataGridColumn Visible="Ctx.Display.Cost" Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Width="7em" TItem="Project" Property="@nameof(Project.Task.CostInc)" Title="@L.S(S.CostInc)">
                 <Template Context="p">
                     @(Util.Cost(p, p.Task.CostInc + p.Task.CostSubInc))
                 </Template>
             </RadzenDataGridColumn>
-            <RadzenDataGridColumn Visible="UIDisplay.File" Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Width="7em" TItem="Project" Property="@nameof(Project.Task.FileSize)" Title="@L.S(S.FileSize)">
+            <RadzenDataGridColumn Visible="Ctx.Display.File" Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Width="7em" TItem="Project" Property="@nameof(Project.Task.FileSize)" Title="@L.S(S.FileSize)">
                 <Template Context="p">
                     @(Util.Size(p.Task.FileSize + p.Task.FileSubSize))
                 </Template>
             </RadzenDataGridColumn>
-            <RadzenDataGridColumn Visible="UIDisplay.File" Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Width="7em" TItem="Project" Property="@nameof(Project.Task.FileN)" Title="@L.S(S.FileN)">
+            <RadzenDataGridColumn Visible="Ctx.Display.File" Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Width="7em" TItem="Project" Property="@nameof(Project.Task.FileN)" Title="@L.S(S.FileN)">
                 <Template Context="p">
                     @(p.Task.FileN + p.Task.FileSubN)
                 </Template>
             </RadzenDataGridColumn>
-            <RadzenDataGridColumn Visible="UIDisplay.SubCounts" Sortable="false" Filterable="false" TextAlign="TextAlign.Center" Width="7em" TItem="Project" Property="@nameof(Project.Task.ChildN)" Title="@L.S(S.ChildN)">
+            <RadzenDataGridColumn Visible="Ctx.Display.SubCounts" Sortable="false" Filterable="false" TextAlign="TextAlign.Center" Width="7em" TItem="Project" Property="@nameof(Project.Task.ChildN)" Title="@L.S(S.ChildN)">
                 <Template Context="p">
                     @(p.Task.ChildN)
                 </Template>
             </RadzenDataGridColumn>
-            <RadzenDataGridColumn Visible="UIDisplay.SubCounts" Sortable="false" Filterable="false" TextAlign="TextAlign.Center" Width="7em" TItem="Project" Property="@nameof(Project.Task.DescN)" Title="@L.S(S.DescN)">
+            <RadzenDataGridColumn Visible="Ctx.Display.SubCounts" Sortable="false" Filterable="false" TextAlign="TextAlign.Center" Width="7em" TItem="Project" Property="@nameof(Project.Task.DescN)" Title="@L.S(S.DescN)">
                 <Template Context="p">
                     @(p.Task.DescN)
                 </Template>
@@ -119,7 +119,7 @@
                     <MinMaxDateDataGridFilter @bind-Value="@EndOn" />
                 </FilterTemplate>
             </RadzenDataGridColumn>
-            <RadzenDataGridColumn Visible="UIDisplay.CreatedOn" Sortable="true" TextAlign="TextAlign.Center" Width="10em" TItem="Project" Property="@nameof(Project.CreatedOn)" Title="@L.S(S.CreatedOn)" FilterValue="@CreatedOn">
+            <RadzenDataGridColumn Visible="Ctx.Display.CreatedOn" Sortable="true" TextAlign="TextAlign.Center" Width="10em" TItem="Project" Property="@nameof(Project.CreatedOn)" Title="@L.S(S.CreatedOn)" FilterValue="@CreatedOn">
                 <Template Context="p">
                     @L.D(p.CreatedOn)
                 </Template>
@@ -133,10 +133,9 @@
 
 @inject L L;
 @inject IApi Api;
-@inject UIDisplay UIDisplay;
 @inject NavigationManager Nav;
 @inject DialogService DialogService;
-@inject IUICtxService UICtx;
+@inject UICtx Ctx;
 @code{
 
     [CascadingParameter]
@@ -145,8 +144,6 @@
     [Parameter]
     [EditorRequired]
     public string OrgId { get; set; } = "";
-    
-    private UICtx Ctx { get; set; } = new ();
 
     private string? NameStartsWith { get; set; }
     private bool? IsPublic { get; set; }
@@ -163,27 +160,27 @@
         get
         {
             var width = 50;
-            if (UIDisplay.User)
+            if (Ctx.Display.User)
             {
                 width += 10;
             }
-            if (UIDisplay.Time)
+            if (Ctx.Display.Time)
             {
                 width += 21;
             }
-            if (UIDisplay.Cost)
+            if (Ctx.Display.Cost)
             {
                 width += 14;
             }
-            if (UIDisplay.File)
+            if (Ctx.Display.File)
             {
                 width += 14;
             }
-            if (UIDisplay.SubCounts)
+            if (Ctx.Display.SubCounts)
             {
                 width += 14;
             }
-            if (UIDisplay.CreatedOn)
+            if (Ctx.Display.CreatedOn)
             {
                 width += 7;
             }
@@ -196,7 +193,7 @@
         _isLoading = true;
         try
         {
-            Ctx = await UICtx.Get();
+            await Ctx.Reload();
             var res = await Api.Project.Get(new(OrgId));
             Items = res.Set.ToList();
         }

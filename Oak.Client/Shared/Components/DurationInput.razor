@@ -9,14 +9,12 @@
 </div>
 
 @inject L L;
+@inject UICtx Ctx;
 @implements IRadzenFormComponent
 @code {
 
     [Parameter]
     public string Name { get; set; } = "";
-    [Parameter]
-    [EditorRequired]
-    public UICtx UICtx { get; set; } = default!;
     [Parameter]
     public ulong Value { get; set; }
     [Parameter]
@@ -81,8 +79,8 @@
     private (ulong mph, ulong mpd, ulong mpw) getMinsPerUnit()
     {
         var mph = 60ul;
-        var mpd = UICtx.Project.HoursPerDay * mph;
-        var mpw = UICtx.Project.DaysPerWeek * mpd;
+        var mpd = Ctx.Project.HoursPerDay * mph;
+        var mpw = Ctx.Project.DaysPerWeek * mpd;
         return (mph, mpd, mpw);
     }
     

@@ -242,6 +242,7 @@ internal static class VItemEps
                                     t.CostInc -= vi.Inc;
                                     break;
                             }
+                            db.VItems.Remove(vi);
                             await db.SaveChangesAsync();
                             List<string>? ancestors = null;
                             if (t.Parent != null)

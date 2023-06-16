@@ -32,11 +32,11 @@
         </div>
         <div class="flx col ai-stretch">
             <RadzenLabel class="m-b-0q" Component="TimeEst" Text="@L.S(S.TimeEst)"/>
-            <DurationInput Name="TimeEst" UICtx="UICtx" @bind-Value="@_model.TimeEst"/>
+            <DurationInput Name="TimeEst" @bind-Value="@_model.TimeEst"/>
         </div>
         <div class="flx col ai-stretch">
             <RadzenLabel class="m-b-0q" Component="CostEst" Text="@L.S(S.CostEst)"/>
-            <CurrencyInput Name="CostEst" UICtx="UICtx" @bind-Value="_model.CostEst"/>
+            <CurrencyInput Name="CostEst" @bind-Value="_model.CostEst"/>
         </div>
         <div class="flx g-0h jc-stretch">
             <RadzenButton ButtonType="ButtonType.Submit" IsBusy="_doing" Text="@(UpdateTask != null? L.S(S.Update): L.S(S.Create))"/>
@@ -47,6 +47,7 @@
 
 @inject L L;
 @inject IApi Api;
+@inject UICtx Ctx;
 @inject DialogService DialogService;
 @inject IUserService UserService;
 @code {
@@ -71,10 +72,6 @@
 
     [Parameter]
     public Func<UpdateRes, Task>? OnUpdated { get; set; }
-
-    [Parameter]
-    [EditorRequired]
-    public UICtx UICtx { get; set; }
 
     private CurrencyPicker.Currency? Currency { get; set; }
 
@@ -102,7 +99,7 @@
             _model.TimeEst = UpdateTask.TimeEst;
             _model.CostEst = UpdateTask.CostEst;
         }
-        Currency = CurrencyPicker.Currencies.SingleOrDefault(x => x.Code == UICtx.Project.CurrencyCode);
+        Currency = CurrencyPicker.Currencies.SingleOrDefault(x => x.Code == Ctx.Project.CurrencyCode);
         await LoadProjectMembers(new());
     }
 

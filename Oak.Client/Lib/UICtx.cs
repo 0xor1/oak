@@ -13,14 +13,24 @@ using Task = Oak.Api.Task.Task;
 
 namespace Oak.Client.Lib;
 
-public record UICtx(
-    Org? Org = null,
-    OrgMember? OrgMember = null,
-    Project? Project = null,
-    ProjectMember? ProjectMember = null,
-    Task? Task = null
-)
+public partial class UICtx
 {
+    private readonly SemaphoreSlim _ss = new(1, 1);
+    private readonly IApi _api;
+    private readonly IAuthService _auth;
+    private readonly NavigationManager _nav;
+
+    public UIDisplay Display { get; init; } = new();
+
+    public string? OrgId { get; set; }
+    public string? ProjectId { get; set; }
+    public string? TaskId { get; set; }
+    public Org? Org { get; set; }
+    public OrgMember? OrgMember { get; set; }
+    public Project? Project { get; set; }
+    public ProjectMember? ProjectMember { get; set; }
+    public Task? Task { get; set; }
+
     public bool HasOrgOwnerPerm => OrgMember is { Role: OrgMemberRole.Owner, IsActive: true };
 
     public bool HasOrgAdminPerm => OrgMember is { Role: <= OrgMemberRole.Admin, IsActive: true };
@@ -60,37 +70,21 @@ public record UICtx(
 
     public bool CanDeleteOorUpdateComment(Comment c) =>
         HasProjectAdminPerm || (HasProjectWritePerm && c.CreatedBy == OrgMember.Id);
-}
 
-public interface IUICtxService
-{
-    Task<UICtx> Get();
-}
-
-public partial class UICtxService : IUICtxService
-{
-    private readonly SemaphoreSlim _ss = new(1, 1);
-    private readonly IApi _api;
-    private readonly IAuthService _auth;
-    private readonly NavigationManager _nav;
-
-    private string? OrgId { get; set; }
-    private string? ProjectId { get; set; }
-    private string? TaskId { get; set; }
-    private Org? Org { get; set; }
-    private OrgMember? OrgMember { get; set; }
-    private Project? Project { get; set; }
-    private ProjectMember? ProjectMember { get; set; }
-    private Task? Task { get; set; }
-
-    public UICtxService(IApi api, IAuthService auth, NavigationManager nav)
+    public UICtx(IApi api, IAuthService auth, NavigationManager nav)
     {
         _api = api;
         _auth = auth;
         _nav = nav;
     }
 
-    public async Task<UICtx> Get()
+    public void TaskUpdated(Task t)
+    {
+        Throw.DataIf(t.Id != Task?.Id, "TaskUpdated called on different task");
+        Task = t;
+    }
+
+    public async System.Threading.Tasks.Task Reload()
     {
         await _ss.WaitAsync();
         try
@@ -157,8 +151,6 @@ public partial class UICtxService : IUICtxService
         {
             _ss.Release();
         }
-
-        return new(Org, OrgMember, Project, ProjectMember, Task);
     }
 
     private (string? orgId, string? projectId, string? taskId) GetIdsFromUrl()

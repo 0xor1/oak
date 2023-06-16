@@ -57,27 +57,27 @@
                         <RadzenPanelMenuItem class="d-none"/>
                         <div class="flx col p-0t p-l-4 g-0t">
                             <div class="flx g-0h">
-                                <RadzenCheckBox Name="User" TValue="bool" @bind-Value="UIDisplay.User"/>
+                                <RadzenCheckBox Name="User" TValue="bool" @bind-Value="Ctx.Display.User"/>
                                 <RadzenLabel Component="User">@L.S(S.User)</RadzenLabel>
                             </div>
                             <div class="flx g-0h">
-                                <RadzenCheckBox Name="Time" TValue="bool" @bind-Value="UIDisplay.Time"/>
+                                <RadzenCheckBox Name="Time" TValue="bool" @bind-Value="Ctx.Display.Time"/>
                                 <RadzenLabel Component="Time">@L.S(S.Time)</RadzenLabel>
                             </div>
                             <div class="flx g-0h">
-                                <RadzenCheckBox Name="Cost" TValue="bool" @bind-Value="UIDisplay.Cost"/>
+                                <RadzenCheckBox Name="Cost" TValue="bool" @bind-Value="Ctx.Display.Cost"/>
                                 <RadzenLabel Component="Cost">@L.S(S.Cost)</RadzenLabel>
                             </div>
                             <div class="flx g-0h">
-                                <RadzenCheckBox Name="File" TValue="bool" @bind-Value="UIDisplay.File"/>
+                                <RadzenCheckBox Name="File" TValue="bool" @bind-Value="Ctx.Display.File"/>
                                 <RadzenLabel Component="File">@L.S(S.File)</RadzenLabel>
                             </div>
                             <div class="flx g-0h">
-                                <RadzenCheckBox Name="SubCounts" TValue="bool" @bind-Value="UIDisplay.SubCounts"/>
+                                <RadzenCheckBox Name="SubCounts" TValue="bool" @bind-Value="Ctx.Display.SubCounts"/>
                                 <RadzenLabel Component="SubCounts">@L.S(S.SubCounts)</RadzenLabel>
                             </div>
                             <div class="flx g-0h">
-                                <RadzenCheckBox Name="CreatedOn" TValue="bool" @bind-Value="UIDisplay.CreatedOn"/>
+                                <RadzenCheckBox Name="CreatedOn" TValue="bool" @bind-Value="Ctx.Display.CreatedOn"/>
                                 <RadzenLabel Component="CreatedOn">@L.S(S.CreatedOn)</RadzenLabel>
                             </div>
                         </div>
@@ -107,10 +107,10 @@
 @using Common.Shared.Auth
 @using Oak.Client.Lib
 @inherits LayoutComponentBase
-@inject IAuthService Auth;
-@inject UIDisplay UIDisplay;
-@inject L L;
-@implements IDisposable;
+@inject IAuthService Auth
+@inject L L
+@inject UICtx Ctx
+@implements IDisposable
 @code{
 
     private bool _leftExpanded;

@@ -15,15 +15,29 @@
             <RadzenTextBox Name="Note" @bind-Value="@_model.Note"/>
             <RadzenRequiredValidator Component="Note" Popup="true" Text="@L.S(S.Required)"></RadzenRequiredValidator>
         </div>
+        @if (UpdateVItem == null)
+        {
+            <div class="flx col ai-stretch">
+                <RadzenLabel class="m-b-0q" Component="Est" Text="@L.S(InternalType == VItemType.Time ? S.TimeEst : S.CostEst)"/>
+                @if (InternalType == VItemType.Time)
+                {
+                    <DurationInput Name="Est" @bind-Value="_model.Est"/>
+                }
+                else
+                {
+                    <CurrencyInput Name="Est" @bind-Value="_model.Est"/>
+                }
+            </div>
+        }
         <div class="flx col ai-stretch">
             <RadzenLabel class="m-b-0q" Component="Inc" Text="@L.S(InternalType == VItemType.Time? S.TimeInc: S.CostInc)"/>
             @if (InternalType == VItemType.Time)
             {
-                <DurationInput Name="Inc" UICtx="UICtx" @bind-Value="_model.Inc"/>
+                <DurationInput Name="Inc" @bind-Value="_model.Inc"/>
             }
             else
             {
-                <CurrencyInput Name="Inc" UICtx="UICtx" @bind-Value="_model.Inc"/>
+                <CurrencyInput Name="Inc" @bind-Value="_model.Inc"/>
             }
         </div>
         <div class="flx g-0h jc-stretch">
@@ -35,11 +49,9 @@
 
 @inject L L;
 @inject IApi Api;
+@inject UICtx Ctx;
 @inject DialogService DialogService;
 @code {
-    
-    [Parameter]
-    public UICtx UICtx { get; set; }
 
     [Parameter]
     public VItemType? Type { get; set; }
@@ -58,6 +70,7 @@
     public class Model
     {
         public string Note { get; set; } = "";
+        public ulong Est { get; set; }
         public ulong Inc { get; set; }
     }
 
@@ -71,6 +84,7 @@
             _model.Note = UpdateVItem.Note;
             _model.Inc = UpdateVItem.Inc;
         }
+        _model.Est = InternalType == VItemType.Time ? Ctx.Task.TimeEst : Ctx.Task.CostEst;
         return Task.CompletedTask;
     }
     
@@ -81,7 +95,7 @@
         {
             if (UpdateVItem == null)
             {
-                var res = await Api.VItem.Create(new(UICtx.Org.Id, UICtx.Project.Id, UICtx.Task.Id, Type.NotNull(), null, _model.Inc, _model.Note));
+                var res = await Api.VItem.Create(new(Ctx.OrgId, Ctx.ProjectId, Ctx.TaskId, Type.NotNull(), _model.Est, _model.Inc, _model.Note));
                 if (OnCreated != null)
                 {
                     await OnCreated(res);

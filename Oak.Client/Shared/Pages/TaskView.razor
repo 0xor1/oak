@@ -19,7 +19,7 @@
                 <RadzenLink Path="@($"/org/{a.Org}/project/{a.Project}/task/{a.Id}")" class="ellip m-y-0h">@a.Name</RadzenLink>
                 <span>></span>
             }
-            <RadzenLink Path="@($"/org/{OrgId}/projects")" class="ellip m-y-0h">@UICtx.Org.Name</RadzenLink>
+            <RadzenLink Path="@($"/org/{OrgId}/projects")" class="ellip m-y-0h">@Ctx.Org.Name</RadzenLink>
         </div>
         @if (MovingTask != null)
         {
@@ -63,7 +63,7 @@
                                                 <RadzenImage title="@L.S(S.Sequential)" class="w-1h" Path="/image/seq.svg"></RadzenImage>
                                             }
                                             <span title="@($"{t.Name}\n\n{t.Description}")" class="shrink-1 ellip">@t.Name</span>
-                                            @if (UICtx.HasProjectWritePerm)
+                                            @if (Ctx.HasProjectWritePerm)
                                             {
                                                 <div class="flx g-0q p-abs show-on-row-mouse-over" style="right: -1em;">
                                                     @if (MovingTask == null)
@@ -71,7 +71,7 @@
                                                         <RadzenButton @onclick:stopPropagation="true" Icon="keyboard_arrow_down" ButtonStyle="ButtonStyle.Success" Size="ButtonSize.ExtraSmall" Click="_ => CreateAfter(t)"/>
                                                         <RadzenButton @onclick:stopPropagation="true" Icon="edit" ButtonStyle="ButtonStyle.Info" Size="ButtonSize.ExtraSmall" Click="_ => Update(t)"/>
                                                         <RadzenButton @onclick:stopPropagation="true" Disabled="@(t.Project == t.Id)" Icon="open_with" ButtonStyle="ButtonStyle.Secondary" Size="ButtonSize.ExtraSmall" Click="_ => Pickup(t)"/>
-                                                        <RadzenButton @onclick:stopPropagation="true" Icon="delete" ButtonStyle="ButtonStyle.Danger" Size="ButtonSize.ExtraSmall" Disabled="!UICtx.CanDeleteTask" Click="_ => Delete(t)"/>
+                                                        <RadzenButton @onclick:stopPropagation="true" Icon="delete" ButtonStyle="ButtonStyle.Danger" Size="ButtonSize.ExtraSmall" Disabled="!Ctx.CanDeleteTask" Click="_ => Delete(t)"/>
                                                     }
                                                     else
                                                     {
@@ -84,49 +84,49 @@
                                         </div>
                                     </Template>
                                 </RadzenDataGridColumn>
-                                <RadzenDataGridColumn Visible="UIDisplay.User" Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Width="10em" TItem="ATask" Property="@nameof(ATask.User)" Title="@L.S(S.User)">
+                                <RadzenDataGridColumn Visible="Ctx.Display.User" Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Width="10em" TItem="ATask" Property="@nameof(ATask.User)" Title="@L.S(S.User)">
                                     <Template Context="t">
                                         <User OrgId="@t.Org" UserId="@t.User"/>
                                     </Template>
                                 </RadzenDataGridColumn>
-                                <RadzenDataGridColumn Visible="UIDisplay.Time" TextAlign="TextAlign.Center" Width="7em" TItem="ATask" Property="@nameof(ATask.TimeSubMin)" Title="@L.S(S.TimeMin)">
+                                <RadzenDataGridColumn Visible="Ctx.Display.Time" TextAlign="TextAlign.Center" Width="7em" TItem="ATask" Property="@nameof(ATask.TimeSubMin)" Title="@L.S(S.TimeMin)">
                                     <Template Context="t">
-                                        @(Util.Duration(UICtx.Project, t.TimeEst + t.TimeSubMin))
+                                        @(Util.Duration(Ctx.Project, t.TimeEst + t.TimeSubMin))
                                     </Template>
                                 </RadzenDataGridColumn>
-                                <RadzenDataGridColumn Visible="UIDisplay.Time" TextAlign="TextAlign.Center" Width="7em" TItem="ATask" Property="@nameof(ATask.TimeEst)" Title="@L.S(S.TimeEst)">
+                                <RadzenDataGridColumn Visible="Ctx.Display.Time" TextAlign="TextAlign.Center" Width="7em" TItem="ATask" Property="@nameof(ATask.TimeEst)" Title="@L.S(S.TimeEst)">
                                     <Template Context="t">
-                                        @(Util.Duration(UICtx.Project, t.TimeEst + t.TimeSubEst))
+                                        @(Util.Duration(Ctx.Project, t.TimeEst + t.TimeSubEst))
                                     </Template>
                                 </RadzenDataGridColumn>
-                                <RadzenDataGridColumn Visible="UIDisplay.Time" TextAlign="TextAlign.Center" Width="7em" TItem="ATask" Property="@nameof(ATask.TimeInc)" Title="@L.S(S.TimeInc)">
+                                <RadzenDataGridColumn Visible="Ctx.Display.Time" TextAlign="TextAlign.Center" Width="7em" TItem="ATask" Property="@nameof(ATask.TimeInc)" Title="@L.S(S.TimeInc)">
                                     <Template Context="t">
-                                        @(Util.Duration(UICtx.Project, t.TimeInc + t.TimeSubInc))
+                                        @(Util.Duration(Ctx.Project, t.TimeInc + t.TimeSubInc))
                                     </Template>
                                 </RadzenDataGridColumn>
-                                <RadzenDataGridColumn Visible="UIDisplay.Cost" TextAlign="TextAlign.Center" Width="7em" TItem="ATask" Property="@nameof(ATask.CostEst)" Title="@L.S(S.CostEst)">
+                                <RadzenDataGridColumn Visible="Ctx.Display.Cost" TextAlign="TextAlign.Center" Width="7em" TItem="ATask" Property="@nameof(ATask.CostEst)" Title="@L.S(S.CostEst)">
                                     <Template Context="t">
-                                        @(Util.Cost(UICtx.Project, t.CostEst + t.CostSubEst))
+                                        @(Util.Cost(Ctx.Project, t.CostEst + t.CostSubEst))
                                     </Template>
                                 </RadzenDataGridColumn>
-                                <RadzenDataGridColumn Visible="UIDisplay.Cost" TextAlign="TextAlign.Center" Width="7em" TItem="ATask" Property="@nameof(ATask.CostInc)" Title="@L.S(S.CostInc)">
+                                <RadzenDataGridColumn Visible="Ctx.Display.Cost" TextAlign="TextAlign.Center" Width="7em" TItem="ATask" Property="@nameof(ATask.CostInc)" Title="@L.S(S.CostInc)">
                                     <Template Context="t">
-                                        @(Util.Cost(UICtx.Project, t.CostInc + t.CostSubInc))
+                                        @(Util.Cost(Ctx.Project, t.CostInc + t.CostSubInc))
                                     </Template>
                                 </RadzenDataGridColumn>
-                                <RadzenDataGridColumn Visible="UIDisplay.File" Sortable="false" TextAlign="TextAlign.Center" Width="7em" TItem="ATask" Property="@nameof(ATask.FileSize)" Title="@L.S(S.FileSize)">
+                                <RadzenDataGridColumn Visible="Ctx.Display.File" Sortable="false" TextAlign="TextAlign.Center" Width="7em" TItem="ATask" Property="@nameof(ATask.FileSize)" Title="@L.S(S.FileSize)">
                                     <Template Context="t">
                                         @(Util.Size(t.FileSize + t.FileSubSize))
                                     </Template>
                                 </RadzenDataGridColumn>
-                                <RadzenDataGridColumn Visible="UIDisplay.File" Sortable="false" TextAlign="TextAlign.Center" Width="7em" TItem="ATask" Property="@nameof(ATask.FileN)" Title="@L.S(S.FileN)">
+                                <RadzenDataGridColumn Visible="Ctx.Display.File" Sortable="false" TextAlign="TextAlign.Center" Width="7em" TItem="ATask" Property="@nameof(ATask.FileN)" Title="@L.S(S.FileN)">
                                     <Template Context="t">
                                         @(t.FileN + t.FileSubN)
                                     </Template>
                                 </RadzenDataGridColumn>
-                                <RadzenDataGridColumn Visible="UIDisplay.SubCounts" Sortable="false" TextAlign="TextAlign.Center" Width="7em" TItem="ATask" Property="@nameof(ATask.ChildN)" Title="@L.S(S.ChildN)"/>
-                                <RadzenDataGridColumn Visible="UIDisplay.SubCounts" Sortable="false" TextAlign="TextAlign.Center" Width="7em" TItem="ATask" Property="@nameof(ATask.DescN)" Title="@L.S(S.DescN)"/>
-                                <RadzenDataGridColumn Visible="UIDisplay.CreatedOn" TextAlign="TextAlign.Center" Width="10em" TItem="ATask" Property="@nameof(ATask.CreatedOn)" Title="@L.S(S.CreatedOn)">
+                                <RadzenDataGridColumn Visible="Ctx.Display.SubCounts" Sortable="false" TextAlign="TextAlign.Center" Width="7em" TItem="ATask" Property="@nameof(ATask.ChildN)" Title="@L.S(S.ChildN)"/>
+                                <RadzenDataGridColumn Visible="Ctx.Display.SubCounts" Sortable="false" TextAlign="TextAlign.Center" Width="7em" TItem="ATask" Property="@nameof(ATask.DescN)" Title="@L.S(S.DescN)"/>
+                                <RadzenDataGridColumn Visible="Ctx.Display.CreatedOn" TextAlign="TextAlign.Center" Width="10em" TItem="ATask" Property="@nameof(ATask.CreatedOn)" Title="@L.S(S.CreatedOn)">
                                     <Template Context="t">
                                         @L.D(t.CreatedOn)
                                     </Template>
@@ -142,13 +142,13 @@
                             <RadzenText TextStyle="TextStyle.Body1" Text="@TheTask.Description"></RadzenText>
                         }
                     </RadzenTabsItem>
-                    <RadzenTabsItem Text="@L.S(S.Time)" Visible="UIDisplay.Time">
-                        <VItemTab Type="VItemType.Time" UICtx="UICtx" OnChange="OnSubItemChange"></VItemTab>
+                    <RadzenTabsItem Text="@L.S(S.Time)" Visible="Ctx.Display.Time">
+                        <VItemTab Type="VItemType.Time" OnChange="OnSubItemChange"></VItemTab>
                     </RadzenTabsItem>
-                    <RadzenTabsItem Text="@L.S(S.Cost)" Visible="UIDisplay.Cost">
-                        <VItemTab Type="VItemType.Cost" UICtx="UICtx" OnChange="OnSubItemChange"></VItemTab>
+                    <RadzenTabsItem Text="@L.S(S.Cost)" Visible="Ctx.Display.Cost">
+                        <VItemTab Type="VItemType.Cost" OnChange="OnSubItemChange"></VItemTab>
                     </RadzenTabsItem>
-                    <RadzenTabsItem Text="@L.S(S.File)" Visible="UIDisplay.File">
+                    <RadzenTabsItem Text="@L.S(S.File)" Visible="Ctx.Display.File">
                         <RadzenText TextStyle="TextStyle.Body1" Text="TODO FILE"></RadzenText>
                     </RadzenTabsItem>
                     <RadzenTabsItem Text="@L.S(S.Comment)">
@@ -167,9 +167,8 @@
 @inject L L;
 @inject IApi Api;
 @inject DialogService DialogService;
-@inject UIDisplay UIDisplay;
 @inject NavigationManager Nav;
-@inject IUICtxService UICtxService;
+@inject UICtx Ctx;
 @code{
     
     [CascadingParameter]
@@ -187,11 +186,23 @@
     [EditorRequired]
     public string TaskId { get; set; } = "";
 
-    private UICtx UICtx { get; set; } = new ();
-
     private bool _ready;
     private List<ATask> Ancestors { get; set; } = new();
-    private ATask TheTask { get; set; }
+    private ATask TheTask { 
+        get => Ctx.Task;
+        set
+        {
+            if (Items.Count > 0)
+            {
+                Items[0] = value;
+            }
+            else
+            {
+                Items.Add(value);
+            }
+            Ctx.TaskUpdated(value);
+        }
+    }
     private int Count => Items.Count; 
     private List<ATask> Items { get; set; } = new ();
     public bool ChildrenMore => Items.Count > 1 && !Items.Last().NextSib.IsNullOrWhiteSpace();
@@ -212,27 +223,27 @@
         get
         {
             var width = 34;
-            if (UIDisplay.User)
+            if (Ctx.Display.User)
             {
                 width += 10;
             }
-            if (UIDisplay.Time)
+            if (Ctx.Display.Time)
             {
                 width += 21;
             }
-            if (UIDisplay.Cost)
+            if (Ctx.Display.Cost)
             {
                 width += 14;
             }
-            if (UIDisplay.File)
+            if (Ctx.Display.File)
             {
                 width += 14;
             }
-            if (UIDisplay.SubCounts)
+            if (Ctx.Display.SubCounts)
             {
                 width += 14;
             }
-            if (UIDisplay.CreatedOn)
+            if (Ctx.Display.CreatedOn)
             {
                 width += 7;
             }
@@ -242,7 +253,7 @@
 
     protected override async Task OnParametersSetAsync()
     {
-        UICtx = await UICtxService.Get();
+        await Ctx.Reload();
         var res = await Api.Task.GetInitView(new (OrgId, ProjectId, TaskId));
         Ancestors = res.Ancestors.ToList();
         TheTask = res.Task;
@@ -266,7 +277,7 @@
             FilesMore = fileRes.More;
         }
         Comments = (await Api.Comment.Get(new(OrgId, ProjectId, TaskId))).Set.ToList();
-        if (MovingTask != null && MovingTask.Project != UICtx.Project.Id)
+        if (MovingTask != null && MovingTask.Project != Ctx.ProjectId)
         {
             MovingTask = null;
         }
@@ -295,11 +306,11 @@
     }
 
     private async Task CreateAfter(ATask t)
-        => await DialogService.OpenAsync<TaskNewOrUpdate>(L.S(S.TaskNewTask), new (){{"OrgId", OrgId}, {"ProjectId", ProjectId}, {"ParentId", TheTask.Id}, {"PrevSib", t == TheTask? null: t}, {"OnCreated", OnCreated}, {"UICtx", UICtx}});
+        => await DialogService.OpenAsync<TaskNewOrUpdate>(L.S(S.TaskNewTask), new (){{"OrgId", OrgId}, {"ProjectId", ProjectId}, {"ParentId", TheTask.Id}, {"PrevSib", t == TheTask? null: t}, {"OnCreated", OnCreated}, {"Ctx", Ctx}});
 
 
     private async Task Update(ATask t)
-        => await DialogService.OpenAsync<TaskNewOrUpdate>(L.S(S.TaskUpdateTask), new (){{"OrgId", OrgId}, {"ProjectId", ProjectId}, {"ParentId", TheTask.Id}, {"PrevSib", t == TheTask? null: t}, {"UpdateTask", t}, {"OnUpdated", OnUpdated}, {"UICtx", UICtx}});
+        => await DialogService.OpenAsync<TaskNewOrUpdate>(L.S(S.TaskUpdateTask), new (){{"OrgId", OrgId}, {"ProjectId", ProjectId}, {"ParentId", TheTask.Id}, {"PrevSib", t == TheTask? null: t}, {"UpdateTask", t}, {"OnUpdated", OnUpdated}, {"Ctx", Ctx}});
 
     private void CancelMovingTask()
         => MovingTask = null;

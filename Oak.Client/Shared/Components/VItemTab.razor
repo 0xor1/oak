@@ -22,11 +22,11 @@
                 <Template Context="i">
                     <div class="flx child-no-shrink jc-s ai-c g-0h w-100 mw-100 p-rel">
                         <span title="@($"{i.Note}")" class="shrink-1 ellip">@i.Note</span>
-                        @if (UICtx.HasProjectWritePerm)
+                        @if (Ctx.HasProjectWritePerm)
                         {
                             <div class="flx g-0q p-abs show-on-row-mouse-over" style="right: -1em;">
-                                <RadzenButton @onclick:stopPropagation="true" Icon="edit" ButtonStyle="ButtonStyle.Info" Size="ButtonSize.ExtraSmall" Disabled="!UICtx.CanDeleteVItemOrFile(i)" Click="_ => Update(i)"/>
-                                <RadzenButton @onclick:stopPropagation="true" Icon="delete" ButtonStyle="ButtonStyle.Danger" Size="ButtonSize.ExtraSmall" Disabled="!UICtx.CanDeleteVItemOrFile(i)" Click="_ => Delete(i)"/>
+                                <RadzenButton @onclick:stopPropagation="true" Icon="edit" ButtonStyle="ButtonStyle.Info" Size="ButtonSize.ExtraSmall" Disabled="!Ctx.CanDeleteVItemOrFile(i)" Click="_ => Update(i)"/>
+                                <RadzenButton @onclick:stopPropagation="true" Icon="delete" ButtonStyle="ButtonStyle.Danger" Size="ButtonSize.ExtraSmall" Disabled="!Ctx.CanDeleteVItemOrFile(i)" Click="_ => Delete(i)"/>
                             </div>
                         }
                     </div>
@@ -37,7 +37,7 @@
                     @Fmt(i)
                 </Template>
             </RadzenDataGridColumn>
-            <RadzenDataGridColumn Visible="UIDisplay.CreatedOn" TextAlign="TextAlign.Center" Width="10em" TItem="VItem" Property="@nameof(VItem.CreatedOn)" Title="@L.S(S.CreatedOn)">
+            <RadzenDataGridColumn Visible="Ctx.Display.CreatedOn" TextAlign="TextAlign.Center" Width="10em" TItem="VItem" Property="@nameof(VItem.CreatedOn)" Title="@L.S(S.CreatedOn)">
                 <Template Context="i">
                     @L.D(i.CreatedOn)
                 </Template>
@@ -46,19 +46,15 @@
     </RadzenDataGrid>
 </div>
 
-@inject UIDisplay UIDisplay;
 @inject L L;
 @inject DialogService DialogService;
 @inject IApi Api
+@inject UICtx Ctx
 @code {
 
     [Parameter]
     [EditorRequired]
     public VItemType Type { get; set; }
-
-    [Parameter]
-    [EditorRequired]
-    public UICtx UICtx { get; set; }
 
     [Parameter]
     [EditorRequired]
@@ -72,7 +68,7 @@
         get
         {
             var width = 55;
-            if (UIDisplay.CreatedOn)
+            if (Ctx.Display.CreatedOn)
             {
                 width += 7;
             }
@@ -80,23 +76,23 @@
         }
     }
 
-    private string Fmt(VItem i) => i.Type == VItemType.Time ? Util.Duration(UICtx.Project, i.Inc) : Util.Cost(UICtx.Project, i.Inc);
+    private string Fmt(VItem i) => i.Type == VItemType.Time ? Util.Duration(Ctx.Project, i.Inc) : Util.Cost(Ctx.Project, i.Inc);
 
     protected override async Task OnParametersSetAsync()
     {
         Items.Clear();
-        var res = await Api.VItem.Get(new(UICtx.Org.Id, UICtx.Project.Id, Type, UICtx.Task.Id));
+        var res = await Api.VItem.Get(new(Ctx.Org.Id, Ctx.Project.Id, Type, Ctx.Task.Id));
         Items.AddRange(res.Set);
         await _grid.Reload();
         await base.OnParametersSetAsync();
     }
 
     private async Task OpenNewDialog()
-        => await DialogService.OpenAsync<VItemNewOrUpdate>(L.S(Type == VItemType.Time? S.TaskNewTime : S.TaskNewCost), new (){{"UICtx", UICtx}, {"Type", Type}, {"OnCreated", OnCreated}});
+        => await DialogService.OpenAsync<VItemNewOrUpdate>(L.S(Type == VItemType.Time? S.TaskNewTime : S.TaskNewCost), new (){{"Type", Type}, {"OnCreated", OnCreated}});
 
 
     private async Task Update(VItem i)
-        => await DialogService.OpenAsync<VItemNewOrUpdate>(L.S(Type == VItemType.Time? S.TaskUpdateTime : S.TaskUpdateCost), new (){{"UICtx", UICtx}, {"Type", Type}, {"OnUpdated", OnUpdated}});
+        => await DialogService.OpenAsync<VItemNewOrUpdate>(L.S(Type == VItemType.Time? S.TaskUpdateTime : S.TaskUpdateCost), new (){{"Type", Type}, {"OnUpdated", OnUpdated}});
 
 
     private async Task Delete(VItem i)

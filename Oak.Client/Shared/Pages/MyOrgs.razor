@@ -36,7 +36,7 @@
                     </div>
                 </Template>
             </RadzenDataGridColumn>
-            <RadzenDataGridColumn Visible="UIDisplay.CreatedOn" Width="7em" TItem="Org" Property="@nameof(Org.CreatedOn)" Title="@L.S(S.CreatedOn)">
+            <RadzenDataGridColumn Visible="Ctx.Display.CreatedOn" Width="7em" TItem="Org" Property="@nameof(Org.CreatedOn)" Title="@L.S(S.CreatedOn)">
                 <Template Context="org">
                     @L.D(org.CreatedOn)
                 </Template>
@@ -49,7 +49,7 @@
 @inject IApi Api;
 @inject NavigationManager Nav;
 @inject DialogService DialogService;
-@inject UIDisplay UIDisplay;
+@inject UICtx Ctx;
 @code{
 
     [CascadingParameter]

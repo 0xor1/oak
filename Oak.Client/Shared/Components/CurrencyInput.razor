@@ -13,15 +13,12 @@ else
 }
 
 @inject L L;
+@inject UICtx Ctx;
 @implements IRadzenFormComponent
 @code {
 
     [Parameter]
     public string Name { get; set; } = "";
-
-    [Parameter]
-    [EditorRequired]
-    public UICtx UICtx { get; set; } = default!;
     
     [Parameter]
     public ulong Value { get; set; }
@@ -29,7 +26,7 @@ else
     [Parameter]
     public EventCallback<ulong> ValueChanged { get; set; }
 
-    private CurrencyPicker.Currency Currency => CurrencyPicker.Currencies.Single(x => x.Code == UICtx.Project.CurrencyCode);
+    private CurrencyPicker.Currency Currency => CurrencyPicker.Currencies.Single(x => x.Code == Ctx.Project.CurrencyCode);
 
     private decimal InternalVal { get; set; }
     
