@@ -306,11 +306,11 @@
     }
 
     private async Task CreateAfter(ATask t)
-        => await DialogService.OpenAsync<TaskNewOrUpdate>(L.S(S.TaskNewTask), new (){ {"PrevSib", t == TheTask? null: t}, {"OnCreated", OnCreated}});
+        => await DialogService.OpenAsync<TaskNewOrUpdate>(L.S(S.TaskNewTask), new (){{"OrgId", OrgId}, {"ProjectId", ProjectId}, {"ParentId", TheTask.Id}, {"PrevSib", t == TheTask? null: t}, {"OnCreated", OnCreated}, {"Ctx", Ctx}});
 
 
     private async Task Update(ATask t)
-        => await DialogService.OpenAsync<TaskNewOrUpdate>(L.S(S.TaskUpdateTask), new (){{"PrevSib", t == TheTask? null: t}, {"UpdateTask", t}, {"OnUpdated", OnUpdated}});
+        => await DialogService.OpenAsync<TaskNewOrUpdate>(L.S(S.TaskUpdateTask), new (){{"OrgId", OrgId}, {"ProjectId", ProjectId}, {"ParentId", TheTask.Id}, {"PrevSib", t == TheTask? null: t}, {"UpdateTask", t}, {"OnUpdated", OnUpdated}, {"Ctx", Ctx}});
 
     private void CancelMovingTask()
         => MovingTask = null;
