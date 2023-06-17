@@ -92,7 +92,7 @@
 
 
     private async Task Update(VItem i)
-        => await DialogService.OpenAsync<VItemNewOrUpdate>(L.S(Type == VItemType.Time? S.TaskUpdateTime : S.TaskUpdateCost), new (){{"Type", Type}, {"OnUpdated", OnUpdated}});
+        => await DialogService.OpenAsync<VItemNewOrUpdate>(L.S(Type == VItemType.Time? S.TaskUpdateTime : S.TaskUpdateCost), new (){{"Type", Type}, {"UpdateVItem", i}, {"OnUpdated", OnUpdated}});
 
 
     private async Task Delete(VItem i)
