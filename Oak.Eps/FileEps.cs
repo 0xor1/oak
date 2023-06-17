@@ -36,6 +36,7 @@ internal static class FileEps
                                 ProjectMemberRole.Writer
                             );
                             EpsUtil.ValidStr(ctx, req.Stream.Name, nameMinLen, nameMaxLen, "Name");
+                            await db.LockProject(req.Org, req.Project);
                             var t = await db.Tasks.SingleOrDefaultAsync(
                                 x =>
                                     x.Org == req.Org && x.Project == req.Project && x.Id == req.Task
@@ -134,6 +135,7 @@ internal static class FileEps
                     await ctx.DbTx<OakDb, Api.Task.Task>(
                         async (db, ses) =>
                         {
+                            await db.LockProject(req.Org, req.Project);
                             var f = await db.Files.SingleOrDefaultAsync(
                                 x =>
                                     x.Org == req.Org
