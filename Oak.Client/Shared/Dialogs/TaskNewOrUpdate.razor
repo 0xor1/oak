@@ -53,15 +53,6 @@
 @code {
 
     [Parameter]
-    public string? OrgId { get; set; }
-
-    [Parameter]
-    public string? ProjectId { get; set; }
-
-    [Parameter]
-    public string? ParentId { get; set; }
-
-    [Parameter]
     public ATask? PrevSib { get; set; }
 
     [Parameter]
@@ -95,7 +86,7 @@
             _model.Name = UpdateTask.Name;
             _model.Description = UpdateTask.Description;
             _model.IsParallel = UpdateTask.IsParallel;
-            _model.User = await UserService.Get(OrgId, ProjectId, UpdateTask.User);
+            _model.User = await UserService.Get(Ctx.OrgId, Ctx.ProjectId, UpdateTask.User);
             _model.TimeEst = UpdateTask.TimeEst;
             _model.CostEst = UpdateTask.CostEst;
         }
@@ -110,7 +101,7 @@
         {
             if (UpdateTask == null)
             {
-                var res = await Api.Task.Create(new(OrgId.NotNull(), ProjectId.NotNull(), ParentId.NotNull(), PrevSib?.Id, _model.Name, _model.Description, _model.IsParallel, _model.User?.Id, _model.TimeEst, _model.CostEst));
+                var res = await Api.Task.Create(new(Ctx.OrgId, Ctx.ProjectId, Ctx.TaskId, PrevSib?.Id, _model.Name, _model.Description, _model.IsParallel, _model.User?.Id, _model.TimeEst, _model.CostEst));
                 if (OnCreated != null)
                 {
                     await OnCreated(res, PrevSib);
@@ -139,7 +130,7 @@
 
     private async Task LoadProjectMembers(LoadDataArgs args)
     {
-        Users = await UserService.Search(OrgId, ProjectId, true,
+        Users = await UserService.Search(Ctx.OrgId, Ctx.ProjectId, true,
             args.Filter);
     }
 
