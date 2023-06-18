@@ -90,7 +90,14 @@
             _model.Note = UpdateVItem.Note;
             _model.Inc = UpdateVItem.Inc;
         }
-        _model.Est = InternalType == VItemType.Time ? Ctx.Task.TimeEst : Ctx.Task.CostEst;
+        if (SubTask != null)
+        {
+            _model.Est = InternalType == VItemType.Time ? SubTask.TimeEst : SubTask.CostEst;
+        }
+        else
+        {
+            _model.Est = InternalType == VItemType.Time ? Ctx.Task.TimeEst : Ctx.Task.CostEst;
+        }
         return Task.CompletedTask;
     }
     
