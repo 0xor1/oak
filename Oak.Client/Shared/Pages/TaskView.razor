@@ -189,10 +189,12 @@
 
     private bool _ready;
     private List<ATask> Ancestors { get; set; } = new();
+    private ATask _theTask;
     private ATask TheTask { 
-        get => Ctx.Task.NotNull();
+        get => _theTask;
         set
         {
+            _theTask = value;
             if (Items.Count > 0)
             {
                 Items[0] = value;

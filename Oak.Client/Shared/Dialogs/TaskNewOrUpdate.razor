@@ -30,14 +30,20 @@
             <RadzenLabel class="m-b-0q" Component="User" Text="@L.S(S.User)"/>
             <RadzenDropDown Name="User" @bind-Value="_model.User" TextProperty="Name" TValue="ProjectMember?" Data="Users" LoadData="LoadProjectMembers" AllowClear="true" AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" FilterOperator="StringFilterOperator.StartsWith"/>
         </div>
-        <div class="flx col ai-stretch">
-            <RadzenLabel class="m-b-0q" Component="TimeEst" Text="@L.S(S.TimeEst)"/>
-            <DurationInput Name="TimeEst" @bind-Value="@_model.TimeEst"/>
-        </div>
-        <div class="flx col ai-stretch">
-            <RadzenLabel class="m-b-0q" Component="CostEst" Text="@L.S(S.CostEst)"/>
-            <CurrencyInput Name="CostEst" @bind-Value="_model.CostEst"/>
-        </div>
+        @if (Ctx.Display.Time)
+        {
+            <div class="flx col ai-stretch">
+                <RadzenLabel class="m-b-0q" Component="TimeEst" Text="@L.S(S.TimeEst)"/>
+                <DurationInput Name="TimeEst" @bind-Value="@_model.TimeEst"/>
+            </div>
+        }
+        @if (Ctx.Display.Cost)
+        {
+            <div class="flx col ai-stretch">
+                <RadzenLabel class="m-b-0q" Component="CostEst" Text="@L.S(S.CostEst)"/>
+                <CurrencyInput Name="CostEst" @bind-Value="_model.CostEst"/>
+            </div>
+        }
         <div class="flx g-0h jc-stretch">
             <RadzenButton ButtonType="ButtonType.Submit" IsBusy="_doing" Text="@(UpdateTask != null? L.S(S.Update): L.S(S.Create))"/>
             <RadzenButton ButtonStyle="ButtonStyle.Secondary" IsBusy="_doing" Text="@L.S(S.Cancel)" Click="@(_ => DialogService.Close())"/>
