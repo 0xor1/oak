@@ -105,6 +105,11 @@
             _model.TimeEst = UpdateTask.TimeEst;
             _model.CostEst = UpdateTask.CostEst;
         }
+        else if(ParentId == Ctx.Task?.Id && Ctx.Task?.User != null)
+        {
+            
+            _model.User = await UserService.Get(OrgId, ProjectId, Ctx.Task?.User);
+        }
         Currency = CurrencyPicker.Currencies.SingleOrDefault(x => x.Code == Ctx.Project.CurrencyCode);
         await LoadProjectMembers(new());
     }
