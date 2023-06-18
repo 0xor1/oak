@@ -30,7 +30,7 @@
             </div>
         }
         <div class="flx col jc-s ai-s g-0t w-100 mw-100">
-            <RadzenTabs class="w-100 no-x-pad" >
+            <RadzenTabs @ref="_tabs" class="w-100 no-x-pad" >
                 <Tabs>
                     <RadzenTabsItem Text="@L.S(S.Task)">
                         <RadzenDataGrid
@@ -102,7 +102,17 @@
                                 </RadzenDataGridColumn>
                                 <RadzenDataGridColumn Visible="Ctx.Display.Time" TextAlign="TextAlign.Center" Width="7em" TItem="ATask" Property="@nameof(ATask.TimeInc)" Title="@L.S(S.TimeInc)">
                                     <Template Context="t">
-                                        @(Util.Duration(Ctx.Project, t.TimeInc + t.TimeSubInc))
+                                        <div class="flx child-no-shrink jc-c ai-c g-0h w-100 mw-100 p-rel">
+                                            <span>
+                                                @(Util.Duration(Ctx.Project, t.TimeInc + t.TimeSubInc))
+                                            </span>
+                                            @if (Ctx.HasProjectWritePerm && MovingTask == null)
+                                            {
+                                                <div class="flx g-0q p-abs show-on-row-mouse-over" style="right: -1em;">
+                                                    <RadzenButton @onclick:stopPropagation="true" Icon="more_time" ButtonStyle="ButtonStyle.Success" Size="ButtonSize.ExtraSmall" Click="_ => NewVItem(VItemType.Time, t)"/>
+                                                </div>
+                                            }
+                                        </div>
                                     </Template>
                                 </RadzenDataGridColumn>
                                 <RadzenDataGridColumn Visible="Ctx.Display.Cost" TextAlign="TextAlign.Center" Width="7em" TItem="ATask" Property="@nameof(ATask.CostEst)" Title="@L.S(S.CostEst)">
@@ -112,7 +122,17 @@
                                 </RadzenDataGridColumn>
                                 <RadzenDataGridColumn Visible="Ctx.Display.Cost" TextAlign="TextAlign.Center" Width="7em" TItem="ATask" Property="@nameof(ATask.CostInc)" Title="@L.S(S.CostInc)">
                                     <Template Context="t">
-                                        @(Util.Cost(Ctx.Project, t.CostInc + t.CostSubInc))
+                                        <div class="flx child-no-shrink jc-c ai-c g-0h w-100 mw-100 p-rel">
+                                            <span>
+                                                @(Util.Cost(Ctx.Project, t.CostInc + t.CostSubInc))
+                                            </span>
+                                            @if (Ctx.HasProjectWritePerm && MovingTask == null)
+                                            {
+                                                <div class="flx g-0q p-abs show-on-row-mouse-over" style="right: -1em;">
+                                                    <RadzenButton @onclick:stopPropagation="true" Icon="paid" ButtonStyle="ButtonStyle.Success" Size="ButtonSize.ExtraSmall" Click="_ => NewVItem(VItemType.Cost, t)"/>
+                                                </div>
+                                            }
+                                        </div>
                                     </Template>
                                 </RadzenDataGridColumn>
                                 <RadzenDataGridColumn Visible="Ctx.Display.File" Sortable="false" TextAlign="TextAlign.Center" Width="7em" TItem="ATask" Property="@nameof(ATask.FileSize)" Title="@L.S(S.FileSize)">
@@ -122,7 +142,17 @@
                                 </RadzenDataGridColumn>
                                 <RadzenDataGridColumn Visible="Ctx.Display.File" Sortable="false" TextAlign="TextAlign.Center" Width="7em" TItem="ATask" Property="@nameof(ATask.FileN)" Title="@L.S(S.FileN)">
                                     <Template Context="t">
-                                        @(t.FileN + t.FileSubN)
+                                        <div class="flx child-no-shrink jc-c ai-c g-0h w-100 mw-100 p-rel">
+                                            <span>
+                                                @(t.FileN + t.FileSubN)
+                                            </span>
+                                            @if (Ctx.HasProjectWritePerm && MovingTask == null)
+                                            {
+                                                <div class="flx g-0q p-abs show-on-row-mouse-over" style="right: -1em;">
+                                                    <RadzenButton @onclick:stopPropagation="true" Icon="file_upload" ButtonStyle="ButtonStyle.Success" Size="ButtonSize.ExtraSmall" Click="_ => UploadFile(t)"/>
+                                                </div>
+                                            }
+                                        </div>
                                     </Template>
                                 </RadzenDataGridColumn>
                                 <RadzenDataGridColumn Visible="Ctx.Display.SubCounts" Sortable="false" TextAlign="TextAlign.Center" Width="7em" TItem="ATask" Property="@nameof(ATask.ChildN)" Title="@L.S(S.ChildN)"/>
@@ -217,7 +247,8 @@
     public List<Comment> Comments { get; set; } = new();
     public bool CommentsMore { get; set; }
     private bool _isLoading = false;
-    private RadzenDataGrid<ATask> _grid;
+    private RadzenDataGrid<ATask>? _grid;
+    private RadzenTabs? _tabs;
     private ATask? MovingTask { get; set; }
 
     private string GridWidth
@@ -255,6 +286,19 @@
 
     protected override async Task OnParametersSetAsync()
     {
+        if (_tabs != null)
+        {
+            // this is a bit of a hacky work around to ensure that when the user clicks on a ancestor link
+            // we go back to the first tab.
+            // ideally the RadzenTabs component would expose a public method to just set the selected tab
+            // but it doesnt.
+            // https://github.com/radzenhq/radzen-blazor/issues/1033
+            _tabs.SelectedIndex = 1;
+            await _tabs.SetParametersAsync(ParameterView.FromDictionary(new Dictionary<string, object?>()
+            {
+                {"SelectedIndex", 0}
+            }));
+        }
         var res = await Api.Task.GetInitView(new (OrgId, ProjectId, TaskId));
         await Ctx.Set(res.Task);
         Ancestors = res.Ancestors.ToList();
@@ -311,6 +355,28 @@
         }
     }
 
+    private async Task NewVItem(VItemType Type, ATask t) => await DialogService.OpenAsync<VItemNewOrUpdate>(L.S(Type == VItemType.Time? S.TaskNewTime: S.TaskNewCost), new (){{"Type", Type}, {"SubTask", t}, {"OnCreated", OnVItemCreated}});
+
+    private async Task OnVItemCreated(VItemRes res)
+    {
+        var i = Items.FindIndex(x => x.Id == res.Task.Id);
+        
+        if (i == 0)
+        {
+            TheTask = res.Task;
+        }
+        else if (i > -1)
+        {
+            // if we added to a sub task we need to refresh the current task we're looking at too.
+            Items[i] = res.Task;
+            TheTask = await Api.Task.GetOne(new (OrgId, ProjectId, TaskId));
+        }
+        await Ctx.Set(TheTask);
+        await _grid.Reload();
+    }
+    
+    private async Task UploadFile(ATask t) => await Task.CompletedTask;
+    
     private async Task CreateAfter(ATask t)
         => await DialogService.OpenAsync<TaskNewOrUpdate>(L.S(S.TaskNewTask), new (){{"OrgId", OrgId}, {"ProjectId", ProjectId}, {"ParentId", TheTask.Id}, {"PrevSib", t == TheTask? null: t}, {"OnCreated", OnCreated}});
 
