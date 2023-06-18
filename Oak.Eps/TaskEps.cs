@@ -538,7 +538,6 @@ internal static class TaskEps
                                                     newParent.Id
                                                 )
                                             );
-                                            await reload(newParent);
                                         }
 
                                         ancestors.AddRange(
@@ -549,6 +548,19 @@ internal static class TaskEps
                                             )
                                         );
                                         await reload(oldParent);
+
+                                        // N.B! why are we recalculating the new parent agg values again?!?!
+                                        // because they may have been dependent on the oldParent which may have just been updated,
+                                        // which ever order you recalc agg values, newParent then oldPArent or vice versa
+                                        // you must always calculate new-old-new or old-new-old, to ensure all values are up to date
+                                        ancestors.AddRange(
+                                            await db.SetAncestralChainAggregateValuesFromTask(
+                                                req.Org,
+                                                req.Project,
+                                                newParent.Id
+                                            )
+                                        );
+                                        await reload(newParent);
                                         ancestors = ancestors.Distinct().ToList();
                                     }
                                     else if (t.Parent != null)

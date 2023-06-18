@@ -10,6 +10,7 @@
 @using ATask = Oak.Api.Task.Task;
 @using S = Oak.I18n.S
 @using Task = System.Threading.Tasks.Task
+@using System.Text
 <div class="root col p-0h g-0h jc-s ai-s">
     @if (_ready)
     {
@@ -71,7 +72,7 @@
                                                         <RadzenButton @onclick:stopPropagation="true" Icon="keyboard_arrow_down" ButtonStyle="ButtonStyle.Success" Size="ButtonSize.ExtraSmall" Click="_ => CreateAfter(t)"/>
                                                         <RadzenButton @onclick:stopPropagation="true" Icon="edit" ButtonStyle="ButtonStyle.Info" Size="ButtonSize.ExtraSmall" Click="_ => Update(t)"/>
                                                         <RadzenButton @onclick:stopPropagation="true" Disabled="@(t.Project == t.Id)" Icon="open_with" ButtonStyle="ButtonStyle.Secondary" Size="ButtonSize.ExtraSmall" Click="_ => Pickup(t)"/>
-                                                        <RadzenButton @onclick:stopPropagation="true" Icon="delete" ButtonStyle="ButtonStyle.Danger" Size="ButtonSize.ExtraSmall" Disabled="!Ctx.CanDeleteTask" Click="_ => Delete(t)"/>
+                                                        <RadzenButton @onclick:stopPropagation="true" Icon="delete" ButtonStyle="ButtonStyle.Danger" Size="ButtonSize.ExtraSmall" Disabled="!Ctx.CanDeleteTask(t)" Click="_ => Delete(t)"/>
                                                     }
                                                     else
                                                     {
@@ -168,7 +169,7 @@
 @inject IApi Api;
 @inject DialogService DialogService;
 @inject NavigationManager Nav;
-@inject UICtx Ctx;
+@inject UiCtx Ctx;
 @code{
     
     [CascadingParameter]
@@ -189,7 +190,7 @@
     private bool _ready;
     private List<ATask> Ancestors { get; set; } = new();
     private ATask TheTask { 
-        get => Ctx.Task;
+        get => Ctx.Task.NotNull();
         set
         {
             if (Items.Count > 0)
@@ -200,7 +201,6 @@
             {
                 Items.Add(value);
             }
-            Ctx.TaskUpdated(value);
         }
     }
     private int Count => Items.Count; 
@@ -253,8 +253,8 @@
 
     protected override async Task OnParametersSetAsync()
     {
-        await Ctx.Reload();
         var res = await Api.Task.GetInitView(new (OrgId, ProjectId, TaskId));
+        await Ctx.Set(res.Task);
         Ancestors = res.Ancestors.ToList();
         TheTask = res.Task;
         Items = res.Children.Prepend(TheTask).ToList();
@@ -295,22 +295,26 @@
 
     private void RowRender(RowRenderEventArgs<ATask> obj)
     {
-        if (obj.Data == TheTask)
+        if (obj.Data == TheTask && obj.Data == MovingTask)
+        {
+            obj.Attributes.Add("class", "task-row moving-task");
+        }
+        else if (obj.Data == TheTask)
         {
             obj.Attributes.Add("class", "task-row");
         }
-        if (obj.Data == MovingTask)
+        else if (obj.Data == MovingTask)
         {
             obj.Attributes.Add("class", "moving-task");
         }
     }
 
     private async Task CreateAfter(ATask t)
-        => await DialogService.OpenAsync<TaskNewOrUpdate>(L.S(S.TaskNewTask), new (){{"OrgId", OrgId}, {"ProjectId", ProjectId}, {"ParentId", TheTask.Id}, {"PrevSib", t == TheTask? null: t}, {"OnCreated", OnCreated}, {"Ctx", Ctx}});
+        => await DialogService.OpenAsync<TaskNewOrUpdate>(L.S(S.TaskNewTask), new (){{"OrgId", OrgId}, {"ProjectId", ProjectId}, {"ParentId", TheTask.Id}, {"PrevSib", t == TheTask? null: t}, {"OnCreated", OnCreated}});
 
 
     private async Task Update(ATask t)
-        => await DialogService.OpenAsync<TaskNewOrUpdate>(L.S(S.TaskUpdateTask), new (){{"OrgId", OrgId}, {"ProjectId", ProjectId}, {"ParentId", TheTask.Id}, {"PrevSib", t == TheTask? null: t}, {"UpdateTask", t}, {"OnUpdated", OnUpdated}, {"Ctx", Ctx}});
+        => await DialogService.OpenAsync<TaskNewOrUpdate>(L.S(S.TaskUpdateTask), new (){{"OrgId", OrgId}, {"ProjectId", ProjectId}, {"ParentId", TheTask.Id}, {"PrevSib", t == TheTask? null: t}, {"UpdateTask", t}, {"OnUpdated", OnUpdated}});
 
     private void CancelMovingTask()
         => MovingTask = null;
@@ -326,7 +330,7 @@
             if (res.OldParent?.Id == TheTask.Id)
             {
                 TheTask = res.OldParent;
-                Items[0] = res.OldParent;
+                await Ctx.Set(TheTask);
             }
             Items.Remove(MovingTask);
             var newParentI = Items.FindIndex(x => x.Id == t.Id);
@@ -344,12 +348,12 @@
             if (res.OldParent?.Id == TheTask.Id)
             {
                 TheTask = res.OldParent;
-                Items[0] = res.OldParent;
+                await Ctx.Set(TheTask);
             }
             if (res.NewParent?.Id == TheTask.Id)
             {
                 TheTask = res.NewParent;
-                Items[0] = res.NewParent;
+                await Ctx.Set(TheTask);
                 // old parent might be in this list
                 res.OldParent.NotNull();
                 var oldParentI = Items.FindIndex(x => x.Id == res.OldParent.Id);
@@ -370,9 +374,8 @@
     {
         // a new task was created
         // so refresh TheTask and insert new task in appropriate index
-        Items.Remove(TheTask);
         TheTask = res.Parent;
-        Items.Insert(0, TheTask);
+        await Ctx.Set(TheTask);
         if (prevSib == null)
         {
             Items.Insert(1, res.New);
@@ -391,14 +394,14 @@
         if (TheTask.Id == res.Task.Id)
         {
             TheTask = res.Task;
-            Items[0] = res.Task;
+            await Ctx.Set(TheTask);
         }
         else
         {
             if (res.OldParent != null)
             {
                 TheTask = res.OldParent;
-                Items[0] = res.OldParent;
+                await Ctx.Set(TheTask);
             }
             var i = Items.FindIndex(x => x.Id == res.Task.Id);
             Items[i] = res.Task;
@@ -420,10 +423,9 @@
             else
             {
                 // else just refresh the current view
-                Items.Remove(TheTask);
                 Items.Remove(t);
                 TheTask = parent;
-                Items.Insert(0, TheTask);
+                await Ctx.Set(TheTask);
                 await _grid.Reload();
             }
         }
@@ -432,7 +434,7 @@
     private async Task OnSubItemChange(ATask t)
     {
         TheTask = t;
-        Items[0] = t;
+        await Ctx.Set(TheTask);
     }
 
 }

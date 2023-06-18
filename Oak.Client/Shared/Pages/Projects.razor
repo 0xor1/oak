@@ -135,7 +135,7 @@
 @inject IApi Api;
 @inject NavigationManager Nav;
 @inject DialogService DialogService;
-@inject UICtx Ctx;
+@inject UiCtx Ctx;
 @code{
 
     [CascadingParameter]
@@ -193,7 +193,7 @@
         _isLoading = true;
         try
         {
-            await Ctx.Reload();
+            await Ctx.Set(await Api.Org.GetOne(new(OrgId)));
             var res = await Api.Project.Get(new(OrgId));
             Items = res.Set.ToList();
         }

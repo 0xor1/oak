@@ -13,12 +13,11 @@ using Task = Oak.Api.Task.Task;
 
 namespace Oak.Client.Lib;
 
-public partial class UICtx
+public class UiCtx
 {
     private readonly SemaphoreSlim _ss = new(1, 1);
     private readonly IApi _api;
     private readonly IAuthService _auth;
-    private readonly NavigationManager _nav;
 
     public UIDisplay Display { get; init; } = new();
 
@@ -48,15 +47,15 @@ public partial class UICtx
             || ProjectMember?.Role <= ProjectMemberRole.Writer
         );
 
-    public bool CanDeleteTask =>
-        Project.NotNull().Id != Task.NotNull().Id
-        && Task.DescN <= 20
+    public bool CanDeleteTask(Task t) =>
+        Project.NotNull().Id != t.Id
+        && t.DescN <= 20
         && (
             (
                 HasProjectWritePerm
-                && Task.CreatedBy == ProjectMember?.Id
-                && Task.DescN == 0
-                && Task.CreatedOn.Add(TimeSpan.FromHours(1)) > DateTime.UtcNow
+                && t.CreatedBy == ProjectMember?.Id
+                && t.DescN == 0
+                && t.CreatedOn.Add(TimeSpan.FromHours(1)) > DateTime.UtcNow
             ) || HasProjectAdminPerm
         );
 
@@ -71,40 +70,30 @@ public partial class UICtx
     public bool CanDeleteOorUpdateComment(Comment c) =>
         HasProjectAdminPerm || (HasProjectWritePerm && c.CreatedBy == OrgMember.Id);
 
-    public UICtx(IApi api, IAuthService auth, NavigationManager nav)
+    public UiCtx(IApi api, IAuthService auth)
     {
         _api = api;
         _auth = auth;
-        _nav = nav;
     }
 
-    public void TaskUpdated(Task t)
-    {
-        Throw.DataIf(t.Id != Task?.Id, "TaskUpdated called on different task");
-        Task = t;
-    }
+    public System.Threading.Tasks.Task Set(Org org) => Set(org, null, null);
 
-    public async System.Threading.Tasks.Task Reload()
+    public System.Threading.Tasks.Task Set(Project project) => Set(null, project, null);
+
+    public System.Threading.Tasks.Task Set(Task task) => Set(null, null, task);
+
+    private async System.Threading.Tasks.Task Set(Org? org, Project? project, Task? task)
     {
         await _ss.WaitAsync();
         try
         {
-            var (orgId, projectId, taskId) = GetIdsFromUrl();
-
             // no white space shenanigans
-            orgId = orgId.IsNullOrWhiteSpace() ? null : orgId;
-            projectId = projectId.IsNullOrWhiteSpace() ? null : projectId;
-            taskId = taskId.IsNullOrWhiteSpace() ? null : taskId;
-
-            Throw.DataIf(
-                (taskId != null && (projectId == null || orgId == null))
-                    || (projectId != null && orgId == null),
-                "if taskId is given the projectId and orgId must be given, and if projectId is given the orgId must be given"
-            );
+            var orgId = org?.Id ?? project?.Org ?? task?.Org;
+            var projectId = project?.Id ?? task?.Project;
+            var taskId = task?.Id;
 
             var orgChanged = OrgId != orgId;
             var projectChanged = ProjectId != projectId;
-            var taskChanged = TaskId != taskId;
 
             OrgId = orgId;
             ProjectId = projectId;
@@ -130,22 +119,19 @@ public partial class UICtx
 
             if (orgChanged && OrgId != null)
             {
-                Org = await _api.Org.GetOne(new(OrgId));
+                Org = org ?? await _api.Org.GetOne(new(OrgId));
                 OrgMember = (await _api.OrgMember.GetOne(new(OrgId, sesId))).Item;
             }
 
             if (projectChanged && ProjectId != null)
             {
-                Project = await _api.Project.GetOne(new(OrgId.NotNull(), ProjectId));
+                Project = project ?? await _api.Project.GetOne(new(OrgId.NotNull(), ProjectId));
                 ProjectMember = (
                     await _api.ProjectMember.GetOne(new(OrgId, ProjectId, sesId))
                 ).Item;
             }
 
-            if (taskChanged && TaskId != null)
-            {
-                Task = await _api.Task.GetOne(new(OrgId, ProjectId, TaskId));
-            }
+            Task = task;
         }
         finally
         {
@@ -153,38 +139,38 @@ public partial class UICtx
         }
     }
 
-    private (string? orgId, string? projectId, string? taskId) GetIdsFromUrl()
-    {
-        var uri = _nav.Uri;
-        // check for /org/{OrgId}/project/{ProjectId}/task/{TaskId}
-        string? orgId = null;
-        var orgMatch = OrgIdRx().Match(uri);
-        if (orgMatch.Success && orgMatch.Groups.Count == 2)
-        {
-            orgId = orgMatch.Groups[1].Value;
-        }
-        string? projectId = null;
-        var projectMatch = ProjectIdRx().Match(uri);
-        if (projectMatch.Success && projectMatch.Groups.Count == 2)
-        {
-            projectId = projectMatch.Groups[1].Value;
-        }
-        string? taskId = null;
-        var taskMatch = TaskIdRx().Match(uri);
-        if (taskMatch.Success && taskMatch.Groups.Count == 2)
-        {
-            taskId = taskMatch.Groups[1].Value;
-        }
-
-        return (orgId, projectId, taskId);
-    }
-
-    [GeneratedRegex(@"/org/([^/\s]+)")]
-    private static partial Regex OrgIdRx();
-
-    [GeneratedRegex(@"/project/([^/\s]+)")]
-    private static partial Regex ProjectIdRx();
-
-    [GeneratedRegex(@"/task/([^/\s]+)")]
-    private static partial Regex TaskIdRx();
+    // private (string? orgId, string? projectId, string? taskId) GetIdsFromUrl()
+    // {
+    //     var uri = _nav.Uri;
+    //     // check for /org/{OrgId}/project/{ProjectId}/task/{TaskId}
+    //     string? orgId = null;
+    //     var orgMatch = OrgIdRx().Match(uri);
+    //     if (orgMatch.Success && orgMatch.Groups.Count == 2)
+    //     {
+    //         orgId = orgMatch.Groups[1].Value;
+    //     }
+    //     string? projectId = null;
+    //     var projectMatch = ProjectIdRx().Match(uri);
+    //     if (projectMatch.Success && projectMatch.Groups.Count == 2)
+    //     {
+    //         projectId = projectMatch.Groups[1].Value;
+    //     }
+    //     string? taskId = null;
+    //     var taskMatch = TaskIdRx().Match(uri);
+    //     if (taskMatch.Success && taskMatch.Groups.Count == 2)
+    //     {
+    //         taskId = taskMatch.Groups[1].Value;
+    //     }
+    //
+    //     return (orgId, projectId, taskId);
+    // }
+    //
+    // [GeneratedRegex(@"/org/([^/\s]+)")]
+    // private static partial Regex OrgIdRx();
+    //
+    // [GeneratedRegex(@"/project/([^/\s]+)")]
+    // private static partial Regex ProjectIdRx();
+    //
+    // [GeneratedRegex(@"/task/([^/\s]+)")]
+    // private static partial Regex TaskIdRx();
 }

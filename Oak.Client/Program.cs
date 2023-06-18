@@ -9,7 +9,7 @@ await Client.Run<App, Oak.Api.IApi>(
     (client) => new Oak.Api.Api(client),
     (sc) =>
     {
-        sc.AddSingleton<UICtx>();
+        sc.AddSingleton<UiCtx>();
         sc.AddSingleton<IUserService, UserService>();
     }
 );
