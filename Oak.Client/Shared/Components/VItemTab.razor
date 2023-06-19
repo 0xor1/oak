@@ -22,7 +22,7 @@
                 <Template Context="i">
                     <div class="flx child-no-shrink jc-s ai-c g-0h w-100 mw-100 p-rel">
                         <span title="@($"{i.Note}")" class="shrink-1 ellip">@i.Note</span>
-                        @if (Ctx.HasProjectWritePerm)
+                        @if (Ctx.CanDeleteVItemOrFile(i))
                         {
                             <div class="flx g-0q p-abs show-on-row-mouse-over" style="right: -1em;">
                                 <RadzenButton @onclick:stopPropagation="true" Icon="edit" ButtonStyle="ButtonStyle.Info" Size="ButtonSize.ExtraSmall" Disabled="!Ctx.CanDeleteVItemOrFile(i)" Click="_ => Update(i)"/>

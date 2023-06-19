@@ -175,4 +175,6 @@ public static partial class S
     public const string TaskNoTimes = "task_no_times";
     public const string TaskNoCosts = "task_no_costs";
     public const string TaskConfirmDeleteVItem = "task_confirm_delete_vitem";
+    public const string TaskNoFiles = "task_no_files";
+    public const string TaskConfirmDeleteFile = "task_confirm_delete_file";
 }

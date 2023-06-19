@@ -180,7 +180,7 @@
                         <VItemTab Type="VItemType.Cost" OnChange="OnSubItemChange"></VItemTab>
                     </RadzenTabsItem>
                     <RadzenTabsItem Text="@L.S(S.File)" Visible="Ctx.Display.File">
-                        <RadzenText TextStyle="TextStyle.Body1" Text="TODO FILE"></RadzenText>
+                        <FileTab OnChange="OnSubItemChange"></FileTab>
                     </RadzenTabsItem>
                     <RadzenTabsItem Text="@L.S(S.Comment)">
                         <RadzenText TextStyle="TextStyle.Body1" Text="TODO COMMENT"></RadzenText>
@@ -286,7 +286,10 @@
 
     protected override async Task OnParametersSetAsync()
     {
-        _selectedTabIndex = 0;
+        if (TheTask?.Id != TaskId)
+        {
+            _selectedTabIndex = 0;
+        }
         var res = await Api.Task.GetInitView(new (OrgId, ProjectId, TaskId));
         await Ctx.Set(res.Task);
         Ancestors = res.Ancestors.ToList();

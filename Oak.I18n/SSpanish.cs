@@ -248,6 +248,11 @@ public static partial class S
         {
             TaskConfirmDeleteVItem,
             new("<p>¿Está seguro de que desea eliminar <strong>{{Value}}</strong>?</p>")
+        },
+        { TaskNoFiles, new("Sin archivos") },
+        {
+            TaskConfirmDeleteFile,
+            new("<p>¿Está seguro de que desea eliminar el archivo <strong>{{Name}}</strong>?</p>")
         }
     };
 }

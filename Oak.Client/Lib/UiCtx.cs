@@ -1,7 +1,5 @@
-﻿using System.Text.RegularExpressions;
-using Common.Client;
+﻿using Common.Client;
 using Common.Shared;
-using Microsoft.AspNetCore.Components;
 using Oak.Api;
 using Oak.Api.Comment;
 using Oak.Api.Org;
@@ -63,12 +61,12 @@ public class UiCtx
         HasProjectAdminPerm
         || (
             HasProjectWritePerm
-            && i.CreatedBy == OrgMember.Id
+            && i.CreatedBy == OrgMember?.Id
             && i.CreatedOn.Add(TimeSpan.FromHours(1)) > DateTime.UtcNow
         );
 
     public bool CanDeleteOorUpdateComment(Comment c) =>
-        HasProjectAdminPerm || (HasProjectWritePerm && c.CreatedBy == OrgMember.Id);
+        HasProjectAdminPerm || (HasProjectWritePerm && c.CreatedBy == OrgMember?.Id);
 
     public UiCtx(IApi api, IAuthService auth)
     {
