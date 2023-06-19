@@ -30,7 +30,7 @@
             </div>
         }
         <div class="flx col jc-s ai-s g-0t w-100 mw-100">
-            <RadzenTabs @ref="_tabs" class="w-100 no-x-pad" >
+            <RadzenTabs @bind-SelectedIndex="_selectedTabIndex" class="w-100 no-x-pad" >
                 <Tabs>
                     <RadzenTabsItem Text="@L.S(S.Task)">
                         <RadzenDataGrid
@@ -248,8 +248,8 @@
     public bool CommentsMore { get; set; }
     private bool _isLoading = false;
     private RadzenDataGrid<ATask>? _grid;
-    private RadzenTabs? _tabs;
     private ATask? MovingTask { get; set; }
+    private int _selectedTabIndex = 0;
 
     private string GridWidth
     {
@@ -286,19 +286,7 @@
 
     protected override async Task OnParametersSetAsync()
     {
-        if (_tabs != null)
-        {
-            // this is a bit of a hacky work around to ensure that when the user clicks on a ancestor link
-            // we go back to the first tab.
-            // ideally the RadzenTabs component would expose a public method to just set the selected tab
-            // but it doesnt.
-            // https://github.com/radzenhq/radzen-blazor/issues/1033
-            _tabs.SelectedIndex = 1;
-            await _tabs.SetParametersAsync(ParameterView.FromDictionary(new Dictionary<string, object?>()
-            {
-                {"SelectedIndex", 0}
-            }));
-        }
+        _selectedTabIndex = 0;
         var res = await Api.Task.GetInitView(new (OrgId, ProjectId, TaskId));
         await Ctx.Set(res.Task);
         Ancestors = res.Ancestors.ToList();
@@ -504,5 +492,4 @@
         TheTask = t;
         await Ctx.Set(TheTask);
     }
-
 }
