@@ -12,7 +12,7 @@
         Data="Items"
         TItem="VItem"
         IsLoading="_isLoading"
-        EmptyText="@L.S(Type == VItemType.Time? S.TaskNoTimes: S.TaskNoCosts)"
+        EmptyText="@L.S(Type == VItemType.Time ? S.TaskNoTimes : S.TaskNoCosts)"
         FilterPopupRenderMode="PopupRenderMode.OnDemand"
         FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
         KeyProperty="Id"
@@ -37,7 +37,7 @@
                     <User OrgId="@i.Org" UserId="@i.CreatedBy"/>
                 </Template>
             </RadzenDataGridColumn>
-            <RadzenDataGridColumn TextAlign="TextAlign.Center" Width="7em" TItem="VItem" Property="@nameof(VItem.Inc)" Title="@L.S(Type == VItemType.Time? S.TimeInc: S.CostInc)">
+            <RadzenDataGridColumn TextAlign="TextAlign.Center" Width="7em" TItem="VItem" Property="@nameof(VItem.Inc)" Title="@L.S(Type == VItemType.Time ? S.TimeInc : S.CostInc)">
                 <Template Context="i">
                     @Fmt(i)
                 </Template>
