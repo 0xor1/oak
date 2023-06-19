@@ -305,7 +305,7 @@ input.invalid:not(:disabled):not(.rz-state-disabled) {
 }
 
 // hide profile menu dropdown arrow icon
-div.header > ul.rz-profile-menu > li.rz-navigation-item > div.rz-navigation-item-wrapper > div.rz-navigation-item-link > i.rz-navigation-item-icon-children {
+div.rz-header > ul.rz-profile-menu > li.rz-navigation-item > div.rz-navigation-item-wrapper > div.rz-navigation-item-link > i.rz-navigation-item-icon-children {
     display: none;
 }
 
