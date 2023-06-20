@@ -52,7 +52,11 @@
                 }
                 else
                 {
-                    <RadzenPanelMenuItem Text="@L.S(S.OrgMyOrgs)" Icon="home" Path="/my_orgs"/>
+                    <RadzenPanelMenuItem Text="@L.S(S.OrgMyOrgs)" Icon="corporate_fare" Path="/my_orgs"/>
+                    @if (_orgId != null)
+                    {
+                        <RadzenPanelMenuItem Text="@L.S(S.OrgNameProjects, new {Ctx.Org?.Name})" Icon="inventory" Path="@($"/org/{_orgId}/projects")"/>
+                    }
                     <RadzenPanelMenuItem Text="@L.S(S.Display)" Icon="visibility">
                         <RadzenPanelMenuItem class="d-none"/>
                         <div class="flx col p-0t p-l-4 g-0t">
@@ -106,10 +110,13 @@
 @using Common.Client
 @using Common.Shared.Auth
 @using Oak.Client.Lib
+@using IApi = Oak.Api.IApi
 @inherits LayoutComponentBase
 @inject IAuthService Auth
 @inject L L
 @inject UiCtx Ctx
+@inject NavigationManager Nav
+@inject IApi Api
 @implements IDisposable
 @code{
 
@@ -117,12 +124,25 @@
     private ISession _session = Session.Default(S.DefaultLang, S.DefaultDateFmt, S.DefaultTimeFmt);
     private bool _ready;
     private IDisposable? _eventReg;
+    private string? _orgId;
+    private string? _projectId;
+    private string? _taskId;
     
     protected override async Task OnInitializedAsync()
     {
         Auth.RegisterRefreshUi(AuthStateChanged);
         AuthStateChanged(await Auth.GetSession());
+        _eventReg = Nav.RegisterLocationChangingHandler(LocationChanging);
         _ready = true;
+    }
+
+    private async ValueTask LocationChanging(LocationChangingContext arg)
+    {
+        (_orgId, _projectId, _taskId) = GetIdsFromUrl(arg.TargetLocation);
+        if (_orgId != null && _projectId == null && _taskId == null)
+        {
+            await Ctx.Set(await Api.Org.GetOne(new (_orgId)));
+        }
     }
 
     private void AuthStateChanged(ISession s)
@@ -141,4 +161,28 @@
         _eventReg?.Dispose();
     }
 
+    private (string? orgId, string? projectId, string? taskId) GetIdsFromUrl(string url)
+    {
+        // check for /org/{OrgId}/project/{ProjectId}/task/{TaskId}
+        string? orgId = null;
+        var orgMatch = OrgIdRx().Match(url);
+        if (orgMatch.Success && orgMatch.Groups.Count == 2)
+        {
+            orgId = orgMatch.Groups[1].Value;
+        }
+        string? projectId = null;
+        var projectMatch = ProjectIdRx().Match(url);
+        if (projectMatch.Success && projectMatch.Groups.Count == 2)
+        {
+            projectId = projectMatch.Groups[1].Value;
+        }
+        string? taskId = null;
+        var taskMatch = TaskIdRx().Match(url);
+        if (taskMatch.Success && taskMatch.Groups.Count == 2)
+        {
+            taskId = taskMatch.Groups[1].Value;
+        }
+    
+        return (orgId, projectId, taskId);
+    }
 }

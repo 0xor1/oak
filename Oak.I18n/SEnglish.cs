@@ -208,6 +208,7 @@ public static partial class S
         },
         { OrgName, new("Organisation Name") },
         { OrgYourName, new("Your Name") },
+        { OrgNameProjects, new("{{Name}} Projects") },
         { OrgProjects, new("Projects") },
         { OrgNoProjects, new("No Projects") },
         { OrgNewProject, new("New Project") },

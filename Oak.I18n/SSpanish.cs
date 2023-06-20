@@ -220,6 +220,7 @@ public static partial class S
         },
         { OrgName, new("nombre de la organización") },
         { OrgYourName, new("Su nombre") },
+        { OrgNameProjects, new("{{Name}} Proyectos") },
         { OrgProjects, new("Proyectos") },
         { OrgNoProjects, new("Sin Proyectos") },
         { OrgNewProject, new("Nuevo proyecto") },

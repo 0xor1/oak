@@ -14,14 +14,17 @@
 <div class="root col p-0h g-0h jc-s ai-s">
     @if (_ready)
     {
-        <div class="flx row rev g-0h ai-c ov-a child-no-shrink mw-100">
-            @foreach (var a in Ancestors)
-            {
-                <RadzenLink Path="@($"/org/{a.Org}/project/{a.Project}/task/{a.Id}")" class="ellip m-y-0h">@a.Name</RadzenLink>
-                <span>></span>
-            }
-            <RadzenLink Path="@($"/org/{OrgId}/projects")" class="ellip m-y-0h">@Ctx.Org.Name</RadzenLink>
-        </div>
+        @if (Ancestors.Any())
+        {
+            <div class="flx row rev g-0h ai-c ov-a child-no-shrink mw-100">
+                @foreach (var a in Ancestors.Take(Ancestors.Count - 1))
+                {
+                    <RadzenLink Path="@($"/org/{a.Org}/project/{a.Project}/task/{a.Id}")" class="ellip m-y-0h">@a.Name</RadzenLink>
+                    <span>></span>
+                }
+                <RadzenLink Path="@($"/org/{TheTask.Org}/project/{TheTask.Project}/task/{Ancestors.Last().Id}")" class="ellip m-y-0h">@Ancestors.Last().Name</RadzenLink>
+            </div>
+        }
         @if (MovingTask != null)
         {
             <div class="flx ai-c p-0h g-0h w-100 br-0q bw-0q bs-solid rz-color-secondary-darker rz-background-color-secondary-lighter rz-border-color-secondary-dark b-">
@@ -238,14 +241,6 @@
     private int Count => Items.Count; 
     private List<ATask> Items { get; set; } = new ();
     public bool ChildrenMore => Items.Count > 1 && !Items.Last().NextSib.IsNullOrWhiteSpace();
-    public List<VItem> Times { get; set; } = new();
-    public bool TimesMore { get; set; }
-    public List<VItem> Costs { get; set; } = new();
-    public bool CostsMore { get; set; }
-    public List<File> Files { get; set; } = new();
-    public bool FilesMore { get; set; }
-    public List<Comment> Comments { get; set; } = new();
-    public bool CommentsMore { get; set; }
     private bool _isLoading = false;
     private RadzenDataGrid<ATask>? _grid;
     private ATask? MovingTask { get; set; }
@@ -289,34 +284,15 @@
         if (TheTask?.Id != TaskId)
         {
             _selectedTabIndex = 0;
-        }
-        var res = await Api.Task.GetInitView(new (OrgId, ProjectId, TaskId));
-        await Ctx.Set(res.Task);
-        Ancestors = res.Ancestors.ToList();
-        TheTask = res.Task;
-        Items = res.Children.Prepend(TheTask).ToList();
-        if (TheTask.TimeInc > 0)
-        {
-            var timesRes = await Api.VItem.Get(new(OrgId, ProjectId, VItemType.Time, TaskId));
-            Times = timesRes.Set.ToList();
-            TimesMore = timesRes.More;
-        }
-        if (TheTask.CostInc > 0)
-        {
-            var costsRes = await Api.VItem.Get(new(OrgId, ProjectId, VItemType.Cost, TaskId));
-            Costs = costsRes.Set.ToList();
-            CostsMore = costsRes.More;
-        }
-        if (TheTask.FileN > 0)
-        {
-            var fileRes = await Api.File.Get(new(OrgId, ProjectId, TaskId));
-            Files = fileRes.Set.ToList();
-            FilesMore = fileRes.More;
-        }
-        Comments = (await Api.Comment.Get(new(OrgId, ProjectId, TaskId))).Set.ToList();
-        if (MovingTask != null && MovingTask.Project != Ctx.ProjectId)
-        {
-            MovingTask = null;
+            var res = await Api.Task.GetInitView(new (OrgId, ProjectId, TaskId));
+            await Ctx.Set(res.Task);
+            Ancestors = res.Ancestors.ToList();
+            TheTask = res.Task;
+            Items = res.Children.Prepend(TheTask).ToList();
+            if (MovingTask != null && MovingTask.Project != Ctx.ProjectId)
+            {
+                MovingTask = null;
+            }
         }
         _ready = true;
         await base.OnParametersSetAsync();

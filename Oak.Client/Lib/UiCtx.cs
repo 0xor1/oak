@@ -19,14 +19,14 @@ public class UiCtx
 
     public UIDisplay Display { get; init; } = new();
 
-    public string? OrgId { get; set; }
-    public string? ProjectId { get; set; }
-    public string? TaskId { get; set; }
-    public Org? Org { get; set; }
-    public OrgMember? OrgMember { get; set; }
-    public Project? Project { get; set; }
-    public ProjectMember? ProjectMember { get; set; }
-    public Task? Task { get; set; }
+    public string? OrgId { get; private set; }
+    public string? ProjectId { get; private set; }
+    public string? TaskId { get; private set; }
+    public Org? Org { get; private set; }
+    public OrgMember? OrgMember { get; private set; }
+    public Project? Project { get; private set; }
+    public ProjectMember? ProjectMember { get; private set; }
+    public Task? Task { get; private set; }
 
     public bool HasOrgOwnerPerm => OrgMember is { Role: OrgMemberRole.Owner, IsActive: true };
 
@@ -136,39 +136,4 @@ public class UiCtx
             _ss.Release();
         }
     }
-
-    // private (string? orgId, string? projectId, string? taskId) GetIdsFromUrl()
-    // {
-    //     var uri = _nav.Uri;
-    //     // check for /org/{OrgId}/project/{ProjectId}/task/{TaskId}
-    //     string? orgId = null;
-    //     var orgMatch = OrgIdRx().Match(uri);
-    //     if (orgMatch.Success && orgMatch.Groups.Count == 2)
-    //     {
-    //         orgId = orgMatch.Groups[1].Value;
-    //     }
-    //     string? projectId = null;
-    //     var projectMatch = ProjectIdRx().Match(uri);
-    //     if (projectMatch.Success && projectMatch.Groups.Count == 2)
-    //     {
-    //         projectId = projectMatch.Groups[1].Value;
-    //     }
-    //     string? taskId = null;
-    //     var taskMatch = TaskIdRx().Match(uri);
-    //     if (taskMatch.Success && taskMatch.Groups.Count == 2)
-    //     {
-    //         taskId = taskMatch.Groups[1].Value;
-    //     }
-    //
-    //     return (orgId, projectId, taskId);
-    // }
-    //
-    // [GeneratedRegex(@"/org/([^/\s]+)")]
-    // private static partial Regex OrgIdRx();
-    //
-    // [GeneratedRegex(@"/project/([^/\s]+)")]
-    // private static partial Regex ProjectIdRx();
-    //
-    // [GeneratedRegex(@"/task/([^/\s]+)")]
-    // private static partial Regex TaskIdRx();
 }
