@@ -196,6 +196,7 @@ public static partial class S
         { ChildN, new("Children") },
         { DescN, new("Descendants") },
         { FileLimit, new("File Limit") },
+        { Upload, new("Upload") },
         { OrgMyOrgs, new("My Organisations") },
         { OrgNoOrgs, new("No Organisations") },
         { OrgNewOrg, new("New Organisation") },
@@ -242,6 +243,7 @@ public static partial class S
         {
             TaskConfirmDeleteFile,
             new("<p>Are you sure you want to delete the file <strong>{{Name}}</strong>?</p>")
-        }
+        },
+        { TaskUploadFile, new("Upload File") }
     };
 }

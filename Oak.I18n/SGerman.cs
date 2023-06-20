@@ -208,6 +208,7 @@ public static partial class S
         { DescN, new("Nachkommenschaft") },
         { FileSize, new("Dateigröße") },
         { FileLimit, new("Dateilimit") },
+        { Upload, new("Hochladen") },
         { OrgMyOrgs, new("Meine Organisationen") },
         { OrgNoOrgs, new("Keine Organisationen") },
         { OrgNewOrg, new("Neue Organisation") },
@@ -256,6 +257,7 @@ public static partial class S
             new(
                 "<p>Sind Sie sicher, dass Sie die Datei <strong>{{Name}}</strong> löschen möchten?</p>"
             )
-        }
+        },
+        { TaskUploadFile, new("Datei hochladen") }
     };
 }

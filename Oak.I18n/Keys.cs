@@ -146,6 +146,7 @@ public static partial class S
     public const string ChildN = "child_n";
     public const string DescN = "desc_n";
     public const string FileLimit = "file_limit";
+    public const string Upload = "upload";
 
     // orgs
     public const string OrgMyOrgs = "org_my_orgs";
@@ -176,6 +177,7 @@ public static partial class S
     public const string TaskNoTimes = "task_no_times";
     public const string TaskNoCosts = "task_no_costs";
     public const string TaskConfirmDeleteVItem = "task_confirm_delete_vitem";
+    public const string TaskUploadFile = "task_upload_file";
     public const string TaskNoFiles = "task_no_files";
     public const string TaskConfirmDeleteFile = "task_confirm_delete_file";
 }

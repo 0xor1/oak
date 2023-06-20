@@ -5,6 +5,7 @@
 @using Oak.I18n
 @using ATask = Oak.Api.Task.Task;
 <div class="flx col jc-s ai-s g-0t w-100 mw-100">
+    <RadzenButton class="m-b-1" ButtonStyle="ButtonStyle.Success" Icon="add_circle_outline" Text="@L.S(S.New)" Click="@OpenNewDialog"/>
     <RadzenDataGrid
         @ref="_grid"
         Count="Count"
@@ -104,4 +105,8 @@
     }
 
     private RadzenDataGrid<File> _grid;
+    
+    private async Task OpenNewDialog()
+        => await DialogService.OpenAsync<FileUpload>(L.S(S.TaskUploadFile), new (){{"OnCreated", OnCreated}});
+
 }

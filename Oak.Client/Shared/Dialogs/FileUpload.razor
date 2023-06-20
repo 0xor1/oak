@@ -1,0 +1,78 @@
+﻿@using Common.Client
+@using Oak.Api
+@using Oak.Api.File
+@using Oak.Client.Lib
+@using ATask = Oak.Api.Task.Task
+@using S = Oak.I18n.S
+<div class="root col">
+    <div class="flx col ai-stretch g-1">
+        <div class="flx col ai-stretch">
+            <div class="rz-fileupload">
+                <div class="rz-fileupload-buttonbar">
+                    <span class="rz-fileupload-choose rz-button">
+                        <!-- TODO -->
+                        <span class="rz-button-text">Choose</span>
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div class="flx g-0h jc-stretch">
+            <RadzenButton ButtonType="ButtonType.Submit" IsBusy="_doing" Text="@(L.S(S.Upload))" Click="@Do"/>
+            <RadzenButton ButtonStyle="ButtonStyle.Secondary" IsBusy="_doing" Text="@L.S(S.Cancel)" Click="@(_ => DialogService.Close())"/>
+        </div>
+    </div>
+</div>
+
+@inject L L;
+@inject IApi Api;
+@inject UiCtx Ctx;
+@inject DialogService DialogService;
+@code {
+
+    [Parameter]
+    public Func<FileRes, Task>? OnCreated { get; set; }
+
+    [Parameter]
+    public ATask? SubTask { get; set; }
+
+    private string TaskId => SubTask?.Id ?? Ctx.TaskId;
+    private IEnumerable<FileInfo> Files = new List<FileInfo>();
+    
+    private bool _doing;
+    private RadzenUpload _uploadRef;
+
+    private async Task Do()
+    {
+        _doing = true;
+        try
+        {
+            var res = await Api.File.Upload(new(Ctx.OrgId, Ctx.ProjectId, TaskId)
+            {
+                Stream = null
+            });
+            if (OnCreated != null)
+            {
+                await OnCreated(res);
+            }
+            DialogService.Close();
+        }
+        catch
+        {
+            // use empty catch to avoid having to
+            // call StatHasChanged on errors
+        }
+        _doing = false;
+    }
+
+    private async Task OnProgress(UploadProgressArgs arg)
+    {
+        Console.WriteLine(arg.Progress);
+        await Task.CompletedTask;
+    }
+
+    private async Task OnChange(UploadChangeEventArgs arg)
+    {
+        Files = arg.Files;
+        await Task.CompletedTask;
+    }
+}
