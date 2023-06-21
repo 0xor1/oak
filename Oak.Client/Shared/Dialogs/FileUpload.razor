@@ -10,9 +10,36 @@
             <div class="rz-fileupload">
                 <div class="rz-fileupload-buttonbar">
                     <span class="rz-fileupload-choose rz-button">
-                        <!-- TODO -->
+                        <InputFile OnChange="OnFilesChanged"  multiple/>
                         <span class="rz-button-text">Choose</span>
                     </span>
+                </div>
+                <div class="flx col jc-s ai-s w-100 g-0h">
+                    @foreach (var f in Files)
+                    {
+                        <div class="flx w-100 jc-sb g-0h">
+                            <span class="shrink-1 ellip">@f.Name</span>
+                            <div class="flx g-0h shrink-0">
+                                @switch (f.Status)
+                                {
+                                    case FileStatus.NotStarted:
+                                        <span>@L.S(S.NotStarted)</span>
+                                        break;
+                                    case FileStatus.Uploading:
+                                        <span>@L.S(S.Uploading)</span>
+                                        break;
+                                    case FileStatus.Success:
+                                        <span>@L.S(S.Success)</span>
+                                        break;
+                                    case FileStatus.Error:
+                                        <span>@L.S(S.Error)</span>
+                                        break;
+                                }
+                                <span>@Util.Size((ulong)f.Size)</span>
+                                <RadzenButton ButtonStyle="ButtonStyle.Secondary" Icon="cancel" Size="ButtonSize.ExtraSmall" Click="() => CancelFile(f)"/>
+                            </div>
+                        </div>
+                    }
                 </div>
             </div>
         </div>
@@ -36,7 +63,7 @@
     public ATask? SubTask { get; set; }
 
     private string TaskId => SubTask?.Id ?? Ctx.TaskId;
-    private IEnumerable<FileInfo> Files = new List<FileInfo>();
+    private List<File> Files = new ();
     
     private bool _doing;
     private RadzenUpload _uploadRef;
@@ -46,13 +73,27 @@
         _doing = true;
         try
         {
-            var res = await Api.File.Upload(new(Ctx.OrgId, Ctx.ProjectId, TaskId)
+            foreach (var f in Files)
             {
-                Stream = null
-            });
-            if (OnCreated != null)
-            {
-                await OnCreated(res);
+                f.Status = FileStatus.Uploading;
+                try
+                {
+                    var res = await Api.File.Upload(new(Ctx.OrgId, Ctx.ProjectId, TaskId)
+                    {
+                        Stream = new(
+                            f.BFile.OpenReadStream((long)(5 * Util.GB)), f.Name, f.Type, false, f.Size)
+                    });
+                    f.Status = FileStatus.Success;
+                    if (OnCreated != null)
+                    {
+                        await OnCreated(res);
+                    }
+                }
+                catch(Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                    f.Status = FileStatus.Error;
+                }
             }
             DialogService.Close();
         }
@@ -64,15 +105,37 @@
         _doing = false;
     }
 
-    private async Task OnProgress(UploadProgressArgs arg)
+    private async Task OnFilesChanged(InputFileChangeEventArgs arg)
     {
-        Console.WriteLine(arg.Progress);
+        Files.Clear();
+        Files.AddRange(arg.GetMultipleFiles().Select(x => new File(x)));
         await Task.CompletedTask;
     }
 
-    private async Task OnChange(UploadChangeEventArgs arg)
+    private Task CancelFile(File f)
     {
-        Files = arg.Files;
-        await Task.CompletedTask;
+        if (_doing)
+        {
+            return Task.CompletedTask;
+        }
+        Files.Remove(f);
+        return Task.CompletedTask;
     }
+
+    public enum FileStatus
+    {
+        NotStarted,
+        Uploading,
+        Success,
+        Error
+    }
+
+    record File(IBrowserFile BFile)
+    {
+        public FileStatus Status { get; set; } = FileStatus.NotStarted;
+        public string Name => BFile.Name;
+        public string Type => BFile.ContentType;
+        public ulong Size => (ulong)BFile.Size;
+    };
+
 }

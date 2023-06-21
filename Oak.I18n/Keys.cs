@@ -68,6 +68,8 @@ public static partial class S
     public const string SendResetPwdLinkSuccess = "send_reset_pwd_link_success";
     public const string Processing = "processing";
     public const string Send = "send";
+    public const string NotStarted = "not_started";
+    public const string Uploading = "uploading";
     public const string Success = "success";
     public const string Error = "error";
     public const string Update = "update";

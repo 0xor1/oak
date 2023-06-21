@@ -118,6 +118,8 @@ public static partial class S
         },
         { Processing, new("wird bearbeitet") },
         { Send, new("Schicken") },
+        { NotStarted, new("Nicht angefangen") },
+        { Uploading, new("Hochladen") },
         { Success, new("Erfolg") },
         { Error, new("Fehler") },
         { Update, new("Aktualisieren") },

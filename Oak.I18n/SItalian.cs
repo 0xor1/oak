@@ -116,6 +116,8 @@ public static partial class S
         },
         { Processing, new("in lavorazione") },
         { Send, new("Inviare") },
+        { NotStarted, new("Non iniziato") },
+        { Uploading, new("Caricamento in corso") },
         { Success, new("Successo") },
         { Error, new("Errore") },
         { Update, new("Aggiornamento") },

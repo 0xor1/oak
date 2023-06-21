@@ -7,19 +7,19 @@ namespace Oak.Client.Lib;
 // TODO i18n/l10n this content
 public static class Util
 {
-    const ulong MinsPerHour = 60ul;
-    const ulong WeeksPerYear = 52ul;
+    public const ulong MinsPerHour = 60ul;
+    public const ulong WeeksPerYear = 52ul;
 
-    const ulong T = 1000000000000ul;
-    const ulong B = 1000000000ul;
-    const ulong M = 1000000ul;
-    const ulong K = 1000ul;
-    const ulong KB = 1024ul;
+    public const ulong T = 1000000000000ul;
+    public const ulong B = 1000000000ul;
+    public const ulong M = 1000000ul;
+    public const ulong K = 1000ul;
 
-    const ulong MB = KB * KB;
-    const ulong GB = KB * MB;
-    const ulong TB = KB * GB;
-    const ulong PB = KB * TB;
+    public const ulong KB = 1024ul;
+    public const ulong MB = KB * KB;
+    public const ulong GB = KB * MB;
+    public const ulong TB = KB * GB;
+    public const ulong PB = KB * TB;
 
     public static string Duration(Project p, ulong val)
     {

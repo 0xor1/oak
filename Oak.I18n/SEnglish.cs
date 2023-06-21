@@ -116,6 +116,8 @@ public static partial class S
         },
         { Processing, new("Processing") },
         { Send, new("Send") },
+        { NotStarted, new("Not Started") },
+        { Uploading, new("Uploading") },
         { Success, new("Success") },
         { Error, new("Error") },
         { Update, new("Update") },

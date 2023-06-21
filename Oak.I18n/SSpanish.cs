@@ -120,6 +120,8 @@ public static partial class S
         },
         { Processing, new("Procesando") },
         { Send, new("Enviar") },
+        { NotStarted, new("No empezado") },
+        { Uploading, new("Cargando") },
         { Success, new("Éxito") },
         { Error, new("Error") },
         { Update, new("Actualizar") },
