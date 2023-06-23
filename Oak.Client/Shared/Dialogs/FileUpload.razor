@@ -17,7 +17,7 @@
                 <div class="flx col jc-s ai-s w-100 g-0h">
                     @foreach (var f in Files)
                     {
-                        <div class="flx w-100 jc-sb g-0h">
+                        <div class="flx w-100 jc-sb g-0h @(f.Status == FileStatus.Uploading? "rz-background-color-info-light": f.Status == FileStatus.Success? "rz-background-color-success-light": f.Status == FileStatus.Error? "rz-background-color-danger-light" : "")">
                             <span class="shrink-1 ellip">@f.Name</span>
                             <div class="flx g-0h shrink-0">
                                 @switch (f.Status)
@@ -73,27 +73,29 @@
         _doing = true;
         try
         {
+            FileRes? res = null;
             foreach (var f in Files)
             {
                 f.Status = FileStatus.Uploading;
                 try
                 {
-                    var res = await Api.File.Upload(new(Ctx.OrgId, Ctx.ProjectId, TaskId)
+                    res = await Api.File.Upload(new(Ctx.OrgId, Ctx.ProjectId, TaskId)
                     {
                         Stream = new(
                             f.BFile.OpenReadStream((long)(5 * Util.GB)), f.Name, f.Type, false, f.Size)
                     });
                     f.Status = FileStatus.Success;
-                    if (OnCreated != null)
-                    {
-                        await OnCreated(res);
-                    }
                 }
                 catch(Exception ex)
                 {
                     Console.WriteLine(ex.Message);
                     f.Status = FileStatus.Error;
                 }
+                StateHasChanged();
+            }
+            if (OnCreated != null && res != null)
+            {
+                await OnCreated(res);
             }
             DialogService.Close();
         }
