@@ -87,6 +87,8 @@ internal static class FileEps
                             await store.Upload(
                                 OrgEps.FilesBucket,
                                 string.Join("/", req.Org, req.Project, req.Task, f.Id),
+                                req.Stream.Type,
+                                req.Stream.Size,
                                 req.Stream.Data
                             );
 

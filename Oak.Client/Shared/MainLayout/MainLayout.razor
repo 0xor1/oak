@@ -130,7 +130,7 @@
     
     protected override async Task OnInitializedAsync()
     {
-        Auth.RegisterRefreshUi(AuthStateChanged);
+        Auth.OnSessionChanged(AuthStateChanged);
         AuthStateChanged(await Auth.GetSession());
         _eventReg = Nav.RegisterLocationChangingHandler(LocationChanging);
         _ready = true;
