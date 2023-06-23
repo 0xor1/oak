@@ -342,7 +342,25 @@
         await _grid.Reload();
     }
     
-    private async Task UploadFile(ATask t) => await Task.CompletedTask;
+    private async Task OnFileCreated(FileRes res)
+    {
+        var i = Items.FindIndex(x => x.Id == res.Task.Id);
+        
+        if (i == 0)
+        {
+            TheTask = res.Task;
+        }
+        else if (i > -1)
+        {
+            // if we added to a sub task we need to refresh the current task we're looking at too.
+            Items[i] = res.Task;
+            TheTask = await Api.Task.GetOne(new (OrgId, ProjectId, TaskId));
+        }
+        await Ctx.Set(TheTask);
+        await _grid.Reload();
+    }
+
+    private async Task UploadFile(ATask t) => await DialogService.OpenAsync<FileUpload>(L.S(S.TaskUploadFile), new() { {"SubTask", t}, { "OnCreated", OnFileCreated } });
     
     private async Task CreateAfter(ATask t)
         => await DialogService.OpenAsync<TaskNewOrUpdate>(L.S(S.TaskNewTask), new (){{"OrgId", OrgId}, {"ProjectId", ProjectId}, {"ParentId", TheTask.Id}, {"PrevSib", t == TheTask? null: t}, {"OnCreated", OnCreated}});
