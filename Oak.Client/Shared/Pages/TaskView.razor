@@ -32,14 +32,14 @@
                 <span class="ellip">@L.H(S.TaskMovingTask, MovingTask)</span>
             </div>
         }
-        <RadzenText class="m-t-0h" TextStyle="TextStyle.H3" Text="@TheTask.Name"/>
+        <RadzenText class="m-t-0q" TextStyle="TextStyle.H3" Text="@TheTask.Name"/>
         @if (TheTask.Description.IsNullOrWhiteSpace())
         {
-            <RadzenText class="m-t-0h" TextStyle="TextStyle.Body1" Text="@L.S(S.NoDescription)"></RadzenText>
+            <RadzenText class="m-t-0q" TextStyle="TextStyle.Body1" Text="@L.S(S.NoDescription)"></RadzenText>
         }
         else
         {
-            <RadzenText class="m-t-0h" TextStyle="TextStyle.Body1" Text="@TheTask.Description"></RadzenText>
+            <RadzenText class="m-t-0q" TextStyle="TextStyle.Body1" Text="@TheTask.Description"></RadzenText>
         }
         <div class="flx col jc-s ai-s g-0t w-100 mw-100">
             <RadzenTabs @bind-SelectedIndex="_selectedTabIndex" class="w-100 no-x-pad" >
