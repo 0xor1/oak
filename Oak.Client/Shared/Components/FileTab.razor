@@ -25,13 +25,16 @@
                         @if (Ctx.CanDeleteVItemOrFile(f))
                         {
                             <div class="flx g-0q p-abs show-on-row-mouse-over" style="right: -1em;">
+                                <a @onclick:stopPropagation="true" href="@(Api.File.DownloadUrl(new (f.Org, f.Project, f.Task, f.Id, true)))" target="_blank">
+                                    <RadzenButton Icon="download" ButtonStyle="ButtonStyle.Info" Size="ButtonSize.ExtraSmall"/>
+                                </a>
                                 <RadzenButton @onclick:stopPropagation="true" Icon="delete" ButtonStyle="ButtonStyle.Danger" Size="ButtonSize.ExtraSmall" Disabled="!Ctx.CanDeleteVItemOrFile(f)" Click="_ => Delete(f)"/>
                             </div>
                         }
                     </div>
                 </Template>
             </RadzenDataGridColumn>
-            <RadzenDataGridColumn Visible="Ctx.Display.User" Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Width="10em" TItem="File" Property="@nameof(File.CreatedBy)" Title="@L.S(S.User)">
+            <RadzenDataGridColumn Visible="Ctx.Display.User" Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Width="7em" TItem="File" Property="@nameof(File.CreatedBy)" Title="@L.S(S.User)">
                 <Template Context="f">
                     <User OrgId="@f.Org" UserId="@f.CreatedBy"/>
                 </Template>
@@ -67,7 +70,7 @@
     {
         get
         {
-            var width = 55;
+            var width = 45;
             if (Ctx.Display.CreatedOn)
             {
                 width += 7;

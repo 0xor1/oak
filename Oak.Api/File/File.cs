@@ -7,6 +7,7 @@ public interface IFileApi
 {
     public Task<FileRes> Upload(Upload arg);
     public Task<HasStream> Download(Download arg);
+    public string DownloadUrl(Download arg);
     public Task<Task.Task> Delete(Exact arg);
     public Task<SetRes<File>> Get(Get arg);
 }
@@ -23,6 +24,8 @@ public class FileApi : IFileApi
     public Task<FileRes> Upload(Upload arg) => _client.Do(FileRpcs.Upload, arg);
 
     public Task<HasStream> Download(Download arg) => _client.Do(FileRpcs.Download, arg);
+
+    public string DownloadUrl(Download arg) => _client.GetUrl(FileRpcs.Download, arg);
 
     public Task<Task.Task> Delete(Exact arg) => _client.Do(FileRpcs.Delete, arg);
 

@@ -32,6 +32,15 @@
                 <span class="ellip">@L.H(S.TaskMovingTask, MovingTask)</span>
             </div>
         }
+        <RadzenText class="m-t-0h" TextStyle="TextStyle.H3" Text="@TheTask.Name"/>
+        @if (TheTask.Description.IsNullOrWhiteSpace())
+        {
+            <RadzenText class="m-t-0h" TextStyle="TextStyle.Body1" Text="@L.S(S.NoDescription)"></RadzenText>
+        }
+        else
+        {
+            <RadzenText class="m-t-0h" TextStyle="TextStyle.Body1" Text="@TheTask.Description"></RadzenText>
+        }
         <div class="flx col jc-s ai-s g-0t w-100 mw-100">
             <RadzenTabs @bind-SelectedIndex="_selectedTabIndex" class="w-100 no-x-pad" >
                 <Tabs>
@@ -95,18 +104,18 @@
                                 </RadzenDataGridColumn>
                                 <RadzenDataGridColumn Visible="Ctx.Display.Time" TextAlign="TextAlign.Center" Width="7em" TItem="ATask" Property="@nameof(ATask.TimeSubMin)" Title="@L.S(S.TimeMin)">
                                     <Template Context="t">
-                                        @(Util.Duration(Ctx.Project, t.TimeEst + t.TimeSubMin))
+                                        <span title="@($"{Util.Duration(Ctx.Project, t.TimeEst)} / {Util.Duration(Ctx.Project, t.TimeSubMin)}")">@(Util.Duration(Ctx.Project, t.TimeEst + t.TimeSubMin))</span>
                                     </Template>
                                 </RadzenDataGridColumn>
                                 <RadzenDataGridColumn Visible="Ctx.Display.Time" TextAlign="TextAlign.Center" Width="7em" TItem="ATask" Property="@nameof(ATask.TimeEst)" Title="@L.S(S.TimeEst)">
                                     <Template Context="t">
-                                        @(Util.Duration(Ctx.Project, t.TimeEst + t.TimeSubEst))
+                                        <span title="@($"{Util.Duration(Ctx.Project, t.TimeEst)} / {Util.Duration(Ctx.Project, t.TimeSubEst)}")">@(Util.Duration(Ctx.Project, t.TimeEst + t.TimeSubEst))</span>
                                     </Template>
                                 </RadzenDataGridColumn>
                                 <RadzenDataGridColumn Visible="Ctx.Display.Time" TextAlign="TextAlign.Center" Width="7em" TItem="ATask" Property="@nameof(ATask.TimeInc)" Title="@L.S(S.TimeInc)">
                                     <Template Context="t">
                                         <div class="flx child-no-shrink jc-c ai-c g-0h w-100 mw-100 p-rel">
-                                            <span>
+                                            <span title="@($"{Util.Duration(Ctx.Project, t.TimeInc)} / {Util.Duration(Ctx.Project, t.TimeSubInc)}")">
                                                 @(Util.Duration(Ctx.Project, t.TimeInc + t.TimeSubInc))
                                             </span>
                                             @if (Ctx.HasProjectWritePerm && MovingTask == null)
@@ -120,13 +129,13 @@
                                 </RadzenDataGridColumn>
                                 <RadzenDataGridColumn Visible="Ctx.Display.Cost" TextAlign="TextAlign.Center" Width="7em" TItem="ATask" Property="@nameof(ATask.CostEst)" Title="@L.S(S.CostEst)">
                                     <Template Context="t">
-                                        @(Util.Cost(Ctx.Project, t.CostEst + t.CostSubEst))
+                                        <span title="@($"{Util.Cost(Ctx.Project, t.CostEst)} / {Util.Cost(Ctx.Project, t.CostSubEst)}")">@(Util.Cost(Ctx.Project, t.CostEst + t.CostSubEst))</span>
                                     </Template>
                                 </RadzenDataGridColumn>
                                 <RadzenDataGridColumn Visible="Ctx.Display.Cost" TextAlign="TextAlign.Center" Width="7em" TItem="ATask" Property="@nameof(ATask.CostInc)" Title="@L.S(S.CostInc)">
                                     <Template Context="t">
                                         <div class="flx child-no-shrink jc-c ai-c g-0h w-100 mw-100 p-rel">
-                                            <span>
+                                            <span title="@($"{Util.Cost(Ctx.Project, t.CostInc)} / {Util.Cost(Ctx.Project, t.CostSubInc)}")">
                                                 @(Util.Cost(Ctx.Project, t.CostInc + t.CostSubInc))
                                             </span>
                                             @if (Ctx.HasProjectWritePerm && MovingTask == null)
@@ -140,13 +149,13 @@
                                 </RadzenDataGridColumn>
                                 <RadzenDataGridColumn Visible="Ctx.Display.File" Sortable="false" TextAlign="TextAlign.Center" Width="7em" TItem="ATask" Property="@nameof(ATask.FileSize)" Title="@L.S(S.FileSize)">
                                     <Template Context="t">
-                                        @(Util.Size(t.FileSize + t.FileSubSize))
+                                        <span title="@($"{Util.Size(t.FileSize)} / {Util.Size(t.FileSubSize)}")">@(Util.Size(t.FileSize + t.FileSubSize))</span>
                                     </Template>
                                 </RadzenDataGridColumn>
                                 <RadzenDataGridColumn Visible="Ctx.Display.File" Sortable="false" TextAlign="TextAlign.Center" Width="7em" TItem="ATask" Property="@nameof(ATask.FileN)" Title="@L.S(S.FileN)">
                                     <Template Context="t">
                                         <div class="flx child-no-shrink jc-c ai-c g-0h w-100 mw-100 p-rel">
-                                            <span>
+                                            <span title="@($"{t.FileN} / {t.FileSubN}")">
                                                 @(t.FileN + t.FileSubN)
                                             </span>
                                             @if (Ctx.HasProjectWritePerm && MovingTask == null)
@@ -167,14 +176,6 @@
                                 </RadzenDataGridColumn>
                             </Columns>
                         </RadzenDataGrid>
-                        @if (TheTask.Description.IsNullOrWhiteSpace())
-                        {
-                            <RadzenText TextStyle="TextStyle.Body1" Text="@L.S(S.NoDescription)"></RadzenText>
-                        }
-                        else
-                        {
-                            <RadzenText TextStyle="TextStyle.Body1" Text="@TheTask.Description"></RadzenText>
-                        }
                     </RadzenTabsItem>
                     <RadzenTabsItem Text="@L.S(S.Time)" Visible="Ctx.Display.Time">
                         <VItemTab Type="VItemType.Time" OnChange="OnSubItemChange"></VItemTab>
