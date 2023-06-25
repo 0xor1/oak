@@ -184,10 +184,10 @@
                         <VItemTab Type="VItemType.Cost" OnChange="OnSubItemChange"></VItemTab>
                     </RadzenTabsItem>
                     <RadzenTabsItem Text="@L.S(S.File)" Visible="Ctx.Display.File">
-                        <FileTab OnChange="OnSubItemChange"></FileTab>
+                        <FileTab OnChange="OnSubItemChange"/>
                     </RadzenTabsItem>
                     <RadzenTabsItem Text="@L.S(S.Comment)">
-                        <RadzenText TextStyle="TextStyle.Body1" Text="TODO COMMENT"></RadzenText>
+                        <CommentTab/>
                     </RadzenTabsItem>
                 </Tabs>
             </RadzenTabs>

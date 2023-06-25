@@ -41,10 +41,4 @@
     <ProjectReference Include="..\Oak.I18n\Oak.I18n.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <AdditionalFiles Include="Shared\Components\DurationInput.razor" />
-    <AdditionalFiles Include="Shared\Components\MinMaxDateDataGridFilter.razor" />
-    <AdditionalFiles Include="Shared\Pages\TaskView.razor" />
-  </ItemGroup>
-
 </Project>

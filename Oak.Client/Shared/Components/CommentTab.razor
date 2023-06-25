@@ -1,0 +1,78 @@
+﻿@using Oak.Client.Lib
+@using Common.Client
+@using Common.Shared
+@using Oak.Api
+@using Oak.Api.Comment
+@using Oak.Api.File
+@using Oak.I18n
+@using S = Oak.I18n.S
+@using ATask = Oak.Api.Task.Task;
+<div class="flx col jc-s ai-s g-0t w-100 mw-100">
+    @if (Ctx.HasProjectWritePerm)
+    {
+        <textarea @ref="_textArea" @bind="Value" @onkeydown="KeyDown" name="Comment" rows="5" class="rz-textarea w-100"></textarea>
+        <textarea @ref="_altTextArea" style="width: 0; height: 0; border: 0; margin: 0;padding: 0"></textarea>
+    }
+    @foreach (var i in Items)
+    {
+        <RadzenCard class="flx col w-100">
+            <div class="f-0t">
+                <User OrgId="@Ctx.OrgId" UserId="@i.CreatedBy"></User>
+                <span>@L.D(i.CreatedOn) @L.T(i.CreatedOn)</span>
+            </div>
+            <div>
+                @AddLineBreaks(i)
+            </div>
+        </RadzenCard>
+    }
+</div>
+
+@inject L L;
+@inject DialogService DialogService;
+@inject IApi Api
+@inject UiCtx Ctx
+@code {
+
+    private List<Comment> Items { get; set; } = new();
+    private bool _isLoading = false;
+    private string Value { get; set; } = "";
+
+    protected override async Task OnParametersSetAsync()
+    {
+        Items.Clear();
+        var res = await Api.Comment.Get(new(Ctx.Org.Id, Ctx.Project.Id, Ctx.Task.Id));
+        Items.AddRange(res.Set);
+        await base.OnParametersSetAsync();
+    }
+
+    private async Task Delete(Comment c)
+    {
+        var confirmed = await DialogService.Confirm(L.S(S.TaskConfirmDeleteFile), L.S(S.Confirm), new ConfirmOptions() { OkButtonText = L.S(S.Delete), CancelButtonText = L.S(S.Cancel) });
+        if (confirmed == true)
+        {
+            await Api.Comment.Delete(new(c.Org, c.Project, c.Task, c.Id));
+            Items.Remove(c);
+        }
+    }
+
+    private async Task KeyDown(KeyboardEventArgs arg)
+    {
+        if (arg is { Code: "Enter", ShiftKey: false })
+        {
+            await _altTextArea.FocusAsync();
+            await _textArea.FocusAsync();
+            Value = Value.Trim();
+            if (!Value.IsNullOrWhiteSpace())
+            {
+                var c = await Api.Comment.Create(new(Ctx.OrgId, Ctx.ProjectId, Ctx.TaskId, Value));
+                Value = "";
+                Items.Insert(0, c);
+                StateHasChanged();
+            }
+        }
+    }
+
+    private MarkupString AddLineBreaks(Comment c) => new (c.Body.Replace("\n", "<br>"));
+    private ElementReference _textArea;
+    private ElementReference _altTextArea;
+}
