@@ -126,6 +126,7 @@ public static partial class S
             StringValidation,
             new("Stringa non valida {{Name}}, Min {{Min}}, Max {{Max}}, Regexes {{Regexes}}")
         },
+        { CopyToClipboardSuccess, new("Copiato negli appunti") },
         { OrgTooMany, new("Sei già membro di troppe org") },
         { ProjectInvalidHoursPerDay, new("Le ore giornaliere devono essere comprese tra 1 e 24") },
         {

@@ -131,6 +131,7 @@ public static partial class S
             StringValidation,
             new("Chaîne non valide {{Name}}, Min {{Min}}, Max {{Max}}, Regexes {{Regexes}}")
         },
+        { CopyToClipboardSuccess, new("Copié dans le presse-papier") },
         { OrgTooMany, new("Vous êtes déjà membre d'un trop grand nombre d'organisations") },
         {
             ProjectInvalidHoursPerDay,

@@ -96,7 +96,7 @@ public static class Util
         }
         if (val >= KB)
         {
-            return $"{((decimal)val / MB).ToString("F")}KB";
+            return $"{((decimal)val / KB).ToString("F")}KB";
         }
         return $"{val}B";
     }

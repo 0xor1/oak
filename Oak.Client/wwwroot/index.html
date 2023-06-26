@@ -69,6 +69,10 @@
             setTimeout(pollNotificationPermission, 1000);
         };
         pollNotificationPermission();
+        
+        window.writeTextToClipboard = function(text) {
+            navigator.clipboard.writeText(text);
+        };
     </script>
     <script src="_content/Radzen.Blazor/Radzen.Blazor.js"></script>
     <script src="_framework/blazor.webassembly.js"></script>

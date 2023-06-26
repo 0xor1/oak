@@ -75,6 +75,7 @@ public static partial class S
     public const string Update = "update";
     public const string Updating = "updating";
     public const string StringValidation = "string_validation";
+    public const string CopyToClipboardSuccess = "copy_to_clipboard_success";
 
     // org
     public const string OrgTooMany = "org_too_many";

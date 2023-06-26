@@ -28,6 +28,7 @@
                                 <a @onclick:stopPropagation="true" href="@(Api.File.DownloadUrl(new (f.Org, f.Project, f.Task, f.Id, true)))" target="_blank">
                                     <RadzenButton Icon="download" ButtonStyle="ButtonStyle.Info" Size="ButtonSize.ExtraSmall"/>
                                 </a>
+                                <RadzenButton Icon="content_copy" ButtonStyle="ButtonStyle.Info" Size="ButtonSize.ExtraSmall" Click="_ => CopyInlineUrlToClipboard(f)"/>
                                 <RadzenButton @onclick:stopPropagation="true" Icon="delete" ButtonStyle="ButtonStyle.Danger" Size="ButtonSize.ExtraSmall" Disabled="!Ctx.CanDeleteVItemOrFile(f)" Click="_ => Delete(f)"/>
                             </div>
                         }
@@ -57,6 +58,8 @@
 @inject DialogService DialogService;
 @inject IApi Api
 @inject UiCtx Ctx
+@inject IJSRuntime JS;
+@inject NotificationService NotificationService;
 @code {
 
     [Parameter]
@@ -111,5 +114,11 @@
     
     private async Task OpenNewDialog()
         => await DialogService.OpenAsync<FileUpload>(L.S(S.TaskUploadFile), new (){{"OnCreated", OnCreated}});
+
+    private async Task CopyInlineUrlToClipboard(File f)
+    {
+        await JS.InvokeVoidAsync("writeTextToClipboard", Api.File.DownloadUrl(new(f.Org, f.Project, f.Task, f.Id, false)));
+        NotificationService.Notify(NotificationSeverity.Success, L.S(S.CopyToClipboardSuccess), duration: 2000d);
+    }
 
 }
