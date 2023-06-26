@@ -10,7 +10,7 @@
 <div class="flx col jc-s ai-s g-0t w-100 mw-100">
     @if (Ctx.HasProjectWritePerm)
     {
-        <textarea @ref="_textArea" @bind="Value" @onkeydown="KeyDown" name="Comment" rows="5" class="rz-textarea w-100"></textarea>
+        <RadzenHtmlEditor @ref="_htmlEditor" @bind-Value="Value" Name="Comment" class="w-100" style="height: 12em" @onkeydown="KeyDown"/>
         <textarea @ref="_altTextArea" style="width: 0; height: 0; border: 0; margin: 0;padding: 0"></textarea>
     }
     @foreach (var i in Items)
@@ -31,6 +31,7 @@
 @inject DialogService DialogService;
 @inject IApi Api
 @inject UiCtx Ctx
+@inject IJSRuntime Js
 @code {
 
     private List<Comment> Items { get; set; } = new();
@@ -57,22 +58,26 @@
 
     private async Task KeyDown(KeyboardEventArgs arg)
     {
-        if (arg is { Code: "Enter", ShiftKey: false })
+        if (arg.Code == "Enter" && !arg.ShiftKey)
         {
+            // this is a hack to force the html editor to refresh its value
+            // otherwise it is always empty string
             await _altTextArea.FocusAsync();
-            await _textArea.FocusAsync();
             Value = Value.Trim();
             if (!Value.IsNullOrWhiteSpace())
             {
-                var c = await Api.Comment.Create(new(Ctx.OrgId, Ctx.ProjectId, Ctx.TaskId, Value));
+                var v = Value;
                 Value = "";
+                var c = await Api.Comment.Create(new(Ctx.OrgId, Ctx.ProjectId, Ctx.TaskId, v));
                 Items.Insert(0, c);
                 StateHasChanged();
             }
+            await _htmlEditor.FocusAsync();
         }
     }
 
     private MarkupString AddLineBreaks(Comment c) => new (c.Body.Replace("\n", "<br>"));
     private ElementReference _textArea;
     private ElementReference _altTextArea;
+    private RadzenHtmlEditor _htmlEditor;
 }
