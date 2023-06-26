@@ -23,6 +23,7 @@ public class TestBase : IDisposable
             S.Inst,
             OakEps.Eps,
             c => new Api.Api(c),
+            OrgEps.AddServices,
             OrgEps.InitApp
         );
     }

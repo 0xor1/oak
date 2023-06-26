@@ -131,6 +131,7 @@ public static partial class S
         { OrgTooMany, new("Sie sind bereits Mitglied in zu vielen Orgs") },
         { ProjectInvalidHoursPerDay, new("Die Stunden pro Tag müssen zwischen 1 und 24 liegen") },
         { ProjectInvalidDaysPerWeek, new("Die Tage pro Woche müssen zwischen 1 und 7 liegen") },
+        { ProjectFileLimitExceeded, new("Projektdateilimit überschritten {{FileLimit}}") },
         {
             TaskTooManyDescN,
             new(

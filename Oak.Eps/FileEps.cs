@@ -5,6 +5,7 @@ using Oak.Api;
 using Oak.Api.File;
 using Oak.Api.ProjectMember;
 using Oak.Db;
+using S = Oak.I18n.S;
 using Upload = Oak.Api.File.Upload;
 using Download = Oak.Api.File.Download;
 using FileRes = Oak.Api.File.FileRes;
@@ -37,6 +38,20 @@ internal static class FileEps
                             );
                             EpsUtil.ValidStr(ctx, req.Stream.Name, nameMinLen, nameMaxLen, "Name");
                             await db.LockProject(req.Org, req.Project);
+                            var p = await db.Projects.SingleAsync(
+                                x => x.Org == req.Org && x.Id == req.Project
+                            );
+                            var pt = await db.Tasks.SingleAsync(
+                                x =>
+                                    x.Org == req.Org
+                                    && x.Project == req.Project
+                                    && x.Id == req.Project
+                            );
+                            ctx.BadRequestIf(
+                                pt.FileSize + pt.FileSubSize + req.Stream.Size > p.FileLimit,
+                                S.ProjectFileLimitExceeded,
+                                new { p.FileLimit }
+                            );
                             var t = await db.Tasks.SingleOrDefaultAsync(
                                 x =>
                                     x.Org == req.Org && x.Project == req.Project && x.Id == req.Task

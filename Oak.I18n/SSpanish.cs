@@ -134,6 +134,10 @@ public static partial class S
         { ProjectInvalidHoursPerDay, new("Las horas por día deben estar entre 1 y 24") },
         { ProjectInvalidDaysPerWeek, new("Los días de la semana deben estar entre 1 y 7") },
         {
+            ProjectFileLimitExceeded,
+            new("Se excedió el límite de archivos del proyecto {{FileLimit}}")
+        },
+        {
             TaskTooManyDescN,
             new(
                 "Demasiados descendientes para obtenerlos todos, solo válido en tareas con 1000 o menos descendientes"

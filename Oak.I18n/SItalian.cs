@@ -132,6 +132,7 @@ public static partial class S
             ProjectInvalidDaysPerWeek,
             new("I giorni della settimana devono essere compresi tra 1 e 7")
         },
+        { ProjectFileLimitExceeded, new("Limite del file di progetto superato {{FileLimit}}") },
         {
             TaskTooManyDescN,
             new(

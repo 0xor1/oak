@@ -2,6 +2,7 @@
 using Amazon.S3;
 using Common.Server;
 using Common.Shared;
+using Ganss.Xss;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Oak.Api.Org;
@@ -21,6 +22,11 @@ public static class OrgEps
 {
     private const int MaxActiveOrgs = 10;
     public const string FilesBucket = "taskfiles";
+
+    public static void AddServices(IServiceCollection sc)
+    {
+        sc.AddSingleton<IHtmlSanitizer, HtmlSanitizer>();
+    }
 
     public static async Task InitApp(IServiceProvider sp)
     {

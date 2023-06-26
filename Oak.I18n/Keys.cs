@@ -82,6 +82,7 @@ public static partial class S
     // project
     public const string ProjectInvalidHoursPerDay = "project_invalid_hours_per_day";
     public const string ProjectInvalidDaysPerWeek = "project_invalid_days_per_week";
+    public const string ProjectFileLimitExceeded = "project_file_limit_exceeded";
 
     // task
     public const string TaskTooManyDescN = "task_too_many_descn";

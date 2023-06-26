@@ -12,11 +12,12 @@
     </ItemGroup>
     
     <ItemGroup>
-        <PackageReference Include="0xor1.Common.Server" Version="2.1.42" />
+        <PackageReference Include="0xor1.Common.Server" Version="2.1.43" />
         <PackageReference Include="CSharpier.MsBuild" Version="0.22.1">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
+        <PackageReference Include="HtmlSanitizer" Version="8.0.645" />
     </ItemGroup>
 
 </Project>

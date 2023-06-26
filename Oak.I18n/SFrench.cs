@@ -141,6 +141,10 @@ public static partial class S
             new("Les jours par semaine doivent être compris entre 1 et 7")
         },
         {
+            ProjectFileLimitExceeded,
+            new("La limite de fichiers de projet a dépassé {{FileLimit}}")
+        },
+        {
             TaskTooManyDescN,
             new(
                 "Trop de descendants pour tous les obtenir, valide uniquement sur les tâches avec 1000 descendants ou moins"
