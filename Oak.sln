@@ -18,6 +18,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Oak.Eps.Test", "Oak.Eps.Tes
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Oak.DevServer", "Oak.DevServer\Oak.DevServer.csproj", "{CA1AD3D2-51B3-41F5-A979-901253053236}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Oak.TreePerfTest", "Oak.TreePerfTest\Oak.TreePerfTest.csproj", "{838873F0-2152-4CF0-8A74-1F9AD10758D9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -124,6 +126,18 @@ Global
 		{CA1AD3D2-51B3-41F5-A979-901253053236}.Release|x64.Build.0 = Release|Any CPU
 		{CA1AD3D2-51B3-41F5-A979-901253053236}.Release|x86.ActiveCfg = Release|Any CPU
 		{CA1AD3D2-51B3-41F5-A979-901253053236}.Release|x86.Build.0 = Release|Any CPU
+		{838873F0-2152-4CF0-8A74-1F9AD10758D9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{838873F0-2152-4CF0-8A74-1F9AD10758D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{838873F0-2152-4CF0-8A74-1F9AD10758D9}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{838873F0-2152-4CF0-8A74-1F9AD10758D9}.Debug|x64.Build.0 = Debug|Any CPU
+		{838873F0-2152-4CF0-8A74-1F9AD10758D9}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{838873F0-2152-4CF0-8A74-1F9AD10758D9}.Debug|x86.Build.0 = Debug|Any CPU
+		{838873F0-2152-4CF0-8A74-1F9AD10758D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{838873F0-2152-4CF0-8A74-1F9AD10758D9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{838873F0-2152-4CF0-8A74-1F9AD10758D9}.Release|x64.ActiveCfg = Release|Any CPU
+		{838873F0-2152-4CF0-8A74-1F9AD10758D9}.Release|x64.Build.0 = Release|Any CPU
+		{838873F0-2152-4CF0-8A74-1F9AD10758D9}.Release|x86.ActiveCfg = Release|Any CPU
+		{838873F0-2152-4CF0-8A74-1F9AD10758D9}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
