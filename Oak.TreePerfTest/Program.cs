@@ -19,7 +19,7 @@ var start = DateTime.UtcNow;
 
 await CreateTree(p.Id, 0, 0, k, h);
 
-var dur = start.Subtract(DateTime.UtcNow);
+var dur = DateTime.UtcNow.Subtract(start);
 Console.WriteLine(dur.ToString());
 
 async Task<int> CreateTree(string parentId, int lastIdx, int currentDepth, int k, int h)
