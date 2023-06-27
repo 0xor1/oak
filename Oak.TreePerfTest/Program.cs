@@ -20,7 +20,8 @@ var start = DateTime.UtcNow;
 await CreateTree(p.Id, 0, 0, k, h);
 
 var dur = DateTime.UtcNow.Subtract(start);
-Console.WriteLine(dur.ToString());
+Console.WriteLine();
+Console.WriteLine($"time: {dur.ToString()}");
 
 async Task<int> CreateTree(string parentId, int lastIdx, int currentDepth, int k, int h)
 {
@@ -32,7 +33,7 @@ async Task<int> CreateTree(string parentId, int lastIdx, int currentDepth, int k
     for(var i = 0; i < k; i++ )
     {
         lastIdx++;
-        Console.WriteLine($"\rcreating node {lastIdx}");
+        Console.Write($"\rcreating node {lastIdx}");
         var isParallel = true;
         var timeEst = (ulong)lastIdx*10;
         if (currentDepth == h - 1 || i % 2 == 0)
