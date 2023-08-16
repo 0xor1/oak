@@ -60,7 +60,7 @@ public class TestBase : IDisposable
                 5,
                 DateTimeExt.UtcNowMilli(),
                 DateTimeExt.UtcNowMilli().Add(TimeSpan.FromDays(5)),
-                10
+                1000
             )
         );
 
@@ -92,7 +92,7 @@ public class TestBase : IDisposable
                 5,
                 DateTimeExt.UtcNowMilli(),
                 DateTimeExt.UtcNowMilli().Add(TimeSpan.FromDays(5)),
-                10
+                1000
             )
         );
 

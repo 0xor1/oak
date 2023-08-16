@@ -34,4 +34,12 @@
       <ProjectReference Include="..\Oak.Eps\Oak.Eps.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Content Update="fcm_service_account_key.json">
+        <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      </Content>
+    </ItemGroup>
+
 </Project>
