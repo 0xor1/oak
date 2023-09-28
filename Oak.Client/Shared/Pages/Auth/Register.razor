@@ -97,9 +97,10 @@
         => AuthValidator.PwdValidator(component);
 
     private ValidationResult ConfirmPasswordValidator(IRadzenFormComponent component)
-        => new ()
-        {
-            Valid = (component.GetValue() as string ?? "") == _model.Pwd,
-            Message = new (S.PwdsDontMatch)
-        };
+    {
+        var res = new ValidationResult(S.PwdsDontMatch);
+        res.InvalidIf((component.GetValue() as string ?? "") != _model.Pwd);
+        return res;
+    }
+
 }
