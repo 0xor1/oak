@@ -21,7 +21,7 @@ internal static class OrgMemberEps
                             // check current member has sufficient permissions
                             var sesOrgMem = await db.OrgMembers
                                 .Where(x => x.Org == req.Org && x.IsActive && x.Id == ses.Id)
-                                .SingleOrDefaultAsync();
+                                .SingleOrDefaultAsync(ctx.Ctkn);
                             ctx.InsufficientPermissionsIf(sesOrgMem == null);
                             var sesRole = sesOrgMem.NotNull().Role;
                             ctx.InsufficientPermissionsIf(
@@ -33,7 +33,8 @@ internal static class OrgMemberEps
                             );
                             // check new member is an active user
                             var newMemExists = await db.Auths.AnyAsync(
-                                x => x.Id == req.Id && x.ActivatedOn != DateTimeExt.Zero()
+                                x => x.Id == req.Id && x.ActivatedOn != DateTimeExt.Zero(),
+                                ctx.Ctkn
                             );
                             ctx.NotFoundIf(!newMemExists, model: new { Name = "User" });
                             var newMem = new Db.OrgMember()
@@ -44,7 +45,7 @@ internal static class OrgMemberEps
                                 Name = req.Name,
                                 Role = req.Role
                             };
-                            await db.OrgMembers.AddAsync(newMem);
+                            await db.OrgMembers.AddAsync(newMem, ctx.Ctkn);
                             return newMem.ToApi();
                         }
                     )
@@ -55,7 +56,8 @@ internal static class OrgMemberEps
                 {
                     var db = ctx.Get<OakDb>();
                     var mem = await db.OrgMembers.SingleOrDefaultAsync(
-                        x => x.Org == req.Org && x.Id == req.Id
+                        x => x.Org == req.Org && x.Id == req.Id,
+                        ctx.Ctkn
                     );
                     return new(mem?.ToApi());
                 }

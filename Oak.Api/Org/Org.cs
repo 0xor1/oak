@@ -4,11 +4,11 @@ namespace Oak.Api.Org;
 
 public interface IOrgApi
 {
-    public Task<Org> Create(Create arg);
-    public Task<Org> GetOne(Exact arg);
-    public Task<IReadOnlyList<Org>> Get(Get arg);
-    public Task<Org> Update(Update arg);
-    public System.Threading.Tasks.Task Delete(Exact arg);
+    public Task<Org> Create(Create arg, CancellationToken ctkn = default);
+    public Task<Org> GetOne(Exact arg, CancellationToken ctkn = default);
+    public Task<IReadOnlyList<Org>> Get(Get arg, CancellationToken ctkn = default);
+    public Task<Org> Update(Update arg, CancellationToken ctkn = default);
+    public System.Threading.Tasks.Task Delete(Exact arg, CancellationToken ctkn = default);
 }
 
 public class OrgApi : IOrgApi
@@ -20,15 +20,20 @@ public class OrgApi : IOrgApi
         _client = client;
     }
 
-    public Task<Org> Create(Create arg) => _client.Do(OrgRpcs.Create, arg);
+    public Task<Org> Create(Create arg, CancellationToken ctkn = default) =>
+        _client.Do(OrgRpcs.Create, arg, ctkn);
 
-    public Task<Org> GetOne(Exact arg) => _client.Do(OrgRpcs.GetOne, arg);
+    public Task<Org> GetOne(Exact arg, CancellationToken ctkn = default) =>
+        _client.Do(OrgRpcs.GetOne, arg, ctkn);
 
-    public Task<IReadOnlyList<Org>> Get(Get arg) => _client.Do(OrgRpcs.Get, arg);
+    public Task<IReadOnlyList<Org>> Get(Get arg, CancellationToken ctkn = default) =>
+        _client.Do(OrgRpcs.Get, arg, ctkn);
 
-    public Task<Org> Update(Update arg) => _client.Do(OrgRpcs.Update, arg);
+    public Task<Org> Update(Update arg, CancellationToken ctkn = default) =>
+        _client.Do(OrgRpcs.Update, arg, ctkn);
 
-    public System.Threading.Tasks.Task Delete(Exact arg) => _client.Do(OrgRpcs.Delete, arg);
+    public System.Threading.Tasks.Task Delete(Exact arg, CancellationToken ctkn = default) =>
+        _client.Do(OrgRpcs.Delete, arg, ctkn);
 }
 
 public static class OrgRpcs

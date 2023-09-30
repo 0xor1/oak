@@ -5,11 +5,11 @@ namespace Oak.Api.File;
 
 public interface IFileApi
 {
-    public Task<FileRes> Upload(Upload arg);
-    public Task<HasStream> Download(Download arg);
+    public Task<FileRes> Upload(Upload arg, CancellationToken ctkn = default);
+    public Task<HasStream> Download(Download arg, CancellationToken ctkn = default);
     public string DownloadUrl(Download arg);
-    public Task<Task.Task> Delete(Exact arg);
-    public Task<SetRes<File>> Get(Get arg);
+    public Task<Task.Task> Delete(Exact arg, CancellationToken ctkn = default);
+    public Task<SetRes<File>> Get(Get arg, CancellationToken ctkn = default);
 }
 
 public class FileApi : IFileApi
@@ -21,15 +21,19 @@ public class FileApi : IFileApi
         _client = client;
     }
 
-    public Task<FileRes> Upload(Upload arg) => _client.Do(FileRpcs.Upload, arg);
+    public Task<FileRes> Upload(Upload arg, CancellationToken ctkn = default) =>
+        _client.Do(FileRpcs.Upload, arg, ctkn);
 
-    public Task<HasStream> Download(Download arg) => _client.Do(FileRpcs.Download, arg);
+    public Task<HasStream> Download(Download arg, CancellationToken ctkn = default) =>
+        _client.Do(FileRpcs.Download, arg, ctkn);
 
     public string DownloadUrl(Download arg) => _client.GetUrl(FileRpcs.Download, arg);
 
-    public Task<Task.Task> Delete(Exact arg) => _client.Do(FileRpcs.Delete, arg);
+    public Task<Task.Task> Delete(Exact arg, CancellationToken ctkn = default) =>
+        _client.Do(FileRpcs.Delete, arg, ctkn);
 
-    public Task<SetRes<File>> Get(Get arg) => _client.Do(FileRpcs.Get, arg);
+    public Task<SetRes<File>> Get(Get arg, CancellationToken ctkn = default) =>
+        _client.Do(FileRpcs.Get, arg, ctkn);
 }
 
 public static class FileRpcs

@@ -39,10 +39,13 @@ internal static class VItemEps
                             );
                             ValidateInc(ctx, req.Type, req.Inc);
                             EpsUtil.ValidStr(ctx, req.Note, 0, noteMaxLen, "note");
-                            await db.LockProject(req.Org, req.Project);
+                            await db.LockProject(req.Org, req.Project, ctx.Ctkn);
                             var t = await db.Tasks.SingleOrDefaultAsync(
                                 x =>
-                                    x.Org == req.Org && x.Project == req.Project && x.Id == req.Task
+                                    x.Org == req.Org
+                                    && x.Project == req.Project
+                                    && x.Id == req.Task,
+                                ctx.Ctkn
                             );
                             ctx.NotFoundIf(t == null, model: new { Name = "Task" });
                             t.NotNull();
@@ -60,15 +63,16 @@ internal static class VItemEps
                                 Inc = req.Inc,
                                 Note = req.Note
                             };
-                            await db.VItems.AddAsync(vi);
-                            await db.SaveChangesAsync();
+                            await db.VItems.AddAsync(vi, ctx.Ctkn);
+                            await db.SaveChangesAsync(ctx.Ctkn);
                             List<string>? ancestors = null;
                             if (t.Parent != null)
                             {
                                 ancestors = await db.SetAncestralChainAggregateValuesFromTask(
                                     req.Org,
                                     req.Project,
-                                    t.Parent
+                                    t.Parent,
+                                    ctx.Ctkn
                                 );
                             }
 
@@ -99,14 +103,15 @@ internal static class VItemEps
                         {
                             ValidateInc(ctx, req.Type, req.Inc);
                             EpsUtil.ValidStr(ctx, req.Note, 0, noteMaxLen, "note");
-                            await db.LockProject(req.Org, req.Project);
+                            await db.LockProject(req.Org, req.Project, ctx.Ctkn);
                             var vi = await db.VItems.SingleOrDefaultAsync(
                                 x =>
                                     x.Org == req.Org
                                     && x.Project == req.Project
                                     && x.Task == req.Task
                                     && x.Type == req.Type
-                                    && x.Id == req.Id
+                                    && x.Id == req.Id,
+                                ctx.Ctkn
                             );
                             ctx.NotFoundIf(vi == null, model: new { Name = req.Type.Humanize() });
                             vi.NotNull();
@@ -129,7 +134,10 @@ internal static class VItemEps
                             );
                             var t = await db.Tasks.SingleOrDefaultAsync(
                                 x =>
-                                    x.Org == req.Org && x.Project == req.Project && x.Id == req.Task
+                                    x.Org == req.Org
+                                    && x.Project == req.Project
+                                    && x.Id == req.Task,
+                                ctx.Ctkn
                             );
                             ctx.NotFoundIf(t == null, model: new { Name = "Task" });
                             t.NotNull();
@@ -165,13 +173,14 @@ internal static class VItemEps
                                         break;
                                 }
                             }
-                            await db.SaveChangesAsync();
+                            await db.SaveChangesAsync(ctx.Ctkn);
                             if (change != 0 && t.Parent != null)
                             {
                                 ancestors = await db.SetAncestralChainAggregateValuesFromTask(
                                     req.Org,
                                     req.Project,
-                                    t.Parent
+                                    t.Parent,
+                                    ctx.Ctkn
                                 );
                             }
                             req = req with { Note = req.Note.Ellipsis(50).NotNull() };
@@ -199,7 +208,7 @@ internal static class VItemEps
                     await ctx.DbTx<OakDb, Task>(
                         async (db, ses) =>
                         {
-                            await db.LockProject(req.Org, req.Project);
+                            await db.LockProject(req.Org, req.Project, ctx.Ctkn);
                             var vi = await db.VItems.SingleOrDefaultAsync(
                                 x =>
                                     x.Org == req.Org
@@ -250,7 +259,8 @@ internal static class VItemEps
                                 ancestors = await db.SetAncestralChainAggregateValuesFromTask(
                                     req.Org,
                                     req.Project,
-                                    t.Parent
+                                    t.Parent,
+                                    ctx.Ctkn
                                 );
                             }
                             await EpsUtil.LogActivity(

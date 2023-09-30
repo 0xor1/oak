@@ -80,7 +80,7 @@ internal static class TaskEps
                                 CostEst = req.CostEst,
                                 IsParallel = req.IsParallel
                             };
-                            await db.LockProject(req.Org, req.Project);
+                            await db.LockProject(req.Org, req.Project, ctx.Ctkn);
                             // get correct next sib value from either prevSib if
                             // specified or parent.FirstChild otherwise. Then update prevSibs nextSib value
                             // or parents firstChild value depending on the scenario.
@@ -89,7 +89,8 @@ internal static class TaskEps
                                 x =>
                                     x.Org == req.Org
                                     && x.Project == req.Project
-                                    && x.Id == req.Parent
+                                    && x.Id == req.Parent,
+                                ctx.Ctkn
                             );
                             ctx.NotFoundIf(parent == null, model: new { Name = "Parent Task" });
                             if (req.PrevSib != null)
@@ -98,7 +99,8 @@ internal static class TaskEps
                                     x =>
                                         x.Org == req.Org
                                         && x.Project == req.Project
-                                        && x.Id == req.PrevSib
+                                        && x.Id == req.PrevSib,
+                                    ctx.Ctkn
                                 );
                                 ctx.NotFoundIf(
                                     prevSib == null,
@@ -117,14 +119,15 @@ internal static class TaskEps
                                 parent.FirstChild = t.Id;
                             }
                             // insert new task
-                            await db.Tasks.AddAsync(t);
-                            await db.SaveChangesAsync();
+                            await db.Tasks.AddAsync(t, ctx.Ctkn);
+                            await db.SaveChangesAsync(ctx.Ctkn);
                             // at this point the tree structure has been updated so all tasks are pointing to the correct new positions
                             // all that remains to do is update aggregate values
                             var ancestors = await db.SetAncestralChainAggregateValuesFromTask(
                                 req.Org,
                                 req.Project,
-                                req.Parent
+                                req.Parent,
+                                ctx.Ctkn
                             );
                             await db.Entry(parent.NotNull()).ReloadAsync();
                             await EpsUtil.LogActivity(
@@ -222,7 +225,7 @@ internal static class TaskEps
                             {
                                 // if moving the task or setting an aggregate value effecting property
                                 // we must lock
-                                await db.LockProject(req.Org, req.Project);
+                                await db.LockProject(req.Org, req.Project, ctx.Ctkn);
                             }
                             var t = await db.Tasks.SingleOrDefaultAsync(
                                 x => x.Org == req.Org && x.Project == req.Project && x.Id == req.Id
@@ -515,7 +518,8 @@ internal static class TaskEps
                                             await db.SetAncestralChainAggregateValuesFromTask(
                                                 req.Org,
                                                 req.Project,
-                                                req.Id
+                                                req.Id,
+                                                ctx.Ctkn
                                             );
                                         if (ancestors.Count > 0)
                                         {
@@ -535,7 +539,8 @@ internal static class TaskEps
                                                 await db.SetAncestralChainAggregateValuesFromTask(
                                                     req.Org,
                                                     req.Project,
-                                                    newParent.Id
+                                                    newParent.Id,
+                                                    ctx.Ctkn
                                                 )
                                             );
                                         }
@@ -544,7 +549,8 @@ internal static class TaskEps
                                             await db.SetAncestralChainAggregateValuesFromTask(
                                                 req.Org,
                                                 req.Project,
-                                                oldParent.NotNull().Id
+                                                oldParent.NotNull().Id,
+                                                ctx.Ctkn
                                             )
                                         );
                                         await reload(oldParent);
@@ -557,7 +563,8 @@ internal static class TaskEps
                                             await db.SetAncestralChainAggregateValuesFromTask(
                                                 req.Org,
                                                 req.Project,
-                                                newParent.Id
+                                                newParent.Id,
+                                                ctx.Ctkn
                                             )
                                         );
                                         await reload(newParent);
@@ -575,7 +582,8 @@ internal static class TaskEps
                                                 await db.SetAncestralChainAggregateValuesFromTask(
                                                     req.Org,
                                                     req.Project,
-                                                    t.Parent
+                                                    t.Parent,
+                                                    ctx.Ctkn
                                                 )
                                             );
                                         }
@@ -625,7 +633,7 @@ internal static class TaskEps
                         async (db, ses) =>
                         {
                             ctx.BadRequestIf(req.Project == req.Id, S.TaskDeleteProjectAttempt);
-                            await db.LockProject(req.Org, req.Project);
+                            await db.LockProject(req.Org, req.Project, ctx.Ctkn);
                             var t = await db.Tasks.SingleOrDefaultAsync(
                                 x => x.Org == req.Org && x.Project == req.Project && x.Id == req.Id
                             );
@@ -737,7 +745,8 @@ internal static class TaskEps
                             var ancestors = await db.SetAncestralChainAggregateValuesFromTask(
                                 req.Org,
                                 req.Project,
-                                t.Parent.NotNull()
+                                t.Parent.NotNull(),
+                                ctx.Ctkn
                             );
 
                             var extraInfo = t.ToApi();
@@ -766,7 +775,8 @@ internal static class TaskEps
                             {
                                 await store.DeletePrefix(
                                     OrgEps.FilesBucket,
-                                    string.Join("/", req.Org, req.Project, task.Id)
+                                    string.Join("/", req.Org, req.Project, task.Id),
+                                    ctx.Ctkn
                                 );
                             }
 

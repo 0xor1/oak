@@ -9,25 +9,30 @@ public class OakDb : DbContext, IAuthDb
     public OakDb(DbContextOptions<OakDb> opts)
         : base(opts) { }
 
-    public async System.Threading.Tasks.Task LockProject(string org, string id)
+    public async System.Threading.Tasks.Task LockProject(
+        string org,
+        string id,
+        CancellationToken ctkn = default
+    )
     {
         var pl = await ProjectLocks
             .FromSql($"SELECT * FROM ProjectLocks WHERE Org={org} AND id={id} FOR UPDATE")
-            .SingleOrDefaultAsync();
+            .SingleOrDefaultAsync(ctkn);
         Throw.DataIf(pl == null, $"project doesnt exists, org: {org}, id: {id}");
     }
 
     public async Task<List<string>> SetAncestralChainAggregateValuesFromTask(
         string org,
         string project,
-        string task
+        string task,
+        CancellationToken ctkn = default
     )
     {
         return await Database
             .SqlQuery<string>(
                 $"CALL SetAncestralChainAggregateValuesFromTask({org}, {project}, {task})"
             )
-            .ToListAsync();
+            .ToListAsync(ctkn);
     }
 
     public DbSet<Auth> Auths { get; set; } = null!;

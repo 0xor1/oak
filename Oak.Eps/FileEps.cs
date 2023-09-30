@@ -37,15 +37,17 @@ internal static class FileEps
                                 ProjectMemberRole.Writer
                             );
                             EpsUtil.ValidStr(ctx, req.Stream.Name, nameMinLen, nameMaxLen, "Name");
-                            await db.LockProject(req.Org, req.Project);
+                            await db.LockProject(req.Org, req.Project, ctx.Ctkn);
                             var p = await db.Projects.SingleAsync(
-                                x => x.Org == req.Org && x.Id == req.Project
+                                x => x.Org == req.Org && x.Id == req.Project,
+                                ctx.Ctkn
                             );
                             var pt = await db.Tasks.SingleAsync(
                                 x =>
                                     x.Org == req.Org
                                     && x.Project == req.Project
-                                    && x.Id == req.Project
+                                    && x.Id == req.Project,
+                                ctx.Ctkn
                             );
                             ctx.BadRequestIf(
                                 pt.FileSize + pt.FileSubSize + req.Stream.Size > p.FileLimit,
@@ -54,7 +56,10 @@ internal static class FileEps
                             );
                             var t = await db.Tasks.SingleOrDefaultAsync(
                                 x =>
-                                    x.Org == req.Org && x.Project == req.Project && x.Id == req.Task
+                                    x.Org == req.Org
+                                    && x.Project == req.Project
+                                    && x.Id == req.Task,
+                                ctx.Ctkn
                             );
                             ctx.NotFoundIf(t == null, model: new { Name = "Task" });
                             t.NotNull();
@@ -72,15 +77,16 @@ internal static class FileEps
                                 Size = req.Stream.Size,
                                 Type = req.Stream.Type
                             };
-                            await db.Files.AddAsync(f);
-                            await db.SaveChangesAsync();
+                            await db.Files.AddAsync(f, ctx.Ctkn);
+                            await db.SaveChangesAsync(ctx.Ctkn);
                             List<string>? ancestors = null;
                             if (t.Parent != null)
                             {
                                 ancestors = await db.SetAncestralChainAggregateValuesFromTask(
                                     req.Org,
                                     req.Project,
-                                    t.Parent
+                                    t.Parent,
+                                    ctx.Ctkn
                                 );
                             }
                             await EpsUtil.LogActivity(
@@ -104,7 +110,8 @@ internal static class FileEps
                                 string.Join("/", req.Org, req.Project, req.Task, f.Id),
                                 req.Stream.Type,
                                 req.Stream.Size,
-                                req.Stream.Data
+                                req.Stream.Data,
+                                ctx.Ctkn
                             );
 
                             return new FileRes(t.ToApi(), f.ToApi());
@@ -130,14 +137,16 @@ internal static class FileEps
                             x.Org == req.Org
                             && x.Project == req.Project
                             && x.Task == req.Task
-                            && x.Id == req.Id
+                            && x.Id == req.Id,
+                        ctx.Ctkn
                     );
                     ctx.NotFoundIf(f == null, model: new { Name = "File" });
                     f.NotNull();
                     var store = ctx.Get<IStoreClient>();
                     var data = await store.Download(
                         OrgEps.FilesBucket,
-                        string.Join("/", f.Org, f.Project, f.Task, f.Id)
+                        string.Join("/", f.Org, f.Project, f.Task, f.Id),
+                        ctx.Ctkn
                     );
 
                     return new HasStream()
@@ -152,13 +161,14 @@ internal static class FileEps
                     await ctx.DbTx<OakDb, Api.Task.Task>(
                         async (db, ses) =>
                         {
-                            await db.LockProject(req.Org, req.Project);
+                            await db.LockProject(req.Org, req.Project, ctx.Ctkn);
                             var f = await db.Files.SingleOrDefaultAsync(
                                 x =>
                                     x.Org == req.Org
                                     && x.Project == req.Project
                                     && x.Task == req.Task
-                                    && x.Id == req.Id
+                                    && x.Id == req.Id,
+                                ctx.Ctkn
                             );
                             ctx.NotFoundIf(f == null, model: new { Name = "File" });
                             f.NotNull();
@@ -182,20 +192,24 @@ internal static class FileEps
                             db.Files.Remove(f);
                             var t = await db.Tasks.SingleOrDefaultAsync(
                                 x =>
-                                    x.Org == req.Org && x.Project == req.Project && x.Id == req.Task
+                                    x.Org == req.Org
+                                    && x.Project == req.Project
+                                    && x.Id == req.Task,
+                                ctx.Ctkn
                             );
                             ctx.NotFoundIf(t == null, model: new { Name = "Task" });
                             t.NotNull();
                             t.FileN--;
                             t.FileSize -= f.Size;
-                            await db.SaveChangesAsync();
+                            await db.SaveChangesAsync(ctx.Ctkn);
                             List<string>? ancestors = null;
                             if (t.Parent != null)
                             {
                                 ancestors = await db.SetAncestralChainAggregateValuesFromTask(
                                     req.Org,
                                     req.Project,
-                                    t.Parent
+                                    t.Parent,
+                                    ctx.Ctkn
                                 );
                             }
                             await EpsUtil.LogActivity(
@@ -258,7 +272,8 @@ internal static class FileEps
                     {
                         // implement cursor based pagination ... in a fashion
                         var after = await db.Files.SingleOrDefaultAsync(
-                            x => x.Org == req.Org && x.Project == req.Project && x.Id == req.After
+                            x => x.Org == req.Org && x.Project == req.Project && x.Id == req.After,
+                            ctx.Ctkn
                         );
                         ctx.NotFoundIf(after == null, model: new { Name = "After" });
                         after.NotNull();
@@ -280,7 +295,7 @@ internal static class FileEps
                         qry = qry.OrderByDescending(x => x.CreatedOn);
                     }
 
-                    var res = await qry.Take(101).Select(x => x.ToApi()).ToListAsync();
+                    var res = await qry.Take(101).Select(x => x.ToApi()).ToListAsync(ctx.Ctkn);
                     return SetRes<File>.FromLimit(res, 101);
                 }
             )

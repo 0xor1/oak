@@ -58,8 +58,11 @@ internal static class ProjectEps
                                 EndOn = req.EndOn,
                                 FileLimit = req.FileLimit
                             };
-                            await db.Projects.AddAsync(p);
-                            await db.ProjectLocks.AddAsync(new() { Org = req.Org, Id = p.Id });
+                            await db.Projects.AddAsync(p, ctx.Ctkn);
+                            await db.ProjectLocks.AddAsync(
+                                new() { Org = req.Org, Id = p.Id },
+                                ctx.Ctkn
+                            );
                             var t = new Db.Task()
                             {
                                 Org = req.Org,
@@ -70,9 +73,10 @@ internal static class ProjectEps
                                 CreatedBy = ses.Id,
                                 CreatedOn = DateTimeExt.UtcNowMilli()
                             };
-                            await db.Tasks.AddAsync(t);
+                            await db.Tasks.AddAsync(t, ctx.Ctkn);
                             var mem = await db.OrgMembers.SingleAsync(
-                                x => x.Org == req.Org && x.Id == ses.Id
+                                x => x.Org == req.Org && x.Id == ses.Id,
+                                ctx.Ctkn
                             );
                             await db.ProjectMembers.AddAsync(
                                 new()
@@ -84,7 +88,8 @@ internal static class ProjectEps
                                     OrgRole = mem.Role,
                                     Name = mem.Name,
                                     Role = ProjectMemberRole.Admin
-                                }
+                                },
+                                ctx.Ctkn
                             );
                             await EpsUtil.LogActivity(
                                 ctx,
@@ -120,12 +125,14 @@ internal static class ProjectEps
                         ProjectMemberRole.Reader
                     );
                     var res = await db.Projects.SingleOrDefaultAsync(
-                        x => x.Org == req.Org && x.Id == req.Id
+                        x => x.Org == req.Org && x.Id == req.Id,
+                        ctx.Ctkn
                     );
                     ctx.NotFoundIf(res == null, model: new { Name = "Project" });
                     res.NotNull();
                     var t = await db.Tasks.SingleAsync(
-                        x => x.Org == req.Org && x.Project == req.Id && x.Id == req.Id
+                        x => x.Org == req.Org && x.Project == req.Id && x.Id == req.Id,
+                        ctx.Ctkn
                     );
                     return res.ToApi(t);
                 }
@@ -137,7 +144,7 @@ internal static class ProjectEps
                     var ses = ctx.GetSession();
                     var db = ctx.Get<OakDb>();
 
-                    var orgMemRole = await EpsUtil.OrgRole(db, ses.Id, req.Org);
+                    var orgMemRole = await EpsUtil.OrgRole(ctx, db, ses.Id, req.Org);
                     if (orgMemRole == null && req.IsPublic != true)
                     {
                         req = req with { IsPublic = true };
@@ -195,14 +202,15 @@ internal static class ProjectEps
                             .Where(x => x.Org == req.Org && x.Id == ses.Id)
                             .Select(x => x.Project)
                             .Distinct()
-                            .ToListAsync();
+                            .ToListAsync(ctx.Ctkn);
                         qry = qry.Where(x => projectIds.Contains(x.Id) || x.IsPublic);
                     }
                     if (req.After != null)
                     {
                         // implement cursor based pagination ... in a fashion
                         var after = await db.Projects.SingleOrDefaultAsync(
-                            x => x.Org == req.Org && x.Id == req.After
+                            x => x.Org == req.Org && x.Id == req.After,
+                            ctx.Ctkn
                         );
                         ctx.NotFoundIf(after == null, model: new { Name = "After" });
                         after.NotNull();
@@ -302,11 +310,11 @@ internal static class ProjectEps
                             => qry.OrderByDescending(x => x.EndOn).ThenBy(x => x.Name),
                     };
                     qry = qry.Take(101);
-                    var ps = await qry.ToListAsync();
+                    var ps = await qry.ToListAsync(ctx.Ctkn);
                     var ids = ps.Select(x => x.Id).ToList();
                     var ts = await db.Tasks
                         .Where(x => x.Org == req.Org && x.Project == x.Id && ids.Contains(x.Id))
-                        .ToListAsync();
+                        .ToListAsync(ctx.Ctkn);
                     var set = ps.Select(x => x.ToApi(ts.Single(y => y.Id == x.Id))).ToList();
                     return SetRes<Project>.FromLimit(set, 101);
                 }
@@ -334,7 +342,8 @@ internal static class ProjectEps
                                 S.ProjectInvalidDaysPerWeek
                             );
                             var p = await db.Projects.SingleOrDefaultAsync(
-                                x => x.Org == req.Org && x.Id == req.Id
+                                x => x.Org == req.Org && x.Id == req.Id,
+                                ctx.Ctkn
                             );
                             ctx.NotFoundIf(p == null, model: new { Name = "Project" });
                             p.NotNull();
@@ -348,7 +357,8 @@ internal static class ProjectEps
                             p.EndOn = req.EndOn ?? p.EndOn;
                             p.FileLimit = req.FileLimit ?? p.FileLimit;
                             var t = await db.Tasks.SingleAsync(
-                                x => x.Org == req.Org && x.Project == req.Id && x.Id == req.Id
+                                x => x.Org == req.Org && x.Project == req.Id && x.Id == req.Id,
+                                ctx.Ctkn
                             );
                             t.Name = p.Name;
                             await EpsUtil.LogActivity(
@@ -385,32 +395,33 @@ internal static class ProjectEps
                             );
                             await db.Projects
                                 .Where(x => x.Org == req.Org && x.Id == req.Id)
-                                .ExecuteDeleteAsync();
+                                .ExecuteDeleteAsync(ctx.Ctkn);
                             await db.ProjectLocks
                                 .Where(x => x.Org == req.Org && x.Id == req.Id)
-                                .ExecuteDeleteAsync();
+                                .ExecuteDeleteAsync(ctx.Ctkn);
                             await db.Activities
                                 .Where(x => x.Org == req.Org && x.Project == req.Id)
-                                .ExecuteDeleteAsync();
+                                .ExecuteDeleteAsync(ctx.Ctkn);
                             await db.ProjectMembers
                                 .Where(x => x.Org == req.Org && x.Project == req.Id)
-                                .ExecuteDeleteAsync();
+                                .ExecuteDeleteAsync(ctx.Ctkn);
                             await db.Tasks
                                 .Where(x => x.Org == req.Org && x.Project == req.Id)
-                                .ExecuteDeleteAsync();
+                                .ExecuteDeleteAsync(ctx.Ctkn);
                             await db.VItems
                                 .Where(x => x.Org == req.Org && x.Project == req.Id)
-                                .ExecuteDeleteAsync();
+                                .ExecuteDeleteAsync(ctx.Ctkn);
                             await db.Files
                                 .Where(x => x.Org == req.Org && x.Project == req.Id)
-                                .ExecuteDeleteAsync();
+                                .ExecuteDeleteAsync(ctx.Ctkn);
                             await db.Comments
                                 .Where(x => x.Org == req.Org && x.Project == req.Id)
-                                .ExecuteDeleteAsync();
+                                .ExecuteDeleteAsync(ctx.Ctkn);
                             using var store = ctx.Get<IStoreClient>();
                             await store.DeletePrefix(
                                 OrgEps.FilesBucket,
-                                string.Join("/", req.Org, req.Id)
+                                string.Join("/", req.Org, req.Id),
+                                ctx.Ctkn
                             );
                             return Nothing.Inst;
                         }

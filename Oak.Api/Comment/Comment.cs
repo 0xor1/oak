@@ -4,10 +4,10 @@ namespace Oak.Api.Comment;
 
 public interface ICommentApi
 {
-    public Task<Comment> Create(Create arg);
-    public Task<Comment> Update(Update arg);
-    public System.Threading.Tasks.Task Delete(Exact arg);
-    public Task<SetRes<Comment>> Get(Get arg);
+    public Task<Comment> Create(Create arg, CancellationToken ctkn = default);
+    public Task<Comment> Update(Update arg, CancellationToken ctkn = default);
+    public System.Threading.Tasks.Task Delete(Exact arg, CancellationToken ctkn = default);
+    public Task<SetRes<Comment>> Get(Get arg, CancellationToken ctkn = default);
 }
 
 public class CommentApi : ICommentApi
@@ -19,13 +19,17 @@ public class CommentApi : ICommentApi
         _client = client;
     }
 
-    public Task<Comment> Create(Create arg) => _client.Do(CommentRpcs.Create, arg);
+    public Task<Comment> Create(Create arg, CancellationToken ctkn = default) =>
+        _client.Do(CommentRpcs.Create, arg, ctkn);
 
-    public Task<Comment> Update(Update arg) => _client.Do(CommentRpcs.Update, arg);
+    public Task<Comment> Update(Update arg, CancellationToken ctkn = default) =>
+        _client.Do(CommentRpcs.Update, arg, ctkn);
 
-    public System.Threading.Tasks.Task Delete(Exact arg) => _client.Do(CommentRpcs.Delete, arg);
+    public System.Threading.Tasks.Task Delete(Exact arg, CancellationToken ctkn = default) =>
+        _client.Do(CommentRpcs.Delete, arg, ctkn);
 
-    public Task<SetRes<Comment>> Get(Get arg) => _client.Do(CommentRpcs.Get, arg);
+    public Task<SetRes<Comment>> Get(Get arg, CancellationToken ctkn = default) =>
+        _client.Do(CommentRpcs.Get, arg, ctkn);
 }
 
 public static class CommentRpcs

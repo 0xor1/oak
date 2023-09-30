@@ -4,14 +4,14 @@ namespace Oak.Api.Task;
 
 public interface ITaskApi
 {
-    public Task<CreateRes> Create(Create arg);
-    public Task<Task> GetOne(Exact arg);
-    public Task<IReadOnlyList<Task>> GetAncestors(Exact arg);
-    public Task<IReadOnlyList<Task>> GetChildren(GetChildren arg);
-    public Task<InitView> GetInitView(Exact arg);
-    public Task<IReadOnlyList<Task>> GetAllDescendants(Exact arg);
-    public Task<UpdateRes> Update(Update arg);
-    public Task<Task> Delete(Exact arg);
+    public Task<CreateRes> Create(Create arg, CancellationToken ctkn = default);
+    public Task<Task> GetOne(Exact arg, CancellationToken ctkn = default);
+    public Task<IReadOnlyList<Task>> GetAncestors(Exact arg, CancellationToken ctkn = default);
+    public Task<IReadOnlyList<Task>> GetChildren(GetChildren arg, CancellationToken ctkn = default);
+    public Task<InitView> GetInitView(Exact arg, CancellationToken ctkn = default);
+    public Task<IReadOnlyList<Task>> GetAllDescendants(Exact arg, CancellationToken ctkn = default);
+    public Task<UpdateRes> Update(Update arg, CancellationToken ctkn = default);
+    public Task<Task> Delete(Exact arg, CancellationToken ctkn = default);
 }
 
 public class TaskApi : ITaskApi
@@ -23,24 +23,33 @@ public class TaskApi : ITaskApi
         _client = client;
     }
 
-    public Task<CreateRes> Create(Create arg) => _client.Do(TaskRpcs.Create, arg);
+    public Task<CreateRes> Create(Create arg, CancellationToken ctkn = default) =>
+        _client.Do(TaskRpcs.Create, arg, ctkn);
 
-    public Task<Task> GetOne(Exact arg) => _client.Do(TaskRpcs.GetOne, arg);
+    public Task<Task> GetOne(Exact arg, CancellationToken ctkn = default) =>
+        _client.Do(TaskRpcs.GetOne, arg, ctkn);
 
-    public Task<IReadOnlyList<Task>> GetAncestors(Exact arg) =>
-        _client.Do(TaskRpcs.GetAncestors, arg);
+    public Task<IReadOnlyList<Task>> GetAncestors(Exact arg, CancellationToken ctkn = default) =>
+        _client.Do(TaskRpcs.GetAncestors, arg, ctkn);
 
-    public Task<IReadOnlyList<Task>> GetChildren(GetChildren arg) =>
-        _client.Do(TaskRpcs.GetChildren, arg);
+    public Task<IReadOnlyList<Task>> GetChildren(
+        GetChildren arg,
+        CancellationToken ctkn = default
+    ) => _client.Do(TaskRpcs.GetChildren, arg, ctkn);
 
-    public Task<InitView> GetInitView(Exact arg) => _client.Do(TaskRpcs.GetInitView, arg);
+    public Task<InitView> GetInitView(Exact arg, CancellationToken ctkn = default) =>
+        _client.Do(TaskRpcs.GetInitView, arg, ctkn);
 
-    public Task<IReadOnlyList<Task>> GetAllDescendants(Exact arg) =>
-        _client.Do(TaskRpcs.GetAllDescendants, arg);
+    public Task<IReadOnlyList<Task>> GetAllDescendants(
+        Exact arg,
+        CancellationToken ctkn = default
+    ) => _client.Do(TaskRpcs.GetAllDescendants, arg, ctkn);
 
-    public Task<UpdateRes> Update(Update arg) => _client.Do(TaskRpcs.Update, arg);
+    public Task<UpdateRes> Update(Update arg, CancellationToken ctkn = default) =>
+        _client.Do(TaskRpcs.Update, arg, ctkn);
 
-    public Task<Task> Delete(Exact arg) => _client.Do(TaskRpcs.Delete, arg);
+    public Task<Task> Delete(Exact arg, CancellationToken ctkn = default) =>
+        _client.Do(TaskRpcs.Delete, arg, ctkn);
 }
 
 public static class TaskRpcs

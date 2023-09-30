@@ -39,22 +39,24 @@ public static class EpsUtil
         }
     }
 
-    public static async Task<OrgMemberRole?> OrgRole(OakDb db, string user, string org)
+    public static async Task<OrgMemberRole?> OrgRole(IRpcCtx ctx, OakDb db, string user, string org)
     {
         var orgMem = await db.OrgMembers.SingleOrDefaultAsync(
-            x => x.Org == org && x.IsActive && x.Id == user
+            x => x.Org == org && x.IsActive && x.Id == user,
+            ctx.Ctkn
         );
         return orgMem?.Role;
     }
 
     public static async Task<bool> HasOrgAccess(
+        IRpcCtx ctx,
         OakDb db,
         string user,
         string org,
         OrgMemberRole role
     )
     {
-        var memRole = await OrgRole(db, user, org);
+        var memRole = await OrgRole(ctx, db, user, org);
         return memRole != null && memRole <= role;
     }
 
@@ -64,9 +66,10 @@ public static class EpsUtil
         string user,
         string org,
         OrgMemberRole role
-    ) => ctx.InsufficientPermissionsIf(!await HasOrgAccess(db, user, org, role));
+    ) => ctx.InsufficientPermissionsIf(!await HasOrgAccess(ctx, db, user, org, role));
 
     public static async Task<ProjectMemberRole?> ProjectRole(
+        IRpcCtx ctx,
         OakDb db,
         string user,
         string org,
@@ -74,7 +77,8 @@ public static class EpsUtil
     )
     {
         var projMem = await db.ProjectMembers.SingleOrDefaultAsync(
-            x => x.Org == org && x.Project == project && x.Id == user
+            x => x.Org == org && x.Project == project && x.Id == user,
+            ctx.Ctkn
         );
         return projMem?.Role;
     }
@@ -88,7 +92,10 @@ public static class EpsUtil
         ProjectMemberRole role
     )
     {
-        var p = await db.Projects.SingleOrDefaultAsync(x => x.Org == org && x.Id == project);
+        var p = await db.Projects.SingleOrDefaultAsync(
+            x => x.Org == org && x.Id == project,
+            ctx.Ctkn
+        );
 
         ctx.NotFoundIf(p == null, model: new { Name = "Project" });
         p.NotNull();
@@ -102,7 +109,7 @@ public static class EpsUtil
 
         // at this point explicit access permission is required
         // 1. ensure active org member
-        var orgRole = await OrgRole(db, user, org);
+        var orgRole = await OrgRole(ctx, db, user, org);
         if (orgRole == null)
         {
             return false;
@@ -119,7 +126,7 @@ public static class EpsUtil
             return true;
         }
 
-        var projRole = await ProjectRole(db, user, org, project);
+        var projRole = await ProjectRole(ctx, db, user, org, project);
         if (projRole != null && projRole <= role)
         {
             // user has sufficient project permission
@@ -175,7 +182,8 @@ public static class EpsUtil
         {
             taskName = (
                 await db.Tasks.SingleOrDefaultAsync(
-                    x => x.Org == org && x.Project == project && x.Id == task
+                    x => x.Org == org && x.Project == project && x.Id == task,
+                    ctx.Ctkn
                 )
             )?.Name;
         }
@@ -197,7 +205,7 @@ public static class EpsUtil
             ItemName = itemName,
             ExtraInfo = exInStr
         };
-        await db.Activities.AddAsync(a);
+        await db.Activities.AddAsync(a, ctx.Ctkn);
 
         if (itemDeleted)
         {
@@ -208,14 +216,18 @@ public static class EpsUtil
                     .ExecuteUpdateAsync(
                         x =>
                             x.SetProperty(x => x.TaskDeleted, _ => true)
-                                .SetProperty(x => x.ItemDeleted, _ => true)
+                                .SetProperty(x => x.ItemDeleted, _ => true),
+                        ctx.Ctkn
                     );
             }
             else
             {
                 await db.Activities
                     .Where(x => x.Org == org && x.Project == project && x.Item == item)
-                    .ExecuteUpdateAsync(x => x.SetProperty(x => x.ItemDeleted, _ => true));
+                    .ExecuteUpdateAsync(
+                        x => x.SetProperty(x => x.ItemDeleted, _ => true),
+                        ctx.Ctkn
+                    );
             }
         }
 

@@ -43,7 +43,8 @@ internal static class CommentEps
                                     x =>
                                         x.Org == req.Org
                                         && x.Project == req.Project
-                                        && x.Id == req.Task
+                                        && x.Id == req.Task,
+                                    ctx.Ctkn
                                 ),
                                 model: new { Name = "Task" }
                             );
@@ -57,7 +58,7 @@ internal static class CommentEps
                                 CreatedOn = DateTimeExt.UtcNowMilli(),
                                 Body = req.Body
                             };
-                            await db.Comments.AddAsync(c);
+                            await db.Comments.AddAsync(c, ctx.Ctkn);
                             await EpsUtil.LogActivity(
                                 ctx,
                                 db,
@@ -98,7 +99,8 @@ internal static class CommentEps
                                     && x.Project == req.Project
                                     && x.Task == req.Task
                                     && x.Id == req.Id
-                                    && x.CreatedBy == ses.Id
+                                    && x.CreatedBy == ses.Id,
+                                ctx.Ctkn
                             );
                             ctx.NotFoundIf(c == null, model: new { Name = "Comment" });
                             c.NotNull();
@@ -132,7 +134,8 @@ internal static class CommentEps
                                     x.Org == req.Org
                                     && x.Project == req.Project
                                     && x.Task == req.Task
-                                    && x.Id == req.Id
+                                    && x.Id == req.Id,
+                                ctx.Ctkn
                             );
                             ctx.NotFoundIf(c == null, model: new { Name = "Comment" });
                             c.NotNull();
@@ -210,7 +213,8 @@ internal static class CommentEps
                     {
                         // implement cursor based pagination ... in a fashion
                         var after = await db.Comments.SingleOrDefaultAsync(
-                            x => x.Org == req.Org && x.Project == req.Project && x.Id == req.After
+                            x => x.Org == req.Org && x.Project == req.Project && x.Id == req.After,
+                            ctx.Ctkn
                         );
                         ctx.NotFoundIf(after == null, model: new { Name = "After" });
                         after.NotNull();
@@ -232,7 +236,7 @@ internal static class CommentEps
                         qry = qry.OrderByDescending(x => x.CreatedOn);
                     }
 
-                    var res = await qry.Take(101).Select(x => x.ToApi()).ToListAsync();
+                    var res = await qry.Take(101).Select(x => x.ToApi()).ToListAsync(ctx.Ctkn);
                     return SetRes<Comment>.FromLimit(res, 101);
                 }
             )

@@ -4,12 +4,15 @@ namespace Oak.Api.Project;
 
 public interface IProjectApi
 {
-    public Task<Project> Create(Create arg);
-    public Task<Project> GetOne(Exact arg);
-    public Task<SetRes<Project>> Get(Get arg);
-    public Task<Project> Update(Update arg);
-    public System.Threading.Tasks.Task Delete(Exact arg);
-    public Task<SetRes<Activity>> GetActivities(GetActivities arg);
+    public Task<Project> Create(Create arg, CancellationToken ctkn = default);
+    public Task<Project> GetOne(Exact arg, CancellationToken ctkn = default);
+    public Task<SetRes<Project>> Get(Get arg, CancellationToken ctkn = default);
+    public Task<Project> Update(Update arg, CancellationToken ctkn = default);
+    public System.Threading.Tasks.Task Delete(Exact arg, CancellationToken ctkn = default);
+    public Task<SetRes<Activity>> GetActivities(
+        GetActivities arg,
+        CancellationToken ctkn = default
+    );
 }
 
 public class ProjectApi : IProjectApi
@@ -21,18 +24,25 @@ public class ProjectApi : IProjectApi
         _client = client;
     }
 
-    public Task<Project> Create(Create arg) => _client.Do(ProjectRpcs.Create, arg);
+    public Task<Project> Create(Create arg, CancellationToken ctkn = default) =>
+        _client.Do(ProjectRpcs.Create, arg, ctkn);
 
-    public Task<Project> GetOne(Exact arg) => _client.Do(ProjectRpcs.GetOne, arg);
+    public Task<Project> GetOne(Exact arg, CancellationToken ctkn = default) =>
+        _client.Do(ProjectRpcs.GetOne, arg, ctkn);
 
-    public Task<SetRes<Project>> Get(Get arg) => _client.Do(ProjectRpcs.Get, arg);
+    public Task<SetRes<Project>> Get(Get arg, CancellationToken ctkn = default) =>
+        _client.Do(ProjectRpcs.Get, arg, ctkn);
 
-    public Task<Project> Update(Update arg) => _client.Do(ProjectRpcs.Update, arg);
+    public Task<Project> Update(Update arg, CancellationToken ctkn = default) =>
+        _client.Do(ProjectRpcs.Update, arg, ctkn);
 
-    public System.Threading.Tasks.Task Delete(Exact arg) => _client.Do(ProjectRpcs.Delete, arg);
+    public System.Threading.Tasks.Task Delete(Exact arg, CancellationToken ctkn = default) =>
+        _client.Do(ProjectRpcs.Delete, arg, ctkn);
 
-    public Task<SetRes<Activity>> GetActivities(GetActivities arg) =>
-        _client.Do(ProjectRpcs.GetActivities, arg);
+    public Task<SetRes<Activity>> GetActivities(
+        GetActivities arg,
+        CancellationToken ctkn = default
+    ) => _client.Do(ProjectRpcs.GetActivities, arg, ctkn);
 }
 
 public static class ProjectRpcs

@@ -44,7 +44,8 @@ public static class OrgEps
                         async (db, ses) =>
                         {
                             var activeOrgs = await db.OrgMembers.CountAsync(
-                                x => x.IsActive && x.Id == ses.Id
+                                x => x.IsActive && x.Id == ses.Id,
+                                ctx.Ctkn
                             );
                             ctx.ErrorIf(
                                 activeOrgs > MaxActiveOrgs,
@@ -58,7 +59,7 @@ public static class OrgEps
                                 Name = req.Name,
                                 CreatedOn = DateTimeExt.UtcNowMilli()
                             };
-                            await db.Orgs.AddAsync(newOrg);
+                            await db.Orgs.AddAsync(newOrg, ctx.Ctkn);
                             var m = new Db.OrgMember()
                             {
                                 Org = newOrg.Id,
@@ -67,7 +68,7 @@ public static class OrgEps
                                 Name = req.OwnerMemberName,
                                 Role = OrgMemberRole.Owner
                             };
-                            await db.OrgMembers.AddAsync(m);
+                            await db.OrgMembers.AddAsync(m, ctx.Ctkn);
                             return newOrg.ToApi(m);
                         }
                     )
@@ -78,10 +79,11 @@ public static class OrgEps
                 {
                     var ses = ctx.GetSession();
                     var db = ctx.Get<OakDb>();
-                    var org = await db.Orgs.SingleOrDefaultAsync(x => x.Id == req.Id);
+                    var org = await db.Orgs.SingleOrDefaultAsync(x => x.Id == req.Id, ctx.Ctkn);
                     ctx.NotFoundIf(org == null, model: new { Name = "Org" });
                     var m = await db.OrgMembers.SingleOrDefaultAsync(
-                        x => x.Org == req.Id && x.Id == ses.Id
+                        x => x.Org == req.Id && x.Id == ses.Id,
+                        ctx.Ctkn
                     );
                     return org.NotNull().ToApi(m);
                 }
@@ -94,7 +96,7 @@ public static class OrgEps
                     var db = ctx.Get<OakDb>();
                     var ms = await db.OrgMembers
                         .Where(x => x.IsActive && x.Id == ses.Id)
-                        .ToListAsync();
+                        .ToListAsync(ctx.Ctkn);
                     var oIds = ms.Select(x => x.Org);
                     var qry = db.Orgs.Where(x => oIds.Contains(x.Id));
                     qry = req switch
@@ -104,7 +106,7 @@ public static class OrgEps
                         (OrgOrderBy.Name, false) => qry.OrderByDescending(x => x.Name),
                         (OrgOrderBy.CreatedOn, false) => qry.OrderByDescending(x => x.CreatedOn),
                     };
-                    var os = await qry.ToListAsync();
+                    var os = await qry.ToListAsync(ctx.Ctkn);
                     return os.Select(x => x.ToApi(ms.Single(y => y.Org == x.Id))).ToList();
                 }
             ),
@@ -115,10 +117,11 @@ public static class OrgEps
                         async (db, ses) =>
                         {
                             var m = await db.OrgMembers.SingleOrDefaultAsync(
-                                x => x.Org == req.Id && x.Id == ses.Id && x.IsActive
+                                x => x.Org == req.Id && x.Id == ses.Id && x.IsActive,
+                                ctx.Ctkn
                             );
                             ctx.InsufficientPermissionsIf(m?.Role != OrgMemberRole.Owner);
-                            var org = await db.Orgs.SingleAsync(x => x.Id == req.Id);
+                            var org = await db.Orgs.SingleAsync(x => x.Id == req.Id, ctx.Ctkn);
                             org.Name = req.Name;
                             return org.ToApi(m);
                         }
@@ -151,12 +154,12 @@ public static class OrgEps
             .Where(x => x.Id == ses.Id && x.IsActive && x.Role == OrgMemberRole.Owner)
             .Select(x => x.Org)
             .Distinct()
-            .ToListAsync();
+            .ToListAsync(ctx.Ctkn);
         var activeOwnerCounts = await db.OrgMembers
             .Where(x => allOwnerOrgs.Contains(x.Org) && x.IsActive && x.Role == OrgMemberRole.Owner)
             .GroupBy(x => x.Org)
             .Select(x => new { Org = x.Key, ActiveOwnerCount = x.Count() })
-            .ToListAsync();
+            .ToListAsync(ctx.Ctkn);
         var orgsWithSoleOwner = activeOwnerCounts
             .Where(x => x.ActiveOwnerCount == 1)
             .Select(x => x.Org)
@@ -167,7 +170,7 @@ public static class OrgEps
             await RawBatchDelete(ctx, db, orgsWithSoleOwner);
         }
         // all remaining orgs user is not the sole owner so just deactivate them.
-        await RawBatchDeactivate(db, ses);
+        await RawBatchDeactivate(ctx, db, ses);
     }
 
     public static async Task AuthValidateFcmTopic(
@@ -190,27 +193,27 @@ public static class OrgEps
 
     private static async Task RawBatchDelete(IRpcCtx ctx, OakDb db, List<string> orgs)
     {
-        await db.Orgs.Where(x => orgs.Contains(x.Id)).ExecuteDeleteAsync();
-        await db.OrgMembers.Where(x => orgs.Contains(x.Org)).ExecuteDeleteAsync();
-        await db.ProjectLocks.Where(x => orgs.Contains(x.Org)).ExecuteDeleteAsync();
-        await db.Projects.Where(x => orgs.Contains(x.Org)).ExecuteDeleteAsync();
-        await db.ProjectMembers.Where(x => orgs.Contains(x.Org)).ExecuteDeleteAsync();
-        await db.Activities.Where(x => orgs.Contains(x.Org)).ExecuteDeleteAsync();
-        await db.Tasks.Where(x => orgs.Contains(x.Org)).ExecuteDeleteAsync();
-        await db.VItems.Where(x => orgs.Contains(x.Org)).ExecuteDeleteAsync();
-        await db.Files.Where(x => orgs.Contains(x.Org)).ExecuteDeleteAsync();
-        await db.Comments.Where(x => orgs.Contains(x.Org)).ExecuteDeleteAsync();
+        await db.Orgs.Where(x => orgs.Contains(x.Id)).ExecuteDeleteAsync(ctx.Ctkn);
+        await db.OrgMembers.Where(x => orgs.Contains(x.Org)).ExecuteDeleteAsync(ctx.Ctkn);
+        await db.ProjectLocks.Where(x => orgs.Contains(x.Org)).ExecuteDeleteAsync(ctx.Ctkn);
+        await db.Projects.Where(x => orgs.Contains(x.Org)).ExecuteDeleteAsync(ctx.Ctkn);
+        await db.ProjectMembers.Where(x => orgs.Contains(x.Org)).ExecuteDeleteAsync(ctx.Ctkn);
+        await db.Activities.Where(x => orgs.Contains(x.Org)).ExecuteDeleteAsync(ctx.Ctkn);
+        await db.Tasks.Where(x => orgs.Contains(x.Org)).ExecuteDeleteAsync(ctx.Ctkn);
+        await db.VItems.Where(x => orgs.Contains(x.Org)).ExecuteDeleteAsync(ctx.Ctkn);
+        await db.Files.Where(x => orgs.Contains(x.Org)).ExecuteDeleteAsync(ctx.Ctkn);
+        await db.Comments.Where(x => orgs.Contains(x.Org)).ExecuteDeleteAsync(ctx.Ctkn);
         using var store = ctx.Get<IStoreClient>();
         foreach (var org in orgs)
         {
-            await store.DeletePrefix(FilesBucket, org);
+            await store.DeletePrefix(FilesBucket, org, ctx.Ctkn);
         }
     }
 
-    private static async Task RawBatchDeactivate(OakDb db, Session ses)
+    private static async Task RawBatchDeactivate(IRpcCtx ctx, OakDb db, Session ses)
     {
         await db.OrgMembers
             .Where(x => x.Id == ses.Id)
-            .ExecuteUpdateAsync(x => x.SetProperty(x => x.IsActive, x => false));
+            .ExecuteUpdateAsync(x => x.SetProperty(x => x.IsActive, x => false), ctx.Ctkn);
     }
 }

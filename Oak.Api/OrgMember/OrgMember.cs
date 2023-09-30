@@ -4,10 +4,10 @@ namespace Oak.Api.OrgMember;
 
 public interface IOrgMemberApi
 {
-    public Task<OrgMember> Add(Add arg);
-    Task<Maybe<OrgMember>> GetOne(Exact arg);
-    public Task<SetRes<OrgMember>> Get(Get arg);
-    public Task<OrgMember> Update(Update arg);
+    public Task<OrgMember> Add(Add arg, CancellationToken ctkn = default);
+    Task<Maybe<OrgMember>> GetOne(Exact arg, CancellationToken ctkn = default);
+    public Task<SetRes<OrgMember>> Get(Get arg, CancellationToken ctkn = default);
+    public Task<OrgMember> Update(Update arg, CancellationToken ctkn = default);
 }
 
 public class OrgMemberApi : IOrgMemberApi
@@ -19,13 +19,17 @@ public class OrgMemberApi : IOrgMemberApi
         _client = client;
     }
 
-    public Task<OrgMember> Add(Add arg) => _client.Do(OrgMemberRpcs.Add, arg);
+    public Task<OrgMember> Add(Add arg, CancellationToken ctkn = default) =>
+        _client.Do(OrgMemberRpcs.Add, arg, ctkn);
 
-    public Task<Maybe<OrgMember>> GetOne(Exact arg) => _client.Do(OrgMemberRpcs.GetOne, arg);
+    public Task<Maybe<OrgMember>> GetOne(Exact arg, CancellationToken ctkn = default) =>
+        _client.Do(OrgMemberRpcs.GetOne, arg, ctkn);
 
-    public Task<SetRes<OrgMember>> Get(Get arg) => _client.Do(OrgMemberRpcs.Get, arg);
+    public Task<SetRes<OrgMember>> Get(Get arg, CancellationToken ctkn = default) =>
+        _client.Do(OrgMemberRpcs.Get, arg, ctkn);
 
-    public Task<OrgMember> Update(Update arg) => _client.Do(OrgMemberRpcs.Update, arg);
+    public Task<OrgMember> Update(Update arg, CancellationToken ctkn = default) =>
+        _client.Do(OrgMemberRpcs.Update, arg, ctkn);
 }
 
 public static class OrgMemberRpcs

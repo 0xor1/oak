@@ -33,7 +33,8 @@ internal static class ProjectMemberEps
                                 ProjectMemberRole.Admin
                             );
                             var orgMem = await db.OrgMembers.SingleOrDefaultAsync(
-                                x => x.Org == req.Org && x.Id == req.Id && x.IsActive
+                                x => x.Org == req.Org && x.Id == req.Id && x.IsActive,
+                                ctx.Ctkn
                             );
                             ctx.NotFoundIf(orgMem == null, model: new { Name = "Org Member" });
                             orgMem.NotNull();
@@ -55,7 +56,7 @@ internal static class ProjectMemberEps
                                 Name = orgMem.Name,
                                 Role = req.Role
                             };
-                            await db.ProjectMembers.AddAsync(mem);
+                            await db.ProjectMembers.AddAsync(mem, ctx.Ctkn);
                             await EpsUtil.LogActivity(
                                 ctx,
                                 db,
@@ -89,13 +90,15 @@ internal static class ProjectMemberEps
                         ProjectMemberRole.Reader
                     );
                     var mem = await db.ProjectMembers.SingleOrDefaultAsync(
-                        x => x.Org == req.Org && x.Project == req.Project && x.Id == req.Id
+                        x => x.Org == req.Org && x.Project == req.Project && x.Id == req.Id,
+                        ctx.Ctkn
                     );
                     if (mem == null)
                     {
                         return new Maybe<ProjectMember>(null);
                     }
                     var stats = await GetStats(
+                        ctx,
                         db,
                         req.Org,
                         req.Project,
@@ -141,7 +144,8 @@ internal static class ProjectMemberEps
                     {
                         // implement cursor based pagination ... in a fashion
                         var after = await db.ProjectMembers.SingleOrDefaultAsync(
-                            x => x.Org == req.Org && x.Project == req.Project && x.Id == req.After
+                            x => x.Org == req.Org && x.Project == req.Project && x.Id == req.After,
+                            ctx.Ctkn
                         );
                         ctx.NotFoundIf(after == null, model: new { Name = "After" });
                         after.NotNull();
@@ -194,9 +198,9 @@ internal static class ProjectMemberEps
                             => qry.OrderByDescending(x => x.Name).ThenBy(x => x.Role),
                     };
                     qry = qry.Take(101);
-                    var mems = await qry.ToListAsync();
+                    var mems = await qry.ToListAsync(ctx.Ctkn);
                     var ids = mems.Select(x => x.Id).ToList();
-                    var stats = await GetStats(db, req.Org, req.Project, ids);
+                    var stats = await GetStats(ctx, db, req.Org, req.Project, ids);
                     var set = mems.Select(
                             x =>
                                 x.ToApi(
@@ -223,12 +227,14 @@ internal static class ProjectMemberEps
                                 ProjectMemberRole.Admin
                             );
                             var mem = await db.ProjectMembers.SingleOrDefaultAsync(
-                                x => x.Org == req.Org && x.Project == req.Project && x.Id == req.Id
+                                x => x.Org == req.Org && x.Project == req.Project && x.Id == req.Id,
+                                ctx.Ctkn
                             );
                             ctx.NotFoundIf(mem == null, model: new { Name = "Project Member" });
                             mem.NotNull();
                             var orgMem = await db.OrgMembers.SingleAsync(
-                                x => x.Org == req.Org && x.Id == req.Id
+                                x => x.Org == req.Org && x.Id == req.Id,
+                                ctx.Ctkn
                             );
                             if (orgMem.Role is OrgMemberRole.Owner or OrgMemberRole.Admin)
                             {
@@ -255,6 +261,7 @@ internal static class ProjectMemberEps
                             );
 
                             var stats = await GetStats(
+                                ctx,
                                 db,
                                 req.Org,
                                 req.Project,
@@ -279,7 +286,8 @@ internal static class ProjectMemberEps
                                 ProjectMemberRole.Admin
                             );
                             var mem = await db.ProjectMembers.SingleOrDefaultAsync(
-                                x => x.Org == req.Org && x.Project == req.Project && x.Id == req.Id
+                                x => x.Org == req.Org && x.Project == req.Project && x.Id == req.Id,
+                                ctx.Ctkn
                             );
                             ctx.NotFoundIf(mem == null, model: new { Name = "Project Member" });
                             await db.ProjectMembers
@@ -289,7 +297,7 @@ internal static class ProjectMemberEps
                                         && x.Project == req.Project
                                         && x.Id == req.Id
                                 )
-                                .ExecuteDeleteAsync();
+                                .ExecuteDeleteAsync(ctx.Ctkn);
                             await EpsUtil.LogActivity(
                                 ctx,
                                 db,
@@ -313,6 +321,7 @@ internal static class ProjectMemberEps
         };
 
     private static async Task<List<ProjectMemberStats>> GetStats(
+        IRpcCtx ctx,
         OakDb db,
         string org,
         string project,
@@ -335,5 +344,5 @@ internal static class ProjectMemberEps
                         TaskN = (ulong)x.Count()
                     }
             )
-            .ToListAsync();
+            .ToListAsync(ctx.Ctkn);
 }

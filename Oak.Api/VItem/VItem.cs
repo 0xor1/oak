@@ -12,10 +12,10 @@ public interface ICreatable
 
 public interface IVItemApi
 {
-    public Task<VItemRes> Create(Create arg);
-    public Task<VItemRes> Update(Update arg);
-    public Task<Task.Task> Delete(Exact arg);
-    public Task<SetRes<VItem>> Get(Get arg);
+    public Task<VItemRes> Create(Create arg, CancellationToken ctkn = default);
+    public Task<VItemRes> Update(Update arg, CancellationToken ctkn = default);
+    public Task<Task.Task> Delete(Exact arg, CancellationToken ctkn = default);
+    public Task<SetRes<VItem>> Get(Get arg, CancellationToken ctkn = default);
 }
 
 public class VItemApi : IVItemApi
@@ -27,13 +27,17 @@ public class VItemApi : IVItemApi
         _client = client;
     }
 
-    public Task<VItemRes> Create(Create arg) => _client.Do(VItemRpcs.Create, arg);
+    public Task<VItemRes> Create(Create arg, CancellationToken ctkn = default) =>
+        _client.Do(VItemRpcs.Create, arg, ctkn);
 
-    public Task<VItemRes> Update(Update arg) => _client.Do(VItemRpcs.Update, arg);
+    public Task<VItemRes> Update(Update arg, CancellationToken ctkn = default) =>
+        _client.Do(VItemRpcs.Update, arg, ctkn);
 
-    public Task<Task.Task> Delete(Exact arg) => _client.Do(VItemRpcs.Delete, arg);
+    public Task<Task.Task> Delete(Exact arg, CancellationToken ctkn = default) =>
+        _client.Do(VItemRpcs.Delete, arg, ctkn);
 
-    public Task<SetRes<VItem>> Get(Get arg) => _client.Do(VItemRpcs.Get, arg);
+    public Task<SetRes<VItem>> Get(Get arg, CancellationToken ctkn = default) =>
+        _client.Do(VItemRpcs.Get, arg, ctkn);
 }
 
 public static class VItemRpcs
