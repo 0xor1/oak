@@ -11,6 +11,7 @@ public static partial class S
     public const string MinMaxNullArgs = Common.Shared.S.MinMaxNullArgs;
     public const string MinMaxReversedArgs = Common.Shared.S.MinMaxReversedArgs;
     public const string BadRequest = Common.Shared.S.BadRequest;
+    public const string RequestBodyTooLarge = Common.Shared.S.RequestBodyTooLarge;
     public const string AuthInvalidEmail = Common.Shared.S.AuthInvalidEmail;
     public const string AuthInvalidPwd = Common.Shared.S.AuthInvalidPwd;
     public const string LessThan8Chars = Common.Shared.S.AuthLessThan8Chars;

@@ -25,6 +25,10 @@ public static partial class S
         { MinMaxNullArgs, new("Los argumentos min y max son nulos") },
         { MinMaxReversedArgs, new("Los valores Min {{Min}} y Max {{Max}} están fuera de orden") },
         { BadRequest, new("Solicitud incorrecta") },
+        {
+            RequestBodyTooLarge,
+            new("El cuerpo de la solicitud es demasiado grande; limite {{MaxSize}} bytes")
+        },
         { AuthInvalidEmail, new("Email inválido") },
         { AuthInvalidPwd, new("Contraseña invalida") },
         { LessThan8Chars, new("Menos de 8 caracteres") },
