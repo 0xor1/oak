@@ -22,6 +22,8 @@ public class FileTests : TestBase
         Assert.Equal(1ul, tt.P.FileSubN);
         Assert.Equal(f.Size, tt.P.FileSubSize);
 
+        var url = ali.File.DownloadUrl(new(f.Org, f.Project, f.Task, f.Id, false));
+        Assert.False(url.IsNullOrEmpty());
         var resp = await ali.File.Download(new(f.Org, f.Project, f.Task, f.Id, false));
         using var sr = new StreamReader(resp.Stream.Data);
         var res = await sr.ReadToEndAsync();
