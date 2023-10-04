@@ -52,4 +52,10 @@
     public bool IsBound => _ddRef.IsBound;
     public bool HasValue => _ddRef.HasValue;
     public FieldIdentifier FieldIdentifier => _ddRef.FieldIdentifier;
+    
+    public async ValueTask FocusAsync()
+    {
+        await _ddRef.FocusAsync();
+    }
+
 }

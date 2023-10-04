@@ -3,7 +3,7 @@
 @using S = Oak.I18n.S
 <div class="root jc-stretch">
     <div class="flx g-0h jc-stretch">
-        <RadzenNumeric Name="@Name" TValue="decimal" Value="InternalVal" Format="@Format" ValueChanged="InternalValueChanged" ShowUpDown="false" Min="0"/>
+        <RadzenNumeric @ref="_nRef" Name="@Name" TValue="decimal" Value="InternalVal" Format="@Format" ValueChanged="InternalValueChanged" ShowUpDown="false" Min="0"/>
         <RadzenDropDown @ref="_ddRef" TValue="TimeUnit" @bind-Value="SelectedTimeUnit" Data="TimeUnits"></RadzenDropDown>
     </div>
 </div>
@@ -92,6 +92,7 @@
     public bool IsBound { get; }
     public bool HasValue { get; }
     public FieldIdentifier FieldIdentifier { get; }
+    private RadzenNumeric<decimal> _nRef;
     private RadzenDropDown<TimeUnit> _ddRef;
 
     public record TimeUnit(Resolution Resolution, L L)
@@ -112,4 +113,10 @@
         Days,
         Weeks
     }
+
+    public async ValueTask FocusAsync()
+    {
+        await _nRef.FocusAsync();
+    }
+
 }

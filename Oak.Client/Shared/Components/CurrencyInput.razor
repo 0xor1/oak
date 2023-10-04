@@ -1,4 +1,5 @@
 ﻿@using Common.Client
+@using Common.Shared
 @using Oak.Api.Project
 @using Oak.Client.Lib
 @using S = Oak.I18n.S
@@ -66,4 +67,17 @@ else
     public FieldIdentifier FieldIdentifier => _decimalRef?.FieldIdentifier ?? _ulongRef.FieldIdentifier;
     RadzenNumeric<ulong>? _ulongRef;
     RadzenNumeric<decimal>? _decimalRef;
+    
+    public async ValueTask FocusAsync()
+    {
+        if (Currency?.Divisions == 1)
+        {
+            await _ulongRef.NotNull().FocusAsync();
+        }
+        else
+        {
+            await _decimalRef.NotNull().FocusAsync();
+        }
+    }
+
 }
