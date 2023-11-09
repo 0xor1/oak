@@ -15,7 +15,7 @@ public static partial class S
         {
             HomeBody,
             new(
-                "Esta es una gestión de proyectos en la que organiza tareas en una estructura de árbol como un directorio de archivos. Cada tarea brinda un resumen de las estadísticas vitales de las tareas debajo de ella, tiempo y costos estimados e incurridos, etc."
+                "Esta es una aplicación de gestión de proyectos donde organizas tareas en una estructura de árbol como un directorio de archivos. Cada tarea ofrece un resumen de las estadísticas vitales de las tareas subyacentes, el tiempo y los costos estimados e incurridos, etc."
             )
         },
         { Invalid, new("Inválido") },

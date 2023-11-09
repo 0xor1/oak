@@ -15,7 +15,7 @@ public static partial class S
         {
             HomeBody,
             new(
-                "Questa è una gestione del progetto in cui organizzi le attività in una struttura ad albero come una directory di file. Ogni attività fornisce un riepilogo delle statistiche vitali delle attività sottostanti, tempi e costi stimati e sostenuti, ecc."
+                "Questa è un'app di gestione dei progetti in cui organizzi le attività in una struttura ad albero come una directory di file. Ogni attività fornisce un riepilogo delle statistiche vitali delle attività sottostanti, tempi e costi stimati e sostenuti, ecc."
             )
         },
         { Invalid, new("Non valido") },

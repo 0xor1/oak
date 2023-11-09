@@ -15,7 +15,7 @@ public static partial class S
         {
             HomeBody,
             new(
-                "This is a project management where you organise tasks in a tree structure like a file directory. Each task gives a summary of the vital stats of the tasks beneath it, estimated and incurred time and costs etc."
+                "This is a project management app where you organise tasks in a tree structure like a file directory. Each task gives a summary of the vital stats of the tasks beneath it, estimated and incurred time and costs etc."
             )
         },
         { Invalid, new("Invalid") },

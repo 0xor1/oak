@@ -15,7 +15,7 @@ public static partial class S
         {
             HomeBody,
             new(
-                "Dabei handelt es sich um eine Projektverwaltung, bei der Sie Aufgaben in einer Baumstruktur wie einem Dateiverzeichnis organisieren. Jede Aufgabe enthält eine Zusammenfassung der wichtigen Statistiken der darunter liegenden Aufgaben, der geschätzten und angefallenen Zeit und Kosten usw."
+                "Dies ist eine Projektmanagement-App, mit der Sie Aufgaben in einer Baumstruktur wie einem Dateiverzeichnis organisieren. Jede Aufgabe enthält eine Zusammenfassung der wichtigen Statistiken der darunter liegenden Aufgaben, der geschätzten und angefallenen Zeit und Kosten usw."
             )
         },
         { Invalid, new("Ungültig") },
