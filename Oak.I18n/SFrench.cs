@@ -9,7 +9,9 @@ public static partial class S
         TemplatableString
     >()
     {
-        { HomeHeader, new("Bienvenue à Chêne !") },
+        { Demo, new("Démo") },
+        { DemoTitle, new("Cette application est uniquement à des fins de démonstration.") },
+        { HomeHeader, new("Bienvenue à Chêne!") },
         {
             HomeBody,
             new(

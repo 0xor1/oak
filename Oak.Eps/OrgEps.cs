@@ -216,4 +216,10 @@ public static class OrgEps
             .Where(x => x.Id == ses.Id)
             .ExecuteUpdateAsync(x => x.SetProperty(x => x.IsActive, x => false), ctx.Ctkn);
     }
+
+    public static async Task AuthOnActivation(IRpcCtx ctx, OakDb db, string id, string email)
+    {
+        // TODO - add from temp list of awaiting new org members to existing org members
+        await Task.CompletedTask;
+    }
 }

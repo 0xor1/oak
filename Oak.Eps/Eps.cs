@@ -15,7 +15,13 @@ public static class OakEps
             {
                 var eps =
                     (List<IRpcEndpoint>)
-                        new AuthEps<OakDb>(5, OrgEps.AuthOnDelete, OrgEps.AuthValidateFcmTopic).Eps;
+                        new AuthEps<OakDb>(
+                            5,
+                            OrgEps.AuthOnActivation,
+                            OrgEps.AuthOnDelete,
+                            OrgEps.AuthValidateFcmTopic
+                        ).Eps;
+                eps.AddRange(AppEps.Eps);
                 eps.AddRange(OrgEps.Eps);
                 eps.AddRange(OrgMemberEps.Eps);
                 eps.AddRange(ProjectEps.Eps);

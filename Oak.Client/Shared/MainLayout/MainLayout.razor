@@ -1,5 +1,17 @@
-﻿<div class="root">
-    <RadzenLayout class="rz-shadow-3 fill">
+﻿<div class="root col">
+    @if (_config.IsDemo)
+    {
+        <a class="txt-dec-none" href="@_config.RepoUrl" target="_blank">
+        <div title="@L.S(S.DemoTitle)" class="flx jc-c rz-background-color-danger-light rz-color-black f-b ptr h-1h">
+            <span class="m-r-0h">@L.S(S.Demo).ToUpper()</span>
+            @if (!StringExts.IsNullOrEmpty(_config.RepoUrl))
+            {
+                <img src="github-mark.png"/>
+            }
+        </div>
+        </a>
+    }
+    <RadzenLayout class="rz-shadow-3 grow-1">
         <RadzenHeader class="flx jc-sb">
             <RadzenSidebarToggle class="flx jc-c ai-c sq-4t" Click="@(() => _leftExpanded = !_leftExpanded)" />
             <RadzenProfileMenu class="m-t-0t">
@@ -109,6 +121,8 @@
 @using Oak.I18n
 @using Common.Client
 @using Common.Shared.Auth
+@using StringExts = Common.Shared.StringAndBytesExt
+@using Oak.Api.App
 @using Oak.Client.Lib
 @using IApi = Oak.Api.IApi
 @inherits LayoutComponentBase
@@ -122,6 +136,7 @@
 
     private bool _leftExpanded;
     private ISession _session = Session.Default(S.DefaultLang, S.DefaultDateFmt, S.DefaultTimeFmt);
+    private Config _config = new (false, null);
     private bool _ready;
     private IDisposable? _eventReg;
     private string? _orgId;
@@ -133,6 +148,7 @@
         Auth.OnSessionChanged(AuthStateChanged);
         AuthStateChanged(await Auth.GetSession());
         _eventReg = Nav.RegisterLocationChangingHandler(LocationChanging);
+        _config = await Api.App.GetConfig();
         _ready = true;
     }
 

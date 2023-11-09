@@ -34,6 +34,8 @@ public static partial class S
     public const string AuthFcmTopicInvalid = Common.Shared.S.AuthFcmTopicInvalid;
     public const string AuthFcmTokenInvalid = Common.Shared.S.AuthFcmTokenInvalid;
     public const string AuthFcmNotEnabled = Common.Shared.S.AuthFcmNotEnabled;
+    public const string Demo = "demo";
+    public const string DemoTitle = "demo_title";
     public const string HomeHeader = "home_header";
     public const string HomeBody = "home_body";
     public const string Home = "home";

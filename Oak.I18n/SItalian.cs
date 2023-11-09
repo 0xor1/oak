@@ -9,6 +9,8 @@ public static partial class S
         TemplatableString
     >()
     {
+        { Demo, new("Dimostrazione") },
+        { DemoTitle, new("Questa app è solo a scopo dimostrativo.") },
         { HomeHeader, new("Benvenuti in Quercia!") },
         {
             HomeBody,

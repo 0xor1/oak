@@ -1,5 +1,6 @@
 ﻿using Common.Shared;
 using Common.Shared.Auth;
+using Oak.Api.App;
 using Oak.Api.Comment;
 using Oak.Api.File;
 using Oak.Api.Org;
@@ -13,6 +14,7 @@ namespace Oak.Api;
 
 public interface IApi : Common.Shared.Auth.IApi
 {
+    public IAppApi App { get; }
     public IOrgApi Org { get; }
     public IOrgMemberApi OrgMember { get; }
     public IProjectApi Project { get; }
@@ -28,6 +30,7 @@ public class Api : IApi
     public Api(IRpcClient client)
     {
         Auth = new AuthApi(client);
+        App = new AppApi(client);
         Org = new OrgApi(client);
         OrgMember = new OrgMemberApi(client);
         Project = new ProjectApi(client);
@@ -39,6 +42,7 @@ public class Api : IApi
     }
 
     public IAuthApi Auth { get; }
+    public IAppApi App { get; }
     public IOrgApi Org { get; }
     public IOrgMemberApi OrgMember { get; }
     public IProjectApi Project { get; }

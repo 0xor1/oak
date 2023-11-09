@@ -125,6 +125,10 @@ img{
     text-align: center;
 }
 
+.txt-dec-none{
+    text-decoration: none;
+}
+
 .ov-v{
     overflow: visible;
 }
@@ -280,6 +284,10 @@ tr:not(:hover){
             flex-shrink: 5;
         }
     }
+}
+
+.ptr{
+    cursor: pointer;
 }
 
 /* RADZEN STYLING OVERRIDES */
