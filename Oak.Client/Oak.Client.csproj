@@ -42,24 +42,4 @@
     <ProjectReference Include="..\Oak.I18n\Oak.I18n.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <_ContentIncludedByDefault Remove="Shared\Pages\Auth\L10n.razor" />
-    <_ContentIncludedByDefault Remove="Shared\Pages\Auth\Register.razor" />
-    <_ContentIncludedByDefault Remove="Shared\Pages\Auth\ResetPwd.razor" />
-    <_ContentIncludedByDefault Remove="Shared\Pages\Auth\SendResetPwdEmail.razor" />
-    <_ContentIncludedByDefault Remove="Shared\Pages\Auth\SignIn.razor" />
-    <_ContentIncludedByDefault Remove="Shared\Pages\Auth\SignOut.razor" />
-    <_ContentIncludedByDefault Remove="Shared\Pages\Auth\VerifyEmail.razor" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <SassFilesToCompile Remove="Shared\Pages\Auth\L10n.razor.scss" />
-    <SassFilesToCompile Remove="Shared\Pages\Auth\Register.razor.scss" />
-    <SassFilesToCompile Remove="Shared\Pages\Auth\ResetPwd.razor.scss" />
-    <SassFilesToCompile Remove="Shared\Pages\Auth\SendResetPwdEmail.razor.scss" />
-    <SassFilesToCompile Remove="Shared\Pages\Auth\SignIn.razor.scss" />
-    <SassFilesToCompile Remove="Shared\Pages\Auth\SignOut.razor.scss" />
-    <SassFilesToCompile Remove="Shared\Pages\Auth\VerifyEmail.razor.scss" />
-  </ItemGroup>
-
 </Project>
