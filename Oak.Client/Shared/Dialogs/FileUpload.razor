@@ -4,6 +4,7 @@
 @using Oak.Client.Lib
 @using ATask = Oak.Api.Task.Task
 @using S = Oak.I18n.S
+@using CS = Common.Shared.I18n.S
 <div class="root col">
     <div class="flx col ai-stretch g-1">
         <div class="flx col ai-stretch">
@@ -29,10 +30,10 @@
                                         <span>@L.S(S.Uploading)</span>
                                         break;
                                     case FileStatus.Success:
-                                        <span>@L.S(S.Success)</span>
+                                        <span>@L.S(CS.Success)</span>
                                         break;
                                     case FileStatus.Error:
-                                        <span>@L.S(S.Error)</span>
+                                        <span>@L.S(CS.Error)</span>
                                         break;
                                 }
                                 <span>@Util.Size((ulong)f.Size)</span>

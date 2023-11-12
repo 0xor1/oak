@@ -1,10 +1,2 @@
 ﻿@page "/verify_email"
-@using Oak.I18n
-@using Common.Client
-@inject L L;
-<PageTitle>@L.S(S.VerifyEmail)</PageTitle>
-<VerifyEmail
-    Email="@(_nav.QueryValue<string>("email"))"
-    Code="@(_nav.QueryValue<string>("code"))"/>
-
-@inject NavigationManager _nav;
+<CmnVerifyEmailPage/>

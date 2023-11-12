@@ -31,19 +31,19 @@ public class TestBase : IDisposable
     protected async Task<(IApi Ali, IApi Bob, IApi Cat, IApi Dan, IApi Anon, Org)> Setup()
     {
         var userName = "ali";
-        var (ali, _, _) = await Rig.NewApi(userName);
+        var (ali, aliEmail, _) = await Rig.NewApi(userName);
         var org = await ali.Org.Create(new("a", userName));
-        var (bob, _, _) = await Rig.NewApi("bob");
+        var (bob, bobEmail, _) = await Rig.NewApi("bob");
         var bobId = (await bob.Auth.GetSession()).Id;
-        var (cat, _, _) = await Rig.NewApi("cat");
+        var (cat, catEmail, _) = await Rig.NewApi("cat");
         var catId = (await cat.Auth.GetSession()).Id;
-        var (dan, _, _) = await Rig.NewApi("dan");
+        var (dan, danEmail, _) = await Rig.NewApi("dan");
         var danId = (await dan.Auth.GetSession()).Id;
-        var (anon, _, _) = await Rig.NewApi();
+        var (anon, anonEmail, _) = await Rig.NewApi();
 
-        await ali.OrgMember.Add(new(org.Id, bobId, "bob", OrgMemberRole.Admin));
-        await ali.OrgMember.Add(new(org.Id, catId, "cat", OrgMemberRole.WriteAllProjects));
-        await ali.OrgMember.Add(new(org.Id, danId, "dan", OrgMemberRole.PerProject));
+        await ali.OrgMember.Invite(new(org.Id, bobEmail, "bob", OrgMemberRole.Admin));
+        await ali.OrgMember.Invite(new(org.Id, catEmail, "cat", OrgMemberRole.WriteAllProjects));
+        await ali.OrgMember.Invite(new(org.Id, danEmail, "dan", OrgMemberRole.PerProject));
 
         return (ali, bob, cat, dan, anon, org);
     }

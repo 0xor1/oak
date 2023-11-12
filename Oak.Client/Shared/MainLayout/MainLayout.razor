@@ -1,9 +1,9 @@
 ﻿<div class="root col">
-    @if (_config.IsDemo)
+    @if (_config.DemoMode)
     {
         <a class="txt-dec-none" href="@_config.RepoUrl" target="_blank">
-        <div title="@L.S(S.DemoTitle)" class="flx jc-c rz-background-color-danger-light rz-color-black f-b ptr h-1h">
-            <span class="m-r-0h">@L.S(S.Demo).ToUpper()</span>
+        <div title="@L.S(CS.DemoTitle)" class="flx jc-c rz-background-color-danger-light rz-color-black f-b ptr h-1h">
+            <span class="m-r-0h">@L.S(CS.Demo).ToUpper()</span>
             @if (!StringExts.IsNullOrEmpty(_config.RepoUrl))
             {
                 <img src="github-mark.png"/>
@@ -21,32 +21,32 @@
                 <ChildContent>
                     @if (_session.IsAuthed)
                     {
-                        <RadzenProfileMenuItem Text="@L.S(S.SignOut)" Path="sign_out" Icon="account_circle"></RadzenProfileMenuItem>
+                        <RadzenProfileMenuItem Text="@L.S(CS.SignOut)" Path="sign_out" Icon="account_circle"></RadzenProfileMenuItem>
                     }
                     else
                     {
-                        <RadzenProfileMenuItem Text="@L.S(S.SignIn)" Path="sign_in" Icon="account_circle"></RadzenProfileMenuItem>
+                        <RadzenProfileMenuItem Text="@L.S(CS.SignIn)" Path="sign_in" Icon="account_circle"></RadzenProfileMenuItem>
                     }
-                    <RadzenProfileMenuItem Text="@L.S(S.L10n)" Path="l10n" Icon="translate"></RadzenProfileMenuItem>
+                    <RadzenProfileMenuItem Text="@L.S(CS.L10n)" Path="l10n" Icon="translate"></RadzenProfileMenuItem>
                     @if (_session.IsAuthed)
                     {
                         // manually build a custom nav menu item to have full
                         // control over the content
-                        <li class="rz-navigation-item" onclick="@ToggleLiveUI" title="@L.S(S.ToggleLiveUpdates)">
+                        <li class="rz-navigation-item" onclick="@ToggleLiveUI" title="@L.S(CS.ToggleLiveUpdates)">
                             <div class="rz-navigation-item-wrapper">
                                 <div class="rz-navigation-item-link">
                                     @if (_session.FcmEnabled)
                                         {
                                             <i class="rzi rz-navigation-item-icon rz-color-success">monitor_heart</i>
                                             <span class="rz-navigation-item-text">
-                                                @L.S(S.Live) <strong class="rz-color-success">@L.S(S.On)</strong>
+                                                @L.S(CS.Live) <strong class="rz-color-success">@L.S(CS.On)</strong>
                                             </span>
                                         }
                                         else
                                         {
                                             <i class="rzi rz-navigation-item-icon rz-color-danger">monitor_heart</i>
                                             <span class="rz-navigation-item-text">
-                                                @L.S(S.Live) <strong class="rz-color-danger">@L.S(S.Off)</strong>
+                                                @L.S(CS.Live) <strong class="rz-color-danger">@L.S(CS.Off)</strong>
                                             </span>
                                         }
                                 </div>
@@ -113,16 +113,15 @@
                 }
             </CascadingValue>
         </RadzenBody>
-        <RadzenNotification/>
-        <RadzenDialog/>
+        <RadzenComponents/>
     </RadzenLayout>
 </div>
 
 @using Oak.I18n
 @using Common.Client
 @using Common.Shared.Auth
+@using CS = Common.Shared.I18n.S
 @using StringExts = Common.Shared.StringAndBytesExt
-@using Oak.Api.App
 @using Oak.Client.Lib
 @using IApi = Oak.Api.IApi
 @inherits LayoutComponentBase
@@ -135,7 +134,7 @@
 @code{
 
     private bool _leftExpanded;
-    private ISession _session = Session.Default(S.DefaultLang, S.DefaultDateFmt, S.DefaultTimeFmt);
+    private ISession _session = Session.CommonDefault();
     private Config _config = new (false, null);
     private bool _ready;
     private IDisposable? _eventReg;

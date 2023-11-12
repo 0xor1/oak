@@ -2,6 +2,7 @@
 @using Oak.Api
 @using Oak.Api.Org
 @using Oak.I18n
+@using CS = Common.Shared.I18n.S
 <div class="root col">
     <RadzenTemplateForm
         TItem="Model"
@@ -22,7 +23,7 @@
             </div>
         }
         <div class="flx g-0h jc-stretch">
-            <RadzenButton ButtonType="ButtonType.Submit" IsBusy="_doing" Text="@(UpdateOrg != null? L.S(S.Update): L.S(S.Create))"/>
+            <RadzenButton ButtonType="ButtonType.Submit" IsBusy="_doing" Text="@(UpdateOrg != null? L.S(CS.Update): L.S(S.Create))"/>
             <RadzenButton ButtonStyle="ButtonStyle.Secondary" IsBusy="_doing" Text="@L.S(S.Cancel)" Click="@(_ => DialogService.Close())"/>
         </div>
     </RadzenTemplateForm>

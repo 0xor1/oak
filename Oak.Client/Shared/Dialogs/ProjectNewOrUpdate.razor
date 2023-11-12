@@ -3,6 +3,7 @@
 @using Oak.Api.Project
 @using Oak.I18n
 @using IApi = Oak.Api.IApi
+@using CS = Common.Shared.I18n.S
 <div class="root col ov-v">
     <RadzenTemplateForm
         TItem="Model"
@@ -44,7 +45,7 @@
             <RadzenRequiredValidator Component="FileLimit" Popup="true" Text="@L.S(S.Required)"></RadzenRequiredValidator>
         </div>
         <div class="flx g-0h jc-stretch">
-            <RadzenButton ButtonType="ButtonType.Submit" IsBusy="_doing" Text="@(UpdateProject != null? L.S(S.Update): L.S(S.Create))"/>
+            <RadzenButton ButtonType="ButtonType.Submit" IsBusy="_doing" Text="@(UpdateProject != null? L.S(CS.Update): L.S(S.Create))"/>
             <RadzenButton ButtonStyle="ButtonStyle.Secondary" IsBusy="_doing" Text="@L.S(S.Cancel)" Click="@(_ => DialogService.Close())"/>
         </div>
     </RadzenTemplateForm>

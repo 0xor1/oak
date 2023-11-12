@@ -1,5 +1,7 @@
 ﻿using Common.Server;
+using Common.Server.Auth;
 using Common.Shared;
+using Common.Shared.Auth;
 using Microsoft.EntityFrameworkCore;
 using Oak.Api.OrgMember;
 using Oak.Db;
@@ -12,12 +14,13 @@ internal static class OrgMemberEps
     public static IReadOnlyList<IRpcEndpoint> Eps { get; } =
         new List<IRpcEndpoint>()
         {
-            new RpcEndpoint<Add, OrgMember>(
-                OrgMemberRpcs.Add,
+            new RpcEndpoint<Invite, OrgMember>(
+                OrgMemberRpcs.Invite,
                 async (ctx, req) =>
                     await ctx.DbTx<OakDb, OrgMember>(
                         async (db, ses) =>
                         {
+                            req = req with { Email = req.Email.ToLower() };
                             // check current member has sufficient permissions
                             var sesOrgMem = await db.OrgMembers
                                 .Where(x => x.Org == req.Org && x.IsActive && x.Id == ses.Id)
@@ -31,22 +34,28 @@ internal static class OrgMemberEps
                                         && req.Role == OrgMemberRole.Owner
                                     )
                             );
-                            // check new member is an active user
-                            var newMemExists = await db.Auths.AnyAsync(
-                                x => x.Id == req.Id && x.ActivatedOn != DateTimeExt.Zero(),
-                                ctx.Ctkn
+                            var (auth, created) = await AuthEps<OakDb>.CreateAuth(
+                                ctx,
+                                db,
+                                new Register(req.Email, $"{Crypto.String(16)}a1@"),
+                                Id.New(),
+                                ses.Lang,
+                                ses.DateFmt,
+                                ses.TimeFmt,
+                                ses.ThousandsSeparator,
+                                ses.DecimalSeparator
                             );
-                            ctx.NotFoundIf(!newMemExists, model: new { Name = "User" });
-                            var newMem = new Db.OrgMember()
+
+                            var mem = new Db.OrgMember()
                             {
                                 Org = req.Org,
-                                Id = req.Id,
+                                Id = auth.Id,
                                 IsActive = true,
                                 Name = req.Name,
                                 Role = req.Role
                             };
-                            await db.OrgMembers.AddAsync(newMem, ctx.Ctkn);
-                            return newMem.ToApi();
+                            await db.OrgMembers.AddAsync(mem, ctx.Ctkn);
+                            return mem.ToApi();
                         }
                     )
             ),

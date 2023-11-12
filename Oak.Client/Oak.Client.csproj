@@ -18,8 +18,8 @@
   </PropertyGroup>
   
   <ItemGroup>
-    <PackageReference Include="0xor1.Common.Client" Version="2.1.62" />
-    <PackageReference Include="0xor1.Common.Shared" Version="2.1.62" />
+    <PackageReference Include="0xor1.Common.Client" Version="2.1.71" />
+    <PackageReference Include="0xor1.Common.Shared" Version="2.1.71" />
     <PackageReference Include="CSharpier.MsBuild" Version="0.22.1">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -30,7 +30,7 @@
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="7.0.4" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="7.0.4" PrivateAssets="all" />
     <PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="2.2.0" />
-    <PackageReference Include="Radzen.Blazor" Version="4.16.4" />
+    <PackageReference Include="Radzen.Blazor" Version="4.20.4" />
   </ItemGroup>
 
   <ItemGroup>
@@ -40,6 +40,26 @@
   <ItemGroup>
     <ProjectReference Include="..\Oak.Api\Oak.Api.csproj" />
     <ProjectReference Include="..\Oak.I18n\Oak.I18n.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="Shared\Pages\Auth\L10n.razor" />
+    <_ContentIncludedByDefault Remove="Shared\Pages\Auth\Register.razor" />
+    <_ContentIncludedByDefault Remove="Shared\Pages\Auth\ResetPwd.razor" />
+    <_ContentIncludedByDefault Remove="Shared\Pages\Auth\SendResetPwdEmail.razor" />
+    <_ContentIncludedByDefault Remove="Shared\Pages\Auth\SignIn.razor" />
+    <_ContentIncludedByDefault Remove="Shared\Pages\Auth\SignOut.razor" />
+    <_ContentIncludedByDefault Remove="Shared\Pages\Auth\VerifyEmail.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <SassFilesToCompile Remove="Shared\Pages\Auth\L10n.razor.scss" />
+    <SassFilesToCompile Remove="Shared\Pages\Auth\Register.razor.scss" />
+    <SassFilesToCompile Remove="Shared\Pages\Auth\ResetPwd.razor.scss" />
+    <SassFilesToCompile Remove="Shared\Pages\Auth\SendResetPwdEmail.razor.scss" />
+    <SassFilesToCompile Remove="Shared\Pages\Auth\SignIn.razor.scss" />
+    <SassFilesToCompile Remove="Shared\Pages\Auth\SignOut.razor.scss" />
+    <SassFilesToCompile Remove="Shared\Pages\Auth\VerifyEmail.razor.scss" />
   </ItemGroup>
 
 </Project>
