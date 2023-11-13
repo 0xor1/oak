@@ -118,6 +118,7 @@ public static partial class S
             { Upload, new("Caricamento") },
             { Invite, new("Invitare") },
             { Active, new("Attivo") },
+            { Clear, new("Chiaro") },
             { OrgMyOrgs, new("Le mie organizzazioni") },
             { OrgNoOrgs, new("Nessuna organizzazione") },
             { OrgNewOrg, new("Nuova Organizzazione") },

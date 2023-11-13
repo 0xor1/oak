@@ -86,6 +86,7 @@ public static partial class S
     public const string Upload = "upload";
     public const string Invite = "invite";
     public const string Active = "active";
+    public const string Clear = "clear";
 
     // orgs
     public const string OrgMyOrgs = "org_my_orgs";

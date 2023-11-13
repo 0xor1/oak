@@ -47,15 +47,15 @@
                     <RadzenCheckBox Disabled="true" Value="m.IsActive"></RadzenCheckBox>
                 </Template>
                 <FilterTemplate>
-                    <BoolDataGridFilter @bind-Value="@IsActive" />
+                    <BoolDataGridFilter @bind-Value="@IsActive" CanBeNull="false"/>
                 </FilterTemplate>
             </RadzenDataGridColumn>
-            <RadzenDataGridColumn Sortable="true" TextAlign="TextAlign.Center" Width="10em" TItem="OrgMember" Property="@nameof(OrgMember.Role)" Title="@L.S(S.OrgMemberRole)">
+            <RadzenDataGridColumn Sortable="true" TextAlign="TextAlign.Center" Width="10em" TItem="OrgMember" Property="@nameof(OrgMember.Role)" Title="@L.S(S.OrgMemberRole)" FilterValue="@Role">
                 <Template Context="m">
                     @RoleString(m.Role, L)
                 </Template>
                 <FilterTemplate>
-                    <RadzenDropDown Name="Role" @bind-Value="@Role" Data="Roles(null)"/>
+                    <RadzenDropDown Style="width: 100%" Name="Role" @bind-Value="@Role" TValue="OrgMemberRole?" ValueProperty="Role" TextProperty="Display" Data="Roles(L, null, true)"/>
                 </FilterTemplate>
             </RadzenDataGridColumn>
         </Columns>
@@ -154,22 +154,32 @@
         await _grid.Reload();
     }
     
-    public static List<RoleOpt> Roles(L l, UiCtx? ctx = null)
+    public static List<RoleOpt> Roles(L l, UiCtx? ctx = null, bool includeClear = false)
     {
         var res = new List<RoleOpt>() { new(OrgMemberRole.Owner, l), new(OrgMemberRole.Admin, l), new(OrgMemberRole.WriteAllProjects, l), new(OrgMemberRole.ReadAllProjects, l), new(OrgMemberRole.PerProject, l) };
         res.RemoveAll(x => x.Role < (ctx?.OrgMember?.Role ?? OrgMemberRole.Owner));
+        if (includeClear)
+        {
+            res = res.Prepend(new (l.S(S.Clear))).ToList();
+        }
         return res;
     }
 
     public record RoleOpt
     {
-        public OrgMemberRole Role { get; init; }
+        public OrgMemberRole? Role { get; init; }
         public string Display { get; init; }
 
         public RoleOpt(OrgMemberRole role, L l)
         {
             Role = role;
             Display = OrgMembers.RoleString(role, l);
+        }
+
+        public RoleOpt(string clearText)
+        {
+            Role = null;
+            Display = clearText;
         }
     };
 
