@@ -67,7 +67,11 @@
                     <RadzenPanelMenuItem Text="@L.S(S.OrgMyOrgs)" Icon="corporate_fare" Path="/my_orgs"/>
                     @if (_orgId != null)
                     {
-                        <RadzenPanelMenuItem Text="@L.S(S.OrgNameProjects, new {Ctx.Org?.Name})" Icon="inventory" Path="@($"/org/{_orgId}/projects")"/>
+                        <RadzenPanelMenuItem Text="@L.S(S.OrgNameProjects, new { Ctx.Org?.Name })" Icon="inventory" Path="@($"/org/{_orgId}/projects")"/>
+                        if (Ctx.HasOrgAdminPerm)
+                        {
+                            <RadzenPanelMenuItem Text="@L.S(S.OrgMembers)" Icon="group" Path="@($"/org/{_orgId}/members")"/>
+                        }
                     }
                     <RadzenPanelMenuItem Text="@L.S(S.Display)" Icon="visibility">
                         <RadzenPanelMenuItem class="d-none"/>

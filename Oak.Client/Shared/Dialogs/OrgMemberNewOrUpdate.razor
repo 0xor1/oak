@@ -5,14 +5,14 @@
 @using Oak.I18n
 @using CS = Common.Shared.I18n.S
 @using IApi = Oak.Api.IApi
-<div class="root col">
+<div class="root col ov-v">
     <RadzenTemplateForm
         TItem="Model"
         Data="_model"
         Submit="Do"
         class="flx col ai-stretch g-1">
         <div class="flx col ai-stretch">
-            <RadzenLabel class="m-b-0q" Component="OrgName" Text="@L.S(S.OrgName)"/>
+            <RadzenLabel class="m-b-0q" Component="OrgName" Text="@L.S(S.Name)"/>
             <RadzenTextBox Name="Name" @bind-Value="@_model.Name"/>
             <RadzenRequiredValidator Component="Name" Popup="true" Text="@L.S(S.Required)"></RadzenRequiredValidator>
         </div>
@@ -27,13 +27,13 @@
         else
         {
             <div class="flx col ai-stretch">
-                <RadzenCheckBox Name="IsActive" @bind-Value="@_model.Email"/>
                 <RadzenLabel class="m-b-0q" Component="IsActive" Text="@L.S(S.Active)"/>
+                <RadzenCheckBox Name="IsActive" @bind-Value="@_model.IsActive"/>
             </div>
         }
         <div class="flx col ai-stretch">
             <RadzenLabel class="m-b-0q" Component="Role" Text="@L.S(S.OrgMemberRole)"/>
-            <RadzenDropDown Name="Role" @bind-Value="@_model.Role" Data="OrgMembers.Roles(L, Ctx)"/>
+            <RadzenDropDown Name="Role" @bind-Value="@_model.Role" TValue="OrgMemberRole" ValueProperty="Role" TextProperty="Display" Data="OrgMembers.Roles(L, Ctx)"/>
         </div>
         <div class="flx g-0h jc-stretch">
             <RadzenButton ButtonType="ButtonType.Submit" IsBusy="_doing" Text="@(UpdateMember != null? L.S(CS.Update): L.S(S.Invite))"/>
@@ -62,7 +62,6 @@
 
     [Parameter]
     public Func<OrgMember, Task>? OnInvited { get; set; }
-
 
     public class Model
     {
@@ -116,7 +115,6 @@
             // call StatHasChanged on errors
         }
         _doing = false;
-        
     }
 
 }

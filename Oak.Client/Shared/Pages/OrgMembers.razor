@@ -9,8 +9,8 @@
 @using S = Oak.I18n.S
 
 <div class="root col p-0h g-0h jc-s ai-s">
-    <RadzenText class="m-t-0" TextStyle="TextStyle.H2">@L.S(S.OrgProjects)</RadzenText>
-    <RadzenButton class="m-b-1" ButtonStyle="ButtonStyle.Success" Icon="add_circle_outline" Text="@L.S(S.New)" Click="@OpenNewDialog"/>
+    <RadzenText class="m-t-0" TextStyle="TextStyle.H2">@L.S(S.OrgMembers)</RadzenText>
+    <RadzenButton class="m-b-1" ButtonStyle="ButtonStyle.Success" Icon="add_circle_outline" Text="@L.S(S.Invite)" Click="@OpenNewDialog"/>
     <RadzenDataGrid
         @ref="_grid"
         Count="Count"
@@ -24,13 +24,13 @@
         AllowFiltering="true"
         AllowPaging="true"
         LoadData="LoadData"
-        KeyProperty="Id">
+        KeyProperty="Id" Style="width: 50rem">
         <Columns>
             <RadzenDataGridColumn Sortable="true" Width="18em" TItem="OrgMember" Property="@nameof(OrgMember.Name)" Title="@L.S(S.Name)" FilterValue="@NameStartsWith">
                 <Template Context="m">
                     <div class="flx child-no-shrink jc-s ai-c g-0h w-100 mw-100 p-rel">
                         <span class="shrink-1 ellip">@m.Name</span>
-                        @if (Ctx.HasOrgAdminPerm)
+                        @if (Ctx.HasOrgAdminPerm && m.Role >= Ctx.OrgMember?.Role)
                         {
                             <div class="flx g-0q p-abs show-on-row-mouse-over" style="right: -1em;">
                                 <RadzenButton @onclick:stopPropagation="true" Icon="edit" ButtonStyle="ButtonStyle.Info" Size="ButtonSize.ExtraSmall" Click="_ => Update(m)"/>
@@ -42,7 +42,7 @@
                     <RadzenTextBox @bind-Value="@NameStartsWith" Style="width:100%"/>
                 </FilterTemplate>
             </RadzenDataGridColumn>
-            <RadzenDataGridColumn Sortable="false" TextAlign="TextAlign.Center" Width="8em" TItem="OrgMember" Property="@nameof(OrgMember.IsActive)" Title="@L.S(S.Public)" FilterValue="@IsActive">
+            <RadzenDataGridColumn Sortable="false" TextAlign="TextAlign.Center" Width="8em" TItem="OrgMember" Property="@nameof(OrgMember.IsActive)" Title="@L.S(S.Active)" FilterValue="@IsActive">
                 <Template Context="m">
                     <RadzenCheckBox Disabled="true" Value="m.IsActive"></RadzenCheckBox>
                 </Template>
@@ -100,7 +100,7 @@
     }
 
     private async Task OpenNewDialog()
-        => await DialogService.OpenAsync<ProjectNewOrUpdate>(L.S(S.OrgNewProject), new (){{"OrgId", OrgId}, {"Session", Session}});
+        => await DialogService.OpenAsync<OrgMemberNewOrUpdate>(L.S(S.OrgNewMember), new (){{"OrgId", OrgId}, {"Session", Session}});
 
     private async Task LoadData(LoadDataArgs arg)
     {
