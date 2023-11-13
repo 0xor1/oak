@@ -100,6 +100,11 @@ public static partial class S
     public const string OrgUpdateProject = "org_update_project";
     public const string OrgConfirmDeleteProject = "org_confirm_delete_project";
 
+    // org members
+    public const string OrgMemberInviteEmailSubject = "org_member_invite_email_subject";
+    public const string OrgMemberInviteEmailHtml = "org_member_invite_email_html";
+    public const string OrgMemberInviteEmailText = "org_member_invite_email_text";
+
     // projects
 
     // tasks

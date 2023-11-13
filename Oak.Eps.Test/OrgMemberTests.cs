@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using Oak.Api.OrgMember;
 
 namespace Oak.Eps.Test;
@@ -5,19 +6,19 @@ namespace Oak.Eps.Test;
 public class OrgMemberTests : TestBase
 {
     [Fact]
-    public async void Add_Success()
+    public async void Invite_Success()
     {
-        var bobName = "bob";
         var (ali, _, _) = await Rig.NewApi("ali");
-        var (bob, bobEmail, _) = await Rig.NewApi(bobName);
-        var bobSes = await bob.Auth.GetSession();
         var org = await ali.Org.Create(new("a", "ali"));
-        var mem = await ali.OrgMember.Invite(new(org.Id, bobEmail, bobName, OrgMemberRole.Admin));
+        var mem = await ali.OrgMember.Invite(
+            new(org.Id, "bob@bob.bob", "bob", OrgMemberRole.Admin)
+        );
         Assert.Equal(org.Id, mem.Org);
-        Assert.Equal(bobSes.Id, mem.Id);
         Assert.True(mem.IsActive);
-        Assert.Equal(bobName, mem.Name);
+        Assert.Equal("bob", mem.Name);
         Assert.Equal(OrgMemberRole.Admin, mem.Role);
+        // needs to be manually cleaned up since Rig isnt creating the user for us
+        Rig.RunDb((db) => db.Auths.Where(x => x.Id == mem.Id).ExecuteDelete());
     }
 
     [Fact]

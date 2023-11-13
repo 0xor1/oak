@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Oak.Api.OrgMember;
 using Oak.Db;
 using OrgMember = Oak.Api.OrgMember.OrgMember;
+using S = Oak.I18n.S;
 
 namespace Oak.Eps;
 
@@ -55,6 +56,28 @@ internal static class OrgMemberEps
                                 Role = req.Role
                             };
                             await db.OrgMembers.AddAsync(mem, ctx.Ctkn);
+                            if (created)
+                            {
+                                var org = await db.Orgs.SingleAsync(x => x.Id == req.Org, ctx.Ctkn);
+                                var config = ctx.Get<IConfig>();
+                                var emailClient = ctx.Get<IEmailClient>();
+                                var model = new
+                                {
+                                    BaseHref = config.Server.Listen,
+                                    Email = auth.Email,
+                                    Code = auth.VerifyEmailCode,
+                                    OrgName = org.Name,
+                                    InviteeName = req.Name,
+                                    InvitedByName = sesOrgMem.Name
+                                };
+                                await emailClient.SendEmailAsync(
+                                    ctx.String(S.OrgMemberInviteEmailSubject, model),
+                                    ctx.String(S.OrgMemberInviteEmailHtml, model),
+                                    ctx.String(S.OrgMemberInviteEmailText, model),
+                                    config.Email.NoReplyAddress,
+                                    new List<string>() { auth.Email }
+                                );
+                            }
                             return mem.ToApi();
                         }
                     )
@@ -63,7 +86,15 @@ internal static class OrgMemberEps
                 OrgMemberRpcs.GetOne,
                 async (ctx, req) =>
                 {
+                    var ses = ctx.GetAuthedSession();
                     var db = ctx.Get<OakDb>();
+                    await EpsUtil.MustHaveOrgAccess(
+                        ctx,
+                        db,
+                        ses.Id,
+                        req.Org,
+                        OrgMemberRole.PerProject
+                    );
                     var mem = await db.OrgMembers.SingleOrDefaultAsync(
                         x => x.Org == req.Org && x.Id == req.Id,
                         ctx.Ctkn
@@ -75,8 +106,15 @@ internal static class OrgMemberEps
                 OrgMemberRpcs.Get,
                 async (ctx, req) =>
                 {
-                    var ses = ctx.GetSession();
+                    var ses = ctx.GetAuthedSession();
                     var db = ctx.Get<OakDb>();
+                    await EpsUtil.MustHaveOrgAccess(
+                        ctx,
+                        db,
+                        ses.Id,
+                        req.Org,
+                        OrgMemberRole.PerProject
+                    );
                     var qry = db.OrgMembers.Where(x => x.Org == req.Org);
                     // filters
                     if (req.IsActive != null)

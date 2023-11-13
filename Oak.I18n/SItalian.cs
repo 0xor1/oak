@@ -139,6 +139,19 @@ public static partial class S
                     "<p>Sei sicuro di voler eliminare il progetto <strong>{{Name}}</strong>?</p><p>L'operazione non può essere annullata.</p>"
                 )
             },
+            { OrgMemberInviteEmailSubject, new("{{OrgName}} - Invito alla gestione del progetto") },
+            {
+                OrgMemberInviteEmailHtml,
+                new(
+                    "<p>Caro <strong>{{InviteeName}}</strong></p><p><strong>{{InvitedByName}}</strong> ti ha invitato a unirti all'organizzazione: <strong>{{OrgName} }</strong></p><p><a href=\"{{BaseHref}}/verify_email?email={{Email}}&code={{Code}}\">Fai clic su questo link per verificare il tuo indirizzo email e iscriviti a <strong>{{OrgName}}</strong></a></p>"
+                )
+            },
+            {
+                OrgMemberInviteEmailText,
+                new(
+                    "Gentile {{InviteeName}}\n\n{{InvitedByName}} ti ha invitato a unirti all'organizzazione: {{OrgName}}\n\nFai clic su questo collegamento per verificare il tuo indirizzo email e iscriverti a {{OrgName}}:\n\n{{BaseHref}}/verify_email?email={{Email}}&code={{Code}}"
+                )
+            },
             { TaskNewTask, new("Nuovo compito") },
             { TaskUpdateTask, new("Attività di aggiornamento") },
             {

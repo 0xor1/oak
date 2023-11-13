@@ -143,6 +143,19 @@ public static partial class S
                     "<p>Voulez-vous vraiment supprimer le projet <strong>{{Name}}</strong>?</p><p>Cette opération est irréversible.</p>"
                 )
             },
+            { OrgMemberInviteEmailSubject, new("{{OrgName}} - Invitation à la gestion de projet") },
+            {
+                OrgMemberInviteEmailHtml,
+                new(
+                    "<p>Cher <strong>{{InviteeName}}</strong></p><p><strong>{{InvitedByName}}</strong> vous a invité à rejoindre l'organisation: <strong>{{OrgName} }</strong></p><p><a href=\"{{BaseHref}}/verify_email?email={{Email}}&code={{Code}}\">Veuillez cliquer sur ce lien pour vérifier votre adresse e-mail et rejoignez <strong>{{OrgName}}</strong></a></p>"
+                )
+            },
+            {
+                OrgMemberInviteEmailText,
+                new(
+                    "Cher {{InviteeName}}\n\n{{InvitedByName}} vous a invité à rejoindre l'organisation: {{OrgName}}\n\nVeuillez cliquer sur ce lien pour vérifier votre adresse e-mail et rejoindre {{OrgName}}:\n\n{{BaseHref}}/verify_email?email={{Email}}&code={{Code}}"
+                )
+            },
             { TaskNewTask, new("Nouvelle tâche") },
             { TaskUpdateTask, new("Mettre à jour la tâche") },
             {

@@ -122,6 +122,19 @@ public static partial class S
                     "<p>Are you sure you want to delete the project <strong>{{Name}}</strong>?</p><p>This can not be undone.</p>"
                 )
             },
+            { OrgMemberInviteEmailSubject, new("{{OrgName}} - Project Management Invite") },
+            {
+                OrgMemberInviteEmailHtml,
+                new(
+                    "<p>Dear <strong>{{InviteeName}}</strong></p><p><strong>{{InvitedByName}}</strong> has invited you to join the organisation: <strong>{{OrgName}}</strong></p><p><a href=\"{{BaseHref}}/verify_email?email={{Email}}&code={{Code}}\">Please click this link to verify your email address and join <strong>{{OrgName}}</strong></a></p>"
+                )
+            },
+            {
+                OrgMemberInviteEmailText,
+                new(
+                    "Dear {{InviteeName}}\n\n{{InvitedByName}} has invited you to join the organisation: {{OrgName}}\n\nPlease click this link to verify your email address and join {{OrgName}}:\n\n{{BaseHref}}/verify_email?email={{Email}}&code={{Code}}"
+                )
+            },
             { TaskNewTask, new("New Task") },
             { TaskUpdateTask, new("Update Task") },
             {

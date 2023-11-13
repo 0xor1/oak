@@ -132,6 +132,19 @@ public static partial class S
                     "<p>Sind Sie sicher, dass Sie das Projekt <strong>{{Name}}</strong> löschen möchten?</p><p>Dies kann nicht rückgängig gemacht werden.</p>"
                 )
             },
+            { OrgMemberInviteEmailSubject, new("{{OrgName}} – Projektmanagement-Einladung") },
+            {
+                OrgMemberInviteEmailHtml,
+                new(
+                    "<p>Lieber <strong>{{InviteeName}}</strong></p><p><strong>{{InvitedByName}}</strong> hat Sie eingeladen, der Organisation beizutreten: <strong>{{OrgName} </strong></p><p><a href=\"{{BaseHref}}/verify_email?email={{Email}}&code={{Code}}\">Bitte klicken Sie auf diesen Link, um Ihre zu bestätigen E-Mail-Adresse und treten Sie <strong>{{OrgName}}</strong></a></p> bei"
+                )
+            },
+            {
+                OrgMemberInviteEmailText,
+                new(
+                    "Lieber {{InviteeName}}\n\n{{InvitedByName}} hat Sie eingeladen, der Organisation beizutreten: {{OrgName}}\n\nBitte klicken Sie auf diesen Link, um Ihre E-Mail-Adresse zu bestätigen und {{OrgName}} beizutreten:\n\n{{BaseHref}}/verify_email?email={{Email}}&code={{Code}}"
+                )
+            },
             { TaskNewTask, new("Neue Aufgabe") },
             { TaskUpdateTask, new("Update-Aufgabe") },
             {
