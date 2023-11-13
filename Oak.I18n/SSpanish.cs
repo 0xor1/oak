@@ -107,6 +107,8 @@ public static partial class S
             { DescN, new("Descendientes") },
             { FileLimit, new("File Limit") },
             { Upload, new("Subir") },
+            { Invite, new("Invitar") },
+            { Active, new("Activo") },
             { OrgMyOrgs, new("Mis organizaciones") },
             { OrgNoOrgs, new("Sin organizaciones") },
             { OrgNewOrg, new("Nueva organización") },
@@ -130,6 +132,16 @@ public static partial class S
                     "<p>¿Está seguro de que desea eliminar el proyecto <strong>{{Name}}</strong>?</p><p>Esto no se puede deshacer.</p>"
                 )
             },
+            { OrgMembers, new("Miembros") },
+            { OrgNoMembers, new("Sin miembros") },
+            { OrgNewMember, new("Nuevo miembro") },
+            { OrgUpdateMember, new("Actualizar miembro") },
+            {
+                OrgConfirmDeactivateMember,
+                new(
+                    "<p>¿Estás seguro de que deseas desactivar el miembro <strong>{{Name}}</strong>?</p>"
+                )
+            },
             {
                 OrgMemberInviteEmailSubject,
                 new("{{OrgName}} - Invitación a la gestión de proyectos")
@@ -146,6 +158,12 @@ public static partial class S
                     "Estimado, {{InviteeName}}\n\n{{InvitedByName}} lo ha invitado a unirse a la organización: {{OrgName}}\n\nHaga clic en este enlace para verificar su dirección de correo electrónico y unirse a {{OrgName}}:\n\n{{BaseHref}}/verify_email?email={{Email}}&code={{Code}}"
                 )
             },
+            { OrgMemberRole, new("Role") },
+            { OrgMemberRoleOwner, new("Dueño") },
+            { OrgMemberRoleAdmin, new("Administrador") },
+            { OrgMemberRoleWriteAllProjects, new("Escribir todos los proyectos") },
+            { OrgMemberRoleReadAllProjects, new("Leer todos los proyectos") },
+            { OrgMemberRolePerProject, new("Por proyecto") },
             { TaskNewTask, new("Nueva tarea") },
             { TaskUpdateTask, new("Actualizar tarea") },
             {

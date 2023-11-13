@@ -99,6 +99,8 @@ public static partial class S
             { DescN, new("Descendants") },
             { FileLimit, new("File Limit") },
             { Upload, new("Upload") },
+            { Invite, new("Invite") },
+            { Active, new("Active") },
             { OrgMyOrgs, new("My Organisations") },
             { OrgNoOrgs, new("No Organisations") },
             { OrgNewOrg, new("New Organisation") },
@@ -122,6 +124,16 @@ public static partial class S
                     "<p>Are you sure you want to delete the project <strong>{{Name}}</strong>?</p><p>This can not be undone.</p>"
                 )
             },
+            { OrgMembers, new("Members") },
+            { OrgNoMembers, new("No Members") },
+            { OrgNewMember, new("New Member") },
+            { OrgUpdateMember, new("Update Member") },
+            {
+                OrgConfirmDeactivateMember,
+                new(
+                    "<p>Are you sure you want to deactivate the member <strong>{{Name}}</strong>?</p>"
+                )
+            },
             { OrgMemberInviteEmailSubject, new("{{OrgName}} - Project Management Invite") },
             {
                 OrgMemberInviteEmailHtml,
@@ -135,6 +147,12 @@ public static partial class S
                     "Dear {{InviteeName}}\n\n{{InvitedByName}} has invited you to join the organisation: {{OrgName}}\n\nPlease click this link to verify your email address and join {{OrgName}}:\n\n{{BaseHref}}/verify_email?email={{Email}}&code={{Code}}"
                 )
             },
+            { OrgMemberRole, new("Role") },
+            { OrgMemberRoleOwner, new("Owner") },
+            { OrgMemberRoleAdmin, new("Admin") },
+            { OrgMemberRoleWriteAllProjects, new("Write All Projects") },
+            { OrgMemberRoleReadAllProjects, new("Read All Projects") },
+            { OrgMemberRolePerProject, new("Per Project") },
             { TaskNewTask, new("New Task") },
             { TaskUpdateTask, new("Update Task") },
             {

@@ -1,0 +1,185 @@
+﻿@using Common.Client
+@using Common.Shared
+@using Common.Shared.Auth
+@using Oak.Api.Org
+@using Oak.Api.OrgMember
+@using Oak.Api.Project
+@using Oak.Client.Lib
+@using IApi = Oak.Api.IApi
+@using S = Oak.I18n.S
+
+<div class="root col p-0h g-0h jc-s ai-s">
+    <RadzenText class="m-t-0" TextStyle="TextStyle.H2">@L.S(S.OrgProjects)</RadzenText>
+    <RadzenButton class="m-b-1" ButtonStyle="ButtonStyle.Success" Icon="add_circle_outline" Text="@L.S(S.New)" Click="@OpenNewDialog"/>
+    <RadzenDataGrid
+        @ref="_grid"
+        Count="Count"
+        Data="Items"
+        TItem="OrgMember"
+        IsLoading="_isLoading"
+        EmptyText="@L.S(S.OrgNoMembers)"
+        FilterPopupRenderMode="PopupRenderMode.OnDemand" 
+        FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+        AllowSorting="true" 
+        AllowFiltering="true"
+        AllowPaging="true"
+        LoadData="LoadData"
+        KeyProperty="Id">
+        <Columns>
+            <RadzenDataGridColumn Sortable="true" Width="18em" TItem="OrgMember" Property="@nameof(OrgMember.Name)" Title="@L.S(S.Name)" FilterValue="@NameStartsWith">
+                <Template Context="m">
+                    <div class="flx child-no-shrink jc-s ai-c g-0h w-100 mw-100 p-rel">
+                        <span class="shrink-1 ellip">@m.Name</span>
+                        @if (Ctx.HasOrgAdminPerm)
+                        {
+                            <div class="flx g-0q p-abs show-on-row-mouse-over" style="right: -1em;">
+                                <RadzenButton @onclick:stopPropagation="true" Icon="edit" ButtonStyle="ButtonStyle.Info" Size="ButtonSize.ExtraSmall" Click="_ => Update(m)"/>
+                            </div>
+                        }
+                    </div>
+                </Template>
+                <FilterTemplate>
+                    <RadzenTextBox @bind-Value="@NameStartsWith" Style="width:100%"/>
+                </FilterTemplate>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn Sortable="false" TextAlign="TextAlign.Center" Width="8em" TItem="OrgMember" Property="@nameof(OrgMember.IsActive)" Title="@L.S(S.Public)" FilterValue="@IsActive">
+                <Template Context="m">
+                    <RadzenCheckBox Disabled="true" Value="m.IsActive"></RadzenCheckBox>
+                </Template>
+                <FilterTemplate>
+                    <BoolDataGridFilter @bind-Value="@IsActive" />
+                </FilterTemplate>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn Sortable="true" TextAlign="TextAlign.Center" Width="10em" TItem="OrgMember" Property="@nameof(OrgMember.Role)" Title="@L.S(S.OrgMemberRole)">
+                <Template Context="m">
+                    @RoleString(m.Role, L)
+                </Template>
+                <FilterTemplate>
+                    <RadzenDropDown Name="Role" @bind-Value="@Role" Data="Roles(null)"/>
+                </FilterTemplate>
+            </RadzenDataGridColumn>
+        </Columns>
+    </RadzenDataGrid>
+</div>
+
+@inject L L;
+@inject IApi Api;
+@inject NavigationManager Nav;
+@inject DialogService DialogService;
+@inject UiCtx Ctx;
+@code{
+
+    [CascadingParameter]
+    public ISession Session { get; set; } = default!;
+
+    [Parameter]
+    [EditorRequired]
+    public string OrgId { get; set; } = "";
+
+    private bool? IsActive { get; set; } = true;
+    private string? NameStartsWith { get; set; }
+    private OrgMemberRole? Role { get; set; }
+    private int Count => Items.Count; 
+    private List<OrgMember> Items { get; set; } = new ();
+    private bool _isLoading = false;
+    private RadzenDataGrid<OrgMember> _grid;
+    
+    protected override async Task OnParametersSetAsync()
+    {
+        _isLoading = true;
+        try
+        {
+            await Ctx.Set(await Api.Org.GetOne(new(OrgId)));
+            var res = await Api.OrgMember.Get(new(OrgId));
+            Items = res.Set.ToList();
+        }
+        finally
+        {
+            _isLoading = false;
+        }
+    }
+
+    private async Task OpenNewDialog()
+        => await DialogService.OpenAsync<ProjectNewOrUpdate>(L.S(S.OrgNewProject), new (){{"OrgId", OrgId}, {"Session", Session}});
+
+    private async Task LoadData(LoadDataArgs arg)
+    {
+        _isLoading = true;
+        try
+        {
+            var orderBy = OrgMemberOrderBy.Role;
+            var asc = true;
+            if (arg.Sorts.Count() == 1)
+            {
+                var sort = arg.Sorts.Single();
+                orderBy = sort.Property switch
+                {
+                    nameof(OrgMember.Name) => OrgMemberOrderBy.Name,
+                    nameof(OrgMember.Role) => OrgMemberOrderBy.Role,
+                    _ => throw new InvalidDataException($"unknown sort property {sort.Property}")
+                };
+                asc = sort.SortOrder switch {
+                    null => true,
+                    SortOrder.Ascending => true,
+                    SortOrder.Descending => false
+                };
+            }
+            if (NameStartsWith.IsNullOrWhiteSpace())
+            {
+                NameStartsWith = null;
+            }
+            var res = await Api.OrgMember.Get(new(OrgId, IsActive, NameStartsWith, Role, null, orderBy, asc));
+            Items = res.Set.ToList();
+        }
+        finally
+        {
+            _isLoading = false;
+        }
+    }
+    
+    private async Task Update(OrgMember m)
+        => await DialogService.OpenAsync<OrgMemberNewOrUpdate>(L.S(S.OrgUpdateProject), new (){{"OrgId", OrgId}, {"UpdateMember", m}, {"Session", Session}, {"OnInvited", OnInvited}, {"OnUpdated", OnUpdated}});
+
+    private async Task OnInvited(OrgMember m)
+    {
+        var i = Items.FindIndex(x => x.Id == m.Id);
+        Items[i] = m;
+        await _grid.Reload();
+    }
+    
+    private async Task OnUpdated(OrgMember m)
+    {
+        var i = Items.FindIndex(x => x.Id == m.Id);
+        Items[i] = m;
+        await _grid.Reload();
+    }
+    
+    public static List<RoleOpt> Roles(L l, UiCtx? ctx = null)
+    {
+        var res = new List<RoleOpt>() { new(OrgMemberRole.Owner, l), new(OrgMemberRole.Admin, l), new(OrgMemberRole.WriteAllProjects, l), new(OrgMemberRole.ReadAllProjects, l), new(OrgMemberRole.PerProject, l) };
+        res.RemoveAll(x => x.Role < (ctx?.OrgMember?.Role ?? OrgMemberRole.Owner));
+        return res;
+    }
+
+    public record RoleOpt
+    {
+        public OrgMemberRole Role { get; init; }
+        public string Display { get; init; }
+
+        public RoleOpt(OrgMemberRole role, L l)
+        {
+            Role = role;
+            Display = OrgMembers.RoleString(role, l);
+        }
+    };
+
+    public static string RoleString(OrgMemberRole r, L L)
+        => r switch{
+            OrgMemberRole.Owner => L.S(S.OrgMemberRoleOwner),
+            OrgMemberRole.Admin => L.S(S.OrgMemberRoleAdmin),
+            OrgMemberRole.WriteAllProjects => L.S(S.OrgMemberRoleWriteAllProjects),
+            OrgMemberRole.ReadAllProjects => L.S(S.OrgMemberRoleReadAllProjects),
+            OrgMemberRole.PerProject => L.S(S.OrgMemberRolePerProject),
+            _ => throw new ArgumentOutOfRangeException()};
+
+}

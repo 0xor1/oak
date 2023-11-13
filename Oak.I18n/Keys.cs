@@ -84,6 +84,8 @@ public static partial class S
     public const string DescN = "desc_n";
     public const string FileLimit = "file_limit";
     public const string Upload = "upload";
+    public const string Invite = "invite";
+    public const string Active = "active";
 
     // orgs
     public const string OrgMyOrgs = "org_my_orgs";
@@ -99,11 +101,22 @@ public static partial class S
     public const string OrgNewProject = "org_new_project";
     public const string OrgUpdateProject = "org_update_project";
     public const string OrgConfirmDeleteProject = "org_confirm_delete_project";
+    public const string OrgMembers = "org_members";
+    public const string OrgNoMembers = "org_no_members";
+    public const string OrgNewMember = "org_new_member";
+    public const string OrgUpdateMember = "org_update_member";
+    public const string OrgConfirmDeactivateMember = "org_confirm_deactivate_member";
 
     // org members
     public const string OrgMemberInviteEmailSubject = "org_member_invite_email_subject";
     public const string OrgMemberInviteEmailHtml = "org_member_invite_email_html";
     public const string OrgMemberInviteEmailText = "org_member_invite_email_text";
+    public const string OrgMemberRole = "org_member_role";
+    public const string OrgMemberRoleOwner = "org_member_role_owner";
+    public const string OrgMemberRoleAdmin = "org_member_role_admin";
+    public const string OrgMemberRoleWriteAllProjects = "org_member_role_write_all_projects";
+    public const string OrgMemberRoleReadAllProjects = "org_member_role_read_all_projects";
+    public const string OrgMemberRolePerProject = "org_member_role_per_project";
 
     // projects
 

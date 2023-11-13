@@ -116,6 +116,8 @@ public static partial class S
             { DescN, new("Discendenti") },
             { FileLimit, new("Limite file") },
             { Upload, new("Caricamento") },
+            { Invite, new("Invitare") },
+            { Active, new("Attivo") },
             { OrgMyOrgs, new("Le mie organizzazioni") },
             { OrgNoOrgs, new("Nessuna organizzazione") },
             { OrgNewOrg, new("Nuova Organizzazione") },
@@ -139,6 +141,14 @@ public static partial class S
                     "<p>Sei sicuro di voler eliminare il progetto <strong>{{Name}}</strong>?</p><p>L'operazione non può essere annullata.</p>"
                 )
             },
+            { OrgMembers, new("Membri") },
+            { OrgNoMembers, new("Nessun membro") },
+            { OrgNewMember, new("Nuovo membro") },
+            { OrgUpdateMember, new("Aggiorna membro") },
+            {
+                OrgConfirmDeactivateMember,
+                new("<p>Sei sicuro di voler disattivare il membro <strong>{{Name}}</strong>?</p>")
+            },
             { OrgMemberInviteEmailSubject, new("{{OrgName}} - Invito alla gestione del progetto") },
             {
                 OrgMemberInviteEmailHtml,
@@ -152,6 +162,12 @@ public static partial class S
                     "Gentile {{InviteeName}}\n\n{{InvitedByName}} ti ha invitato a unirti all'organizzazione: {{OrgName}}\n\nFai clic su questo collegamento per verificare il tuo indirizzo email e iscriverti a {{OrgName}}:\n\n{{BaseHref}}/verify_email?email={{Email}}&code={{Code}}"
                 )
             },
+            { OrgMemberRole, new("Ruolo") },
+            { OrgMemberRoleOwner, new("Proprietario") },
+            { OrgMemberRoleAdmin, new("Ammin") },
+            { OrgMemberRoleWriteAllProjects, new("Scrivi tutti i progetti") },
+            { OrgMemberRoleReadAllProjects, new("Leggi tutti i progetti") },
+            { OrgMemberRolePerProject, new("Per progetto") },
             { TaskNewTask, new("Nuovo compito") },
             { TaskUpdateTask, new("Attività di aggiornamento") },
             {

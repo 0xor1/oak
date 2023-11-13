@@ -120,6 +120,8 @@ public static partial class S
             { DescN, new("Descendance") },
             { FileLimit, new("Limite de fichiers") },
             { Upload, new("Télécharger") },
+            { Invite, new("Inviter") },
+            { Active, new("Actif") },
             { OrgMyOrgs, new("Mes organisations") },
             { OrgNoOrgs, new("Aucune organisation") },
             { OrgNewOrg, new("Nouvelle organisation") },
@@ -143,6 +145,16 @@ public static partial class S
                     "<p>Voulez-vous vraiment supprimer le projet <strong>{{Name}}</strong>?</p><p>Cette opération est irréversible.</p>"
                 )
             },
+            { OrgMembers, new("Membres") },
+            { OrgNoMembers, new("Aucun membre") },
+            { OrgNewMember, new("Nouveau membre") },
+            { OrgUpdateMember, new("Mettre à jour le membre") },
+            {
+                OrgConfirmDeactivateMember,
+                new(
+                    "<p>Êtes-vous sûr de vouloir désactiver le membre <strong>{{Name}}</strong>?</p>"
+                )
+            },
             { OrgMemberInviteEmailSubject, new("{{OrgName}} - Invitation à la gestion de projet") },
             {
                 OrgMemberInviteEmailHtml,
@@ -156,6 +168,12 @@ public static partial class S
                     "Cher {{InviteeName}}\n\n{{InvitedByName}} vous a invité à rejoindre l'organisation: {{OrgName}}\n\nVeuillez cliquer sur ce lien pour vérifier votre adresse e-mail et rejoindre {{OrgName}}:\n\n{{BaseHref}}/verify_email?email={{Email}}&code={{Code}}"
                 )
             },
+            { OrgMemberRole, new("Rôle") },
+            { OrgMemberRoleOwner, new("Propriétaire") },
+            { OrgMemberRoleAdmin, new("Administrateur") },
+            { OrgMemberRoleWriteAllProjects, new("Écrire tous les projets") },
+            { OrgMemberRoleReadAllProjects, new("Lire tous les projets") },
+            { OrgMemberRolePerProject, new("Par projet") },
             { TaskNewTask, new("Nouvelle tâche") },
             { TaskUpdateTask, new("Mettre à jour la tâche") },
             {

@@ -109,6 +109,8 @@ public static partial class S
             { FileSize, new("Dateigröße") },
             { FileLimit, new("Dateilimit") },
             { Upload, new("Hochladen") },
+            { Invite, new("Einladen") },
+            { Active, new("Aktiv") },
             { OrgMyOrgs, new("Meine Organisationen") },
             { OrgNoOrgs, new("Keine Organisationen") },
             { OrgNewOrg, new("Neue Organisation") },
@@ -132,6 +134,16 @@ public static partial class S
                     "<p>Sind Sie sicher, dass Sie das Projekt <strong>{{Name}}</strong> löschen möchten?</p><p>Dies kann nicht rückgängig gemacht werden.</p>"
                 )
             },
+            { OrgMembers, new("Mitglieder") },
+            { OrgNoMembers, new("Keine Mitglieder") },
+            { OrgNewMember, new("Neues Mitglied") },
+            { OrgUpdateMember, new("Mitglied aktualisieren") },
+            {
+                OrgConfirmDeactivateMember,
+                new(
+                    "<p>Sind Sie sicher, dass Sie das Mitglied <strong>{{Name}}</strong> deaktivieren möchten?</p>"
+                )
+            },
             { OrgMemberInviteEmailSubject, new("{{OrgName}} – Projektmanagement-Einladung") },
             {
                 OrgMemberInviteEmailHtml,
@@ -145,6 +157,12 @@ public static partial class S
                     "Lieber {{InviteeName}}\n\n{{InvitedByName}} hat Sie eingeladen, der Organisation beizutreten: {{OrgName}}\n\nBitte klicken Sie auf diesen Link, um Ihre E-Mail-Adresse zu bestätigen und {{OrgName}} beizutreten:\n\n{{BaseHref}}/verify_email?email={{Email}}&code={{Code}}"
                 )
             },
+            { OrgMemberRole, new("Rolle") },
+            { OrgMemberRoleOwner, new("Eigentümer") },
+            { OrgMemberRoleAdmin, new("Administrator") },
+            { OrgMemberRoleWriteAllProjects, new("Schreiben Sie alle Projekte") },
+            { OrgMemberRoleReadAllProjects, new("Alle Projekte lesen") },
+            { OrgMemberRolePerProject, new("Pro Projekt") },
             { TaskNewTask, new("Neue Aufgabe") },
             { TaskUpdateTask, new("Update-Aufgabe") },
             {
