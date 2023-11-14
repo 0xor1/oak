@@ -21,7 +21,7 @@ namespace Oak.Eps;
 public static class OrgEps
 {
     private const int MaxActiveOrgs = 10;
-    public const string FilesBucket = "taskfiles";
+    public const string FilesBucket = "oaktaskfiles";
 
     public static void AddServices(IServiceCollection sc)
     {
