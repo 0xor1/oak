@@ -4,8 +4,12 @@
     "demoMode": true,
     "repoUrl": "https://github.com/0xor1/oak"
   },
+  "auth": {
+    "baseHref": "http://localhost:9500"
+  },
   "server": {
-    "listen": "https://localhost:9500"
+    "listen": "http://localhost:9500",
+    "useHttpsRedirection": false
   },
   "db": {
     "connection": "Server=localhost;Database=Oak;Uid=Oak;Pwd=C0-Mm-0n-Oak"
