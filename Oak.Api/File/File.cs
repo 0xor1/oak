@@ -38,7 +38,7 @@ public class FileApi : IFileApi
 
 public static class FileRpcs
 {
-    public static readonly Rpc<Upload, FileRes> Upload = new("/file/upload");
+    public static readonly Rpc<Upload, FileRes> Upload = new("/file/upload", 50 * Size.MB);
     public static readonly Rpc<Download, HasStream> Download = new("/file/download");
     public static readonly Rpc<Exact, Task.Task> Delete = new("/file/delete");
     public static readonly Rpc<Get, SetRes<File>> Get = new("/file/get");
