@@ -74,6 +74,18 @@
         window.writeTextToClipboard = function(text) {
             navigator.clipboard.writeText(text);
         };
+        window.getWidth = function() {
+            let pxWidth = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+            let emWidth = pxWidth / parseFloat(
+                getComputedStyle(
+                    document.querySelector('html')
+                )['font-size']
+            );
+            if (emWidth){
+                return emWidth
+            }
+            return null;
+        };
     </script>
     <script src="_content/Radzen.Blazor/Radzen.Blazor.js"></script>
     <script src="_framework/blazor.webassembly.js"></script>

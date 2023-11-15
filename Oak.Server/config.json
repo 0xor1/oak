@@ -21,6 +21,7 @@
     ]
   },
   "email": {
+    "type": "log",
     "region": "eu-west-1",
     "key": "abc",
     "secret": "123",

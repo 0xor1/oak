@@ -60,17 +60,17 @@
             <RadzenPanelMenu>
                 @if (_session.IsAnon)
                 {
-                    <RadzenPanelMenuItem Text="@L.S(S.Home)" Icon="home" Path="/"/>
+                    <RadzenPanelMenuItem Text="@L.S(S.Home)" Icon="home" Path="/" Click="CollapseIfNarrow"/>
                 }
                 else
                 {
-                    <RadzenPanelMenuItem Text="@L.S(S.OrgMyOrgs)" Icon="corporate_fare" Path="/my_orgs"/>
+                    <RadzenPanelMenuItem Text="@L.S(S.OrgMyOrgs)" Icon="corporate_fare" Path="/my_orgs" Click="CollapseIfNarrow"/>
                     @if (_orgId != null)
                     {
-                        <RadzenPanelMenuItem Text="@L.S(S.OrgNameProjects, new { Ctx.Org?.Name })" Icon="inventory" Path="@($"/org/{_orgId}/projects")"/>
+                        <RadzenPanelMenuItem Text="@L.S(S.OrgNameProjects, new { Ctx.Org?.Name })" Icon="inventory" Path="@($"/org/{_orgId}/projects")" Click="CollapseIfNarrow"/>
                         if (Ctx.HasOrgAdminPerm)
                         {
-                            <RadzenPanelMenuItem Text="@L.S(S.OrgMembers)" Icon="group" Path="@($"/org/{_orgId}/members")"/>
+                            <RadzenPanelMenuItem Text="@L.S(S.OrgMembers)" Icon="group" Path="@($"/org/{_orgId}/members")" Click="CollapseIfNarrow"/>
                         }
                     }
                     <RadzenPanelMenuItem Text="@L.S(S.Display)" Icon="visibility">
@@ -120,7 +120,6 @@
         <RadzenComponents/>
     </RadzenLayout>
 </div>
-
 @using Oak.I18n
 @using Common.Client
 @using Common.Shared.Auth
@@ -135,6 +134,7 @@
 @inject NavigationManager Nav
 @inject IApi Api
 @implements IDisposable
+@inject IJSRuntime Js;
 @code{
 
     private bool _leftExpanded;
@@ -203,5 +203,12 @@
         }
     
         return (orgId, projectId, taskId);
+    }
+
+    private async Task CollapseIfNarrow(MouseEventArgs args)
+    {
+        var width = await Js.InvokeAsync<decimal>("getWidth");
+        if(width < 50)
+            _leftExpanded = false;
     }
 }
