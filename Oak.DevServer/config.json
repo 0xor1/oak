@@ -1,6 +1,6 @@
 ﻿{
   "devServer": {
-    "listen": "https://localhost:9501",
+    "listen": "http://localhost:9500",
     "rpcHost": "https://oak.dans-demos.com"
   }
 }

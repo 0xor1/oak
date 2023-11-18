@@ -11,8 +11,8 @@ using Create = Oak.Api.Project.Create;
 using Exact = Oak.Api.Project.Exact;
 using Get = Oak.Api.Project.Get;
 using Project = Oak.Api.Project.Project;
-using Update = Oak.Api.Project.Update;
 using S = Oak.I18n.S;
+using Update = Oak.Api.Project.Update;
 
 namespace Oak.Eps;
 

@@ -6,11 +6,11 @@
     <div class="flx col p-0h g-0h">
         <div class="flx col ai-stretch">
             <RadzenLabel class="m-b-0q" Component="Min" Text="@L.S(S.Min)"/>
-            <RadzenDatePicker TValue="DateTime?" AllowClear="true" Max="@Max" Name="Min" DateFormat="@Session.DateFmt" Value="Value?.Min" ValueChanged="MinValueChanged"/>
+            <RadzenDatePicker TValue="DateTime?" AllowClear="true" Max="@Max" Name="Min" DateFormat="@Session.DateFmtStr" Value="Value?.Min" ValueChanged="MinValueChanged"/>
         </div>
         <div class="flx col ai-stretch">
             <RadzenLabel class="m-b-0q" Component="Max" Text="@L.S(S.Max)"/>
-            <RadzenDatePicker TValue="DateTime?" AllowClear="true" Min="@Min" Name="Max" DateFormat="@Session.DateFmt" Value="Value?.Max" ValueChanged="MaxValueChanged"/>
+            <RadzenDatePicker TValue="DateTime?" AllowClear="true" Min="@Min" Name="Max" DateFormat="@Session.DateFmtStr" Value="Value?.Max" ValueChanged="MaxValueChanged"/>
         </div>
     </div>
 </div>

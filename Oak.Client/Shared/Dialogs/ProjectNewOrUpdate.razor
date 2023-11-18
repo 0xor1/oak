@@ -33,11 +33,11 @@
         </div>
         <div class="flx col ai-stretch">
             <RadzenLabel class="m-b-0q" Component="StartOn" Text="@L.S(S.StartOn)"/>
-            <RadzenDatePicker TValue="DateTime?" Max="@_model.EndOn" Name="StartOn" DateFormat="@Session.DateFmt"  @bind-Value="@_model.StartOn"/>
+            <RadzenDatePicker TValue="DateTime?" Max="@_model.EndOn" Name="StartOn" DateFormat="@Session.DateFmtStr"  @bind-Value="@_model.StartOn"/>
         </div>
         <div class="flx col ai-stretch">
             <RadzenLabel class="m-b-0q" Component="EndOn" Text="@L.S(S.EndOn)"/>
-            <RadzenDatePicker TValue="DateTime?" Min="@_model.StartOn" Name="EndOn" DateFormat="@Session.DateFmt" @bind-Value="@_model.EndOn"/>
+            <RadzenDatePicker TValue="DateTime?" Min="@_model.StartOn" Name="EndOn" DateFormat="@Session.DateFmtStr" @bind-Value="@_model.EndOn"/>
         </div>
         <div class="flx col ai-stretch">
             <RadzenLabel class="m-b-0q" Component="FileLimit" Text="@L.S(S.FileLimit)"/>
