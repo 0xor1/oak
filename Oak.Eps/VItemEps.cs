@@ -361,10 +361,10 @@ internal static class VItemEps
         switch (type)
         {
             case VItemType.Time:
-                ctx.BadRequestIf(inc == 0 || inc > maxTimeInc, S.VItemInvalidTimeInc);
+                ctx.BadRequestIf(inc == 0 || inc > maxTimeInc, S.VitemInvalidTimeInc);
                 break;
             case VItemType.Cost:
-                ctx.BadRequestIf(inc == 0, S.VItemInvalidCostInc);
+                ctx.BadRequestIf(inc == 0, S.VitemInvalidCostInc);
                 break;
         }
     }

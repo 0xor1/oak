@@ -102,7 +102,7 @@
 
     private async Task Delete(VItem i)
     {
-        var confirmed = await DialogService.Confirm(L.S(S.TaskConfirmDeleteVItem, new {Value = Fmt(i)}), L.S(S.Confirm), new ConfirmOptions() { OkButtonText = L.S(S.Delete), CancelButtonText = L.S(S.Cancel) });
+        var confirmed = await DialogService.Confirm(L.S(S.TaskConfirmDeleteVitem, new {Value = Fmt(i)}), L.S(S.Confirm), new ConfirmOptions() { OkButtonText = L.S(S.Delete), CancelButtonText = L.S(S.Cancel) });
         if (confirmed == true)
         {
             var parent = await Api.VItem.Delete(new(i.Org, i.Project, i.Task, i.Type, i.Id));

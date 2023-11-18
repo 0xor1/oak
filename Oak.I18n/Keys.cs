@@ -6,7 +6,7 @@ using Common.Shared;
 namespace Oak.I18n;
 
 public static partial class S
-{ 
+{
     public const string Active = "active";
     public const string Cancel = "cancel";
     public const string ChildN = "child_n";

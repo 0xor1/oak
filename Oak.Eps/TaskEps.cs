@@ -660,7 +660,7 @@ internal static class TaskEps
                             );
                             ctx.BadRequestIf(
                                 t.DescN > 20,
-                                S.TaskTooManyDescNToDelete,
+                                S.TaskTooManyDescnToDelete,
                                 model: new { Max = 20 }
                             );
                             var prevTask = await db.Tasks.SingleOrDefaultAsync(
@@ -919,7 +919,7 @@ internal static class TaskEps
                         x => x.Org == req.Org && x.Project == req.Project && x.Id == req.Id
                     );
                     ctx.NotFoundIf(t == null, model: new { Name = "Task" });
-                    ctx.BadRequestIf(t.NotNull().DescN > 1000, S.TaskTooManyDescN);
+                    ctx.BadRequestIf(t.NotNull().DescN > 1000, S.TaskTooManyDescn);
                     if (t.DescN == 0)
                     {
                         return new List<Task>();
