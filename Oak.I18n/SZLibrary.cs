@@ -7,10 +7,10 @@ public static partial class S
     private static readonly Dictionary<string, Dictionary<string, TemplatableString>> Library =
         new()
         {
-            { Common.Shared.I18n.S.EN, English },
-            { Common.Shared.I18n.S.ES, Spanish },
-            { Common.Shared.I18n.S.FR, French },
-            { Common.Shared.I18n.S.DE, German },
-            { Common.Shared.I18n.S.IT, Italian }
+            { Common.Shared.I18n.S.EN, EN_Strings },
+            { Common.Shared.I18n.S.ES, ES_Strings },
+            { Common.Shared.I18n.S.FR, FR_Strings },
+            { Common.Shared.I18n.S.DE, DE_Strings },
+            { Common.Shared.I18n.S.IT, IT_Strings }
         };
 }

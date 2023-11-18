@@ -1,0 +1,145 @@
+key,en,es,fr,de,it
+active,Active,Activo,Actif,Aktiv,Attivo
+cancel,Cancel,Cancelar,Annuler,Stornieren,Annulla
+child_n,Children,Niños,Enfants,Kinder,Bambini
+clear,Clear,Claro,Clair,Klar,Chiaro
+comment,Comment,Comentario,Commentaire,Kommentar,Commento
+confirm,Confirm,Confirmar,Confirmer,Bestätigen,Confermare
+copy_to_clipboard_success,Copied to clipboard,Copiado al portapapeles,Copié dans le presse-papier,In die Zwischenablage kopiert,Copiato negli appunti
+cost,Cost,Costo,Coût,Kosten,Costo
+cost_est,Cost Est.,Costo estimado,Prix estimé,Geschätzte Kosten,Costo stimato
+cost_inc,Cost Inc.,Coste incurrido,Coûts encourus,Entstandenen Kosten,Costo sostenuto
+create,Create,Crear,Créer,Erstellen,Creare
+created_on,Created On,Creado en,Créé sur,Erstellt am,Creato
+currency,Currency,Divisa,Monnaie,Währung,Valuta
+days,Days,Días,Jours,Tage,Giorni
+days_per_week,Days per Week,Días por semana,Jours par semaine,Tage pro Woche,Giorni alla settimana
+delete,Delete,Borrar,Supprimer,Löschen,Eliminare
+desc_n,Descendants,Descendientes,Descendance,Nachkommenschaft,Discendenti
+description,Description,Descripción,Description,Beschreibung,Descrizione
+display,Display,Mostrar,Afficher,Anzeige,Schermo
+edit,Edit,Editar,Modifier,Bearbeiten,Modificare
+end_on,End On,Finalizará el,Fin le,Endet am,Fine su
+false,False,Falso,Faux,Falsch,Falso
+file,File,Archivo,Dossier,Datei,File
+file_limit,File Limit,File Limit,Limite de fichiers,Dateilimit,Limite file
+file_n,File Count,Número de archivos,Nombre de fichiers,Dateianzahl,Conteggio file
+file_size,File Size,Tamaño del archivo,Taille du fichier,Dateigröße,Dimensione del file
+home,Home,Hogar,Maison,Heim,Casa
+home_body,"This is a project management app where you organise tasks in a tree structure like a file directory. Each task gives a summary of the vital stats of the tasks beneath it, estimated and incurred time and costs etc.","Esta es una aplicación de gestión de proyectos donde organizas tareas en una estructura de árbol como un directorio de archivos. Cada tarea ofrece un resumen de las estadísticas vitales de las tareas subyacentes, el tiempo y los costos estimados e incurridos, etc.","Il s'agit d'une application de gestion de projet dans laquelle vous organisez les tâches dans une arborescence comme un répertoire de fichiers. Chaque tâche donne un résumé des statistiques vitales des tâches en dessous, du temps et des coûts estimés et engagés, etc.","Dies ist eine Projektmanagement-App, mit der Sie Aufgaben in einer Baumstruktur wie einem Dateiverzeichnis organisieren. Jede Aufgabe enthält eine Zusammenfassung der wichtigen Statistiken der darunter liegenden Aufgaben, der geschätzten und angefallenen Zeit und Kosten usw.","Questa è un'app di gestione dei progetti in cui organizzi le attività in una struttura ad albero come una directory di file. Ogni attività fornisce un riepilogo delle statistiche vitali delle attività sottostanti, tempi e costi stimati e sostenuti, ecc."
+home_header,Welcome to Oak!,¡Bienvenido a Roble!,Bienvenue à Chêne!,Willkommen in Oak!,Benvenuti in Quercia!
+hours,Hours,Horas,Heures,Stunden,Ore
+hours_per_day,Hours per Day,Horas al día,Heures par jour,Stunden pro Tag,Ore al giorno
+invite,Invite,Invitar,Inviter,Einladen,Invitare
+loading,Loading,Cargando,Chargement,Wird geladen,Caricamento
+max,Max,Máx.,Max,Max,Massimo
+min,Min,Mínimo,Min,Min,Minimo
+minutes,Minutes,Minutos,Minutes,Minuten,Minuti
+name,Name,Nombre,Nom,Name,Nome
+new,New,Nuevo,Nouveau,Neu,Nuovo
+no_description,No Description,Sin descripción,Pas de description,Keine Beschreibung,Nessuna descrizione
+not_started,Not Started,No empezado,Pas commencé,Nicht angefangen,Non iniziato
+note,Note,Nota,Note,Notiz,Nota
+nothing_to_see_here,Nothing to see here.,Nada que ver aqui.,Rien à voir ici.,Es gibt hier nichts zu sehen.,Niente da vedere quì.
+org_confirm_deactivate_member,<p>Are you sure you want to deactivate the member <strong>{{Name}}</strong>?</p>,<p>¿Estás seguro de que deseas desactivar el miembro <strong>{{Name}}</strong>?</p>,<p>Êtes-vous sûr de vouloir désactiver le membre <strong>{{Name}}</strong>?</p>,"<p>Sind Sie sicher, dass Sie das Mitglied <strong>{{Name}}</strong> deaktivieren möchten?</p>",<p>Sei sicuro di voler disattivare il membro <strong>{{Name}}</strong>?</p>
+org_confirm_delete_org,<p>Are you sure you want to delete the organisation <strong>{{Name}}</strong>?</p><p>This can not be undone.</p>,<p>¿Está seguro de que desea eliminar la organización <strong>{{Name}}</strong>?</p><p>Esto no se puede deshacer.</p>,<p>Voulez-vous vraiment supprimer l'organisation <strong>{{Name}}</strong>?</p><p>Cette opération est irréversible.</p>,"<p>Sind Sie sicher, dass Sie die Organisation <strong>{{Name}}</strong> löschen möchten?</p><p>Dies kann nicht rückgängig gemacht werden.</p>",<p>Sei sicuro di voler eliminare l'organizzazione <strong>{{Name}}</strong>?</p><p>L'operazione non può essere annullata.</p>
+org_confirm_delete_project,<p>Are you sure you want to delete the project <strong>{{Name}}</strong>?</p><p>This can not be undone.</p>,<p>¿Está seguro de que desea eliminar el proyecto <strong>{{Name}}</strong>?</p><p>Esto no se puede deshacer.</p>,<p>Voulez-vous vraiment supprimer le projet <strong>{{Name}}</strong>?</p><p>Cette opération est irréversible.</p>,"<p>Sind Sie sicher, dass Sie das Projekt <strong>{{Name}}</strong> löschen möchten?</p><p>Dies kann nicht rückgängig gemacht werden.</p>",<p>Sei sicuro di voler eliminare il progetto <strong>{{Name}}</strong>?</p><p>L'operazione non può essere annullata.</p>
+org_member_invite_email_html,"<p>Dear <strong>{{InviteeName}}</strong></p><p><strong>{{InvitedByName}}</strong> has invited you to join the organisation: <strong>{{OrgName}}</strong></p><p><a href=""{{BaseHref}}/verify_email?email={{Email}}&code={{Code}}"">Please click this link to verify your email address and join <strong>{{OrgName}}</strong></a></p>","<p>Estimado <strong>{{InviteeName}}</strong></p><p><strong>{{InvitedByName}}</strong> te ha invitado a unirte a la organización: <strong>{{OrgName} }</strong></p><p><a href=""{{BaseHref}}/verify_email?email={{Email}}&code={{Code}}"">Haga clic en este enlace para verificar su dirección de correo electrónico y únete a <strong>{{OrgName}}</strong></a></p>","<p>Cher <strong>{{InviteeName}}</strong></p><p><strong>{{InvitedByName}}</strong> vous a invité à rejoindre l'organisation: <strong>{{OrgName} }</strong></p><p><a href=""{{BaseHref}}/verify_email?email={{Email}}&code={{Code}}"">Veuillez cliquer sur ce lien pour vérifier votre adresse e-mail et rejoignez <strong>{{OrgName}}</strong></a></p>","<p>Lieber <strong>{{InviteeName}}</strong></p><p><strong>{{InvitedByName}}</strong> hat Sie eingeladen, der Organisation beizutreten: <strong>{{OrgName} </strong></p><p><a href=""{{BaseHref}}/verify_email?email={{Email}}&code={{Code}}"">Bitte klicken Sie auf diesen Link, um Ihre zu bestätigen E-Mail-Adresse und treten Sie <strong>{{OrgName}}</strong></a></p> bei","<p>Caro <strong>{{InviteeName}}</strong></p><p><strong>{{InvitedByName}}</strong> ti ha invitato a unirti all'organizzazione: <strong>{{OrgName} }</strong></p><p><a href=""{{BaseHref}}/verify_email?email={{Email}}&code={{Code}}"">Fai clic su questo link per verificare il tuo indirizzo email e iscriviti a <strong>{{OrgName}}</strong></a></p>"
+org_member_invite_email_subject,{{OrgName}} - Project Management Invite,{{OrgName}} - Invitación a la gestión de proyectos,{{OrgName}} - Invitation à la gestion de projet,{{OrgName}} – Projektmanagement-Einladung,{{OrgName}} - Invito alla gestione del progetto
+org_member_invite_email_text,"Dear {{InviteeName}}
+
+{{InvitedByName}} has invited you to join the organisation: {{OrgName}}
+
+Please click this link to verify your email address and join {{OrgName}}:
+
+{{BaseHref}}/verify_email?email={{Email}}&code={{Code}}","Estimado, {{InviteeName}}
+
+{{InvitedByName}} lo ha invitado a unirse a la organización: {{OrgName}}
+
+Haga clic en este enlace para verificar su dirección de correo electrónico y unirse a {{OrgName}}:
+
+{{BaseHref}}/verify_email?email={{Email}}&code={{Code}}","Cher {{InviteeName}}
+
+{{InvitedByName}} vous a invité à rejoindre l'organisation: {{OrgName}}
+
+Veuillez cliquer sur ce lien pour vérifier votre adresse e-mail et rejoindre {{OrgName}}:
+
+{{BaseHref}}/verify_email?email={{Email}}&code={{Code}}","Lieber {{InviteeName}}
+
+{{InvitedByName}} hat Sie eingeladen, der Organisation beizutreten: {{OrgName}}
+
+Bitte klicken Sie auf diesen Link, um Ihre E-Mail-Adresse zu bestätigen und {{OrgName}} beizutreten:
+
+{{BaseHref}}/verify_email?email={{Email}}&code={{Code}}","Gentile {{InviteeName}}
+
+{{InvitedByName}} ti ha invitato a unirti all'organizzazione: {{OrgName}}
+
+Fai clic su questo collegamento per verificare il tuo indirizzo email e iscriverti a {{OrgName}}:
+
+{{BaseHref}}/verify_email?email={{Email}}&code={{Code}}"
+org_member_role,Role,Role,Rôle,Rolle,Ruolo
+org_member_role_admin,Admin,Administrador,Administrateur,Administrator,Ammin
+org_member_role_owner,Owner,Dueño,Propriétaire,Eigentümer,Proprietario
+org_member_role_per_project,Per Project,Por proyecto,Par projet,Pro Projekt,Per progetto
+org_member_role_read_all_projects,Read All Projects,Leer todos los proyectos,Lire tous les projets,Alle Projekte lesen,Leggi tutti i progetti
+org_member_role_write_all_projects,Write All Projects,Escribir todos los proyectos,Écrire tous les projets,Schreiben Sie alle Projekte,Scrivi tutti i progetti
+org_members,Members,Miembros,Membres,Mitglieder,Membri
+org_my_orgs,My Organisations,Mis organizaciones,Mes organisations,Meine Organisationen,Le mie organizzazioni
+org_name,Organisation Name,nombre de la organización,Nom de l'organisme,Name der Organisation,Nome dell'Organizzazione
+org_name_projects,{{Name}} Projects,{{Name}} Proyectos,{{Name}} Projes,{{Name}} Projekte,{{Name}} Progetti
+org_new_member,New Member,Nuevo miembro,Nouveau membre,Neues Mitglied,Nuovo membro
+org_new_org,New Organisation,Nueva organización,Nouvelle organisation,Neue Organisation,Nuova Organizzazione
+org_new_project,New Project,Nuevo proyecto,Nouveau projet,Neues Projekt,Nuovo progetto
+org_no_members,No Members,Sin miembros,Aucun membre,Keine Mitglieder,Nessun membro
+org_no_orgs,No Organisations,Sin organizaciones,Aucune organisation,Keine Organisationen,Nessuna organizzazione
+org_no_projects,No Projects,Sin Proyectos,Aucune Projets,Keine Projekte,Nessuna Progetti
+org_projects,Projects,Proyectos,Projets,Projekte,Progetti
+org_too_many,You are already a member of too many Orgs,Ya eres miembro de demasiadas organizaciones,Vous êtes déjà membre d'un trop grand nombre d'organisations,Sie sind bereits Mitglied in zu vielen Orgs,Sei già membro di troppe org
+org_update_member,Update Member,Actualizar miembro,Mettre à jour le membre,Mitglied aktualisieren,Aggiorna membro
+org_update_org,Update Organisation,Actualizar organización,Mettre à jour l'organisation,Organisation aktualisieren,Aggiorna organizzazione
+org_update_project,Update Project,Actualizar proyecto,Mettre à jour le projet,Projekt aktualisieren,Aggiorna progetto
+org_your_name,Your Name,Su nombre,votre nom,Ihren Namen,Il tuo nome
+parallel,Parallel,Paralelo,Parallèle,Parallel,Parallelo
+project_file_limit_exceeded,Project file limit exceeded {{FileLimit}},Se excedió el límite de archivos del proyecto {{FileLimit}},La limite de fichiers de projet a dépassé {{FileLimit}},Projektdateilimit überschritten {{FileLimit}},Limite del file di progetto superato {{FileLimit}}
+project_invalid_days_per_week,Days per week must be between 1 and 7,Los días de la semana deben estar entre 1 y 7,Les jours par semaine doivent être compris entre 1 et 7,Die Tage pro Woche müssen zwischen 1 und 7 liegen,I giorni della settimana devono essere compresi tra 1 e 7
+project_invalid_hours_per_day,Hours per day must be between 1 and 24,Las horas por día deben estar entre 1 y 24,Les heures par jour doivent être comprises entre 1 et 24,Die Stunden pro Tag müssen zwischen 1 und 24 liegen,Le ore giornaliere devono essere comprese tra 1 e 24
+public,Public,Público,Public,Öffentlich,Pubblico
+required,Required,Requerido,Requis,Erforderlich,Necessario
+sequential,Sequential,Secuencial,Séquentiel,Sequentiell,Sequenziale
+start_on,Start On,Comienza en,Démarrer,Beginnen am,Inizia
+string_validation,"Invalid string {{Name}}, Min {{Min}}, Max {{Max}}, Regexes {{Regexes}}","Cadena no válida {{Nombre}}, Min {{Min}}, Max {{Max}}, Regexes {{Regexes}}","Chaîne non valide {{Name}}, Min {{Min}}, Max {{Max}}, Regexes {{Regexes}}","Ungültiger String {{Name}}, Min. {{Min}}, Max. {{Max}}, Regexes {{Regexes}}","Stringa non valida {{Name}}, Min {{Min}}, Max {{Max}}, Regexes {{Regexes}}"
+sub_counts,Sub Counts,Conteos secundarios,Sous-comptes,Sub-Zählungen,Conteggi secondari
+task,Task,Tarea,Tâche,Aufgabe,Compito
+task_cant_move_root_project_node,Can't move root project node,No se puede mover el nodo del proyecto raíz,Impossible de déplacer le nœud du projet racine,Stammprojektknoten kann nicht verschoben werden,Impossibile spostare il nodo principale del progetto
+task_confirm_delete_file,<p>Are you sure you want to delete the file <strong>{{Name}}</strong>?</p>,<p>¿Está seguro de que desea eliminar el archivo <strong>{{Name}}</strong>?</p>,<p>Êtes-vous sûr de vouloir supprimer le fichier <strong>{{Name}}</strong>?</p>,"<p>Sind Sie sicher, dass Sie die Datei <strong>{{Name}}</strong> löschen möchten?</p>",<p>Sei sicuro di voler eliminare il file <strong>{{Name}}</strong>?</p>
+task_confirm_delete_task,<p>Are you sure you want to delete the task <strong>{{Name}}</strong>?</p><p>This can not be undone.</p>,<p>¿Está seguro de que desea eliminar la tarea <strong>{{Name}}</strong>?</p><p>Esto no se puede deshacer.</p>,<p>Êtes-vous sûr de vouloir supprimer la tâche <strong>{{Name}}</strong>?</p><p>Cette opération est irréversible.</p>,"<p>Sind Sie sicher, dass Sie die Aufgabe <strong>{{Name}}</strong> löschen möchten?</p><p>Dies kann nicht rückgängig gemacht werden.</p>",<p>Sei sicuro di voler eliminare l'attività <strong>{{Name}}</strong>?</p><p>L'operazione non può essere annullata.</p>
+task_confirm_delete_vitem,<p>Are you sure you want to delete <strong>{{Value}}</strong>?</p>,<p>¿Está seguro de que desea eliminar <strong>{{Value}}</strong>?</p>,<p>Êtes-vous sûr de vouloir supprimer <strong>{{Valeur}}</strong>?</p>,"<p>Sind Sie sicher, dass Sie <strong>{{Value}}</strong>?</p>",<p>Sei sicuro di voler eliminare <strong>{{Value}}</strong>?</p>
+task_delete_project_attempt,"Can't delete project node from tasks endpoint, use project delete endpoint","No se puede eliminar el nodo del proyecto del punto final de tareas, use el punto final de eliminación del proyecto","Impossible de supprimer le nœud de projet du point de terminaison des tâches, utilisez le point de terminaison de suppression du projet",Der Projektknoten kann nicht vom Aufgabenendpunkt gelöscht werden. Verwenden Sie den Projektlöschendpunkt,"Impossibile eliminare il nodo del progetto dall'endpoint delle attività, utilizzare l'endpoint di eliminazione del progetto"
+task_edit_task,Update Task,Actualizar tarea,Mettre à jour la tâche,Update-Aufgabe,Attività di aggiornamento
+task_move_prev_sib_parent_mismatch,Previous sibling and parent ids are mismatched,Las identificaciones de padres y hermanos anteriores no coinciden,Les précédents identifiants des frères et sœurs et des parents ne correspondent pas,Frühere Geschwister- und Eltern-IDs stimmen nicht überein,Gli ID dei fratelli e dei genitori precedenti non corrispondono
+task_moving_task,Moving Task: <strong>{{Name}}</strong>,Tarea en movimiento: <strong>{{Name}}</strong>,Tâche de déplacement: <strong>{{Name}}</strong>,Umzugsaufgabe: <strong>{{Name}}</strong>,Attività in movimento: <strong>{{Name}}</strong>
+task_new_cost,New Cost,Nuevo costo,Nouveau coût,Neue Kosten,Nuovo costo
+task_new_task,New Task,Nueva tarea,Nouvelle tâche,Neue Aufgabe,Nuovo compito
+task_new_time,New Time,Nuevo tiempo,Nouvelle heure,Neue Zeit,Nuovo tempo
+task_no_costs,No Costs,Sin Costos,Aucun frais,Keine Kosten,Nessun costo
+task_no_files,No Files,Sin archivos,Aucun fichier,Keine Dateien,Nessun documento
+task_no_times,No Times,sin tiempos,Pas de temps,Keine Zeiten,Nessun tempo
+task_recursive_loop_detected,Move operation would result in recursive loop,La operación de movimiento daría como resultado un bucle recursivo,L'opération de déplacement entraînerait une boucle récursive,Die Move-Operation würde zu einer rekursiven Schleife führen,L'operazione di spostamento risulterebbe in un ciclo ricorsivo
+task_too_many_descn,"Too many descendants to get all of them, only valid on tasks with 1000 or fewer descendants","Demasiados descendientes para obtenerlos todos, solo válido en tareas con 1000 o menos descendientes","Trop de descendants pour tous les obtenir, valide uniquement sur les tâches avec 1000 descendants ou moins","Zu viele Nachkommen, um alle zu erhalten, nur gültig für Aufgaben mit 1000 oder weniger Nachkommen","Troppi discendenti per ottenerli tutti, valido solo per attività con 1000 o meno discendenti"
+task_too_many_descn_to_delete,Can't delete a task with {{Max}} or more descendant tasks,No se puede eliminar una tarea con {{Max}} o más tareas descendientes,Impossible de supprimer une tâche avec {{Max}} ou plusieurs tâches descendantes,Eine Aufgabe mit {{Max}} oder mehr untergeordneten Aufgaben kann nicht gelöscht werden,Impossibile eliminare un'attività con {{Max}} o più attività discendenti
+task_update_cost,Update Cost,Costo de actualización,Coût de mise à jour,Aktualisierungskosten,Aggiorna costo
+task_update_time,Update Time,Tiempo de actualizacion,Temps de mise à jour,Updatezeit,Tempo di aggiornamento
+task_upload_file,Upload File,Subir archivo,Téléverser un fichier,Datei hochladen,Caricare un file
+time,Time,Tiempo,Temps,Zeit,Tempo
+time_est,Time Est.,Tiempo estimado,Temps estimée.,Zeitschätzung,Stima del tempo
+time_inc,Time Inc.,Tiempo incurrido,Temps engagé,Angefallene Zeit,Tempo impiegato
+time_min,Time Min.,Tiempo mín.,Durée min.,Zeitminimum,Tempo min.
+true,True,Verdadero,Vrai,Wahr,Vero
+unassigned,Unassigned,Sin asignar,Non attribué,Nicht zugewiesen,Non assegnato
+upload,Upload,Subir,Télécharger,Hochladen,Caricamento
+uploading,Uploading,Cargando,Téléchargement,Hochladen,Caricamento in corso
+user,User,Usuario,Utilisateur,Benutzer,Utente
+vitem_invalid_cost_inc,Cost entry must be more than 0,La entrada de costo debe ser mayor que 0,L'entrée de coût doit être supérieure à 0,Der Kosteneintrag muss größer als 0 sein,La voce di costo deve essere maggiore di 0
+vitem_invalid_time_inc,Time entry must be 1 to 1440 minutes,La entrada de tiempo debe ser de 1 a 1440 minutos,L'entrée de temps doit être comprise entre 1 et 1440 minutes,Der Zeiteintrag muss 1 bis 1440 Minuten betragen,L'inserimento dell'ora deve essere compreso tra 1 e 1440 minuti
+weeks,Weeks,Semanas,Semaines,Wochen,Settimane
+years,Years,Años,Ans,Jahre,Anni
