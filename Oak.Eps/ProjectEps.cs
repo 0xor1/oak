@@ -448,6 +448,10 @@ internal static class ProjectEps
                     {
                         qry = qry.Where(x => x.ItemDeleted == false);
                     }
+                    if (req.Task != null)
+                    {
+                        qry = qry.Where(x => x.Task == req.Task);
+                    }
                     if (req.Item != null)
                     {
                         qry = qry.Where(x => x.Item == req.Item);

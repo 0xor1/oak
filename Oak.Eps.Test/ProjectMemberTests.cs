@@ -1,3 +1,4 @@
+using Oak.Api.OrgMember;
 using Oak.Api.ProjectMember;
 
 namespace Oak.Eps.Test;
@@ -11,8 +12,21 @@ public class ProjectMemberTests : TestBase
         var p = await CreateProject(ali, org.Id);
         var bobId = (await bob.Auth.GetSession()).Id;
         var bobPm = await ali.ProjectMember.Add(new(org.Id, p.Id, bobId, ProjectMemberRole.Admin));
+
+        Assert.Equal(org.Id, bobPm.Org);
+        Assert.Equal(p.Id, bobPm.Project);
         Assert.Equal(bobId, bobPm.Id);
+        Assert.True(bobPm.IsActive);
+        Assert.Equal(OrgMemberRole.Admin, bobPm.OrgRole);
         Assert.Equal("bob", bobPm.Name);
+        Assert.Equal(ProjectMemberRole.Admin, bobPm.Role);
+        Assert.Equal((ulong)0, bobPm.TimeEst);
+        Assert.Equal((ulong)0, bobPm.TimeInc);
+        Assert.Equal((ulong)0, bobPm.CostEst);
+        Assert.Equal((ulong)0, bobPm.CostInc);
+        Assert.Equal((ulong)0, bobPm.FileN);
+        Assert.Equal((ulong)0, bobPm.FileSize);
+        Assert.Equal((ulong)0, bobPm.TaskN);
     }
 
     [Fact]

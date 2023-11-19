@@ -12,6 +12,12 @@ public class CommentTests : TestBase
         var p = await CreateProject(ali, org.Id);
         var c = await ali.Comment.Create(new(org.Id, p.Id, p.Id, "a"));
         Assert.Equal("a", c.Body);
+        Assert.Equal(aliSes.Id, c.CreatedBy);
+        Assert.InRange(
+            c.CreatedOn,
+            DateTimeExt.UtcNowMilli().Add(TimeSpan.FromSeconds(-1)),
+            DateTimeExt.UtcNowMilli()
+        );
     }
 
     [Fact]

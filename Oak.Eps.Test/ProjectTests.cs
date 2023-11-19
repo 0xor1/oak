@@ -1,5 +1,6 @@
 using Common.Server.Test;
 using Common.Shared;
+using Oak.Api;
 using Oak.Api.Project;
 
 namespace Oak.Eps.Test;
@@ -25,6 +26,13 @@ public class ProjectTests : TestBase
             )
         );
         Assert.Equal("a", p.Name);
+        Assert.False(p.IsArchived);
+        Assert.True(p.IsPublic);
+        Assert.Equal("£", p.CurrencySymbol);
+        Assert.Equal("GBP", p.CurrencyCode);
+        Assert.Equal((uint)8, p.HoursPerDay);
+        Assert.Equal((uint)5, p.DaysPerWeek);
+        Assert.Equal((ulong)10, p.FileLimit);
     }
 
     [Fact]
@@ -351,9 +359,26 @@ public class ProjectTests : TestBase
         );
         var aliSes = await ali.Auth.GetSession();
         a = await ali.Project.Update(new(a.Org, a.Id, Name: "yolo"));
-        var res = await ali.Project.GetActivities(new(a.Org, a.Id));
+        var res = await ali.Project.GetActivities(new(a.Org, a.Id, Task: a.Id));
         Assert.Equal(2, res.Set.Count);
         Assert.Equal("yolo", res.Set[0].ItemName);
+        Assert.Equal(org.Id, res.Set[0].Org);
+        Assert.Equal(a.Id, res.Set[0].Project);
+        Assert.Equal(a.Id, res.Set[0].Task);
+        Assert.InRange(
+            res.Set[0].OccurredOn,
+            DateTimeExt.UtcNowMilli().Add(TimeSpan.FromSeconds(-1)),
+            DateTimeExt.UtcNowMilli()
+        );
+        Assert.Equal(a.Id, res.Set[0].Project);
+        Assert.Equal(aliSes.Id, res.Set[0].User);
+        Assert.Equal(a.Id, res.Set[0].Item);
+        Assert.Equal(ActivityItemType.Project, res.Set[0].ItemType);
+        Assert.False(res.Set[0].TaskDeleted);
+        Assert.False(res.Set[0].ItemDeleted);
+        Assert.Equal(ActivityAction.Update, res.Set[0].Action);
+        Assert.Equal("yolo", res.Set[0].TaskName);
+        Assert.NotNull(res.Set[0].ExtraInfo);
         Assert.Equal("a", res.Set[1].ItemName);
         res = await ali.Project.GetActivities(
             new(

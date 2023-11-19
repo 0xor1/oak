@@ -10,6 +10,7 @@ public class FileTests : TestBase
     public async void Upload_Download_Delete_Success()
     {
         var (ali, bob, cat, dan, anon, org) = await Setup();
+        var aliSes = await ali.Auth.GetSession();
         var tt = await CreateTaskTree(ali, org.Id);
         var upload = new Upload(org.Id, tt.P.Id, tt.E.Id);
         var test = "yolo baby!";
@@ -21,6 +22,14 @@ public class FileTests : TestBase
         await tt.Refresh();
         Assert.Equal(1ul, tt.P.FileSubN);
         Assert.Equal(f.Size, tt.P.FileSubSize);
+        Assert.Equal("test", f.Name);
+        Assert.Equal(aliSes.Id, f.CreatedBy);
+        Assert.InRange(
+            f.CreatedOn,
+            DateTimeExt.UtcNowMilli().Add(TimeSpan.FromSeconds(-1)),
+            DateTimeExt.UtcNowMilli()
+        );
+        Assert.Equal("text/plain", f.Type);
 
         var url = ali.File.DownloadUrl(new(f.Org, f.Project, f.Task, f.Id, false));
         Assert.False(url.IsNullOrEmpty());

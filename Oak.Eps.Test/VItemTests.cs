@@ -29,6 +29,7 @@ public class VItemTests : TestBase
         Assert.Equal(res.Item, vi);
         Assert.Equal(tt.E, res.Task);
         Assert.Equal(60ul, tt.P.TimeSubInc);
+        Assert.Equal(aliSes.Id, vi.CreatedBy);
     }
 
     [Fact]
