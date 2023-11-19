@@ -6,7 +6,6 @@ TestResults/
 /packages/
 riderModule.iml
 /_ReSharper.Caches/
-*.css
 /Scratch
 *.sln.DotSettings.user
 fcm_service_account_key.json
