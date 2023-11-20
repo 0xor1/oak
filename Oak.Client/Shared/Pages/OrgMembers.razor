@@ -55,7 +55,7 @@
                     @RoleString(m.Role, L)
                 </Template>
                 <FilterTemplate>
-                    <RadzenDropDown Style="width: 100%" Name="Role" @bind-Value="@Role" TValue="OrgMemberRole?" ValueProperty="Role" TextProperty="Display" Data="Roles(L, null, true)"/>
+                    <RadzenDropDown Style="width: 100%" Name="Role" @bind-Value="@Role" TValue="OrgMemberRole?" ValueProperty="Role" TextProperty="Display" AllowClear="true" Data="Roles(L, null)"/>
                 </FilterTemplate>
             </RadzenDataGridColumn>
         </Columns>
@@ -154,14 +154,10 @@
         await _grid.Reload();
     }
     
-    public static List<RoleOpt> Roles(L l, UiCtx? ctx = null, bool includeClear = false)
+    public static List<RoleOpt> Roles(L l, UiCtx? ctx = null)
     {
         var res = new List<RoleOpt>() { new(OrgMemberRole.Owner, l), new(OrgMemberRole.Admin, l), new(OrgMemberRole.WriteAllProjects, l), new(OrgMemberRole.ReadAllProjects, l), new(OrgMemberRole.PerProject, l) };
         res.RemoveAll(x => x.Role < (ctx?.OrgMember?.Role ?? OrgMemberRole.Owner));
-        if (includeClear)
-        {
-            res = res.Prepend(new (l.S(S.Clear))).ToList();
-        }
         return res;
     }
 
