@@ -8,6 +8,7 @@ namespace Oak.I18n;
 public static partial class S
 {
     public const string Active = "active";
+    public const string Add = "add";
     public const string Cancel = "cancel";
     public const string ChildN = "child_n";
     public const string Clear = "clear";
@@ -28,6 +29,7 @@ public static partial class S
     public const string Display = "display";
     public const string Edit = "edit";
     public const string EndOn = "end_on";
+    public const string EntityNameMembers = "entity_name_members";
     public const string False = "false";
     public const string File = "file";
     public const string FileLimit = "file_limit";
@@ -81,6 +83,10 @@ public static partial class S
     public const string ProjectFileLimitExceeded = "project_file_limit_exceeded";
     public const string ProjectInvalidDaysPerWeek = "project_invalid_days_per_week";
     public const string ProjectInvalidHoursPerDay = "project_invalid_hours_per_day";
+    public const string ProjectMemberRoleAdmin = "project_member_role_admin";
+    public const string ProjectMemberRoleWriter = "project_member_role_writer";
+    public const string ProjectMemberRoleReader = "project_member_role_reader";
+    public const string ProjectMembers = "project_members";
     public const string Public = "public";
     public const string Required = "required";
     public const string Sequential = "sequential";
@@ -108,6 +114,7 @@ public static partial class S
     public const string TaskUpdateCost = "task_update_cost";
     public const string TaskUpdateTime = "task_update_time";
     public const string TaskUploadFile = "task_upload_file";
+    public const string Tasks = "tasks";
     public const string Time = "time";
     public const string TimeEst = "time_est";
     public const string TimeInc = "time_inc";

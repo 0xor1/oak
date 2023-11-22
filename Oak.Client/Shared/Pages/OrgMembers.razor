@@ -89,7 +89,6 @@
         _isLoading = true;
         try
         {
-            await Ctx.Set(await Api.Org.GetOne(new(OrgId)));
             var res = await Api.OrgMember.Get(new(OrgId));
             Items = res.Set.ToList();
         }
@@ -142,8 +141,7 @@
 
     private async Task OnInvited(OrgMember m)
     {
-        var i = Items.FindIndex(x => x.Id == m.Id);
-        Items[i] = m;
+        Items = Items.Append(m).ToList();
         await _grid.Reload();
     }
     
@@ -169,13 +167,7 @@
         public RoleOpt(OrgMemberRole role, L l)
         {
             Role = role;
-            Display = OrgMembers.RoleString(role, l);
-        }
-
-        public RoleOpt(string clearText)
-        {
-            Role = null;
-            Display = clearText;
+            Display = RoleString(role, l);
         }
     };
 

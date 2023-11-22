@@ -74,11 +74,11 @@ public class UiCtx
         _auth = auth;
     }
 
-    public System.Threading.Tasks.Task Set(Org org) => Set(org, null, null);
+    public System.Threading.Tasks.Task Set(Org? org) => Set(org, null, null);
 
-    public System.Threading.Tasks.Task Set(Project project) => Set(null, project, null);
+    public System.Threading.Tasks.Task Set(Project? project) => Set(null, project, null);
 
-    public System.Threading.Tasks.Task Set(Task task) => Set(null, null, task);
+    public System.Threading.Tasks.Task Set(Task? task) => Set(null, null, task);
 
     private async System.Threading.Tasks.Task Set(Org? org, Project? project, Task? task)
     {

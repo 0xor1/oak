@@ -1,5 +1,6 @@
 key,en,es,fr,de,it
 active,Active,Activo,Actif,Aktiv,Attivo
+add,Add,Agregar,Ajouter,Hinzufügen,Aggiungere
 cancel,Cancel,Cancelar,Annuler,Stornieren,Annulla
 child_n,Children,Niños,Enfants,Kinder,Bambini
 clear,Clear,Claro,Clair,Klar,Chiaro
@@ -20,6 +21,7 @@ description,Description,Descripción,Description,Beschreibung,Descrizione
 display,Display,Mostrar,Afficher,Anzeige,Schermo
 edit,Edit,Editar,Modifier,Bearbeiten,Modificare
 end_on,End On,Finalizará el,Fin le,Endet am,Fine su
+entity_name_members,{{Name}} Members,{{Name}} Miembros,{{Name}} Membres,{{Name}} Mitglieder,{{Name}} Membri
 false,False,Falso,Faux,Falsch,Falso
 file,File,Archivo,Dossier,Datei,File
 file_limit,File Limit,File Limit,Limite de fichiers,Dateilimit,Limite file
@@ -103,6 +105,10 @@ parallel,Parallel,Paralelo,Parallèle,Parallel,Parallelo
 project_file_limit_exceeded,Project file limit exceeded {{FileLimit}},Se excedió el límite de archivos del proyecto {{FileLimit}},La limite de fichiers de projet a dépassé {{FileLimit}},Projektdateilimit überschritten {{FileLimit}},Limite del file di progetto superato {{FileLimit}}
 project_invalid_days_per_week,Days per week must be between 1 and 7,Los días de la semana deben estar entre 1 y 7,Les jours par semaine doivent être compris entre 1 et 7,Die Tage pro Woche müssen zwischen 1 und 7 liegen,I giorni della settimana devono essere compresi tra 1 e 7
 project_invalid_hours_per_day,Hours per day must be between 1 and 24,Las horas por día deben estar entre 1 y 24,Les heures par jour doivent être comprises entre 1 et 24,Die Stunden pro Tag müssen zwischen 1 und 24 liegen,Le ore giornaliere devono essere comprese tra 1 e 24
+project_member_role_admin,Admin,Administrador,Administrateur,Administrator,Ammin
+project_member_role_writer,Writer,Escritor,Écrivain,Schriftsteller,Scrittore
+project_member_role_reader,Reader,Lector,Lecteur,Leser,Lettore
+project_members,Project Members,Miembros del proyecto,Membres du projet,Projektmitglieder,Membri del progetto
 public,Public,Público,Public,Öffentlich,Pubblico
 required,Required,Requerido,Requis,Erforderlich,Necessario
 sequential,Sequential,Secuencial,Séquentiel,Sequentiell,Sequenziale
@@ -130,6 +136,7 @@ task_too_many_descn_to_delete,Can't delete a task with {{Max}} or more descendan
 task_update_cost,Update Cost,Costo de actualización,Coût de mise à jour,Aktualisierungskosten,Aggiorna costo
 task_update_time,Update Time,Tiempo de actualizacion,Temps de mise à jour,Updatezeit,Tempo di aggiornamento
 task_upload_file,Upload File,Subir archivo,Téléverser un fichier,Datei hochladen,Caricare un file
+tasks,Tasks,Tareas,Tâches,Aufgaben,Compiti
 time,Time,Tiempo,Temps,Zeit,Tempo
 time_est,Time Est.,Tiempo estimado,Temps estimée.,Zeitschätzung,Stima del tempo
 time_inc,Time Inc.,Tiempo incurrido,Temps engagé,Angefallene Zeit,Tempo impiegato

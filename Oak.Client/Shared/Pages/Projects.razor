@@ -194,7 +194,6 @@
         _isLoading = true;
         try
         {
-            await Ctx.Set(await Api.Org.GetOne(new(OrgId)));
             var res = await Api.Project.Get(new(OrgId));
             Items = res.Set.ToList();
         }
