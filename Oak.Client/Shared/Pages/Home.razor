@@ -14,9 +14,9 @@
             }
             else
             {
-                <RadzenButton ButtonStyle="ButtonStyle.Secondary" Text="@L.S(CS.SignIn)" Click="@(() => Nav.NavigateTo("/sign_in"))"/>
+                <RadzenButton ButtonStyle="ButtonStyle.Secondary" Text="@L.S(CS.SignIn)" Click="@(() => Nav.NavigateTo("/cmn/auth/sign_in"))"/>
                 <RadzenText TextStyle="TextStyle.Body1" class="m-0">@L.S(CS.Or)</RadzenText>
-                <RadzenButton ButtonStyle="ButtonStyle.Primary" Text="@L.S(CS.Register)" Click="@(() => Nav.NavigateTo("/register"))"/>
+                <RadzenButton ButtonStyle="ButtonStyle.Primary" Text="@L.S(CS.Register)" Click="@(() => Nav.NavigateTo("/cmn/auth/register"))"/>
             }
         </div>
     </RadzenCard>
