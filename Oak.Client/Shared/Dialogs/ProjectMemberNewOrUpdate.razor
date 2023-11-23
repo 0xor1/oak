@@ -64,16 +64,18 @@
     Model _model = new();
     private bool _doing;
 
-    protected override Task OnInitializedAsync()
+    protected override async Task OnInitializedAsync()
     {
-        
         if (UpdateMember != null)
         {
             var um = UpdateMember;
             _model.User = new OrgMember(um.Org, um.Id, um.IsActive, um.Name, um.OrgRole);
             _model.Role = UpdateMember.Role;
         }
-        return Task.CompletedTask;
+        else
+        {
+            await LoadOrgMembers(new ());
+        }
     }
     
     private async Task Do()
