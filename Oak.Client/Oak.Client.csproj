@@ -8,7 +8,8 @@
   </PropertyGroup>
   
   <ItemGroup>
-    <PackageReference Include="0xor1.Common.Client" Version="3.0.4" />
+    <PackageReference Include="DartSassBuilder" Version="1.0.0" />
+    <PackageReference Include="0xor1.Common.Client" Version="3.0.5" />
     <PackageReference Include="0xor1.Common.Shared" Version="3.0.4" />
     <PackageReference Include="CSharpier.MsBuild" Version="0.26.2">
       <PrivateAssets>all</PrivateAssets>
@@ -19,7 +20,7 @@
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="8.0.0" PrivateAssets="all" />
     <PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="8.0.0" />
-    <PackageReference Include="Radzen.Blazor" Version="4.21.3" />
+    <PackageReference Include="Radzen.Blazor" Version="4.21.4" />
   </ItemGroup>
 
   <ItemGroup>
