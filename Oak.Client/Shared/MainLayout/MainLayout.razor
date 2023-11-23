@@ -107,12 +107,46 @@
         Auth.OnSessionChanged(AuthStateChanged);
         AuthStateChanged(await Auth.GetSession());
         _eventReg = Nav.RegisterLocationChangingHandler(LocationChanging);
+        await SetCtxFromUrl(Nav.Uri);
         _ready = true;
     }
 
     private async ValueTask LocationChanging(LocationChangingContext arg)
+        => await SetCtxFromUrl(arg.TargetLocation);
+
+    private void AuthStateChanged(ISession s)
     {
-        var (orgId, projectId, taskId) = GetIdsFromUrl(arg.TargetLocation);
+        _session = s;
+        StateHasChanged();
+    }
+
+    public void Dispose()
+    {
+        _eventReg?.Dispose();
+    }
+
+    private async ValueTask SetCtxFromUrl(string url)
+    {
+        // check for /org/{OrgId}/project/{ProjectId}/task/{TaskId}
+        string? orgId = null;
+        var orgMatch = OrgIdRx().Match(url);
+        if (orgMatch.Success && orgMatch.Groups.Count == 2)
+        {
+            orgId = orgMatch.Groups[1].Value;
+        }
+        string? projectId = null;
+        var projectMatch = ProjectIdRx().Match(url);
+        if (projectMatch.Success && projectMatch.Groups.Count == 2)
+        {
+            projectId = projectMatch.Groups[1].Value;
+        }
+        string? taskId = null;
+        var taskMatch = TaskIdRx().Match(url);
+        if (taskMatch.Success && taskMatch.Groups.Count == 2)
+        {
+            taskId = taskMatch.Groups[1].Value;
+        }
+    
         var changed = _orgId != orgId || _projectId != projectId || _taskId != taskId;
         _orgId = orgId;
         _projectId = projectId;
@@ -137,47 +171,6 @@
         {
             StateHasChanged();
         }
-    }
-
-    private void AuthStateChanged(ISession s)
-    {
-        _session = s;
-        StateHasChanged();
-    }
-
-    private async void ToggleLiveUI()
-    {
-        await Auth.FcmEnabled(!_session.FcmEnabled);
-    }
-
-    public void Dispose()
-    {
-        _eventReg?.Dispose();
-    }
-
-    private (string? orgId, string? projectId, string? taskId) GetIdsFromUrl(string url)
-    {
-        // check for /org/{OrgId}/project/{ProjectId}/task/{TaskId}
-        string? orgId = null;
-        var orgMatch = OrgIdRx().Match(url);
-        if (orgMatch.Success && orgMatch.Groups.Count == 2)
-        {
-            orgId = orgMatch.Groups[1].Value;
-        }
-        string? projectId = null;
-        var projectMatch = ProjectIdRx().Match(url);
-        if (projectMatch.Success && projectMatch.Groups.Count == 2)
-        {
-            projectId = projectMatch.Groups[1].Value;
-        }
-        string? taskId = null;
-        var taskMatch = TaskIdRx().Match(url);
-        if (taskMatch.Success && taskMatch.Groups.Count == 2)
-        {
-            taskId = taskMatch.Groups[1].Value;
-        }
-    
-        return (orgId, projectId, taskId);
     }
 
     private async Task CollapseIfNarrow(MouseEventArgs args)

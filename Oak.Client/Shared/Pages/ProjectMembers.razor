@@ -34,6 +34,7 @@
                         {
                             <div class="flx g-0q p-abs show-on-row-mouse-over" style="right: -1em;">
                                 <RadzenButton @onclick:stopPropagation="true" Icon="edit" ButtonStyle="ButtonStyle.Info" Size="ButtonSize.ExtraSmall" Click="_ => Update(m)"/>
+                                <RadzenButton @onclick:stopPropagation="true" Icon="cancel" ButtonStyle="ButtonStyle.Danger" Size="ButtonSize.ExtraSmall" Click="_ => Remove(m)"/>
                             </div>
                         }
                     </div>
@@ -202,8 +203,16 @@
     
     private async Task Update(ProjectMember m)
         => await DialogService.OpenAsync<ProjectMemberNewOrUpdate>(L.S(S.OrgUpdateMember), new (){{"OrgId", OrgId}, {"ProjectId", ProjectId}, {"UpdateMember", m}, {"Session", Session}, {"OnUpdated", OnUpdated}});
+
     
-    
+    private async Task Remove(ProjectMember m)
+    {
+        await Api.ProjectMember.Remove(new(m.Org, m.Project, m.Id));
+        Items.Remove(m);
+        await _grid.Reload();
+    }
+
+
     private async Task OnAdded(ProjectMember m)
     {
         Items = Items.Append(m).ToList();

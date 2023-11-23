@@ -1,5 +1,6 @@
 ﻿@using Common.Client
 @using Common.Shared.Auth
+@using Oak.Api.OrgMember
 @using Oak.Api.ProjectMember
 @using Oak.Client.Lib
 @using Oak.I18n
@@ -13,7 +14,7 @@
         class="flx col ai-stretch g-1">
         <div class="flx col ai-stretch">
             <RadzenLabel class="m-b-0q" Component="User" Text="@L.S(S.User)"/>
-            <RadzenDropDown Name="User" Disabled="@(UpdateMember != null)" @bind-Value="_model.User" TextProperty="Name" TValue="ProjectMember?" Data="Users" LoadData="LoadProjectMembers" AllowClear="true" AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" FilterOperator="StringFilterOperator.StartsWith"/>
+            <RadzenDropDown Name="User" Disabled="@(UpdateMember != null)" @bind-Value="_model.User" TextProperty="Name" TValue="OrgMember?" Data="Users" LoadData="LoadOrgMembers" AllowClear="true" AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" FilterOperator="StringFilterOperator.StartsWith"/>
             <RadzenRequiredValidator Component="User" Popup="true" Text="@L.S(S.Required)"></RadzenRequiredValidator>
         </div>
         <div class="flx col ai-stretch">
@@ -57,7 +58,7 @@
         public string Id { get; set; } = "";
         public string Name { get; set; } = "";
         public ProjectMemberRole Role { get; set; } = ProjectMemberRole.Reader;
-        public ProjectMember? User { get; set; }
+        public OrgMember? User { get; set; }
     }
 
     Model _model = new();
@@ -68,7 +69,8 @@
         
         if (UpdateMember != null)
         {
-            _model.User = UpdateMember;
+            var um = UpdateMember;
+            _model.User = new OrgMember(um.Org, um.Id, um.IsActive, um.Name, um.OrgRole);
             _model.Role = UpdateMember.Role;
         }
         return Task.CompletedTask;
@@ -109,11 +111,11 @@
         _doing = false;
     }
 
-    private List<ProjectMember> Users { get; set; } = new();
+    private List<OrgMember> Users { get; set; } = new();
 
-    private async Task LoadProjectMembers(LoadDataArgs args)
+    private async Task LoadOrgMembers(LoadDataArgs args)
     {
-        Users = await UserService.Search(OrgId, ProjectId, true,
+        Users = await UserService.Search(OrgId, true,
             args.Filter);
     }
 
