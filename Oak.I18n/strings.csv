@@ -19,6 +19,8 @@ delete,Delete,Borrar,Supprimer,Löschen,Eliminare
 desc_n,Descendants,Descendientes,Descendance,Nachkommenschaft,Discendenti
 description,Description,Descripción,Description,Beschreibung,Descrizione
 display,Display,Mostrar,Afficher,Anzeige,Schermo
+drop_after,Drop After,Soltar después,Déposer après,Danach fallenlassen,Rilascia dopo
+drop_in,Drop In,Colocar dentro,Placer à l'intérieur,Drinnen legen,Mettilo dentro
 edit,Edit,Editar,Modifier,Bearbeiten,Modificare
 end_on,End On,Finalizará el,Fin le,Endet am,Fine su
 entity_name_members,{{Name}} Members,{{Name}} Miembros,{{Name}} Membres,{{Name}} Mitglieder,{{Name}} Membri
@@ -37,6 +39,7 @@ loading,Loading,Cargando,Chargement,Wird geladen,Caricamento
 max,Max,Máx.,Max,Max,Massimo
 min,Min,Mínimo,Min,Min,Minimo
 minutes,Minutes,Minutos,Minutes,Minuten,Minuti
+move,Move,Mover,Se déplacer,Bewegen,Mossa
 name,Name,Nombre,Nom,Name,Nome
 new,New,Nuevo,Nouveau,Neu,Nuovo
 no_description,No Description,Sin descripción,Pas de description,Keine Beschreibung,Nessuna descrizione

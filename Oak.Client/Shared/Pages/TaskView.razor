@@ -81,15 +81,15 @@
                                                 <div class="flx g-0q p-abs show-on-row-mouse-over" style="right: -1em;">
                                                     @if (MovingTask == null)
                                                     {
-                                                        <RadzenButton @onclick:stopPropagation="true" Icon="keyboard_arrow_down" ButtonStyle="ButtonStyle.Success" Size="ButtonSize.ExtraSmall" Click="_ => CreateAfter(t)"/>
-                                                        <RadzenButton @onclick:stopPropagation="true" Icon="edit" ButtonStyle="ButtonStyle.Info" Size="ButtonSize.ExtraSmall" Click="_ => Update(t)"/>
-                                                        <RadzenButton @onclick:stopPropagation="true" Disabled="@(t.Project == t.Id)" Icon="open_with" ButtonStyle="ButtonStyle.Secondary" Size="ButtonSize.ExtraSmall" Click="_ => Pickup(t)"/>
-                                                        <RadzenButton @onclick:stopPropagation="true" Icon="delete" ButtonStyle="ButtonStyle.Danger" Size="ButtonSize.ExtraSmall" Disabled="!Ctx.CanDeleteTask(t)" Click="_ => Delete(t)"/>
+                                                        <RadzenButton title="@L.S(S.New)" @onclick:stopPropagation="true" Icon="keyboard_arrow_down" ButtonStyle="ButtonStyle.Success" Size="ButtonSize.ExtraSmall" Click="_ => CreateAfter(t)"/>
+                                                        <RadzenButton title="@L.S(S.Edit)" @onclick:stopPropagation="true" Icon="edit" ButtonStyle="ButtonStyle.Info" Size="ButtonSize.ExtraSmall" Click="_ => Update(t)"/>
+                                                        <RadzenButton title="@L.S(S.Move)" @onclick:stopPropagation="true" Disabled="@(t.Project == t.Id)" Icon="open_with" ButtonStyle="ButtonStyle.Secondary" Size="ButtonSize.ExtraSmall" Click="_ => Pickup(t)"/>
+                                                        <RadzenButton title="@L.S(S.Delete)" @onclick:stopPropagation="true" Icon="delete" ButtonStyle="ButtonStyle.Danger" Size="ButtonSize.ExtraSmall" Disabled="!Ctx.CanDeleteTask(t)" Click="_ => Delete(t)"/>
                                                     }
                                                     else
                                                     {
-                                                        <RadzenButton @onclick:stopPropagation="true" Icon="keyboard_arrow_left" Disabled="@(TheTask.Id == t.Id || MovingTask.Id == t.Id)" ButtonStyle="ButtonStyle.Secondary" Size="ButtonSize.ExtraSmall" Click="_ => DropIn(t)"/>
-                                                        <RadzenButton @onclick:stopPropagation="true" Icon="keyboard_arrow_down" Disabled="@(MovingTask.Id == t.Id)" ButtonStyle="ButtonStyle.Secondary" Size="ButtonSize.ExtraSmall" Click="_ => DropAfter(t)"/>
+                                                        <RadzenButton title="@L.S(S.DropIn)" @onclick:stopPropagation="true" Icon="keyboard_arrow_left" Disabled="@(TheTask.Id == t.Id || MovingTask.Id == t.Id)" ButtonStyle="ButtonStyle.Secondary" Size="ButtonSize.ExtraSmall" Click="_ => DropIn(t)"/>
+                                                        <RadzenButton title="@L.S(S.DropAfter)" @onclick:stopPropagation="true" Icon="keyboard_arrow_down" Disabled="@(MovingTask.Id == t.Id)" ButtonStyle="ButtonStyle.Secondary" Size="ButtonSize.ExtraSmall" Click="_ => DropAfter(t)"/>
                                                         <RadzenButton title="@L.S(S.Cancel)" @onclick:stopPropagation="true" Icon="cancel" ButtonStyle="ButtonStyle.Secondary" Size="ButtonSize.ExtraSmall" Click="_ => CancelMovingTask()"/>
                                                     }
                                                 </div>

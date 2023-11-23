@@ -27,6 +27,8 @@ public static partial class S
     public const string DescN = "desc_n";
     public const string Description = "description";
     public const string Display = "display";
+    public const string DropAfter = "drop_after";
+    public const string DropIn = "drop_in";
     public const string Edit = "edit";
     public const string EndOn = "end_on";
     public const string EntityNameMembers = "entity_name_members";
@@ -45,6 +47,7 @@ public static partial class S
     public const string Max = "max";
     public const string Min = "min";
     public const string Minutes = "minutes";
+    public const string Move = "move";
     public const string Name = "name";
     public const string New = "new";
     public const string NoDescription = "no_description";
