@@ -21,8 +21,12 @@ public static class Util
     public const ulong TB = KB * GB;
     public const ulong PB = KB * TB;
 
-    public static string Duration(Project p, ulong val)
+    public static string Duration(Project? p, ulong val)
     {
+        if (p == null || p.HoursPerDay == 0 || p.DaysPerWeek == 0)
+        {
+            return $"{val}m";
+        }
         Throw.OpIf(
             p.HoursPerDay == 0 || p.DaysPerWeek == 0,
             "hoursPerDay and daysPerWeek must be > 0"
@@ -51,8 +55,13 @@ public static class Util
         return $"{val}m";
     }
 
-    public static string Cost(Project p, ulong val)
+    public static string Cost(Project? p, ulong val)
     {
+        if (p == null || p.CurrencyCode.IsNullOrEmpty())
+        {
+            return $"{p?.CurrencySymbol}{val}";
+        }
+
         var divs =
             CurrencyPicker.Currencies.SingleOrDefault(x => x.Code == p.CurrencyCode)?.Divisions
             ?? 100;
