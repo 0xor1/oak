@@ -29,9 +29,8 @@
         {
             ProjectMember = await UserService.Get(OrgId, ProjectId, UserId);
         }
-        if(ProjectMember == null)
+        else
         {
-            // if no project member was found look for org member
             OrgMember = await UserService.Get(OrgId, UserId);
         }
     }

@@ -34,7 +34,7 @@
             </RadzenDataGridColumn>
             <RadzenDataGridColumn Visible="Ctx.Display.User" Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Width="10em" TItem="VItem" Property="@nameof(VItem.CreatedBy)" Title="@L.S(S.User)">
                 <Template Context="i">
-                    <User OrgId="@i.Org" ProjectId="@i.Project" UserId="@i.CreatedBy"/>
+                    <User OrgId="@i.Org" UserId="@i.CreatedBy"/>
                 </Template>
             </RadzenDataGridColumn>
             <RadzenDataGridColumn TextAlign="TextAlign.Center" Width="7em" TItem="VItem" Property="@nameof(VItem.Inc)" Title="@L.S(Type == VItemType.Time ? S.TimeInc : S.CostInc)">
