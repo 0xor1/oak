@@ -1,10 +1,11 @@
 ﻿@using Common.Client
 @using Oak.Api.OrgMember
+@using Oak.Api.ProjectMember
 @using Oak.Client.Lib
 @using S = Oak.I18n.S
 
 <span class="mw-100 ellip">
-    @(OrgMember != null? OrgMember.Name: L.S(S.Unassigned))
+    @(OrgMember?.Name ?? ProjectMember?.Name ?? L.S(S.Unassigned))
 </span>
 
 @inject L L;
@@ -14,13 +15,24 @@
     [Parameter]
     public string OrgId { get; set; } = "";
     [Parameter]
+    public string? ProjectId { get; set; }
+    [Parameter]
     public string? UserId { get; set; }
 
     private OrgMember? OrgMember { get; set; }
 
+    private ProjectMember? ProjectMember { get; set; }
+
     protected override async Task OnParametersSetAsync()
     {
-        OrgMember = await UserService.Get(OrgId, UserId);
+        if (ProjectId != null)
+        {
+            ProjectMember = await UserService.Get(OrgId, ProjectId, UserId);
+        }
+        else
+        {
+            OrgMember = await UserService.Get(OrgId, UserId);
+        }
     }
 
 }
