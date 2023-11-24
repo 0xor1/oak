@@ -37,7 +37,7 @@
             </RadzenDataGridColumn>
             <RadzenDataGridColumn Visible="Ctx.Display.User" Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Width="7em" TItem="File" Property="@nameof(File.CreatedBy)" Title="@L.S(S.User)">
                 <Template Context="f">
-                    <User OrgId="@f.Org" UserId="@f.CreatedBy"/>
+                    <User OrgId="@f.Org" ProjectId="@f.Project" UserId="@f.CreatedBy"/>
                 </Template>
             </RadzenDataGridColumn>
             <RadzenDataGridColumn TextAlign="TextAlign.Center" Width="7em" TItem="File" Property="@nameof(File.Size)" Title="@L.S(S.FileSize)">

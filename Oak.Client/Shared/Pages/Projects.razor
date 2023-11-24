@@ -56,7 +56,7 @@
             </RadzenDataGridColumn>
             <RadzenDataGridColumn Visible="Ctx.Display.User" Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Width="10em" TItem="Project" Property="@nameof(Project.Task.User)" Title="@L.S(S.User)">
                 <Template Context="p">
-                    <User OrgId="@p.Org" UserId="@p.Task.User"/>
+                    <User OrgId="@p.Org" ProjectId="@p.Id" UserId="@p.Task.User"/>
                 </Template>
             </RadzenDataGridColumn>
             <RadzenDataGridColumn Visible="Ctx.Display.Time" Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Width="7em" TItem="Project" Property="@nameof(Project.Task.TimeSubMin)" Title="@L.S(S.TimeMin)">

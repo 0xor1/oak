@@ -18,7 +18,7 @@
     {
         <RadzenCard class="flx col w-100">
             <div class="f-0t">
-                <User OrgId="@Ctx.OrgId" UserId="@i.CreatedBy"></User>
+                <User OrgId="@i.Org" ProjectId="@i.Project" UserId="@i.CreatedBy"></User>
                 <span>@L.D(i.CreatedOn) @L.T(i.CreatedOn)</span>
             </div>
             <div>
