@@ -13,7 +13,6 @@ namespace Oak.Api;
 
 public interface IApi : Common.Shared.Auth.IApi
 {
-    public IAppApi App { get; }
     public IOrgApi Org { get; }
     public IOrgMemberApi OrgMember { get; }
     public IProjectApi Project { get; }
