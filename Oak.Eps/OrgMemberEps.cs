@@ -87,20 +87,15 @@ internal static class OrgMemberEps
                 OrgMemberRpcs.GetOne,
                 async (ctx, req) =>
                 {
-                    var ses = ctx.GetSession();
+                    var ses = ctx.GetAuthedSession();
                     var db = ctx.Get<OakDb>();
-                    if (
-                        !await EpsUtil.HasOrgAccess(
-                            ctx,
-                            db,
-                            ses.Id,
-                            req.Org,
-                            OrgMemberRole.PerProject
-                        )
-                    )
-                    {
-                        return new Maybe<OrgMember>(null);
-                    }
+                    await EpsUtil.MustHaveOrgAccess(
+                        ctx,
+                        db,
+                        ses.Id,
+                        req.Org,
+                        OrgMemberRole.PerProject
+                    );
                     var mem = await db.OrgMembers.SingleOrDefaultAsync(
                         x => x.Org == req.Org && x.Id == req.Id,
                         ctx.Ctkn
