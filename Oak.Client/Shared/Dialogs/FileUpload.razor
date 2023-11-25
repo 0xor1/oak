@@ -1,4 +1,5 @@
 ﻿@using Common.Client
+@using Common.Shared
 @using Oak.Api
 @using Oak.Api.File
 @using Oak.Client.Lib
@@ -11,15 +12,17 @@
             <div class="rz-fileupload">
                 <div class="rz-fileupload-buttonbar">
                     <span class="rz-fileupload-choose rz-button">
-                        <InputFile OnChange="OnFilesChanged"  multiple/>
+                        <InputFile OnChange="OnFilesChanged"   multiple/>
                         <span class="rz-button-text">Choose</span>
                     </span>
                 </div>
                 <div class="flx col jc-s ai-s w-100 g-0h">
                     @foreach (var f in Files)
                     {
-                        <div class="flx w-100 jc-sb g-0h @(f.Status == FileStatus.Uploading? "rz-background-color-info-light": f.Status == FileStatus.Success? "rz-background-color-success-light": f.Status == FileStatus.Error? "rz-background-color-danger-light" : "")">
-                            <span class="shrink-1 ellip">@f.Name</span>
+                        <div class="flx w-100 jc-sb g-0h @(f.Status == FileStatus.Uploading? "rz-background-color-info-light": f.Status == FileStatus.Success? "rz-background-color-success-light": f.Status is FileStatus.Error or FileStatus.TooLarge? "rz-background-color-danger-light" : "")">
+                            <span class="shrink-1 ellip">
+                                @f.Name
+                            </span>
                             <div class="flx g-0h shrink-0">
                                 @switch (f.Status)
                                 {
@@ -34,6 +37,9 @@
                                         break;
                                     case FileStatus.Error:
                                         <span>@L.S(CS.Error)</span>
+                                        break;
+                                    case FileStatus.TooLarge:
+                                        <span>@L.S(CS.FileTooLarge, new {MaxSize = Util.Size(FileRpcs.Upload.MaxSize ?? 0L)})</span>
                                         break;
                                 }
                                 <span>@Util.Size((ulong)f.Size)</span>
@@ -75,7 +81,7 @@
         try
         {
             FileRes? res = null;
-            foreach (var f in Files)
+            foreach (var f in Files.Where(x => x.Status != FileStatus.TooLarge))
             {
                 f.Status = FileStatus.Uploading;
                 try
@@ -112,6 +118,10 @@
     {
         Files.Clear();
         Files.AddRange(arg.GetMultipleFiles().Select(x => new File(x)));
+        if (FileRpcs.Upload.MaxSize != null)
+        {
+            Files.Where(x => x.Size > FileRpcs.Upload.MaxSize).ForEach(x => x.Status = FileStatus.TooLarge);
+        }
         await Task.CompletedTask;
     }
 
@@ -130,7 +140,8 @@
         NotStarted,
         Uploading,
         Success,
-        Error
+        Error,
+        TooLarge
     }
 
     record File(IBrowserFile BFile)
@@ -139,6 +150,6 @@
         public string Name => BFile.Name;
         public string Type => BFile.ContentType;
         public ulong Size => (ulong)BFile.Size;
-    };
+    }
 
 }
