@@ -28,6 +28,9 @@
                                 <a @onclick:stopPropagation="true" href="@(Api.File.DownloadUrl(new (f.Org, f.Project, f.Task, f.Id, true)))" target="_blank">
                                     <RadzenButton Icon="download" ButtonStyle="ButtonStyle.Info" Size="ButtonSize.ExtraSmall"/>
                                 </a>
+                                <a @onclick:stopPropagation="true" href="@(Api.File.DownloadUrl(new (f.Org, f.Project, f.Task, f.Id, false)))" target="_blank">
+                                    <RadzenButton Icon="open_in_new" ButtonStyle="ButtonStyle.Info" Size="ButtonSize.ExtraSmall"/>
+                                </a>
                                 <RadzenButton Icon="content_copy" ButtonStyle="ButtonStyle.Info" Size="ButtonSize.ExtraSmall" Click="_ => CopyInlineUrlToClipboard(f)"/>
                                 <RadzenButton @onclick:stopPropagation="true" Icon="delete" ButtonStyle="ButtonStyle.Danger" Size="ButtonSize.ExtraSmall" Disabled="!Ctx.CanDeleteVItemOrFile(f)" Click="_ => Delete(f)"/>
                             </div>
