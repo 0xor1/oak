@@ -1,4 +1,7 @@
-﻿@using Oak.Client.Shared.MainLayout
+﻿@using Oak.Client.Shared.MainLayout;
+@using CS = Common.Shared.I18n.S;
+@using Common.Client
+@inject L L;
 <Router AppAssembly="@typeof(App).Assembly">
     <Found Context="routeData">
         <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
@@ -7,7 +10,7 @@
     <NotFound>
         <PageTitle>Not found</PageTitle>
         <LayoutView Layout="@typeof(MainLayout)">
-            <p class="m-1" role="alert">Sorry, there's nothing at this address.</p>
+            <p class="m-1" role="alert">@L.S(CS.NothingAtAddress)</p>
         </LayoutView>
     </NotFound>
 </Router>
