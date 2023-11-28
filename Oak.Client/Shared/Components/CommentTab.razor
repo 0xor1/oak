@@ -16,10 +16,13 @@
     }
     @foreach (var i in Items)
     {
-        <RadzenCard class="flx col w-100">
-            <div class="f-0t">
+        <RadzenCard class="flx col w-100 comment-card">
+            <div class="f-0t flx g-1 row ai-c h-2 rz-color-base-100">
                 <User OrgId="@Ctx.OrgId" UserId="@i.CreatedBy"></User>
                 <span>@L.D(i.CreatedOn) @L.T(i.CreatedOn)</span>
+                <span class="comment-actions">
+                    <RadzenButton title="@L.S(S.Delete)" @onclick:stopPropagation="true" Icon="delete" ButtonStyle="ButtonStyle.Danger" Size="ButtonSize.ExtraSmall" Disabled="!Ctx.CanDeleteOorUpdateComment(i)" Click="_ => Delete(i)"/>
+                </span>
             </div>
             <div>
                 @AddLineBreaks(i)
@@ -50,7 +53,7 @@
 
     private async Task Delete(Comment c)
     {
-        var confirmed = await DialogService.Confirm(L.S(S.TaskConfirmDeleteFile), L.S(S.Confirm), new ConfirmOptions() { OkButtonText = L.S(S.Delete), CancelButtonText = L.S(S.Cancel) });
+        var confirmed = await DialogService.Confirm(L.S(S.TaskConfirmDeleteComment), L.S(S.Confirm), new ConfirmOptions() { OkButtonText = L.S(S.Delete), CancelButtonText = L.S(S.Cancel) });
         if (confirmed == true)
         {
             await Api.Comment.Delete(new(c.Org, c.Project, c.Task, c.Id));

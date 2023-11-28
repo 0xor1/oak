@@ -1,0 +1,8 @@
+.comment-actions{
+  display: none;
+}
+.comment-card:hover{
+  .comment-actions{
+    display: inline-block;
+  }
+}

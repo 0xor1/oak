@@ -140,6 +140,7 @@ public static partial class S
             TaskCantMoveRootProjectNode,
             new("Impossibile spostare il nodo principale del progetto")
         },
+        { TaskConfirmDeleteComment, new(" dass Sie diesen Kommentar löschen möchten?</p>") },
         {
             TaskConfirmDeleteFile,
             new("<p>Sei sicuro di voler eliminare il file <strong>{{Name}}</strong>?</p>")

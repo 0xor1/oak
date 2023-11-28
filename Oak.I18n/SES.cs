@@ -140,6 +140,10 @@ public static partial class S
         { Task, new("Tarea") },
         { TaskCantMoveRootProjectNode, new("No se puede mover el nodo del proyecto raíz") },
         {
+            TaskConfirmDeleteComment,
+            new("<p> ¿Estás seguro de que quieres eliminar este comentario? </p>")
+        },
+        {
             TaskConfirmDeleteFile,
             new("<p>¿Está seguro de que desea eliminar el archivo <strong>{{Name}}</strong>?</p>")
         },

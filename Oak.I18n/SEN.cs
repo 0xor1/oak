@@ -134,6 +134,7 @@ public static partial class S
         { SubCounts, new("Sub Counts") },
         { Task, new("Task") },
         { TaskCantMoveRootProjectNode, new("Can't move root project node") },
+        { TaskConfirmDeleteComment, new("<p>Are you sure you want to delete this comment?</p>") },
         {
             TaskConfirmDeleteFile,
             new("<p>Are you sure you want to delete the file <strong>{{Name}}</strong>?</p>")

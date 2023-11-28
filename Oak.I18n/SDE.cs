@@ -136,6 +136,7 @@ public static partial class S
         { SubCounts, new("Sub-Zählungen") },
         { Task, new("Aufgabe") },
         { TaskCantMoveRootProjectNode, new("Stammprojektknoten kann nicht verschoben werden") },
+        { TaskConfirmDeleteComment, new("<p>Sind Sie sicher") },
         {
             TaskConfirmDeleteFile,
             new(

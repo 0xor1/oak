@@ -98,6 +98,7 @@ public static partial class S
     public const string SubCounts = "sub_counts";
     public const string Task = "task";
     public const string TaskCantMoveRootProjectNode = "task_cant_move_root_project_node";
+    public const string TaskConfirmDeleteComment = "task_confirm_delete_comment";
     public const string TaskConfirmDeleteFile = "task_confirm_delete_file";
     public const string TaskConfirmDeleteTask = "task_confirm_delete_task";
     public const string TaskConfirmDeleteVitem = "task_confirm_delete_vitem";

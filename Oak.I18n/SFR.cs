@@ -144,6 +144,10 @@ public static partial class S
         { Task, new("Tâche") },
         { TaskCantMoveRootProjectNode, new("Impossible de déplacer le nœud du projet racine") },
         {
+            TaskConfirmDeleteComment,
+            new("<p>Êtes-vous sûr de vouloir supprimer ce commentaire?</p>")
+        },
+        {
             TaskConfirmDeleteFile,
             new("<p>Êtes-vous sûr de vouloir supprimer le fichier <strong>{{Name}}</strong>?</p>")
         },
