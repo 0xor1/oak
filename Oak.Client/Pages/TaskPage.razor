@@ -1,8 +1,10 @@
 ﻿@page "/org/{OrgId}/project/{ProjectId}/task/{TaskId}"
 @using Oak.I18n
 @using Common.Client
+@using Oak.Client.Lib
 @inject L L;
-<PageTitle>@L.S(S.Tasks)</PageTitle>
+@inject UiCtx Ctx
+<PageTitle>@(Ctx.Project?.Name ?? @L.S(S.Tasks))</PageTitle>
 <TaskView OrgId="@OrgId" ProjectId="@ProjectId" TaskId="@TaskId"/>
 
 @code{
