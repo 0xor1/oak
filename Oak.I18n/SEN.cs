@@ -46,7 +46,7 @@ public static partial class S
         {
             HomeBody,
             new(
-                "This is a project management app where you organise tasks in a tree structure like a file directory. Each task gives a summary of the vital stats of the tasks beneath it, estimated and incurred time and costs etc."
+                "Oak is a project management app, tasks are organised in trees like a file directory. Each task contains a summary of the stats of all the tasks beneath it, like estimated and incurred time."
             )
         },
         { HomeHeader, new("Welcome to Oak!") },

@@ -46,7 +46,7 @@ public static partial class S
         {
             HomeBody,
             new(
-                "Questa è un'app di gestione dei progetti in cui organizzi le attività in una struttura ad albero come una directory di file. Ogni attività fornisce un riepilogo delle statistiche vitali delle attività sottostanti, tempi e costi stimati e sostenuti, ecc."
+                "Oak è un'app di gestione dei progetti, le attività sono organizzate in alberi come una directory di file. Ogni attività contiene un riepilogo delle statistiche di tutte le attività sottostanti, come il tempo stimato e quello sostenuto."
             )
         },
         { HomeHeader, new("Benvenuti in Quercia!") },

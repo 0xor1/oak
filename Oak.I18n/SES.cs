@@ -46,7 +46,7 @@ public static partial class S
         {
             HomeBody,
             new(
-                "Esta es una aplicación de gestión de proyectos donde organizas tareas en una estructura de árbol como un directorio de archivos. Cada tarea ofrece un resumen de las estadísticas vitales de las tareas subyacentes, el tiempo y los costos estimados e incurridos, etc."
+                "Oak es una aplicación de gestión de proyectos, las tareas se organizan en árboles como un directorio de archivos. Cada tarea contiene un resumen de las estadísticas de todas las tareas subyacentes, como el tiempo estimado y el tiempo incurrido."
             )
         },
         { HomeHeader, new("¡Bienvenido a Roble!") },

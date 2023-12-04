@@ -46,7 +46,7 @@ public static partial class S
         {
             HomeBody,
             new(
-                "Il s'agit d'une application de gestion de projet dans laquelle vous organisez les tâches dans une arborescence comme un répertoire de fichiers. Chaque tâche donne un résumé des statistiques vitales des tâches en dessous, du temps et des coûts estimés et engagés, etc."
+                "Oak est une application de gestion de projet, les tâches sont organisées en arborescences comme un répertoire de fichiers. Chaque tâche contient un résumé des statistiques de toutes les tâches en dessous, comme le temps estimé et engagé."
             )
         },
         { HomeHeader, new("Bienvenue à Chêne!") },

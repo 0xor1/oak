@@ -46,7 +46,7 @@ public static partial class S
         {
             HomeBody,
             new(
-                "Dies ist eine Projektmanagement-App, mit der Sie Aufgaben in einer Baumstruktur wie einem Dateiverzeichnis organisieren. Jede Aufgabe enthält eine Zusammenfassung der wichtigen Statistiken der darunter liegenden Aufgaben, der geschätzten und angefallenen Zeit und Kosten usw."
+                "Oak ist eine Projektmanagement-App, Aufgaben werden in Bäumen wie einem Dateiverzeichnis organisiert. Jede Aufgabe enthält eine Zusammenfassung der Statistiken aller darunter liegenden Aufgaben, wie geschätzte und angefallene Zeit."
             )
         },
         { HomeHeader, new("Willkommen in Oak!") },
