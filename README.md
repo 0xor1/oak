@@ -1,7 +1,9 @@
 Oak
 ===
+[![Build Status](https://github.com/0xor1/oak/actions/workflows/build.yml/badge.svg)](https://github.com/0xor1/oak/actions/workflows/build.yml)
+[![Coverage Status](https://coveralls.io/repos/github/0xor1/oak/badge.svg)](https://coveralls.io/github/0xor1/oak)
+[![Demo Live](https://img.shields.io/badge/demo-live-4ec820)](https://oak.dans-demos.com)
 
-[LIVE DEMO](https://oak.dans-demos.com)
 
 A project management app where tasks are organised in a tree structure.
 This gives the benefit of enabling the aggregation of task stats like time
