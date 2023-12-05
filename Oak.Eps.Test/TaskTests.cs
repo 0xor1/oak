@@ -21,7 +21,7 @@ public class TaskTests : TestBase
     }
 
     [Fact]
-    public async void Create_ForOtherUSer_Success()
+    public async void Create_ForOtherUser_Success()
     {
         var (ali, bob, cat, dan, anon, org) = await Setup();
         var p = await CreateProject(ali, org.Id);
