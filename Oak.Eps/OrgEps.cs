@@ -2,6 +2,7 @@
 using Amazon.S3;
 using Common.Server;
 using Common.Shared;
+using Common.Shared.Auth;
 using Ganss.Xss;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -13,6 +14,7 @@ using Exact = Oak.Api.Org.Exact;
 using Get = Oak.Api.Org.Get;
 using Org = Oak.Api.Org.Org;
 using S = Oak.I18n.S;
+using Session = Common.Server.Session;
 using Task = System.Threading.Tasks.Task;
 using Update = Oak.Api.Org.Update;
 
@@ -147,7 +149,7 @@ public static class OrgEps
             )
         };
 
-    public static async Task AuthOnDelete(IRpcCtx ctx, OakDb db, Session ses)
+    public static async Task AuthOnDelete(IRpcCtx ctx, OakDb db, ISession ses)
     {
         // when a user wants to delete their account entirely,
         var allOwnerOrgs = await db.OrgMembers
@@ -176,7 +178,7 @@ public static class OrgEps
     public static async Task AuthValidateFcmTopic(
         IRpcCtx ctx,
         OakDb db,
-        Session ses,
+        ISession ses,
         IReadOnlyList<string> topic
     )
     {
@@ -210,7 +212,7 @@ public static class OrgEps
         }
     }
 
-    private static async Task RawBatchDeactivate(IRpcCtx ctx, OakDb db, Session ses)
+    private static async Task RawBatchDeactivate(IRpcCtx ctx, OakDb db, ISession ses)
     {
         await db.OrgMembers
             .Where(x => x.Id == ses.Id)

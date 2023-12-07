@@ -8,16 +8,9 @@
         <RadzenText class="m-t-0" TextStyle="TextStyle.H2">@L.S(S.HomeHeader)</RadzenText>
         <RadzenText class="txt-j" TextStyle="TextStyle.Body1" >@L.S(S.HomeBody)</RadzenText>
         <div class="flx m-t-0h ai-c g-1">
-            @if (Session.IsAuthed)
-            {
-                <RadzenButton ButtonStyle="ButtonStyle.Primary" Text="@L.S(S.OrgMyOrgs)" Click="@(() => Nav.NavigateTo("/my_orgs"))"/>
-            }
-            else
-            {
-                <RadzenButton ButtonStyle="ButtonStyle.Secondary" Text="@L.S(CS.SignIn)" Click="@(() => Nav.NavigateTo("/cmn/auth/sign_in"))"/>
-                <RadzenText TextStyle="TextStyle.Body1" class="m-0">@L.S(CS.Or)</RadzenText>
-                <RadzenButton ButtonStyle="ButtonStyle.Primary" Text="@L.S(CS.Register)" Click="@(() => Nav.NavigateTo("/cmn/auth/register"))"/>
-            }
+            <RadzenButton ButtonStyle="ButtonStyle.Secondary" Text="@L.S(CS.SignIn)" Click="@(() => Nav.NavigateTo("/cmn/auth/sign_in"))"/>
+            <RadzenText TextStyle="TextStyle.Body1" class="m-0">@L.S(CS.Or)</RadzenText>
+            <RadzenButton ButtonStyle="ButtonStyle.Primary" Text="@L.S(CS.Register)" Click="@(() => Nav.NavigateTo("/cmn/auth/register"))"/>
         </div>
     </RadzenCard>
 </div>

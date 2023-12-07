@@ -1,6 +1,7 @@
 ﻿using System.Text.RegularExpressions;
 using Common.Server;
 using Common.Shared;
+using Common.Shared.Auth;
 using Microsoft.EntityFrameworkCore;
 using Oak.Api;
 using Oak.Api.OrgMember;
@@ -151,7 +152,7 @@ public static class EpsUtil
     public static async Task LogActivity(
         IRpcCtx ctx,
         OakDb db,
-        Session ses,
+        ISession ses,
         string org,
         string project,
         string task,

@@ -1,0 +1,37 @@
+{
+  "env": "lcl",
+  "client": {
+    "demoMode": true,
+    "repoUrl": "https://github.com/0xor1/oak"
+  },
+  "auth": {
+    "baseHref": "http://localhost:9500"
+  },
+  "server": {
+    "listen": "http://localhost:9500",
+    "useHttpsRedirection": false
+  },
+  "db": {
+    "connection": "Server=localhost;Database=Oak;Uid=Oak;Pwd=C0-Mm-0n-Oak"
+  },
+  "session": {
+    "signatureKeys": [
+      "MlSZpzRgE0NovHM66Zm0MJf_B-0GK4eFABsN3BemeiP1uw9PxxyM2GHYhNmgveS5g5-QMM37tVq4XxOxCBfnjw",
+      "YYHMi8l-UeuyDkBx3E1IEO-CGb7s5Dspe6MeARFdHoO0a8jcX4h0uM-CMHTSlUjUj3ix41MmqbaGmSzzmNM8DA"
+    ]
+  },
+  "email": {
+    "region": "eu-west-1",
+    "key": "abc",
+    "secret": "123",
+    "noReplyAddress": "noreply@yolo.solo"
+  },
+  "store": {
+    "host": "localhost:9000",
+    "key": "localtest",
+    "secret": "localtest"
+  },
+  "fcm": {
+    "serviceAccountKeyFile": "C:\\Users\\danie\\code\\dotnet\\Oak\\Oak.Server\\fcm_service_account_key.json"
+  }
+}
