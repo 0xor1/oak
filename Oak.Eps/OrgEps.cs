@@ -202,6 +202,7 @@ public static class OrgEps
         await db.ProjectMembers.Where(x => orgs.Contains(x.Org)).ExecuteDeleteAsync(ctx.Ctkn);
         await db.Activities.Where(x => orgs.Contains(x.Org)).ExecuteDeleteAsync(ctx.Ctkn);
         await db.Tasks.Where(x => orgs.Contains(x.Org)).ExecuteDeleteAsync(ctx.Ctkn);
+        await db.Timers.Where(x => orgs.Contains(x.Org)).ExecuteDeleteAsync(ctx.Ctkn);
         await db.VItems.Where(x => orgs.Contains(x.Org)).ExecuteDeleteAsync(ctx.Ctkn);
         await db.Files.Where(x => orgs.Contains(x.Org)).ExecuteDeleteAsync(ctx.Ctkn);
         await db.Comments.Where(x => orgs.Contains(x.Org)).ExecuteDeleteAsync(ctx.Ctkn);

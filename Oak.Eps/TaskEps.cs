@@ -705,6 +705,14 @@ internal static class TaskEps
                                         && allTaskIds.Contains(x.Id)
                                 )
                                 .ExecuteDeleteAsync();
+                            await db.Timers
+                                .Where(
+                                    x =>
+                                        x.Org == req.Org
+                                        && x.Project == req.Project
+                                        && allTaskIds.Contains(x.Task)
+                                )
+                                .ExecuteDeleteAsync();
                             await db.VItems
                                 .Where(
                                     x =>

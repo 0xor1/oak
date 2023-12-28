@@ -196,6 +196,23 @@ CREATE TABLE Tasks(
     UNIQUE INDEX(Org, Project, User, Id)
 );
 
+DROP TABLE IF EXISTS Timers;
+CREATE TABLE Timers(
+    Org VARCHAR(22) NOT NULL,
+    Project VARCHAR(22) NOT NULL,
+    Task VARCHAR(22) NOT NULL,
+    User VARCHAR(22) NULL,
+    CreatedOn DATETIME(3) NOT NULL,
+    Note VARCHAR(1250) NOT NULL,
+    # Inc is in seconds here, when this is logged to a vitem it is rounded to minutes
+    Inc BIGINT UNSIGNED NOT NULL,
+    LastStartedOn DATETIME(3) NOT NULL,
+    IsRunning BOOLEAN NOT NULL
+    PRIMARY KEY (Org, Project, Task, User),
+    UNIQUE INDEX(Org, Project, User, Task),
+    INDEX(Org, Project, IsRunning, LastStartedOn)
+);
+
 DROP TABLE IF EXISTS VItems;
 CREATE TABLE VItems(
     Org VARCHAR(22) NOT NULL,

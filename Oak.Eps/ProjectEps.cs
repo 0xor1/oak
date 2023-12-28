@@ -408,6 +408,9 @@ internal static class ProjectEps
                             await db.Tasks
                                 .Where(x => x.Org == req.Org && x.Project == req.Id)
                                 .ExecuteDeleteAsync(ctx.Ctkn);
+                            await db.Timers
+                                .Where(x => x.Org == req.Org && x.Project == req.Id)
+                                .ExecuteDeleteAsync(ctx.Ctkn);
                             await db.VItems
                                 .Where(x => x.Org == req.Org && x.Project == req.Id)
                                 .ExecuteDeleteAsync(ctx.Ctkn);
