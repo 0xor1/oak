@@ -10,10 +10,9 @@ public class Timer
     public string Project { get; set; }
     public string Task { get; set; }
     public string User { get; set; }
-    public string Note { get; set; }
     public ulong Inc { get; set; }
     public DateTime LastStartedOn { get; set; }
     public bool IsRunning { get; set; }
 
-    public ApiTimer ToApi() => new(Org, Project, Task, User, Note, Inc, LastStartedOn, IsRunning);
+    public ApiTimer ToApi() => new(Org, Project, Task, User, Inc, LastStartedOn, IsRunning);
 }

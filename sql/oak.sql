@@ -202,7 +202,6 @@ CREATE TABLE Timers(
     Project VARCHAR(22) NOT NULL,
     Task VARCHAR(22) NOT NULL,
     User VARCHAR(22) NULL,
-    Note VARCHAR(1250) NOT NULL,
     # Inc is in seconds here, when this is logged to a vitem it is rounded to minutes
     Inc BIGINT UNSIGNED NOT NULL,
     LastStartedOn DATETIME(3) NOT NULL,
