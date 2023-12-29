@@ -163,11 +163,16 @@ public static class TimerEps
                     await ctx.DbTx<OakDb, IReadOnlyList<Timer>>(
                         async (db, ses) =>
                         {
-                            var ts = await db.Timers.Where(x =>
-                                x.Org == req.Org && x.Project == req.Project &&
-                                x.User == ses.Id).ToListAsync(ctx.Ctkn);
+                            var ts = await db.Timers
+                                .Where(
+                                    x =>
+                                        x.Org == req.Org
+                                        && x.Project == req.Project
+                                        && x.User == ses.Id
+                                )
+                                .ToListAsync(ctx.Ctkn);
                             var t = ts.SingleOrDefault(x => x.Task == req.Task);
-                            ctx.NotFoundIf(t == null, model: new {Name = "Timer"});
+                            ctx.NotFoundIf(t == null, model: new { Name = "Timer" });
                             t.NotNull();
                             db.Timers.Remove(t);
                             ts.Remove(t);
