@@ -197,6 +197,8 @@ public static partial class S
         { TimeEst, new("Tiempo estimado") },
         { TimeInc, new("Tiempo incurrido") },
         { TimeMin, new("Tiempo mín.") },
+        { TimerAlreadyExists, new("El temporizador ya existe") },
+        { TimerMaxTimers, new("Temporizadores máximos por usuario: {{MaxTimers}}") },
         { True, new("Verdadero") },
         { Unassigned, new("Sin asignar") },
         { Upload, new("Subir") },

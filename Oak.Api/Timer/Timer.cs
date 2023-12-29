@@ -45,24 +45,16 @@ public record Timer(
     string Project,
     string Task,
     string User,
-    DateTime CreatedOn,
     string Note,
     ulong Inc,
     DateTime LastStartedOn,
     bool IsRunning
 );
 
-public record Create(string Org, string Project, string Task, string User);
+public record Create(string Org, string Project, string Task);
 
-public record Get(string Org, string Project, string? Task, string? User, bool Asc = true);
+public record Get(string Org, string Project, string? Task, string? User, bool Asc = false);
 
-public record Update(
-    string Org,
-    string Project,
-    string Task,
-    string User,
-    string? Note,
-    bool? IsRunning
-);
+public record Update(string Org, string Project, string Task, string? Note, bool? IsRunning);
 
-public record Delete(string Org, string Project, string Task, string User, bool Log);
+public record Delete(string Org, string Project, string Task, bool Log, string? Note);

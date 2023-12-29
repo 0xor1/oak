@@ -1,5 +1,3 @@
-using Microsoft.AspNetCore.Components.Web;
-
 namespace Oak.Client.Test;
 
 public class HomeTest : TestBase

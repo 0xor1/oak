@@ -195,6 +195,8 @@ public static partial class S
         { TimeEst, new("Zeitschätzung") },
         { TimeInc, new("Angefallene Zeit") },
         { TimeMin, new("Zeitminimum") },
+        { TimerAlreadyExists, new("Timer existiert bereits") },
+        { TimerMaxTimers, new("Maximale Timer pro Benutzer: {{MaxTimers}}") },
         { True, new("Wahr") },
         { Unassigned, new("Nicht zugewiesen") },
         { Upload, new("Hochladen") },

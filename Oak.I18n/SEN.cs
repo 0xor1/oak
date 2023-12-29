@@ -181,6 +181,8 @@ public static partial class S
         { TimeEst, new("Time Est.") },
         { TimeInc, new("Time Inc.") },
         { TimeMin, new("Time Min.") },
+        { TimerAlreadyExists, new("Timer already exists") },
+        { TimerMaxTimers, new("Max timers per user: {{MaxTimers}}") },
         { True, new("True") },
         { Unassigned, new("Unassigned") },
         { Upload, new("Upload") },

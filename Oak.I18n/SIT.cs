@@ -195,6 +195,8 @@ public static partial class S
         { TimeEst, new("Stima del tempo") },
         { TimeInc, new("Tempo impiegato") },
         { TimeMin, new("Tempo min.") },
+        { TimerAlreadyExists, new("Il timer esiste già") },
+        { TimerMaxTimers, new("Numero massimo di timer per utente: {{MaxTimers}}") },
         { True, new("Vero") },
         { Unassigned, new("Non assegnato") },
         { Upload, new("Caricamento") },

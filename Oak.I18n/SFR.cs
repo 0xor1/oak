@@ -203,6 +203,8 @@ public static partial class S
         { TimeEst, new("Temps estimée.") },
         { TimeInc, new("Temps engagé") },
         { TimeMin, new("Durée min.") },
+        { TimerAlreadyExists, new("La minuterie existe déjà") },
+        { TimerMaxTimers, new("Minuteries maximales par utilisateur: {{MaxTimers}}") },
         { True, new("Vrai") },
         { Unassigned, new("Non attribué") },
         { Upload, new("Télécharger") },
