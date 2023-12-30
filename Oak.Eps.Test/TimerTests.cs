@@ -38,5 +38,9 @@ public class TimerTests : TestBase
         ts = await ali.Timer.Delete(new(org.Id, tt.P.Id, tt.B.Id));
         Assert.Equal(2, ts.Count);
         Assert.True(ts.All(x => x.Task != tt.B.Id));
+        Assert.Equal(org.Id, ts[0].Org);
+        Assert.Equal(tt.P.Id, ts[0].Project);
+        Assert.Equal(aliSes.Id, ts[0].User);
+        Assert.Equal(0u, ts[0].Inc);
     }
 }
