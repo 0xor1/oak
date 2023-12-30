@@ -1,0 +1,51 @@
+﻿@using Common.Client
+@using Common.Shared
+@using Oak.Client.Lib
+@using S = Oak.I18n.S
+@using System.Timers
+<div class="flx col g-0h">
+    <RadzenLabel>@Value.TaskName</RadzenLabel>
+    @if (Value.IsRunning)
+    {
+        <RadzenLabel>@Util.TimerDuration(Value.Inc + (ulong)DateTimeExt.UtcNowMilli().Subtract(Value.LastStartedOn).Seconds)</RadzenLabel>
+    }
+    else
+    {
+        <RadzenLabel>@Util.TimerDuration(Value.Inc)</RadzenLabel>
+    }
+</div>
+
+@inject L L;
+@inject UiCtx Ctx;
+@code {
+
+    [Parameter]
+    [EditorRequired]
+    public Api.Timer.Timer Value { get; set; }
+    
+    private System.Timers.Timer Ticker; 
+
+    protected override async Task OnInitializedAsync()
+    {
+        Ticker = new System.Timers.Timer(TimeSpan.FromSeconds(1))
+        {
+            AutoReset = true,
+            Enabled = true
+        };
+        Ticker.Elapsed += TimerTick;
+    }
+
+    private void TimerTick(object? obj, ElapsedEventArgs? args)
+    {
+        if (Ctx.Timers?.Any(x => x.IsRunning) ?? false)
+        {
+            Ticker.Start();
+            InvokeAsync(StateHasChanged);
+        }
+        else
+        {
+            Ticker.Stop();
+        }
+    }
+
+}

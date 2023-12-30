@@ -12,6 +12,7 @@ await Client.Run<App, Oak.Api.IApi>(
     {
         sc.AddSingleton<UiCtx>();
         sc.AddSingleton<IUserService, UserService>();
+        sc.AddSingleton<ITimerService, TimerService>();
         sc.AddSingleton<IHtmlSanitizer, HtmlSanitizer>();
     },
     true

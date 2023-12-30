@@ -11,6 +11,7 @@
 @using S = Oak.I18n.S
 @using Task = System.Threading.Tasks.Task
 @using System.Text
+@using Oak.Api.Timer
 <div class="root col p-0h g-0h jc-s ai-s">
     @if (_ready)
     {
@@ -122,6 +123,7 @@
                                             {
                                                 <div class="flx g-0q p-abs show-on-row-mouse-over" style="right: -1em;">
                                                     <RadzenButton @onclick:stopPropagation="true" Icon="more_time" ButtonStyle="ButtonStyle.Success" Size="ButtonSize.ExtraSmall" Click="_ => NewVItem(VItemType.Time, t)"/>
+                                                    <RadzenButton @onclick:stopPropagation="true" Icon="timer" ButtonStyle="ButtonStyle.Success" Size="ButtonSize.ExtraSmall" Click="_ => StartTimer(t)"/>
                                                 </div>
                                             }
                                         </div>
@@ -204,6 +206,7 @@
 @inject DialogService DialogService;
 @inject NavigationManager Nav;
 @inject UiCtx Ctx;
+@inject ITimerService TimerService;
 @code{
     
     [CascadingParameter]
@@ -324,6 +327,22 @@
     }
 
     private async Task NewVItem(VItemType Type, ATask t) => await DialogService.OpenAsync<VItemNewOrUpdate>(L.S(Type == VItemType.Time? S.TaskNewTime: S.TaskNewCost), new (){{"Type", Type}, {"SubTask", t}, {"OnCreated", OnVItemCreated}});
+
+    private async Task StartTimer(ATask t)
+    {
+        var timer = Ctx.Timers?.SingleOrDefault(x => x.Task == t.Id);
+        var ts = Ctx.Timers;
+        if (timer != null && !timer.IsRunning)
+        {
+            // restart existing paused timer
+            ts = (await Api.Timer.Update(new (timer.Org, timer.Project, timer.Task, true))).ToList();
+        }
+        else if (timer == null)
+        {
+            ts = (await Api.Timer.Create(new (t.Org, t.Project, t.Id))).ToList();
+        }
+        TimerService.TimersChanged(ts);
+    }
 
     private async Task OnVItemCreated(VItemRes res)
     {

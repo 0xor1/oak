@@ -27,14 +27,12 @@
                         }
                         @if (ShowTimers)
                         {
-                            <RadzenPanelMenuItem Text="@L.S(S.Timers)" Icon="more_time">
+                            <RadzenPanelMenuItem Text="@L.S(S.Timers)" Icon="timer">
                                 <RadzenPanelMenuItem class="d-none"/>
                                 <div class="flx col p-0t p-l-4 g-0t">
                                     @foreach (var t in Ctx.Timers ?? new List<Timer>())
                                     {
-                                        <div class="flx g-0h">
-                                            <RadzenLabel>@t.TaskName</RadzenLabel>
-                                        </div>
+                                        <Timer Value="t"/>
                                     }
                                 </div>
                             </RadzenPanelMenuItem>
@@ -92,14 +90,15 @@
 @using Common.Shared
 @using Common.Shared.Auth
 @using Oak.Api.Org
-@using Oak.Api.Timer
 @using CS = Common.Shared.I18n.S
 @using StringExts = Common.Shared.StringAndBytesExt
 @using Oak.Client.Lib
 @using IApi = Oak.Api.IApi
 @using S = Oak.I18n.S
+@using Timer = Oak.Api.Timer.Timer
 @inherits LayoutComponentBase
 @inject IAuthService Auth
+@inject ITimerService TimerService
 @inject L L
 @inject UiCtx Ctx
 @inject NavigationManager Nav
@@ -120,6 +119,7 @@
     
     protected override async Task OnInitializedAsync()
     {
+        TimerService.OnTimersChanged(TimersChanged);
         Auth.OnSessionChanged(AuthStateChanged);
         AuthStateChanged(await Auth.GetSession());
         _eventReg = Nav.RegisterLocationChangingHandler(LocationChanging);
@@ -133,6 +133,12 @@
     private void AuthStateChanged(ISession s)
     {
         _session = s;
+        StateHasChanged();
+    }
+
+    private void TimersChanged(List<Timer> ts)
+    {
+        Ctx.Set(ts);
         StateHasChanged();
     }
 

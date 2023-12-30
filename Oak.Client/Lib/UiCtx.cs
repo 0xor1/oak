@@ -76,13 +76,20 @@ public class UiCtx
         _auth = auth;
     }
 
-    public System.Threading.Tasks.Task Set(Org? org) => Set(org, null, null);
+    public System.Threading.Tasks.Task Set(Org? org) => Set(org, null, null, null);
 
-    public System.Threading.Tasks.Task Set(Project? project) => Set(null, project, null);
+    public System.Threading.Tasks.Task Set(Project? project) => Set(null, project, null, null);
 
-    public System.Threading.Tasks.Task Set(Task? task) => Set(null, null, task);
+    public System.Threading.Tasks.Task Set(Task? task) => Set(null, null, task, null);
 
-    private async System.Threading.Tasks.Task Set(Org? org, Project? project, Task? task)
+    public System.Threading.Tasks.Task Set(List<Timer>? timers) => Set(null, null, null, timers);
+
+    private async System.Threading.Tasks.Task Set(
+        Org? org,
+        Project? project,
+        Task? task,
+        List<Timer>? timers
+    )
     {
         await _ss.WaitAsync();
         try
@@ -92,12 +99,20 @@ public class UiCtx
             var projectId = project?.Id ?? task?.Project;
             var taskId = task?.Id;
 
+            if (orgId == null && projectId == null && taskId == null && (timers?.Any() ?? false))
+            {
+                orgId = timers[0].Org;
+                projectId = timers[0].Project;
+                taskId = timers[0].Task;
+            }
+
             var orgChanged = OrgId != orgId;
             var projectChanged = ProjectId != projectId;
 
             OrgId = orgId;
             ProjectId = projectId;
             TaskId = taskId;
+            Timers = timers ?? (projectChanged ? null : Timers);
             var sesId = (await _auth.GetSession()).Id;
 
             if (OrgId == null)
@@ -130,7 +145,9 @@ public class UiCtx
                 ProjectMember = (
                     await _api.ProjectMember.GetOne(new(OrgId, ProjectId, sesId))
                 ).Item;
-                Timers = (await _api.Timer.Get(new(OrgId, ProjectId, User: sesId))).Set.ToList();
+                Timers =
+                    timers
+                    ?? (await _api.Timer.Get(new(OrgId, ProjectId, User: sesId))).Set.ToList();
             }
 
             Task = task;
