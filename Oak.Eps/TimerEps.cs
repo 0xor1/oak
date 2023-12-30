@@ -103,7 +103,7 @@ public static class TimerEps
                         false => oqry.ThenByDescending(x => x.LastStartedOn)
                     };
                     var initRes = await oqry.Take(101).ToListAsync(ctx.Ctkn);
-                    var tmpRes = await ReturnResult(ctx, db, initRes, false);
+                    var tmpRes = await ReturnResult(ctx, db, initRes, req.User != null);
                     return SetRes<Timer>.FromLimit(tmpRes, 101);
                 }
             ),

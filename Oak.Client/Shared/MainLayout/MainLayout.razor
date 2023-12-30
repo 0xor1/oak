@@ -25,6 +25,20 @@
                                 }
                             }
                         }
+                        @if (ShowTimers)
+                        {
+                            <RadzenPanelMenuItem Text="@L.S(S.Timers)" Icon="more_time">
+                                <RadzenPanelMenuItem class="d-none"/>
+                                <div class="flx col p-0t p-l-4 g-0t">
+                                    @foreach (var t in Ctx.Timers ?? new List<Timer>())
+                                    {
+                                        <div class="flx g-0h">
+                                            <RadzenLabel>@t.TaskName</RadzenLabel>
+                                        </div>
+                                    }
+                                </div>
+                            </RadzenPanelMenuItem>
+                        }
                         @if (ShowDisplayOptions)
                         {
                             <RadzenPanelMenuItem Text="@L.S(S.Display)" Icon="visibility">
@@ -78,6 +92,7 @@
 @using Common.Shared
 @using Common.Shared.Auth
 @using Oak.Api.Org
+@using Oak.Api.Timer
 @using CS = Common.Shared.I18n.S
 @using StringExts = Common.Shared.StringAndBytesExt
 @using Oak.Client.Lib
@@ -101,6 +116,7 @@
     private string? _projectId;
     private string? _taskId;
     private bool ShowDisplayOptions => !Ctx.OrgId.IsNullOrWhiteSpace();
+    private bool ShowTimers => Ctx.Timers?.Any() ?? false;
     
     protected override async Task OnInitializedAsync()
     {

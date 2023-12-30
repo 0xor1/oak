@@ -147,6 +147,7 @@ time_inc,Time Inc.,Tiempo incurrido,Temps engagé,Angefallene Zeit,Tempo impiega
 time_min,Time Min.,Tiempo mín.,Durée min.,Zeitminimum,Tempo min.
 timer_already_exists,Timer already exists,El temporizador ya existe,La minuterie existe déjà,Timer existiert bereits,Il timer esiste già
 timer_max_timers,Max timers per user: {{MaxTimers}},Temporizadores máximos por usuario: {{MaxTimers}},Minuteries maximales par utilisateur: {{MaxTimers}},Maximale Timer pro Benutzer: {{MaxTimers}},Numero massimo di timer per utente: {{MaxTimers}}
+timers,Timers,Temporizadores,Minuteries,Timer,Temporizzatori
 true,True,Verdadero,Vrai,Wahr,Vero
 unassigned,Unassigned,Sin asignar,Non attribué,Nicht zugewiesen,Non assegnato
 upload,Upload,Subir,Télécharger,Hochladen,Caricamento

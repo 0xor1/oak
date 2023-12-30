@@ -197,6 +197,7 @@ public static partial class S
         { TimeMin, new("Tempo min.") },
         { TimerAlreadyExists, new("Il timer esiste già") },
         { TimerMaxTimers, new("Numero massimo di timer per utente: {{MaxTimers}}") },
+        { Timers, new("Temporizzatori") },
         { True, new("Vero") },
         { Unassigned, new("Non assegnato") },
         { Upload, new("Caricamento") },

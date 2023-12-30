@@ -205,6 +205,7 @@ public static partial class S
         { TimeMin, new("Durée min.") },
         { TimerAlreadyExists, new("La minuterie existe déjà") },
         { TimerMaxTimers, new("Minuteries maximales par utilisateur: {{MaxTimers}}") },
+        { Timers, new("Minuteries") },
         { True, new("Vrai") },
         { Unassigned, new("Non attribué") },
         { Upload, new("Télécharger") },

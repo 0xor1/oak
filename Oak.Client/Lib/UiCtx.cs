@@ -110,6 +110,7 @@ public class UiCtx
             {
                 Project = null;
                 ProjectMember = null;
+                Timers = null;
             }
 
             if (TaskId == null)
@@ -129,6 +130,7 @@ public class UiCtx
                 ProjectMember = (
                     await _api.ProjectMember.GetOne(new(OrgId, ProjectId, sesId))
                 ).Item;
+                Timers = (await _api.Timer.Get(new(OrgId, ProjectId, User: sesId))).Set.ToList();
             }
 
             Task = task;
