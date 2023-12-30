@@ -8,6 +8,7 @@ using Oak.Api.Project;
 using Oak.Api.ProjectMember;
 using Oak.Api.VItem;
 using Task = Oak.Api.Task.Task;
+using Timer = Oak.Api.Timer.Timer;
 
 namespace Oak.Client.Lib;
 
@@ -27,6 +28,7 @@ public class UiCtx
     public Project? Project { get; private set; }
     public ProjectMember? ProjectMember { get; private set; }
     public Task? Task { get; private set; }
+    public List<Timer>? Timers { get; private set; }
 
     public bool HasOrgOwnerPerm => OrgMember is { Role: OrgMemberRole.Owner, IsActive: true };
 

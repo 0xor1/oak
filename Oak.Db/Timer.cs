@@ -14,5 +14,6 @@ public class Timer
     public DateTime LastStartedOn { get; set; }
     public bool IsRunning { get; set; }
 
-    public ApiTimer ToApi() => new(Org, Project, Task, User, Inc, LastStartedOn, IsRunning);
+    public ApiTimer ToApi(string taskName) =>
+        new(Org, Project, Task, User, taskName, Inc, LastStartedOn, IsRunning);
 }

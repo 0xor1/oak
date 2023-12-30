@@ -45,6 +45,7 @@ public record Timer(
     string Project,
     string Task,
     string User,
+    string TaskName,
     ulong Inc,
     DateTime LastStartedOn,
     bool IsRunning

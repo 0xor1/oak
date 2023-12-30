@@ -67,10 +67,7 @@ public static class TimerEps
                             };
                             await db.Timers.AddAsync(t, ctx.Ctkn);
                             ts.Add(t);
-                            return ts.Select(x => x.ToApi())
-                                .OrderByDescending(x => x.IsRunning)
-                                .ThenByDescending(x => x.LastStartedOn)
-                                .ToList();
+                            return await ReturnResult(ctx, db, ts);
                         }
                     )
             ),
@@ -105,8 +102,9 @@ public static class TimerEps
                         true => oqry.ThenBy(x => x.LastStartedOn),
                         false => oqry.ThenByDescending(x => x.LastStartedOn)
                     };
-                    var res = await oqry.Take(101).ToListAsync(ctx.Ctkn);
-                    return SetRes<Timer>.FromLimit(res.Select(x => x.ToApi()).ToList(), 101);
+                    var initRes = await oqry.Take(101).ToListAsync(ctx.Ctkn);
+                    var tmpRes = await ReturnResult(ctx, db, initRes, false);
+                    return SetRes<Timer>.FromLimit(tmpRes, 101);
                 }
             ),
             new RpcEndpoint<Update, IReadOnlyList<Timer>>(
@@ -156,10 +154,7 @@ public static class TimerEps
                                 t.Inc += (ulong)
                                     DateTimeExt.UtcNowMilli().Subtract(t.LastStartedOn).Seconds;
                             }
-                            return ts.Select(x => x.ToApi())
-                                .OrderByDescending(x => x.IsRunning)
-                                .ThenByDescending(x => x.LastStartedOn)
-                                .ToList();
+                            return await ReturnResult(ctx, db, ts);
                         }
                     )
             ),
@@ -182,12 +177,34 @@ public static class TimerEps
                             t.NotNull();
                             db.Timers.Remove(t);
                             ts.Remove(t);
-                            return ts.Select(x => x.ToApi())
-                                .OrderByDescending(x => x.IsRunning)
-                                .ThenByDescending(x => x.LastStartedOn)
-                                .ToList();
+                            return await ReturnResult(ctx, db, ts);
                         }
                     )
             )
         };
+
+    private static async Task<List<Timer>> ReturnResult(
+        IRpcCtx ctx,
+        OakDb db,
+        IList<Db.Timer> ts,
+        bool defaultSort = true
+    )
+    {
+        if (!ts.Any())
+            return new List<Timer>();
+        var taskIds = ts.Select(x => x.Task).ToList();
+        var tasks = await db.Tasks
+            .Where(x => x.Org == ts[0].Org && x.Project == ts[0].Project && taskIds.Contains(x.Id))
+            .ToListAsync(ctx.Ctkn);
+        var qry = ts.Select(
+            x => x.ToApi(tasks.SingleOrDefault(y => y.Id == x.Task)?.Name ?? "unknown")
+        );
+
+        if (defaultSort)
+        {
+            qry = qry.OrderByDescending(x => x.IsRunning).ThenByDescending(x => x.LastStartedOn);
+        }
+
+        return qry.ToList();
+    }
 }

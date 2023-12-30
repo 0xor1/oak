@@ -41,6 +41,7 @@ public class TimerTests : TestBase
         Assert.Equal(org.Id, ts[0].Org);
         Assert.Equal(tt.P.Id, ts[0].Project);
         Assert.Equal(aliSes.Id, ts[0].User);
+        Assert.Equal("a", ts[0].TaskName);
         Assert.Equal(0u, ts[0].Inc);
     }
 }
