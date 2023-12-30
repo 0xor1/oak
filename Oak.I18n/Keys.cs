@@ -1,8 +1,6 @@
 // Generated Code File, Do Not Edit.
 // This file is generated with Common.I18nCodeGen.
 
-using Common.Shared;
-
 namespace Oak.I18n;
 
 public static partial class S
@@ -123,6 +121,8 @@ public static partial class S
     public const string TimeEst = "time_est";
     public const string TimeInc = "time_inc";
     public const string TimeMin = "time_min";
+    public const string TimerAlreadyExists = "timer_already_exists";
+    public const string TimerMaxTimers = "timer_max_timers";
     public const string True = "true";
     public const string Unassigned = "unassigned";
     public const string Upload = "upload";

@@ -196,6 +196,28 @@ CREATE TABLE Tasks(
     UNIQUE INDEX(Org, Project, User, Id)
 );
 
+DROP TABLE IF EXISTS Timers;
+CREATE TABLE Timers(
+    Org VARCHAR(22) NOT NULL,
+    Project VARCHAR(22) NOT NULL,
+    Task VARCHAR(22) NOT NULL,
+    User VARCHAR(22) NULL,
+    # Inc is in seconds here, when this is logged to a vitem it is rounded to minutes
+    Inc BIGINT UNSIGNED NOT NULL,
+    LastStartedOn DATETIME(3) NOT NULL,
+    IsRunning BOOLEAN NOT NULL,
+    PRIMARY KEY (Org, Project, Task, User),
+    UNIQUE INDEX(Org, Project, User, Task),
+    INDEX(Org, Project, IsRunning, LastStartedOn)
+);
+
+# regularly delete running timers that have been left running for more than a day
+DROP EVENT IF EXISTS TimerCleanup;
+CREATE EVENT TimerCleanup
+ON SCHEDULE EVERY 24 HOUR
+STARTS CURRENT_TIMESTAMP + INTERVAL 1 HOUR
+DO DELETE FROM Timers WHERE IsRunning = TRUE AND LastStartedOn < DATE_SUB(NOW(), INTERVAL 1 DAY);
+
 DROP TABLE IF EXISTS VItems;
 CREATE TABLE VItems(
     Org VARCHAR(22) NOT NULL,

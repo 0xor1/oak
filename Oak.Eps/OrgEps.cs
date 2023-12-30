@@ -14,7 +14,6 @@ using Exact = Oak.Api.Org.Exact;
 using Get = Oak.Api.Org.Get;
 using Org = Oak.Api.Org.Org;
 using S = Oak.I18n.S;
-using Session = Common.Server.Session;
 using Task = System.Threading.Tasks.Task;
 using Update = Oak.Api.Org.Update;
 
@@ -202,6 +201,7 @@ public static class OrgEps
         await db.ProjectMembers.Where(x => orgs.Contains(x.Org)).ExecuteDeleteAsync(ctx.Ctkn);
         await db.Activities.Where(x => orgs.Contains(x.Org)).ExecuteDeleteAsync(ctx.Ctkn);
         await db.Tasks.Where(x => orgs.Contains(x.Org)).ExecuteDeleteAsync(ctx.Ctkn);
+        await db.Timers.Where(x => orgs.Contains(x.Org)).ExecuteDeleteAsync(ctx.Ctkn);
         await db.VItems.Where(x => orgs.Contains(x.Org)).ExecuteDeleteAsync(ctx.Ctkn);
         await db.Files.Where(x => orgs.Contains(x.Org)).ExecuteDeleteAsync(ctx.Ctkn);
         await db.Comments.Where(x => orgs.Contains(x.Org)).ExecuteDeleteAsync(ctx.Ctkn);

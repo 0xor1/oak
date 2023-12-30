@@ -26,6 +26,7 @@ public static class OakEps
                 eps.AddRange(ProjectEps.Eps);
                 eps.AddRange(ProjectMemberEps.Eps);
                 eps.AddRange(TaskEps.Eps);
+                eps.AddRange(TimerEps.Eps);
                 eps.AddRange(VItemEps.Eps);
                 eps.AddRange(FileEps.Eps);
                 eps.AddRange(CommentEps.Eps);

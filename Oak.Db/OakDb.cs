@@ -44,6 +44,7 @@ public class OakDb : DbContext, IAuthDb
     public DbSet<ProjectMember> ProjectMembers { get; set; } = null!;
     public DbSet<Activity> Activities { get; set; } = null!;
     public DbSet<Task> Tasks { get; set; } = null!;
+    public DbSet<Timer> Timers { get; set; } = null!;
     public DbSet<VItem> VItems { get; set; } = null!;
     public DbSet<File> Files { get; set; } = null!;
     public DbSet<Comment> Comments { get; set; } = null!;

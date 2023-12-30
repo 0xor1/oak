@@ -7,6 +7,7 @@ using Oak.Api.OrgMember;
 using Oak.Api.Project;
 using Oak.Api.ProjectMember;
 using Oak.Api.Task;
+using Oak.Api.Timer;
 using Oak.Api.VItem;
 
 namespace Oak.Api;
@@ -18,6 +19,7 @@ public interface IApi : Common.Shared.Auth.IApi
     public IProjectApi Project { get; }
     public IProjectMemberApi ProjectMember { get; }
     public ITaskApi Task { get; }
+    public ITimerApi Timer { get; }
     public IVItemApi VItem { get; }
     public IFileApi File { get; }
     public ICommentApi Comment { get; }
@@ -34,6 +36,7 @@ public class Api : IApi
         Project = new ProjectApi(client);
         ProjectMember = new ProjectMemberApi(client);
         Task = new TaskApi(client);
+        Timer = new TimerApi(client);
         VItem = new VItemApi(client);
         File = new FileApi(client);
         Comment = new CommentApi(client);
@@ -46,6 +49,7 @@ public class Api : IApi
     public IProjectApi Project { get; }
     public IProjectMemberApi ProjectMember { get; }
     public ITaskApi Task { get; }
+    public ITimerApi Timer { get; }
     public IVItemApi VItem { get; }
     public IFileApi File { get; }
     public ICommentApi Comment { get; }
