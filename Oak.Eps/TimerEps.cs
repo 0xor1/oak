@@ -67,7 +67,10 @@ public static class TimerEps
                             };
                             await db.Timers.AddAsync(t, ctx.Ctkn);
                             ts.Add(t);
-                            return ts.Select(x => x.ToApi()).ToList();
+                            return ts.Select(x => x.ToApi())
+                                .OrderByDescending(x => x.IsRunning)
+                                .ThenByDescending(x => x.LastStartedOn)
+                                .ToList();
                         }
                     )
             ),
@@ -96,13 +99,13 @@ public static class TimerEps
                         qry = qry.Where(x => x.User == req.User);
                     }
 
-                    qry = qry.OrderByDescending(x => x.IsRunning);
-                    qry = req.Asc switch
+                    var oqry = qry.OrderByDescending(x => x.IsRunning);
+                    oqry = req.Asc switch
                     {
-                        true => qry.OrderBy(x => x.LastStartedOn),
-                        false => qry.OrderByDescending(x => x.LastStartedOn)
+                        true => oqry.ThenBy(x => x.LastStartedOn),
+                        false => oqry.ThenByDescending(x => x.LastStartedOn)
                     };
-                    var res = await qry.Take(101).ToListAsync(ctx.Ctkn);
+                    var res = await oqry.Take(101).ToListAsync(ctx.Ctkn);
                     return SetRes<Timer>.FromLimit(res.Select(x => x.ToApi()).ToList(), 101);
                 }
             ),
@@ -132,7 +135,7 @@ public static class TimerEps
                             var t = ts.SingleOrDefault(x => x.Task == req.Task);
                             ctx.NotFoundIf(t == null, model: new { Name = "Timer" });
                             t.NotNull();
-                            if (req.IsRunning == true && t.IsRunning == false)
+                            if (req.IsRunning && t.IsRunning == false)
                             {
                                 // starting the timer, must stop any other running timer
                                 ts.ForEach(x =>
@@ -146,14 +149,17 @@ public static class TimerEps
                                 t.LastStartedOn = DateTimeExt.UtcNowMilli();
                                 t.IsRunning = true;
                             }
-                            if (req.IsRunning == false && t.IsRunning == true)
+                            if (req.IsRunning == false && t.IsRunning)
                             {
                                 // pausing timer
                                 t.IsRunning = false;
                                 t.Inc += (ulong)
                                     DateTimeExt.UtcNowMilli().Subtract(t.LastStartedOn).Seconds;
                             }
-                            return ts.Select(x => x.ToApi()).ToList();
+                            return ts.Select(x => x.ToApi())
+                                .OrderByDescending(x => x.IsRunning)
+                                .ThenByDescending(x => x.LastStartedOn)
+                                .ToList();
                         }
                     )
             ),
@@ -176,7 +182,10 @@ public static class TimerEps
                             t.NotNull();
                             db.Timers.Remove(t);
                             ts.Remove(t);
-                            return ts.Select(x => x.ToApi()).ToList();
+                            return ts.Select(x => x.ToApi())
+                                .OrderByDescending(x => x.IsRunning)
+                                .ThenByDescending(x => x.LastStartedOn)
+                                .ToList();
                         }
                     )
             )

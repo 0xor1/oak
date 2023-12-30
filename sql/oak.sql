@@ -205,7 +205,7 @@ CREATE TABLE Timers(
     # Inc is in seconds here, when this is logged to a vitem it is rounded to minutes
     Inc BIGINT UNSIGNED NOT NULL,
     LastStartedOn DATETIME(3) NOT NULL,
-    IsRunning BOOLEAN NOT NULL
+    IsRunning BOOLEAN NOT NULL,
     PRIMARY KEY (Org, Project, Task, User),
     UNIQUE INDEX(Org, Project, User, Task),
     INDEX(Org, Project, IsRunning, LastStartedOn)

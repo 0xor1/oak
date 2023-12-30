@@ -156,8 +156,6 @@ public record TestTree
     public ApiTask G => MaybeG.NotNull();
     public ApiTask H => MaybeH.NotNull();
 
-    private TestTree() { }
-
     public static async Task<TestTree> Init(IApi api, string org, string project)
     {
         // make 4 tasks a-d that are all children of the root node, in order

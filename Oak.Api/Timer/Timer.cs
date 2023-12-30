@@ -52,8 +52,14 @@ public record Timer(
 
 public record Create(string Org, string Project, string Task);
 
-public record Get(string Org, string Project, string? Task, string? User, bool Asc = false);
+public record Get(
+    string Org,
+    string Project,
+    string? Task = null,
+    string? User = null,
+    bool Asc = false
+);
 
-public record Update(string Org, string Project, string Task, bool? IsRunning);
+public record Update(string Org, string Project, string Task, bool IsRunning);
 
 public record Delete(string Org, string Project, string Task);
