@@ -51,8 +51,11 @@ public static class TimerEps
                                 if (!x.IsRunning)
                                     return;
                                 x.IsRunning = false;
-                                x.Inc += (ulong)
-                                    DateTimeExt.UtcNowMilli().Subtract(x.LastStartedOn).Seconds;
+                                x.Inc = (ulong)
+                                    DateTimeExt
+                                        .UtcNowMilli()
+                                        .Subtract(x.LastStartedOn)
+                                        .TotalSeconds;
                             });
 
                             var t = new Db.Timer
@@ -103,7 +106,7 @@ public static class TimerEps
                         false => oqry.ThenByDescending(x => x.LastStartedOn)
                     };
                     var initRes = await oqry.Take(101).ToListAsync(ctx.Ctkn);
-                    var tmpRes = await ReturnResult(ctx, db, initRes, false);
+                    var tmpRes = await ReturnResult(ctx, db, initRes, req.User != null);
                     return SetRes<Timer>.FromLimit(tmpRes, 101);
                 }
             ),
@@ -142,7 +145,10 @@ public static class TimerEps
                                         return;
                                     x.IsRunning = false;
                                     x.Inc += (ulong)
-                                        DateTimeExt.UtcNowMilli().Subtract(x.LastStartedOn).Seconds;
+                                        DateTimeExt
+                                            .UtcNowMilli()
+                                            .Subtract(x.LastStartedOn)
+                                            .TotalSeconds;
                                 });
                                 t.LastStartedOn = DateTimeExt.UtcNowMilli();
                                 t.IsRunning = true;
@@ -152,7 +158,10 @@ public static class TimerEps
                                 // pausing timer
                                 t.IsRunning = false;
                                 t.Inc += (ulong)
-                                    DateTimeExt.UtcNowMilli().Subtract(t.LastStartedOn).Seconds;
+                                    DateTimeExt
+                                        .UtcNowMilli()
+                                        .Subtract(t.LastStartedOn)
+                                        .TotalSeconds;
                             }
                             return await ReturnResult(ctx, db, ts);
                         }

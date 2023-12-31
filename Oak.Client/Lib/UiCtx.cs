@@ -82,6 +82,12 @@ public class UiCtx
 
     public System.Threading.Tasks.Task Set(Task? task) => Set(null, null, task);
 
+    public System.Threading.Tasks.Task Set(List<Timer>? timers)
+    {
+        Timers = timers;
+        return System.Threading.Tasks.Task.CompletedTask;
+    }
+
     private async System.Threading.Tasks.Task Set(Org? org, Project? project, Task? task)
     {
         await _ss.WaitAsync();
@@ -98,6 +104,7 @@ public class UiCtx
             OrgId = orgId;
             ProjectId = projectId;
             TaskId = taskId;
+            Timers = projectChanged ? null : Timers;
             var sesId = (await _auth.GetSession()).Id;
 
             if (OrgId == null)
@@ -110,6 +117,7 @@ public class UiCtx
             {
                 Project = null;
                 ProjectMember = null;
+                Timers = null;
             }
 
             if (TaskId == null)
@@ -129,6 +137,7 @@ public class UiCtx
                 ProjectMember = (
                     await _api.ProjectMember.GetOne(new(OrgId, ProjectId, sesId))
                 ).Item;
+                Timers = (await _api.Timer.Get(new(OrgId, ProjectId, User: sesId))).Set.ToList();
             }
 
             Task = task;

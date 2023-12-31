@@ -68,9 +68,12 @@
     public Func<VItemRes, Task>? OnUpdated { get; set; }
 
     [Parameter]
-    public ATask? SubTask { get; set; }
+    public ATask? Task { get; set; }
 
-    private string TaskId => SubTask?.Id ?? Ctx.TaskId;
+    [Parameter]
+    public ulong? Inc { get; set; }
+
+    private string TaskId => Task?.Id ?? Ctx.TaskId;
 
     private VItemType InternalType => Type ?? UpdateVItem.NotNull().Type;
 
@@ -91,15 +94,19 @@
             _model.Note = UpdateVItem.Note;
             _model.Inc = UpdateVItem.Inc;
         }
-        if (SubTask != null)
+        if (Task != null)
         {
-            _model.Est = InternalType == VItemType.Time ? SubTask.TimeEst : SubTask.CostEst;
+            _model.Est = InternalType == VItemType.Time ? Task.TimeEst : Task.CostEst;
         }
         else
         {
             _model.Est = InternalType == VItemType.Time ? Ctx.Task.TimeEst : Ctx.Task.CostEst;
         }
-        return Task.CompletedTask;
+        if (Inc != null)
+        {
+            _model.Inc = Inc.Value;
+        }
+        return System.Threading.Tasks.Task.CompletedTask;
     }
     
     private async Task Do()

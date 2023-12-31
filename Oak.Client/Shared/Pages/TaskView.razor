@@ -11,6 +11,7 @@
 @using S = Oak.I18n.S
 @using Task = System.Threading.Tasks.Task
 @using System.Text
+@using Oak.Api.Timer
 <div class="root col p-0h g-0h jc-s ai-s">
     @if (_ready)
     {
@@ -122,6 +123,7 @@
                                             {
                                                 <div class="flx g-0q p-abs show-on-row-mouse-over" style="right: -1em;">
                                                     <RadzenButton @onclick:stopPropagation="true" Icon="more_time" ButtonStyle="ButtonStyle.Success" Size="ButtonSize.ExtraSmall" Click="_ => NewVItem(VItemType.Time, t)"/>
+                                                    <RadzenButton @onclick:stopPropagation="true" Icon="timer" ButtonStyle="ButtonStyle.Success" Size="ButtonSize.ExtraSmall" Click="_ => StartTimer(t)"/>
                                                 </div>
                                             }
                                         </div>
@@ -204,6 +206,8 @@
 @inject DialogService DialogService;
 @inject NavigationManager Nav;
 @inject UiCtx Ctx;
+@inject ITimerService TimerService;
+@inject ITaskViewRefresherService TaskViewRefresher;
 @code{
     
     [CascadingParameter]
@@ -280,9 +284,21 @@
         }
     }
 
+    protected override Task OnInitializedAsync()
+    {
+        TaskViewRefresher.OnTaskChanged(OnTaskChanged);
+        return Task.CompletedTask;
+    }
+
     protected override async Task OnParametersSetAsync()
     {
-        if (TheTask?.Id != TaskId)
+        await Refresh(false);
+        await base.OnParametersSetAsync();
+    }
+    
+    private async Task Refresh(bool force)
+    {
+        if (TheTask?.Id != TaskId || force)
         {
             _selectedTabIndex = 0;
             var res = await Api.Task.GetInitView(new (OrgId, ProjectId, TaskId));
@@ -323,21 +339,47 @@
         }
     }
 
-    private async Task NewVItem(VItemType Type, ATask t) => await DialogService.OpenAsync<VItemNewOrUpdate>(L.S(Type == VItemType.Time? S.TaskNewTime: S.TaskNewCost), new (){{"Type", Type}, {"SubTask", t}, {"OnCreated", OnVItemCreated}});
+    private async Task NewVItem(VItemType Type, ATask t) => await DialogService.OpenAsync<VItemNewOrUpdate>(L.S(Type == VItemType.Time? S.TaskNewTime: S.TaskNewCost), new (){{"Type", Type}, {"Task", t}, {"OnCreated", OnVItemCreated}});
+
+    private async Task StartTimer(ATask t)
+    {
+        var timer = Ctx.Timers?.SingleOrDefault(x => x.Task == t.Id);
+        var ts = Ctx.Timers;
+        if (timer != null && !timer.IsRunning)
+        {
+            // restart existing paused timer
+            ts = (await Api.Timer.Update(new (timer.Org, timer.Project, timer.Task, true))).ToList();
+        }
+        else if (timer == null)
+        {
+            ts = (await Api.Timer.Create(new (t.Org, t.Project, t.Id))).ToList();
+        }
+        TimerService.TimersChanged(ts);
+    }
 
     private async Task OnVItemCreated(VItemRes res)
     {
-        var i = Items.FindIndex(x => x.Id == res.Task.Id);
+        await OnTaskChanged(res.Task);
+    } 
+
+    private async Task OnTaskChanged(ATask t)
+    {
+        var i = Items.FindIndex(x => x.Id == t.Id);
         
         if (i == 0)
         {
-            TheTask = res.Task;
+            TheTask = t;
         }
         else if (i > -1)
         {
             // if we added to a sub task we need to refresh the current task we're looking at too.
-            Items[i] = res.Task;
+            Items[i] = t;
             TheTask = await Api.Task.GetOne(new (OrgId, ProjectId, TaskId));
+        }
+        else
+        {
+            // just refresh the whole view just incase it was a descendant
+            await Refresh(true);
         }
         await Ctx.Set(TheTask);
         await _grid.Reload();

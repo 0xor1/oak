@@ -32,4 +32,8 @@
     <ProjectReference Include="..\Oak.I18n\Oak.I18n.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Remove="Shared\Components\Timer.scss" />
+  </ItemGroup>
+
 </Project>

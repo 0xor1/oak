@@ -21,6 +21,9 @@ public class TimerTests : TestBase
         Assert.Equal(1, getRes.Set.Count);
         Assert.Equal(ts.Single(x => x.Task == tt.P.Id), getRes.Set[0]);
 
+        getRes = await ali.Timer.Get(new(org.Id, tt.P.Id, tt.D.Id, Asc: true));
+        Assert.Equal(0, getRes.Set.Count);
+
         getRes = await ali.Timer.Get(new(org.Id, tt.P.Id, Asc: true));
         Assert.False(getRes.More);
         Assert.Equal(3, getRes.Set.Count);

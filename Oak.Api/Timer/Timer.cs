@@ -1,4 +1,5 @@
 ﻿using Common.Shared;
+using Newtonsoft.Json;
 
 namespace Oak.Api.Timer;
 
@@ -49,7 +50,14 @@ public record Timer(
     ulong Inc,
     DateTime LastStartedOn,
     bool IsRunning
-);
+)
+{
+    [JsonIgnore]
+    public ulong FullInc =>
+        !IsRunning
+            ? Inc
+            : Inc + (ulong)DateTimeExt.UtcNowMilli().Subtract(LastStartedOn).TotalSeconds;
+}
 
 public record Create(string Org, string Project, string Task);
 

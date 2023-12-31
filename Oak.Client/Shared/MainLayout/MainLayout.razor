@@ -25,6 +25,18 @@
                                 }
                             }
                         }
+                        @if (ShowTimers)
+                        {
+                            <RadzenPanelMenuItem Text="@L.S(S.Timers)" Icon="timer">
+                                <RadzenPanelMenuItem class="d-none"/>
+                                <div class="flx col">
+                                    @foreach (var t in Ctx.Timers ?? new List<Timer>())
+                                    {
+                                        <Timer Value="t"/>
+                                    }
+                                </div>
+                            </RadzenPanelMenuItem>
+                        }
                         @if (ShowDisplayOptions)
                         {
                             <RadzenPanelMenuItem Text="@L.S(S.Display)" Icon="visibility">
@@ -83,8 +95,10 @@
 @using Oak.Client.Lib
 @using IApi = Oak.Api.IApi
 @using S = Oak.I18n.S
+@using Timer = Oak.Api.Timer.Timer
 @inherits LayoutComponentBase
 @inject IAuthService Auth
+@inject ITimerService TimerService
 @inject L L
 @inject UiCtx Ctx
 @inject NavigationManager Nav
@@ -101,9 +115,11 @@
     private string? _projectId;
     private string? _taskId;
     private bool ShowDisplayOptions => !Ctx.OrgId.IsNullOrWhiteSpace();
+    private bool ShowTimers => Ctx.Timers?.Any() ?? false;
     
     protected override async Task OnInitializedAsync()
     {
+        TimerService.OnTimersChanged(TimersChanged);
         Auth.OnSessionChanged(AuthStateChanged);
         AuthStateChanged(await Auth.GetSession());
         _eventReg = Nav.RegisterLocationChangingHandler(LocationChanging);
@@ -117,6 +133,12 @@
     private void AuthStateChanged(ISession s)
     {
         _session = s;
+        StateHasChanged();
+    }
+
+    private void TimersChanged(List<Timer> ts)
+    {
+        Ctx.Set(ts);
         StateHasChanged();
     }
 

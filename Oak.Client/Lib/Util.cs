@@ -21,6 +21,15 @@ public static class Util
     public const ulong TB = KB * GB;
     public const ulong PB = KB * TB;
 
+    public static string TimerDuration(ulong val)
+    {
+        var hrs = val / 3600;
+        val -= hrs * 3600;
+        var mins = val / 60;
+        val -= mins * 60;
+        return $"{hrs:D2}:{mins:D2}:{val:D2}";
+    }
+
     public static string Duration(Project? p, ulong val)
     {
         if (p == null || p.HoursPerDay == 0 || p.DaysPerWeek == 0)
