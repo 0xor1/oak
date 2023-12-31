@@ -51,7 +51,7 @@ public static class TimerEps
                                 if (!x.IsRunning)
                                     return;
                                 x.IsRunning = false;
-                                x.Inc += (ulong)
+                                x.Inc = (ulong)
                                     DateTimeExt
                                         .UtcNowMilli()
                                         .Subtract(x.LastStartedOn)

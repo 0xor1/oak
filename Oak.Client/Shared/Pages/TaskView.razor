@@ -326,7 +326,7 @@
         }
     }
 
-    private async Task NewVItem(VItemType Type, ATask t) => await DialogService.OpenAsync<VItemNewOrUpdate>(L.S(Type == VItemType.Time? S.TaskNewTime: S.TaskNewCost), new (){{"Type", Type}, {"SubTask", t}, {"OnCreated", OnVItemCreated}});
+    private async Task NewVItem(VItemType Type, ATask t) => await DialogService.OpenAsync<VItemNewOrUpdate>(L.S(Type == VItemType.Time? S.TaskNewTime: S.TaskNewCost), new (){{"Type", Type}, {"Task", t}, {"OnCreated", OnVItemCreated}});
 
     private async Task StartTimer(ATask t)
     {

@@ -8,14 +8,13 @@
 <div class="flx col g-0h p-l-4 p-y-0h ptr timer" @onclick="@GoToTask">
     <RadzenLabel class="ptr ellip m-r-4">@Value.TaskName</RadzenLabel>
     <div class="flx g-0h ptr">
+        <RadzenLabel class="m-r-1">@Util.TimerDuration(Value.FullInc)</RadzenLabel>
         @if (Value.IsRunning)
         {
-            <RadzenLabel class="m-r-1">@Util.TimerDuration(Value.Inc + (ulong)DateTimeExt.UtcNowMilli().Subtract(Value.LastStartedOn).TotalSeconds)</RadzenLabel>
             <RadzenButton @onclick:stopPropagation="true" Icon="pause_circle" ButtonStyle="ButtonStyle.Warning" Size="ButtonSize.ExtraSmall" Click="_ => ToggleTimer(false)"/>
         }
         else
         {
-            <RadzenLabel class="m-r-1">@Util.TimerDuration(Value.Inc)</RadzenLabel>
             <RadzenButton @onclick:stopPropagation="true" Icon="play_circle" ButtonStyle="ButtonStyle.Success" Size="ButtonSize.ExtraSmall" Click="_ => ToggleTimer(true)"/>
         }
         <RadzenButton @onclick:stopPropagation="true" Icon="more_time" ButtonStyle="ButtonStyle.Success" Size="ButtonSize.ExtraSmall" Click="LogTimer"/>
@@ -24,10 +23,10 @@
 </div>
 
 @inject L L;
-@inject UiCtx Ctx;
 @inject IApi Api
 @inject NavigationManager Nav;
 @inject ITimerService TimerService;
+@inject DialogService DialogService;
 @implements IDisposable
 @code {
 
@@ -50,7 +49,7 @@
 
     private void TimerTick(object? obj, ElapsedEventArgs? args)
     {
-        if (Ctx.Timers?.Any(x => x.IsRunning) ?? false)
+        if (Value.IsRunning)
         {
             Ticker?.Start();
             InvokeAsync(StateHasChanged);
@@ -69,8 +68,12 @@
 
     private async Task LogTimer()
     {
-        // TODO launch log time dialog pre filled out
-        // if it closes with success then delete timer, otherwise do nothingw
+        var t = await Api.Task.GetOne(new(Value.Org, Value.Project, Value.Task));
+        await DialogService.OpenAsync<VItemNewOrUpdate>(L.S(S.TaskNewTime), new (){{"Type", VItemType.Time}, {"Task", t}, {"Inc", Value.FullInc / 60}, {"OnCreated", OnTimeLogged}});
+    }
+
+    private async Task OnTimeLogged(VItemRes _)
+    {
         await DeleteTimer();
     }
 
