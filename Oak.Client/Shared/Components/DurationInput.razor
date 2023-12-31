@@ -4,7 +4,7 @@
 <div class="root jc-stretch">
     <div class="flx g-0h jc-stretch">
         <RadzenNumeric @ref="_nRef" Name="@Name" TValue="decimal" Value="InternalVal" Format="@Format" ValueChanged="InternalValueChanged" ShowUpDown="false" Min="0"/>
-        <RadzenDropDown @ref="_ddRef" TValue="TimeUnit" @bind-Value="SelectedTimeUnit" Data="TimeUnits"></RadzenDropDown>
+        <RadzenDropDown @ref="_ddRef" TValue="TimeUnit" Value="SelectedTimeUnit" ValueChanged="InternalUnitChanged" Data="TimeUnits"></RadzenDropDown>
     </div>
 </div>
 
@@ -117,6 +117,19 @@
     public async ValueTask FocusAsync()
     {
         await _nRef.FocusAsync();
+    }
+
+    private async Task InternalUnitChanged(TimeUnit unit)
+    {
+        var (mph, mpd, mpw) = getMinsPerUnit();
+        var tmp = unit.Resolution switch {
+            Resolution.Minutes => InternalVal,
+            Resolution.Hours => InternalVal * mph,
+            Resolution.Days => InternalVal * mpd,
+            Resolution.Weeks => InternalVal * mpw 
+            };
+        Value = (ulong)tmp;
+        await SetInternalValueAndSelectedTimeUnitAndUpdateValue();
     }
 
 }
