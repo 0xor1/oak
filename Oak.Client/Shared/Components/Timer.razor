@@ -27,6 +27,7 @@
 @inject NavigationManager Nav;
 @inject ITimerService TimerService;
 @inject DialogService DialogService;
+@inject ITaskViewRefresherService TaskViewRefresher;
 @implements IDisposable
 @code {
 
@@ -72,8 +73,9 @@
         await DialogService.OpenAsync<VItemNewOrUpdate>(L.S(S.TaskNewTime), new (){{"Type", VItemType.Time}, {"Task", t}, {"Inc", Value.FullInc / 60}, {"OnCreated", OnTimeLogged}});
     }
 
-    private async Task OnTimeLogged(VItemRes _)
+    private async Task OnTimeLogged(VItemRes res)
     {
+        await TaskViewRefresher.TaskChanged(res.Task);
         await DeleteTimer();
     }
 
