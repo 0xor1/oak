@@ -52,7 +52,10 @@ public static class TimerEps
                                     return;
                                 x.IsRunning = false;
                                 x.Inc += (ulong)
-                                    DateTimeExt.UtcNowMilli().Subtract(x.LastStartedOn).Seconds;
+                                    DateTimeExt
+                                        .UtcNowMilli()
+                                        .Subtract(x.LastStartedOn)
+                                        .TotalSeconds;
                             });
 
                             var t = new Db.Timer
@@ -142,7 +145,10 @@ public static class TimerEps
                                         return;
                                     x.IsRunning = false;
                                     x.Inc += (ulong)
-                                        DateTimeExt.UtcNowMilli().Subtract(x.LastStartedOn).Seconds;
+                                        DateTimeExt
+                                            .UtcNowMilli()
+                                            .Subtract(x.LastStartedOn)
+                                            .TotalSeconds;
                                 });
                                 t.LastStartedOn = DateTimeExt.UtcNowMilli();
                                 t.IsRunning = true;
@@ -152,7 +158,10 @@ public static class TimerEps
                                 // pausing timer
                                 t.IsRunning = false;
                                 t.Inc += (ulong)
-                                    DateTimeExt.UtcNowMilli().Subtract(t.LastStartedOn).Seconds;
+                                    DateTimeExt
+                                        .UtcNowMilli()
+                                        .Subtract(t.LastStartedOn)
+                                        .TotalSeconds;
                             }
                             return await ReturnResult(ctx, db, ts);
                         }

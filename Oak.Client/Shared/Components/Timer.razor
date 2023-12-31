@@ -5,18 +5,18 @@
 @using System.Timers
 @using Oak.Api
 @using Oak.Api.VItem
-<div class="flx col g-0h">
-    <RadzenLabel>@Value.TaskName</RadzenLabel>
-    <div class="flx g-0h">
+<div class="flx col g-0h p-l-4 p-y-0h ptr timer" @onclick="@GoToTask">
+    <RadzenLabel class="ptr ellip m-r-4">@Value.TaskName</RadzenLabel>
+    <div class="flx g-0h ptr">
         @if (Value.IsRunning)
         {
-            <RadzenLabel>@Util.TimerDuration(Value.Inc + (ulong)DateTimeExt.UtcNowMilli().Subtract(Value.LastStartedOn).Seconds)</RadzenLabel>
-            <RadzenButton @onclick:stopPropagation="true" Icon="stop" ButtonStyle="ButtonStyle.Warning" Size="ButtonSize.ExtraSmall" Click="_ => ToggleTimer(false)"/>
+            <RadzenLabel class="m-r-1">@Util.TimerDuration(Value.Inc + (ulong)DateTimeExt.UtcNowMilli().Subtract(Value.LastStartedOn).TotalSeconds)</RadzenLabel>
+            <RadzenButton @onclick:stopPropagation="true" Icon="pause_circle" ButtonStyle="ButtonStyle.Warning" Size="ButtonSize.ExtraSmall" Click="_ => ToggleTimer(false)"/>
         }
         else
         {
-            <RadzenLabel>@Util.TimerDuration(Value.Inc)</RadzenLabel>
-            <RadzenButton @onclick:stopPropagation="true" Icon="play" ButtonStyle="ButtonStyle.Success" Size="ButtonSize.ExtraSmall" Click="_ => ToggleTimer(true)"/>
+            <RadzenLabel class="m-r-1">@Util.TimerDuration(Value.Inc)</RadzenLabel>
+            <RadzenButton @onclick:stopPropagation="true" Icon="play_circle" ButtonStyle="ButtonStyle.Success" Size="ButtonSize.ExtraSmall" Click="_ => ToggleTimer(true)"/>
         }
         <RadzenButton @onclick:stopPropagation="true" Icon="more_time" ButtonStyle="ButtonStyle.Success" Size="ButtonSize.ExtraSmall" Click="LogTimer"/>
         <RadzenButton @onclick:stopPropagation="true" Icon="delete" ButtonStyle="ButtonStyle.Danger" Size="ButtonSize.ExtraSmall" Click="DeleteTimer"/>
@@ -26,6 +26,7 @@
 @inject L L;
 @inject UiCtx Ctx;
 @inject IApi Api
+@inject NavigationManager Nav;
 @inject ITimerService TimerService;
 @implements IDisposable
 @code {
@@ -69,7 +70,7 @@
     private async Task LogTimer()
     {
         // TODO launch log time dialog pre filled out
-        // if it closes with success then delete timer, otherwise do nothing
+        // if it closes with success then delete timer, otherwise do nothingw
         await DeleteTimer();
     }
 
@@ -82,6 +83,11 @@
     public void Dispose()
     {
         Ticker?.Dispose();
+    }
+
+    private void GoToTask()
+    {
+        Nav.NavigateTo($"/org/{Value.Org}/project/{Value.Project}/task/{Value.Task}");
     }
 
 }
