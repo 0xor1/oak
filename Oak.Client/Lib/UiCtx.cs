@@ -105,7 +105,8 @@ public class UiCtx
             ProjectId = projectId;
             TaskId = taskId;
             Timers = projectChanged ? null : Timers;
-            var sesId = (await _auth.GetSession()).Id;
+            var ses = (await _auth.GetSession());
+            var sesId = ses.Id;
 
             if (OrgId == null)
             {
@@ -137,7 +138,10 @@ public class UiCtx
                 ProjectMember = (
                     await _api.ProjectMember.GetOne(new(OrgId, ProjectId, sesId))
                 ).Item;
-                Timers = (await _api.Timer.Get(new(OrgId, ProjectId, User: sesId))).Set.ToList();
+                if (ses.IsAuthed)
+                {
+                    Timers = (await _api.Timer.Get(new(OrgId, ProjectId, User: sesId))).Set.ToList();
+                }
             }
 
             Task = task;
