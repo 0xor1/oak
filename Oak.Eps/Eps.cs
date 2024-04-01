@@ -6,15 +6,15 @@ namespace Oak.Eps;
 
 public static class OakEps
 {
-    private static IReadOnlyList<IRpcEndpoint>? _eps;
-    public static IReadOnlyList<IRpcEndpoint> Eps
+    private static IReadOnlyList<IEp>? _eps;
+    public static IReadOnlyList<IEp> Eps
     {
         get
         {
             if (_eps == null)
             {
                 var eps =
-                    (List<IRpcEndpoint>)
+                    (List<IEp>)
                         new CommonEps<OakDb>(
                             5,
                             OrgEps.AuthOnActivation,

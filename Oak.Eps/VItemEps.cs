@@ -20,268 +20,252 @@ internal static class VItemEps
 {
     private const ulong maxTimeInc = 1440; // 24hrs in mins
     private const int noteMaxLen = 250;
-    public static IReadOnlyList<IRpcEndpoint> Eps { get; } =
-        new List<IRpcEndpoint>()
+    public static IReadOnlyList<IEp> Eps { get; } =
+        new List<IEp>()
         {
-            new RpcEndpoint<Create, VItemRes>(
+            Ep<Create, VItemRes>.DbTx<OakDb>(
                 VItemRpcs.Create,
-                async (ctx, req) =>
-                    await ctx.DbTx<OakDb, VItemRes>(
-                        async (db, ses) =>
-                        {
-                            await EpsUtil.MustHaveProjectAccess(
-                                ctx,
-                                db,
-                                ses.Id,
-                                req.Org,
-                                req.Project,
-                                ProjectMemberRole.Writer
-                            );
-                            ValidateInc(ctx, req.Type, req.Inc);
-                            EpsUtil.ValidStr(ctx, req.Note, 0, noteMaxLen, "note");
-                            await db.LockProject(req.Org, req.Project, ctx.Ctkn);
-                            var t = await db.Tasks.SingleOrDefaultAsync(
-                                x =>
-                                    x.Org == req.Org
-                                    && x.Project == req.Project
-                                    && x.Id == req.Task,
-                                ctx.Ctkn
-                            );
-                            ctx.NotFoundIf(t == null, model: new { Name = "Task" });
-                            t.NotNull();
-                            setTaskVal(t, req.Est, req.Type, true);
-                            setTaskVal(t, req.Inc, req.Type, false);
-                            var vi = new Db.VItem()
-                            {
-                                Org = req.Org,
-                                Project = req.Project,
-                                Task = req.Task,
-                                Type = req.Type,
-                                Id = Id.New(),
-                                CreatedBy = ses.Id,
-                                CreatedOn = DateTimeExt.UtcNowMilli(),
-                                Inc = req.Inc,
-                                Note = req.Note
-                            };
-                            await db.VItems.AddAsync(vi, ctx.Ctkn);
-                            await db.SaveChangesAsync(ctx.Ctkn);
-                            List<string>? ancestors = null;
-                            if (t.Parent != null)
-                            {
-                                ancestors = await db.SetAncestralChainAggregateValuesFromTask(
-                                    req.Org,
-                                    req.Project,
-                                    t.Parent,
-                                    ctx.Ctkn
-                                );
-                            }
+                async (ctx, db, ses, req) =>
+                {
+                    await EpsUtil.MustHaveProjectAccess(
+                        ctx,
+                        db,
+                        ses.Id,
+                        req.Org,
+                        req.Project,
+                        ProjectMemberRole.Writer
+                    );
+                    ValidateInc(ctx, req.Type, req.Inc);
+                    EpsUtil.ValidStr(ctx, req.Note, 0, noteMaxLen, "note");
+                    await db.LockProject(req.Org, req.Project, ctx.Ctkn);
+                    var t = await db.Tasks.SingleOrDefaultAsync(
+                        x => x.Org == req.Org && x.Project == req.Project && x.Id == req.Task,
+                        ctx.Ctkn
+                    );
+                    ctx.NotFoundIf(t == null, model: new { Name = "Task" });
+                    t.NotNull();
+                    setTaskVal(t, req.Est, req.Type, true);
+                    setTaskVal(t, req.Inc, req.Type, false);
+                    var vi = new Db.VItem()
+                    {
+                        Org = req.Org,
+                        Project = req.Project,
+                        Task = req.Task,
+                        Type = req.Type,
+                        Id = Id.New(),
+                        CreatedBy = ses.Id,
+                        CreatedOn = DateTimeExt.UtcNowMilli(),
+                        Inc = req.Inc,
+                        Note = req.Note
+                    };
+                    await db.VItems.AddAsync(vi, ctx.Ctkn);
+                    await db.SaveChangesAsync(ctx.Ctkn);
+                    List<string>? ancestors = null;
+                    if (t.Parent != null)
+                    {
+                        ancestors = await db.SetAncestralChainAggregateValuesFromTask(
+                            req.Org,
+                            req.Project,
+                            t.Parent,
+                            ctx.Ctkn
+                        );
+                    }
 
-                            req = req with { Note = req.Note.Ellipsis(50).NotNull() };
-                            await EpsUtil.LogActivity(
-                                ctx,
-                                db,
-                                ses,
-                                req.Org,
-                                req.Project,
-                                req.Task,
-                                vi.Id,
-                                ActivityItemType.VItem,
-                                ActivityAction.Create,
-                                null,
-                                req,
-                                ancestors
-                            );
-                            return new VItemRes(t.ToApi(), vi.ToApi());
-                        }
-                    )
+                    req = req with { Note = req.Note.Ellipsis(50).NotNull() };
+                    await EpsUtil.LogActivity(
+                        ctx,
+                        db,
+                        ses,
+                        req.Org,
+                        req.Project,
+                        req.Task,
+                        vi.Id,
+                        ActivityItemType.VItem,
+                        ActivityAction.Create,
+                        null,
+                        req,
+                        ancestors
+                    );
+                    return new VItemRes(t.ToApi(), vi.ToApi());
+                }
             ),
-            new RpcEndpoint<Update, VItemRes>(
+            Ep<Update, VItemRes>.DbTx<OakDb>(
                 VItemRpcs.Update,
-                async (ctx, req) =>
-                    await ctx.DbTx<OakDb, VItemRes>(
-                        async (db, ses) =>
+                async (ctx, db, ses, req) =>
+                {
+                    ValidateInc(ctx, req.Type, req.Inc);
+                    EpsUtil.ValidStr(ctx, req.Note, 0, noteMaxLen, "note");
+                    await db.LockProject(req.Org, req.Project, ctx.Ctkn);
+                    var vi = await db.VItems.SingleOrDefaultAsync(
+                        x =>
+                            x.Org == req.Org
+                            && x.Project == req.Project
+                            && x.Task == req.Task
+                            && x.Type == req.Type
+                            && x.Id == req.Id,
+                        ctx.Ctkn
+                    );
+                    ctx.NotFoundIf(vi == null, model: new { Name = req.Type.Humanize() });
+                    vi.NotNull();
+                    var requiredRole = ProjectMemberRole.Admin;
+                    if (
+                        vi.CreatedBy == ses.Id
+                        && vi.CreatedOn.Add(TimeSpan.FromHours(1)) > DateTime.UtcNow
+                    )
+                    {
+                        // if i created it in the last hour I only need to be a writer
+                        requiredRole = ProjectMemberRole.Writer;
+                    }
+                    await EpsUtil.MustHaveProjectAccess(
+                        ctx,
+                        db,
+                        ses.Id,
+                        req.Org,
+                        req.Project,
+                        requiredRole
+                    );
+                    var t = await db.Tasks.SingleOrDefaultAsync(
+                        x => x.Org == req.Org && x.Project == req.Project && x.Id == req.Task,
+                        ctx.Ctkn
+                    );
+                    ctx.NotFoundIf(t == null, model: new { Name = "Task" });
+                    t.NotNull();
+                    var oldInc = (int)vi.Inc;
+                    var newInc = (int)req.Inc;
+                    var change = newInc - oldInc;
+                    List<string>? ancestors = null;
+                    vi.Note = req.Note;
+                    if (change != 0)
+                    {
+                        vi.Inc = req.Inc;
+                        switch (vi.Type)
                         {
-                            ValidateInc(ctx, req.Type, req.Inc);
-                            EpsUtil.ValidStr(ctx, req.Note, 0, noteMaxLen, "note");
-                            await db.LockProject(req.Org, req.Project, ctx.Ctkn);
-                            var vi = await db.VItems.SingleOrDefaultAsync(
-                                x =>
-                                    x.Org == req.Org
-                                    && x.Project == req.Project
-                                    && x.Task == req.Task
-                                    && x.Type == req.Type
-                                    && x.Id == req.Id,
-                                ctx.Ctkn
-                            );
-                            ctx.NotFoundIf(vi == null, model: new { Name = req.Type.Humanize() });
-                            vi.NotNull();
-                            var requiredRole = ProjectMemberRole.Admin;
-                            if (
-                                vi.CreatedBy == ses.Id
-                                && vi.CreatedOn.Add(TimeSpan.FromHours(1)) > DateTime.UtcNow
-                            )
-                            {
-                                // if i created it in the last hour I only need to be a writer
-                                requiredRole = ProjectMemberRole.Writer;
-                            }
-                            await EpsUtil.MustHaveProjectAccess(
-                                ctx,
-                                db,
-                                ses.Id,
-                                req.Org,
-                                req.Project,
-                                requiredRole
-                            );
-                            var t = await db.Tasks.SingleOrDefaultAsync(
-                                x =>
-                                    x.Org == req.Org
-                                    && x.Project == req.Project
-                                    && x.Id == req.Task,
-                                ctx.Ctkn
-                            );
-                            ctx.NotFoundIf(t == null, model: new { Name = "Task" });
-                            t.NotNull();
-                            var oldInc = (int)vi.Inc;
-                            var newInc = (int)req.Inc;
-                            var change = newInc - oldInc;
-                            List<string>? ancestors = null;
-                            vi.Note = req.Note;
-                            if (change != 0)
-                            {
-                                vi.Inc = req.Inc;
-                                switch (vi.Type)
+                            case VItemType.Time:
+                                if (change > 0)
                                 {
-                                    case VItemType.Time:
-                                        if (change > 0)
-                                        {
-                                            t.TimeInc += (ulong)change;
-                                        }
-                                        else
-                                        {
-                                            t.TimeInc -= (ulong)-change;
-                                        }
-                                        break;
-                                    case VItemType.Cost:
-                                        if (change > 0)
-                                        {
-                                            t.CostInc += (ulong)change;
-                                        }
-                                        else
-                                        {
-                                            t.CostInc -= (ulong)-change;
-                                        }
-                                        break;
+                                    t.TimeInc += (ulong)change;
                                 }
-                            }
-                            await db.SaveChangesAsync(ctx.Ctkn);
-                            if (change != 0 && t.Parent != null)
-                            {
-                                ancestors = await db.SetAncestralChainAggregateValuesFromTask(
-                                    req.Org,
-                                    req.Project,
-                                    t.Parent,
-                                    ctx.Ctkn
-                                );
-                            }
-                            req = req with { Note = req.Note.Ellipsis(50).NotNull() };
-                            await EpsUtil.LogActivity(
-                                ctx,
-                                db,
-                                ses,
-                                req.Org,
-                                req.Project,
-                                req.Task,
-                                vi.Id,
-                                ActivityItemType.VItem,
-                                ActivityAction.Update,
-                                null,
-                                req,
-                                ancestors
-                            );
-                            return new VItemRes(t.ToApi(), vi.ToApi());
+                                else
+                                {
+                                    t.TimeInc -= (ulong)-change;
+                                }
+                                break;
+                            case VItemType.Cost:
+                                if (change > 0)
+                                {
+                                    t.CostInc += (ulong)change;
+                                }
+                                else
+                                {
+                                    t.CostInc -= (ulong)-change;
+                                }
+                                break;
                         }
-                    )
+                    }
+                    await db.SaveChangesAsync(ctx.Ctkn);
+                    if (change != 0 && t.Parent != null)
+                    {
+                        ancestors = await db.SetAncestralChainAggregateValuesFromTask(
+                            req.Org,
+                            req.Project,
+                            t.Parent,
+                            ctx.Ctkn
+                        );
+                    }
+                    req = req with { Note = req.Note.Ellipsis(50).NotNull() };
+                    await EpsUtil.LogActivity(
+                        ctx,
+                        db,
+                        ses,
+                        req.Org,
+                        req.Project,
+                        req.Task,
+                        vi.Id,
+                        ActivityItemType.VItem,
+                        ActivityAction.Update,
+                        null,
+                        req,
+                        ancestors
+                    );
+                    return new VItemRes(t.ToApi(), vi.ToApi());
+                }
             ),
-            new RpcEndpoint<Exact, Task>(
+            Ep<Exact, Task>.DbTx<OakDb>(
                 VItemRpcs.Delete,
-                async (ctx, req) =>
-                    await ctx.DbTx<OakDb, Task>(
-                        async (db, ses) =>
-                        {
-                            await db.LockProject(req.Org, req.Project, ctx.Ctkn);
-                            var vi = await db.VItems.SingleOrDefaultAsync(
-                                x =>
-                                    x.Org == req.Org
-                                    && x.Project == req.Project
-                                    && x.Task == req.Task
-                                    && x.Type == req.Type
-                                    && x.Id == req.Id
-                            );
-                            ctx.NotFoundIf(vi == null, model: new { Name = req.Type.Humanize() });
-                            vi.NotNull();
-                            var requiredRole = ProjectMemberRole.Admin;
-                            if (
-                                vi.CreatedBy == ses.Id
-                                && vi.CreatedOn.Add(TimeSpan.FromHours(1)) > DateTime.UtcNow
-                            )
-                            {
-                                // if i created it in the last hour I only need to be a writer
-                                requiredRole = ProjectMemberRole.Writer;
-                            }
-                            await EpsUtil.MustHaveProjectAccess(
-                                ctx,
-                                db,
-                                ses.Id,
-                                req.Org,
-                                req.Project,
-                                requiredRole
-                            );
-                            var t = await db.Tasks.SingleOrDefaultAsync(
-                                x =>
-                                    x.Org == req.Org && x.Project == req.Project && x.Id == req.Task
-                            );
-                            ctx.NotFoundIf(t == null, model: new { Name = "Task" });
-                            t.NotNull();
-                            switch (vi.Type)
-                            {
-                                case VItemType.Time:
-                                    t.TimeInc -= vi.Inc;
-                                    break;
-                                case VItemType.Cost:
-                                    t.CostInc -= vi.Inc;
-                                    break;
-                            }
-                            db.VItems.Remove(vi);
-                            await db.SaveChangesAsync();
-                            List<string>? ancestors = null;
-                            if (t.Parent != null)
-                            {
-                                ancestors = await db.SetAncestralChainAggregateValuesFromTask(
-                                    req.Org,
-                                    req.Project,
-                                    t.Parent,
-                                    ctx.Ctkn
-                                );
-                            }
-                            await EpsUtil.LogActivity(
-                                ctx,
-                                db,
-                                ses,
-                                req.Org,
-                                req.Project,
-                                req.Task,
-                                vi.Id,
-                                ActivityItemType.VItem,
-                                ActivityAction.Delete,
-                                null,
-                                req,
-                                ancestors
-                            );
-                            return t.ToApi();
-                        }
+                async (ctx, db, ses, req) =>
+                {
+                    await db.LockProject(req.Org, req.Project, ctx.Ctkn);
+                    var vi = await db.VItems.SingleOrDefaultAsync(
+                        x =>
+                            x.Org == req.Org
+                            && x.Project == req.Project
+                            && x.Task == req.Task
+                            && x.Type == req.Type
+                            && x.Id == req.Id
+                    );
+                    ctx.NotFoundIf(vi == null, model: new { Name = req.Type.Humanize() });
+                    vi.NotNull();
+                    var requiredRole = ProjectMemberRole.Admin;
+                    if (
+                        vi.CreatedBy == ses.Id
+                        && vi.CreatedOn.Add(TimeSpan.FromHours(1)) > DateTime.UtcNow
                     )
+                    {
+                        // if i created it in the last hour I only need to be a writer
+                        requiredRole = ProjectMemberRole.Writer;
+                    }
+                    await EpsUtil.MustHaveProjectAccess(
+                        ctx,
+                        db,
+                        ses.Id,
+                        req.Org,
+                        req.Project,
+                        requiredRole
+                    );
+                    var t = await db.Tasks.SingleOrDefaultAsync(
+                        x => x.Org == req.Org && x.Project == req.Project && x.Id == req.Task
+                    );
+                    ctx.NotFoundIf(t == null, model: new { Name = "Task" });
+                    t.NotNull();
+                    switch (vi.Type)
+                    {
+                        case VItemType.Time:
+                            t.TimeInc -= vi.Inc;
+                            break;
+                        case VItemType.Cost:
+                            t.CostInc -= vi.Inc;
+                            break;
+                    }
+                    db.VItems.Remove(vi);
+                    await db.SaveChangesAsync();
+                    List<string>? ancestors = null;
+                    if (t.Parent != null)
+                    {
+                        ancestors = await db.SetAncestralChainAggregateValuesFromTask(
+                            req.Org,
+                            req.Project,
+                            t.Parent,
+                            ctx.Ctkn
+                        );
+                    }
+                    await EpsUtil.LogActivity(
+                        ctx,
+                        db,
+                        ses,
+                        req.Org,
+                        req.Project,
+                        req.Task,
+                        vi.Id,
+                        ActivityItemType.VItem,
+                        ActivityAction.Delete,
+                        null,
+                        req,
+                        ancestors
+                    );
+                    return t.ToApi();
+                }
             ),
-            new RpcEndpoint<Get, SetRes<VItem>>(
+            new Ep<Get, SetRes<VItem>>(
                 VItemRpcs.Get,
                 async (ctx, req) =>
                 {

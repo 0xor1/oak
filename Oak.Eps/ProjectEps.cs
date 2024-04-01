@@ -18,98 +18,86 @@ namespace Oak.Eps;
 
 internal static class ProjectEps
 {
-    public static IReadOnlyList<IRpcEndpoint> Eps { get; } =
-        new List<IRpcEndpoint>()
+    public static IReadOnlyList<IEp> Eps { get; } =
+        new List<IEp>()
         {
-            new RpcEndpoint<Create, Project>(
+            Ep<Create, Project>.DbTx<OakDb>(
                 ProjectRpcs.Create,
-                async (ctx, req) =>
-                    await ctx.DbTx<OakDb, Project>(
-                        async (db, ses) =>
+                async (ctx, db, ses, req) =>
+                {
+                    await EpsUtil.MustHaveOrgAccess(ctx, db, ses.Id, req.Org, OrgMemberRole.Admin);
+                    ctx.BadRequestIf(
+                        req.HoursPerDay < 1 || req.HoursPerDay > 24,
+                        S.ProjectInvalidHoursPerDay
+                    );
+                    ctx.BadRequestIf(
+                        req.DaysPerWeek < 1 || req.DaysPerWeek > 7,
+                        S.ProjectInvalidDaysPerWeek
+                    );
+                    var p = new Db.Project()
+                    {
+                        Org = req.Org,
+                        Id = Id.New(),
+                        IsArchived = false,
+                        IsPublic = req.IsPublic,
+                        Name = req.Name,
+                        CreatedOn = DateTimeExt.UtcNowMilli(),
+                        CurrencySymbol = req.CurrencySymbol,
+                        CurrencyCode = req.CurrencyCode,
+                        HoursPerDay = req.HoursPerDay,
+                        DaysPerWeek = req.DaysPerWeek,
+                        StartOn = req.StartOn,
+                        EndOn = req.EndOn,
+                        FileLimit = req.FileLimit
+                    };
+                    await db.Projects.AddAsync(p, ctx.Ctkn);
+                    await db.ProjectLocks.AddAsync(new() { Org = req.Org, Id = p.Id }, ctx.Ctkn);
+                    var t = new Db.Task()
+                    {
+                        Org = req.Org,
+                        Project = p.Id,
+                        Id = p.Id,
+                        User = ses.Id,
+                        Name = p.Name,
+                        CreatedBy = ses.Id,
+                        CreatedOn = DateTimeExt.UtcNowMilli()
+                    };
+                    await db.Tasks.AddAsync(t, ctx.Ctkn);
+                    var mem = await db.OrgMembers.SingleAsync(
+                        x => x.Org == req.Org && x.Id == ses.Id,
+                        ctx.Ctkn
+                    );
+                    await db.ProjectMembers.AddAsync(
+                        new()
                         {
-                            await EpsUtil.MustHaveOrgAccess(
-                                ctx,
-                                db,
-                                ses.Id,
-                                req.Org,
-                                OrgMemberRole.Admin
-                            );
-                            ctx.BadRequestIf(
-                                req.HoursPerDay < 1 || req.HoursPerDay > 24,
-                                S.ProjectInvalidHoursPerDay
-                            );
-                            ctx.BadRequestIf(
-                                req.DaysPerWeek < 1 || req.DaysPerWeek > 7,
-                                S.ProjectInvalidDaysPerWeek
-                            );
-                            var p = new Db.Project()
-                            {
-                                Org = req.Org,
-                                Id = Id.New(),
-                                IsArchived = false,
-                                IsPublic = req.IsPublic,
-                                Name = req.Name,
-                                CreatedOn = DateTimeExt.UtcNowMilli(),
-                                CurrencySymbol = req.CurrencySymbol,
-                                CurrencyCode = req.CurrencyCode,
-                                HoursPerDay = req.HoursPerDay,
-                                DaysPerWeek = req.DaysPerWeek,
-                                StartOn = req.StartOn,
-                                EndOn = req.EndOn,
-                                FileLimit = req.FileLimit
-                            };
-                            await db.Projects.AddAsync(p, ctx.Ctkn);
-                            await db.ProjectLocks.AddAsync(
-                                new() { Org = req.Org, Id = p.Id },
-                                ctx.Ctkn
-                            );
-                            var t = new Db.Task()
-                            {
-                                Org = req.Org,
-                                Project = p.Id,
-                                Id = p.Id,
-                                User = ses.Id,
-                                Name = p.Name,
-                                CreatedBy = ses.Id,
-                                CreatedOn = DateTimeExt.UtcNowMilli()
-                            };
-                            await db.Tasks.AddAsync(t, ctx.Ctkn);
-                            var mem = await db.OrgMembers.SingleAsync(
-                                x => x.Org == req.Org && x.Id == ses.Id,
-                                ctx.Ctkn
-                            );
-                            await db.ProjectMembers.AddAsync(
-                                new()
-                                {
-                                    Org = req.Org,
-                                    Project = p.Id,
-                                    Id = ses.Id,
-                                    IsActive = mem.IsActive,
-                                    OrgRole = mem.Role,
-                                    Name = mem.Name,
-                                    Role = ProjectMemberRole.Admin
-                                },
-                                ctx.Ctkn
-                            );
-                            await EpsUtil.LogActivity(
-                                ctx,
-                                db,
-                                ses,
-                                req.Org,
-                                p.Id,
-                                p.Id,
-                                p.Id,
-                                ActivityItemType.Project,
-                                ActivityAction.Create,
-                                p.Name,
-                                null,
-                                null
-                            );
-                            return p.ToApi(t);
-                        }
-                    )
+                            Org = req.Org,
+                            Project = p.Id,
+                            Id = ses.Id,
+                            IsActive = mem.IsActive,
+                            OrgRole = mem.Role,
+                            Name = mem.Name,
+                            Role = ProjectMemberRole.Admin
+                        },
+                        ctx.Ctkn
+                    );
+                    await EpsUtil.LogActivity(
+                        ctx,
+                        db,
+                        ses,
+                        req.Org,
+                        p.Id,
+                        p.Id,
+                        p.Id,
+                        ActivityItemType.Project,
+                        ActivityAction.Create,
+                        p.Name,
+                        null,
+                        null
+                    );
+                    return p.ToApi(t);
+                }
             ),
-            new RpcEndpoint<Exact, Project>(
+            new Ep<Exact, Project>(
                 ProjectRpcs.GetOne,
                 async (ctx, req) =>
                 {
@@ -137,7 +125,7 @@ internal static class ProjectEps
                     return res.ToApi(t);
                 }
             ),
-            new RpcEndpoint<Get, SetRes<Project>>(
+            new Ep<Get, SetRes<Project>>(
                 ProjectRpcs.Get,
                 async (ctx, req) =>
                 {
@@ -319,118 +307,112 @@ internal static class ProjectEps
                     return SetRes<Project>.FromLimit(set, 101);
                 }
             ),
-            new RpcEndpoint<Update, Project>(
+            Ep<Update, Project>.DbTx<OakDb>(
                 ProjectRpcs.Update,
-                async (ctx, req) =>
-                    await ctx.DbTx<OakDb, Project>(
-                        async (db, ses) =>
-                        {
-                            await EpsUtil.MustHaveProjectAccess(
-                                ctx,
-                                db,
-                                ses.Id,
-                                req.Org,
-                                req.Id,
-                                ProjectMemberRole.Admin
-                            );
-                            ctx.BadRequestIf(
-                                req.HoursPerDay < 1 || req.HoursPerDay > 24,
-                                S.ProjectInvalidHoursPerDay
-                            );
-                            ctx.BadRequestIf(
-                                req.DaysPerWeek < 1 || req.DaysPerWeek > 7,
-                                S.ProjectInvalidDaysPerWeek
-                            );
-                            var p = await db.Projects.SingleOrDefaultAsync(
-                                x => x.Org == req.Org && x.Id == req.Id,
-                                ctx.Ctkn
-                            );
-                            ctx.NotFoundIf(p == null, model: new { Name = "Project" });
-                            p.NotNull();
-                            p.Name = req.Name ?? p.Name;
-                            p.IsPublic = req.IsPublic ?? p.IsPublic;
-                            p.CurrencySymbol = req.CurrencySymbol ?? p.CurrencySymbol;
-                            p.CurrencyCode = req.CurrencyCode ?? p.CurrencyCode;
-                            p.HoursPerDay = req.HoursPerDay ?? p.HoursPerDay;
-                            p.DaysPerWeek = req.DaysPerWeek ?? p.DaysPerWeek;
-                            p.StartOn = req.StartOn ?? p.StartOn;
-                            p.EndOn = req.EndOn ?? p.EndOn;
-                            p.FileLimit = req.FileLimit ?? p.FileLimit;
-                            var t = await db.Tasks.SingleAsync(
-                                x => x.Org == req.Org && x.Project == req.Id && x.Id == req.Id,
-                                ctx.Ctkn
-                            );
-                            t.Name = p.Name;
-                            await EpsUtil.LogActivity(
-                                ctx,
-                                db,
-                                ses,
-                                p.Org,
-                                p.Id,
-                                p.Id,
-                                p.Id,
-                                ActivityItemType.Project,
-                                ActivityAction.Update,
-                                p.Name,
-                                req,
-                                null
-                            );
-                            return p.ToApi(t);
-                        }
-                    )
+                async (ctx, db, ses, req) =>
+                {
+                    await EpsUtil.MustHaveProjectAccess(
+                        ctx,
+                        db,
+                        ses.Id,
+                        req.Org,
+                        req.Id,
+                        ProjectMemberRole.Admin
+                    );
+                    ctx.BadRequestIf(
+                        req.HoursPerDay < 1 || req.HoursPerDay > 24,
+                        S.ProjectInvalidHoursPerDay
+                    );
+                    ctx.BadRequestIf(
+                        req.DaysPerWeek < 1 || req.DaysPerWeek > 7,
+                        S.ProjectInvalidDaysPerWeek
+                    );
+                    var p = await db.Projects.SingleOrDefaultAsync(
+                        x => x.Org == req.Org && x.Id == req.Id,
+                        ctx.Ctkn
+                    );
+                    ctx.NotFoundIf(p == null, model: new { Name = "Project" });
+                    p.NotNull();
+                    p.Name = req.Name ?? p.Name;
+                    p.IsPublic = req.IsPublic ?? p.IsPublic;
+                    p.CurrencySymbol = req.CurrencySymbol ?? p.CurrencySymbol;
+                    p.CurrencyCode = req.CurrencyCode ?? p.CurrencyCode;
+                    p.HoursPerDay = req.HoursPerDay ?? p.HoursPerDay;
+                    p.DaysPerWeek = req.DaysPerWeek ?? p.DaysPerWeek;
+                    p.StartOn = req.StartOn ?? p.StartOn;
+                    p.EndOn = req.EndOn ?? p.EndOn;
+                    p.FileLimit = req.FileLimit ?? p.FileLimit;
+                    var t = await db.Tasks.SingleAsync(
+                        x => x.Org == req.Org && x.Project == req.Id && x.Id == req.Id,
+                        ctx.Ctkn
+                    );
+                    t.Name = p.Name;
+                    await EpsUtil.LogActivity(
+                        ctx,
+                        db,
+                        ses,
+                        p.Org,
+                        p.Id,
+                        p.Id,
+                        p.Id,
+                        ActivityItemType.Project,
+                        ActivityAction.Update,
+                        p.Name,
+                        req,
+                        null
+                    );
+                    return p.ToApi(t);
+                }
             ),
-            new RpcEndpoint<Exact, Nothing>(
+            Ep<Exact, Nothing>.DbTx<OakDb>(
                 ProjectRpcs.Delete,
-                async (ctx, req) =>
-                    await ctx.DbTx<OakDb, Nothing>(
-                        async (db, ses) =>
-                        {
-                            await EpsUtil.MustHaveProjectAccess(
-                                ctx,
-                                db,
-                                ses.Id,
-                                req.Org,
-                                req.Id,
-                                ProjectMemberRole.Admin
-                            );
-                            await db.Projects
-                                .Where(x => x.Org == req.Org && x.Id == req.Id)
-                                .ExecuteDeleteAsync(ctx.Ctkn);
-                            await db.ProjectLocks
-                                .Where(x => x.Org == req.Org && x.Id == req.Id)
-                                .ExecuteDeleteAsync(ctx.Ctkn);
-                            await db.Activities
-                                .Where(x => x.Org == req.Org && x.Project == req.Id)
-                                .ExecuteDeleteAsync(ctx.Ctkn);
-                            await db.ProjectMembers
-                                .Where(x => x.Org == req.Org && x.Project == req.Id)
-                                .ExecuteDeleteAsync(ctx.Ctkn);
-                            await db.Tasks
-                                .Where(x => x.Org == req.Org && x.Project == req.Id)
-                                .ExecuteDeleteAsync(ctx.Ctkn);
-                            await db.Timers
-                                .Where(x => x.Org == req.Org && x.Project == req.Id)
-                                .ExecuteDeleteAsync(ctx.Ctkn);
-                            await db.VItems
-                                .Where(x => x.Org == req.Org && x.Project == req.Id)
-                                .ExecuteDeleteAsync(ctx.Ctkn);
-                            await db.Files
-                                .Where(x => x.Org == req.Org && x.Project == req.Id)
-                                .ExecuteDeleteAsync(ctx.Ctkn);
-                            await db.Comments
-                                .Where(x => x.Org == req.Org && x.Project == req.Id)
-                                .ExecuteDeleteAsync(ctx.Ctkn);
-                            using var store = ctx.Get<IStoreClient>();
-                            await store.DeletePrefix(
-                                OrgEps.FilesBucket,
-                                string.Join("/", req.Org, req.Id),
-                                ctx.Ctkn
-                            );
-                            return Nothing.Inst;
-                        }
-                    )
+                async (ctx, db, ses, req) =>
+                {
+                    await EpsUtil.MustHaveProjectAccess(
+                        ctx,
+                        db,
+                        ses.Id,
+                        req.Org,
+                        req.Id,
+                        ProjectMemberRole.Admin
+                    );
+                    await db.Projects
+                        .Where(x => x.Org == req.Org && x.Id == req.Id)
+                        .ExecuteDeleteAsync(ctx.Ctkn);
+                    await db.ProjectLocks
+                        .Where(x => x.Org == req.Org && x.Id == req.Id)
+                        .ExecuteDeleteAsync(ctx.Ctkn);
+                    await db.Activities
+                        .Where(x => x.Org == req.Org && x.Project == req.Id)
+                        .ExecuteDeleteAsync(ctx.Ctkn);
+                    await db.ProjectMembers
+                        .Where(x => x.Org == req.Org && x.Project == req.Id)
+                        .ExecuteDeleteAsync(ctx.Ctkn);
+                    await db.Tasks
+                        .Where(x => x.Org == req.Org && x.Project == req.Id)
+                        .ExecuteDeleteAsync(ctx.Ctkn);
+                    await db.Timers
+                        .Where(x => x.Org == req.Org && x.Project == req.Id)
+                        .ExecuteDeleteAsync(ctx.Ctkn);
+                    await db.VItems
+                        .Where(x => x.Org == req.Org && x.Project == req.Id)
+                        .ExecuteDeleteAsync(ctx.Ctkn);
+                    await db.Files
+                        .Where(x => x.Org == req.Org && x.Project == req.Id)
+                        .ExecuteDeleteAsync(ctx.Ctkn);
+                    await db.Comments
+                        .Where(x => x.Org == req.Org && x.Project == req.Id)
+                        .ExecuteDeleteAsync(ctx.Ctkn);
+                    using var store = ctx.Get<IStoreClient>();
+                    await store.DeletePrefix(
+                        OrgEps.FilesBucket,
+                        string.Join("/", req.Org, req.Id),
+                        ctx.Ctkn
+                    );
+                    return Nothing.Inst;
+                }
             ),
-            new RpcEndpoint<GetActivities, SetRes<Activity>>(
+            new Ep<GetActivities, SetRes<Activity>>(
                 ProjectRpcs.GetActivities,
                 async (ctx, req) =>
                 {

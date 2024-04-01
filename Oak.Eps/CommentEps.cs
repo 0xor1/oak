@@ -19,160 +19,148 @@ internal static class CommentEps
     private const int minBodyLen = 1;
     private const int maxBodyLen = 10000;
 
-    public static IReadOnlyList<IRpcEndpoint> Eps { get; } =
-        new List<IRpcEndpoint>()
+    public static IReadOnlyList<IEp> Eps { get; } =
+        new List<IEp>()
         {
-            new RpcEndpoint<Create, Comment>(
+            Ep<Create, Comment>.DbTx<OakDb>(
                 CommentRpcs.Create,
-                async (ctx, req) =>
-                    await ctx.DbTx<OakDb, Comment>(
-                        async (db, ses) =>
-                        {
-                            await EpsUtil.MustHaveProjectAccess(
-                                ctx,
-                                db,
-                                ses.Id,
-                                req.Org,
-                                req.Project,
-                                ProjectMemberRole.Writer
-                            );
-                            req = req with { Body = ctx.Get<IHtmlSanitizer>().Sanitize(req.Body) };
-                            EpsUtil.ValidStr(ctx, req.Body, minBodyLen, maxBodyLen, "body");
-                            ctx.NotFoundIf(
-                                !await db.Tasks.AnyAsync(
-                                    x =>
-                                        x.Org == req.Org
-                                        && x.Project == req.Project
-                                        && x.Id == req.Task,
-                                    ctx.Ctkn
-                                ),
-                                model: new { Name = "Task" }
-                            );
-                            var c = new Db.Comment()
-                            {
-                                Org = req.Org,
-                                Project = req.Project,
-                                Task = req.Task,
-                                Id = Id.New(),
-                                CreatedBy = ses.Id,
-                                CreatedOn = DateTimeExt.UtcNowMilli(),
-                                Body = req.Body
-                            };
-                            await db.Comments.AddAsync(c, ctx.Ctkn);
-                            await EpsUtil.LogActivity(
-                                ctx,
-                                db,
-                                ses,
-                                req.Org,
-                                req.Project,
-                                req.Task,
-                                c.Id,
-                                ActivityItemType.Comment,
-                                ActivityAction.Create,
-                                null,
-                                null,
-                                null
-                            );
-                            return c.ToApi();
-                        }
-                    )
+                async (ctx, db, ses, req) =>
+                {
+                    await EpsUtil.MustHaveProjectAccess(
+                        ctx,
+                        db,
+                        ses.Id,
+                        req.Org,
+                        req.Project,
+                        ProjectMemberRole.Writer
+                    );
+                    req = req with { Body = ctx.Get<IHtmlSanitizer>().Sanitize(req.Body) };
+                    EpsUtil.ValidStr(ctx, req.Body, minBodyLen, maxBodyLen, "body");
+                    ctx.NotFoundIf(
+                        !await db.Tasks.AnyAsync(
+                            x => x.Org == req.Org && x.Project == req.Project && x.Id == req.Task,
+                            ctx.Ctkn
+                        ),
+                        model: new { Name = "Task" }
+                    );
+                    var c = new Db.Comment()
+                    {
+                        Org = req.Org,
+                        Project = req.Project,
+                        Task = req.Task,
+                        Id = Id.New(),
+                        CreatedBy = ses.Id,
+                        CreatedOn = DateTimeExt.UtcNowMilli(),
+                        Body = req.Body
+                    };
+                    await db.Comments.AddAsync(c, ctx.Ctkn);
+                    await EpsUtil.LogActivity(
+                        ctx,
+                        db,
+                        ses,
+                        req.Org,
+                        req.Project,
+                        req.Task,
+                        c.Id,
+                        ActivityItemType.Comment,
+                        ActivityAction.Create,
+                        null,
+                        null,
+                        null
+                    );
+                    return c.ToApi();
+                }
             ),
-            new RpcEndpoint<Update, Comment>(
+            Ep<Update, Comment>.DbTx<OakDb>(
                 CommentRpcs.Update,
-                async (ctx, req) =>
-                    await ctx.DbTx<OakDb, Comment>(
-                        async (db, ses) =>
-                        {
-                            req = req with { Body = ctx.Get<IHtmlSanitizer>().Sanitize(req.Body) };
-                            EpsUtil.ValidStr(ctx, req.Body, minBodyLen, maxBodyLen, "body");
-                            await EpsUtil.MustHaveProjectAccess(
-                                ctx,
-                                db,
-                                ses.Id,
-                                req.Org,
-                                req.Project,
-                                ProjectMemberRole.Writer
-                            );
-                            var c = await db.Comments.SingleOrDefaultAsync(
-                                x =>
-                                    x.Org == req.Org
-                                    && x.Project == req.Project
-                                    && x.Task == req.Task
-                                    && x.Id == req.Id
-                                    && x.CreatedBy == ses.Id,
-                                ctx.Ctkn
-                            );
-                            ctx.NotFoundIf(c == null, model: new { Name = "Comment" });
-                            c.NotNull();
-                            c.Body = req.Body;
-                            await EpsUtil.LogActivity(
-                                ctx,
-                                db,
-                                ses,
-                                req.Org,
-                                req.Project,
-                                req.Task,
-                                c.Id,
-                                ActivityItemType.Comment,
-                                ActivityAction.Update,
-                                null,
-                                req,
-                                null
-                            );
-                            return c.ToApi();
-                        }
-                    )
+                async (ctx, db, ses, req) =>
+                {
+                    req = req with { Body = ctx.Get<IHtmlSanitizer>().Sanitize(req.Body) };
+                    EpsUtil.ValidStr(ctx, req.Body, minBodyLen, maxBodyLen, "body");
+                    await EpsUtil.MustHaveProjectAccess(
+                        ctx,
+                        db,
+                        ses.Id,
+                        req.Org,
+                        req.Project,
+                        ProjectMemberRole.Writer
+                    );
+                    var c = await db.Comments.SingleOrDefaultAsync(
+                        x =>
+                            x.Org == req.Org
+                            && x.Project == req.Project
+                            && x.Task == req.Task
+                            && x.Id == req.Id
+                            && x.CreatedBy == ses.Id,
+                        ctx.Ctkn
+                    );
+                    ctx.NotFoundIf(c == null, model: new { Name = "Comment" });
+                    c.NotNull();
+                    c.Body = req.Body;
+                    await EpsUtil.LogActivity(
+                        ctx,
+                        db,
+                        ses,
+                        req.Org,
+                        req.Project,
+                        req.Task,
+                        c.Id,
+                        ActivityItemType.Comment,
+                        ActivityAction.Update,
+                        null,
+                        req,
+                        null
+                    );
+                    return c.ToApi();
+                }
             ),
-            new RpcEndpoint<Exact, Nothing>(
+            Ep<Exact, Nothing>.DbTx<OakDb>(
                 CommentRpcs.Delete,
-                async (ctx, req) =>
-                    await ctx.DbTx<OakDb, Nothing>(
-                        async (db, ses) =>
-                        {
-                            var c = await db.Comments.SingleOrDefaultAsync(
-                                x =>
-                                    x.Org == req.Org
-                                    && x.Project == req.Project
-                                    && x.Task == req.Task
-                                    && x.Id == req.Id,
-                                ctx.Ctkn
-                            );
-                            ctx.NotFoundIf(c == null, model: new { Name = "Comment" });
-                            c.NotNull();
-                            var requiredRole = ProjectMemberRole.Admin;
-                            if (c.CreatedBy == ses.Id)
-                            {
-                                // I can delete my own comments
-                                requiredRole = ProjectMemberRole.Writer;
-                            }
-                            await EpsUtil.MustHaveProjectAccess(
-                                ctx,
-                                db,
-                                ses.Id,
-                                req.Org,
-                                req.Project,
-                                requiredRole
-                            );
-                            db.Comments.Remove(c);
-                            await EpsUtil.LogActivity(
-                                ctx,
-                                db,
-                                ses,
-                                req.Org,
-                                req.Project,
-                                req.Task,
-                                c.Id,
-                                ActivityItemType.Comment,
-                                ActivityAction.Delete,
-                                null,
-                                null,
-                                null
-                            );
-                            return Nothing.Inst;
-                        }
-                    )
+                async (ctx, db, ses, req) =>
+                {
+                    var c = await db.Comments.SingleOrDefaultAsync(
+                        x =>
+                            x.Org == req.Org
+                            && x.Project == req.Project
+                            && x.Task == req.Task
+                            && x.Id == req.Id,
+                        ctx.Ctkn
+                    );
+                    ctx.NotFoundIf(c == null, model: new { Name = "Comment" });
+                    c.NotNull();
+                    var requiredRole = ProjectMemberRole.Admin;
+                    if (c.CreatedBy == ses.Id)
+                    {
+                        // I can delete my own comments
+                        requiredRole = ProjectMemberRole.Writer;
+                    }
+                    await EpsUtil.MustHaveProjectAccess(
+                        ctx,
+                        db,
+                        ses.Id,
+                        req.Org,
+                        req.Project,
+                        requiredRole
+                    );
+                    db.Comments.Remove(c);
+                    await EpsUtil.LogActivity(
+                        ctx,
+                        db,
+                        ses,
+                        req.Org,
+                        req.Project,
+                        req.Task,
+                        c.Id,
+                        ActivityItemType.Comment,
+                        ActivityAction.Delete,
+                        null,
+                        null,
+                        null
+                    );
+                    return Nothing.Inst;
+                }
             ),
-            new RpcEndpoint<Get, SetRes<Comment>>(
+            new Ep<Get, SetRes<Comment>>(
                 CommentRpcs.Get,
                 async (ctx, req) =>
                 {

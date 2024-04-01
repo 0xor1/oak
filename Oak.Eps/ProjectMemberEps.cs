@@ -15,67 +15,64 @@ namespace Oak.Eps;
 
 internal static class ProjectMemberEps
 {
-    public static IReadOnlyList<IRpcEndpoint> Eps { get; } =
-        new List<IRpcEndpoint>()
+    public static IReadOnlyList<IEp> Eps { get; } =
+        new List<IEp>()
         {
-            new RpcEndpoint<Add, ProjectMember>(
+            Ep<Add, ProjectMember>.DbTx<OakDb>(
                 ProjectMemberRpcs.Add,
-                async (ctx, req) =>
-                    await ctx.DbTx<OakDb, ProjectMember>(
-                        async (db, ses) =>
+                async (ctx, db, ses, req) =>
+                {
+                    await EpsUtil.MustHaveProjectAccess(
+                        ctx,
+                        db,
+                        ses.Id,
+                        req.Org,
+                        req.Project,
+                        ProjectMemberRole.Admin
+                    );
+                    var orgMem = await db.OrgMembers.SingleOrDefaultAsync(
+                        x => x.Org == req.Org && x.Id == req.Id && x.IsActive,
+                        ctx.Ctkn
+                    );
+                    ctx.NotFoundIf(orgMem == null, model: new { Name = "Org Member" });
+                    orgMem.NotNull();
+                    if (orgMem.Role is OrgMemberRole.Owner or OrgMemberRole.Admin)
+                    {
+                        // org level owners and admins cant be less than project admins
+                        req = req with
                         {
-                            await EpsUtil.MustHaveProjectAccess(
-                                ctx,
-                                db,
-                                ses.Id,
-                                req.Org,
-                                req.Project,
-                                ProjectMemberRole.Admin
-                            );
-                            var orgMem = await db.OrgMembers.SingleOrDefaultAsync(
-                                x => x.Org == req.Org && x.Id == req.Id && x.IsActive,
-                                ctx.Ctkn
-                            );
-                            ctx.NotFoundIf(orgMem == null, model: new { Name = "Org Member" });
-                            orgMem.NotNull();
-                            if (orgMem.Role is OrgMemberRole.Owner or OrgMemberRole.Admin)
-                            {
-                                // org level owners and admins cant be less than project admins
-                                req = req with
-                                {
-                                    Role = ProjectMemberRole.Admin
-                                };
-                            }
-                            var mem = new Db.ProjectMember()
-                            {
-                                Org = req.Org,
-                                Project = req.Project,
-                                Id = req.Id,
-                                IsActive = orgMem.IsActive,
-                                OrgRole = orgMem.Role,
-                                Name = orgMem.Name,
-                                Role = req.Role
-                            };
-                            await db.ProjectMembers.AddAsync(mem, ctx.Ctkn);
-                            await EpsUtil.LogActivity(
-                                ctx,
-                                db,
-                                ses,
-                                req.Org,
-                                req.Project,
-                                req.Project,
-                                mem.Id,
-                                ActivityItemType.Member,
-                                ActivityAction.Create,
-                                mem.Name,
-                                null,
-                                null
-                            );
-                            return mem.ToApi(new ProjectMemberStats());
-                        }
-                    )
+                            Role = ProjectMemberRole.Admin
+                        };
+                    }
+                    var mem = new Db.ProjectMember()
+                    {
+                        Org = req.Org,
+                        Project = req.Project,
+                        Id = req.Id,
+                        IsActive = orgMem.IsActive,
+                        OrgRole = orgMem.Role,
+                        Name = orgMem.Name,
+                        Role = req.Role
+                    };
+                    await db.ProjectMembers.AddAsync(mem, ctx.Ctkn);
+                    await EpsUtil.LogActivity(
+                        ctx,
+                        db,
+                        ses,
+                        req.Org,
+                        req.Project,
+                        req.Project,
+                        mem.Id,
+                        ActivityItemType.Member,
+                        ActivityAction.Create,
+                        mem.Name,
+                        null,
+                        null
+                    );
+                    return mem.ToApi(new ProjectMemberStats());
+                }
             ),
-            new RpcEndpoint<Exact, Maybe<ProjectMember>>(
+            new Ep<Exact, Maybe<ProjectMember>>(
                 ProjectMemberRpcs.GetOne,
                 async (ctx, req) =>
                 {
@@ -109,7 +106,7 @@ internal static class ProjectMemberEps
                     );
                 }
             ),
-            new RpcEndpoint<Get, SetRes<ProjectMember>>(
+            new Ep<Get, SetRes<ProjectMember>>(
                 ProjectMemberRpcs.Get,
                 async (ctx, req) =>
                 {
@@ -212,111 +209,100 @@ internal static class ProjectMemberEps
                     return SetRes<ProjectMember>.FromLimit(set, 101);
                 }
             ),
-            new RpcEndpoint<Update, ProjectMember>(
+            Ep<Update, ProjectMember>.DbTx<OakDb>(
                 ProjectMemberRpcs.Update,
-                async (ctx, req) =>
-                    await ctx.DbTx<OakDb, ProjectMember>(
-                        async (db, ses) =>
+                async (ctx, db, ses, req) =>
+                {
+                    await EpsUtil.MustHaveProjectAccess(
+                        ctx,
+                        db,
+                        ses.Id,
+                        req.Org,
+                        req.Project,
+                        ProjectMemberRole.Admin
+                    );
+                    var mem = await db.ProjectMembers.SingleOrDefaultAsync(
+                        x => x.Org == req.Org && x.Project == req.Project && x.Id == req.Id,
+                        ctx.Ctkn
+                    );
+                    ctx.NotFoundIf(mem == null, model: new { Name = "Project Member" });
+                    mem.NotNull();
+                    var orgMem = await db.OrgMembers.SingleAsync(
+                        x => x.Org == req.Org && x.Id == req.Id,
+                        ctx.Ctkn
+                    );
+                    if (orgMem.Role is OrgMemberRole.Owner or OrgMemberRole.Admin)
+                    {
+                        // org level owners and admins cant be less than project admins
+                        req = req with
                         {
-                            await EpsUtil.MustHaveProjectAccess(
-                                ctx,
-                                db,
-                                ses.Id,
-                                req.Org,
-                                req.Project,
-                                ProjectMemberRole.Admin
-                            );
-                            var mem = await db.ProjectMembers.SingleOrDefaultAsync(
-                                x => x.Org == req.Org && x.Project == req.Project && x.Id == req.Id,
-                                ctx.Ctkn
-                            );
-                            ctx.NotFoundIf(mem == null, model: new { Name = "Project Member" });
-                            mem.NotNull();
-                            var orgMem = await db.OrgMembers.SingleAsync(
-                                x => x.Org == req.Org && x.Id == req.Id,
-                                ctx.Ctkn
-                            );
-                            if (orgMem.Role is OrgMemberRole.Owner or OrgMemberRole.Admin)
-                            {
-                                // org level owners and admins cant be less than project admins
-                                req = req with
-                                {
-                                    Role = ProjectMemberRole.Admin
-                                };
-                            }
-                            mem.Role = req.Role;
-                            await EpsUtil.LogActivity(
-                                ctx,
-                                db,
-                                ses,
-                                req.Org,
-                                req.Project,
-                                req.Project,
-                                mem.Id,
-                                ActivityItemType.Member,
-                                ActivityAction.Update,
-                                mem.Name,
-                                null,
-                                null
-                            );
+                            Role = ProjectMemberRole.Admin
+                        };
+                    }
+                    mem.Role = req.Role;
+                    await EpsUtil.LogActivity(
+                        ctx,
+                        db,
+                        ses,
+                        req.Org,
+                        req.Project,
+                        req.Project,
+                        mem.Id,
+                        ActivityItemType.Member,
+                        ActivityAction.Update,
+                        mem.Name,
+                        null,
+                        null
+                    );
 
-                            var stats = await GetStats(
-                                ctx,
-                                db,
-                                req.Org,
-                                req.Project,
-                                new List<string>() { mem.Id }
-                            );
-                            return mem.ToApi(stats.SingleOrDefault() ?? new ProjectMemberStats());
-                        }
-                    )
+                    var stats = await GetStats(
+                        ctx,
+                        db,
+                        req.Org,
+                        req.Project,
+                        new List<string>() { mem.Id }
+                    );
+                    return mem.ToApi(stats.SingleOrDefault() ?? new ProjectMemberStats());
+                }
             ),
-            new RpcEndpoint<Exact, Nothing>(
+            Ep<Exact, Nothing>.DbTx<OakDb>(
                 ProjectMemberRpcs.Remove,
-                async (ctx, req) =>
-                    await ctx.DbTx<OakDb, Nothing>(
-                        async (db, ses) =>
-                        {
-                            await EpsUtil.MustHaveProjectAccess(
-                                ctx,
-                                db,
-                                ses.Id,
-                                req.Org,
-                                req.Project,
-                                ProjectMemberRole.Admin
-                            );
-                            var mem = await db.ProjectMembers.SingleOrDefaultAsync(
-                                x => x.Org == req.Org && x.Project == req.Project && x.Id == req.Id,
-                                ctx.Ctkn
-                            );
-                            ctx.NotFoundIf(mem == null, model: new { Name = "Project Member" });
-                            await db.ProjectMembers
-                                .Where(
-                                    x =>
-                                        x.Org == req.Org
-                                        && x.Project == req.Project
-                                        && x.Id == req.Id
-                                )
-                                .ExecuteDeleteAsync(ctx.Ctkn);
-                            await EpsUtil.LogActivity(
-                                ctx,
-                                db,
-                                ses,
-                                req.Org,
-                                req.Project,
-                                req.Project,
-                                mem.NotNull().Id,
-                                ActivityItemType.Member,
-                                ActivityAction.Delete,
-                                mem.Name,
-                                null,
-                                null
-                            );
+                async (ctx, db, ses, req) =>
+                {
+                    await EpsUtil.MustHaveProjectAccess(
+                        ctx,
+                        db,
+                        ses.Id,
+                        req.Org,
+                        req.Project,
+                        ProjectMemberRole.Admin
+                    );
+                    var mem = await db.ProjectMembers.SingleOrDefaultAsync(
+                        x => x.Org == req.Org && x.Project == req.Project && x.Id == req.Id,
+                        ctx.Ctkn
+                    );
+                    ctx.NotFoundIf(mem == null, model: new { Name = "Project Member" });
+                    await db.ProjectMembers
+                        .Where(x => x.Org == req.Org && x.Project == req.Project && x.Id == req.Id)
+                        .ExecuteDeleteAsync(ctx.Ctkn);
+                    await EpsUtil.LogActivity(
+                        ctx,
+                        db,
+                        ses,
+                        req.Org,
+                        req.Project,
+                        req.Project,
+                        mem.NotNull().Id,
+                        ActivityItemType.Member,
+                        ActivityAction.Delete,
+                        mem.Name,
+                        null,
+                        null
+                    );
 
-                            // dont do anything clever like mass unassigning their currently assigned tasks
-                            return Nothing.Inst;
-                        }
-                    )
+                    // dont do anything clever like mass unassigning their currently assigned tasks
+                    return Nothing.Inst;
+                }
             )
         };
 

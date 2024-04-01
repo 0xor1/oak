@@ -19,106 +19,97 @@ internal static class FileEps
 {
     private const int nameMinLen = 1;
     private const int nameMaxLen = 250;
-    public static IReadOnlyList<IRpcEndpoint> Eps { get; } =
-        new List<IRpcEndpoint>()
+    public static IReadOnlyList<IEp> Eps { get; } =
+        new List<IEp>()
         {
-            new RpcEndpoint<Upload, FileRes>(
+            Ep<Upload, FileRes>.DbTx<OakDb>(
                 FileRpcs.Upload,
-                async (ctx, req) =>
-                    await ctx.DbTx<OakDb, FileRes>(
-                        async (db, ses) =>
-                        {
-                            await EpsUtil.MustHaveProjectAccess(
-                                ctx,
-                                db,
-                                ses.Id,
-                                req.Org,
-                                req.Project,
-                                ProjectMemberRole.Writer
-                            );
-                            EpsUtil.ValidStr(ctx, req.Stream.Name, nameMinLen, nameMaxLen, "Name");
-                            await db.LockProject(req.Org, req.Project, ctx.Ctkn);
-                            var p = await db.Projects.SingleAsync(
-                                x => x.Org == req.Org && x.Id == req.Project,
-                                ctx.Ctkn
-                            );
-                            var pt = await db.Tasks.SingleAsync(
-                                x =>
-                                    x.Org == req.Org
-                                    && x.Project == req.Project
-                                    && x.Id == req.Project,
-                                ctx.Ctkn
-                            );
-                            ctx.BadRequestIf(
-                                pt.FileSize + pt.FileSubSize + req.Stream.Size > p.FileLimit,
-                                S.ProjectFileLimitExceeded,
-                                new { p.FileLimit }
-                            );
-                            var t = await db.Tasks.SingleOrDefaultAsync(
-                                x =>
-                                    x.Org == req.Org
-                                    && x.Project == req.Project
-                                    && x.Id == req.Task,
-                                ctx.Ctkn
-                            );
-                            ctx.NotFoundIf(t == null, model: new { Name = "Task" });
-                            t.NotNull();
-                            t.FileN++;
-                            t.FileSize += req.Stream.Size;
-                            var f = new Db.File()
-                            {
-                                Org = req.Org,
-                                Project = req.Project,
-                                Task = req.Task,
-                                Id = Id.New(),
-                                Name = req.Stream.Name,
-                                CreatedBy = ses.Id,
-                                CreatedOn = DateTimeExt.UtcNowMilli(),
-                                Size = req.Stream.Size,
-                                Type = req.Stream.Type
-                            };
-                            await db.Files.AddAsync(f, ctx.Ctkn);
-                            await db.SaveChangesAsync(ctx.Ctkn);
-                            List<string>? ancestors = null;
-                            if (t.Parent != null)
-                            {
-                                ancestors = await db.SetAncestralChainAggregateValuesFromTask(
-                                    req.Org,
-                                    req.Project,
-                                    t.Parent,
-                                    ctx.Ctkn
-                                );
-                            }
-                            await EpsUtil.LogActivity(
-                                ctx,
-                                db,
-                                ses,
-                                req.Org,
-                                req.Project,
-                                req.Task,
-                                f.Id,
-                                ActivityItemType.File,
-                                ActivityAction.Create,
-                                f.Name,
-                                new { f.Size, f.Type },
-                                ancestors
-                            );
+                async (ctx, db, ses, req) =>
+                {
+                    await EpsUtil.MustHaveProjectAccess(
+                        ctx,
+                        db,
+                        ses.Id,
+                        req.Org,
+                        req.Project,
+                        ProjectMemberRole.Writer
+                    );
+                    EpsUtil.ValidStr(ctx, req.Stream.Name, nameMinLen, nameMaxLen, "Name");
+                    await db.LockProject(req.Org, req.Project, ctx.Ctkn);
+                    var p = await db.Projects.SingleAsync(
+                        x => x.Org == req.Org && x.Id == req.Project,
+                        ctx.Ctkn
+                    );
+                    var pt = await db.Tasks.SingleAsync(
+                        x => x.Org == req.Org && x.Project == req.Project && x.Id == req.Project,
+                        ctx.Ctkn
+                    );
+                    ctx.BadRequestIf(
+                        pt.FileSize + pt.FileSubSize + req.Stream.Size > p.FileLimit,
+                        S.ProjectFileLimitExceeded,
+                        new { p.FileLimit }
+                    );
+                    var t = await db.Tasks.SingleOrDefaultAsync(
+                        x => x.Org == req.Org && x.Project == req.Project && x.Id == req.Task,
+                        ctx.Ctkn
+                    );
+                    ctx.NotFoundIf(t == null, model: new { Name = "Task" });
+                    t.NotNull();
+                    t.FileN++;
+                    t.FileSize += req.Stream.Size;
+                    var f = new Db.File()
+                    {
+                        Org = req.Org,
+                        Project = req.Project,
+                        Task = req.Task,
+                        Id = Id.New(),
+                        Name = req.Stream.Name,
+                        CreatedBy = ses.Id,
+                        CreatedOn = DateTimeExt.UtcNowMilli(),
+                        Size = req.Stream.Size,
+                        Type = req.Stream.Type
+                    };
+                    await db.Files.AddAsync(f, ctx.Ctkn);
+                    await db.SaveChangesAsync(ctx.Ctkn);
+                    List<string>? ancestors = null;
+                    if (t.Parent != null)
+                    {
+                        ancestors = await db.SetAncestralChainAggregateValuesFromTask(
+                            req.Org,
+                            req.Project,
+                            t.Parent,
+                            ctx.Ctkn
+                        );
+                    }
+                    await EpsUtil.LogActivity(
+                        ctx,
+                        db,
+                        ses,
+                        req.Org,
+                        req.Project,
+                        req.Task,
+                        f.Id,
+                        ActivityItemType.File,
+                        ActivityAction.Create,
+                        f.Name,
+                        new { f.Size, f.Type },
+                        ancestors
+                    );
 
-                            var store = ctx.Get<IStoreClient>();
-                            await store.Upload(
-                                OrgEps.FilesBucket,
-                                string.Join("/", req.Org, req.Project, req.Task, f.Id),
-                                req.Stream.Type,
-                                req.Stream.Size,
-                                req.Stream.Data,
-                                ctx.Ctkn
-                            );
+                    var store = ctx.Get<IStoreClient>();
+                    await store.Upload(
+                        OrgEps.FilesBucket,
+                        string.Join("/", req.Org, req.Project, req.Task, f.Id),
+                        req.Stream.Type,
+                        req.Stream.Size,
+                        req.Stream.Data,
+                        ctx.Ctkn
+                    );
 
-                            return new FileRes(t.ToApi(), f.ToApi());
-                        }
-                    )
+                    return new FileRes(t.ToApi(), f.ToApi());
+                }
             ),
-            new RpcEndpoint<Download, HasStream>(
+            new Ep<Download, HasStream>(
                 FileRpcs.Download,
                 async (ctx, req) =>
                 {
@@ -155,83 +146,77 @@ internal static class FileEps
                     };
                 }
             ),
-            new RpcEndpoint<Exact, Api.Task.Task>(
+            Ep<Exact, Api.Task.Task>.DbTx<OakDb>(
                 FileRpcs.Delete,
-                async (ctx, req) =>
-                    await ctx.DbTx<OakDb, Api.Task.Task>(
-                        async (db, ses) =>
-                        {
-                            await db.LockProject(req.Org, req.Project, ctx.Ctkn);
-                            var f = await db.Files.SingleOrDefaultAsync(
-                                x =>
-                                    x.Org == req.Org
-                                    && x.Project == req.Project
-                                    && x.Task == req.Task
-                                    && x.Id == req.Id,
-                                ctx.Ctkn
-                            );
-                            ctx.NotFoundIf(f == null, model: new { Name = "File" });
-                            f.NotNull();
-                            var requiredRole = ProjectMemberRole.Admin;
-                            if (
-                                f.CreatedBy == ses.Id
-                                && f.CreatedOn.Add(TimeSpan.FromHours(1)) > DateTime.UtcNow
-                            )
-                            {
-                                // if i created it in the last hour I only need to be a writer
-                                requiredRole = ProjectMemberRole.Writer;
-                            }
-                            await EpsUtil.MustHaveProjectAccess(
-                                ctx,
-                                db,
-                                ses.Id,
-                                req.Org,
-                                req.Project,
-                                requiredRole
-                            );
-                            db.Files.Remove(f);
-                            var t = await db.Tasks.SingleOrDefaultAsync(
-                                x =>
-                                    x.Org == req.Org
-                                    && x.Project == req.Project
-                                    && x.Id == req.Task,
-                                ctx.Ctkn
-                            );
-                            ctx.NotFoundIf(t == null, model: new { Name = "Task" });
-                            t.NotNull();
-                            t.FileN--;
-                            t.FileSize -= f.Size;
-                            await db.SaveChangesAsync(ctx.Ctkn);
-                            List<string>? ancestors = null;
-                            if (t.Parent != null)
-                            {
-                                ancestors = await db.SetAncestralChainAggregateValuesFromTask(
-                                    req.Org,
-                                    req.Project,
-                                    t.Parent,
-                                    ctx.Ctkn
-                                );
-                            }
-                            await EpsUtil.LogActivity(
-                                ctx,
-                                db,
-                                ses,
-                                req.Org,
-                                req.Project,
-                                req.Task,
-                                f.Id,
-                                ActivityItemType.File,
-                                ActivityAction.Delete,
-                                f.Name,
-                                new { f.Size, f.Type },
-                                ancestors
-                            );
-
-                            return t.ToApi();
-                        }
+                async (ctx, db, ses, req) =>
+                {
+                    await db.LockProject(req.Org, req.Project, ctx.Ctkn);
+                    var f = await db.Files.SingleOrDefaultAsync(
+                        x =>
+                            x.Org == req.Org
+                            && x.Project == req.Project
+                            && x.Task == req.Task
+                            && x.Id == req.Id,
+                        ctx.Ctkn
+                    );
+                    ctx.NotFoundIf(f == null, model: new { Name = "File" });
+                    f.NotNull();
+                    var requiredRole = ProjectMemberRole.Admin;
+                    if (
+                        f.CreatedBy == ses.Id
+                        && f.CreatedOn.Add(TimeSpan.FromHours(1)) > DateTime.UtcNow
                     )
+                    {
+                        // if i created it in the last hour I only need to be a writer
+                        requiredRole = ProjectMemberRole.Writer;
+                    }
+                    await EpsUtil.MustHaveProjectAccess(
+                        ctx,
+                        db,
+                        ses.Id,
+                        req.Org,
+                        req.Project,
+                        requiredRole
+                    );
+                    db.Files.Remove(f);
+                    var t = await db.Tasks.SingleOrDefaultAsync(
+                        x => x.Org == req.Org && x.Project == req.Project && x.Id == req.Task,
+                        ctx.Ctkn
+                    );
+                    ctx.NotFoundIf(t == null, model: new { Name = "Task" });
+                    t.NotNull();
+                    t.FileN--;
+                    t.FileSize -= f.Size;
+                    await db.SaveChangesAsync(ctx.Ctkn);
+                    List<string>? ancestors = null;
+                    if (t.Parent != null)
+                    {
+                        ancestors = await db.SetAncestralChainAggregateValuesFromTask(
+                            req.Org,
+                            req.Project,
+                            t.Parent,
+                            ctx.Ctkn
+                        );
+                    }
+                    await EpsUtil.LogActivity(
+                        ctx,
+                        db,
+                        ses,
+                        req.Org,
+                        req.Project,
+                        req.Task,
+                        f.Id,
+                        ActivityItemType.File,
+                        ActivityAction.Delete,
+                        f.Name,
+                        new { f.Size, f.Type },
+                        ancestors
+                    );
+
+                    return t.ToApi();
+                }
             ),
-            new RpcEndpoint<Get, SetRes<File>>(
+            new Ep<Get, SetRes<File>>(
                 FileRpcs.Get,
                 async (ctx, req) =>
                 {

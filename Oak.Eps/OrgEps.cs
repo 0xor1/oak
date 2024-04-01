@@ -35,46 +35,43 @@ public static class OrgEps
         await sc.CreateBucket(FilesBucket, S3CannedACL.Private);
     }
 
-    public static IReadOnlyList<IRpcEndpoint> Eps { get; } =
-        new List<IRpcEndpoint>()
+    public static IReadOnlyList<IEp> Eps { get; } =
+        new List<IEp>()
         {
-            new RpcEndpoint<Create, Org>(
+            Ep<Create, Org>.DbTx<OakDb>(
                 OrgRpcs.Create,
-                async (ctx, req) =>
-                    await ctx.DbTx<OakDb, Org>(
-                        async (db, ses) =>
-                        {
-                            var activeOrgs = await db.OrgMembers.CountAsync(
-                                x => x.IsActive && x.Id == ses.Id,
-                                ctx.Ctkn
-                            );
-                            ctx.ErrorIf(
-                                activeOrgs > MaxActiveOrgs,
-                                S.OrgTooMany,
-                                null,
-                                HttpStatusCode.BadRequest
-                            );
-                            var newOrg = new Db.Org()
-                            {
-                                Id = Id.New(),
-                                Name = req.Name,
-                                CreatedOn = DateTimeExt.UtcNowMilli()
-                            };
-                            await db.Orgs.AddAsync(newOrg, ctx.Ctkn);
-                            var m = new Db.OrgMember()
-                            {
-                                Org = newOrg.Id,
-                                Id = ses.Id,
-                                IsActive = true,
-                                Name = req.OwnerMemberName,
-                                Role = OrgMemberRole.Owner
-                            };
-                            await db.OrgMembers.AddAsync(m, ctx.Ctkn);
-                            return newOrg.ToApi(m);
-                        }
-                    )
+                async (ctx, db, ses, req) =>
+                {
+                    var activeOrgs = await db.OrgMembers.CountAsync(
+                        x => x.IsActive && x.Id == ses.Id,
+                        ctx.Ctkn
+                    );
+                    ctx.ErrorIf(
+                        activeOrgs > MaxActiveOrgs,
+                        S.OrgTooMany,
+                        null,
+                        HttpStatusCode.BadRequest
+                    );
+                    var newOrg = new Db.Org()
+                    {
+                        Id = Id.New(),
+                        Name = req.Name,
+                        CreatedOn = DateTimeExt.UtcNowMilli()
+                    };
+                    await db.Orgs.AddAsync(newOrg, ctx.Ctkn);
+                    var m = new Db.OrgMember()
+                    {
+                        Org = newOrg.Id,
+                        Id = ses.Id,
+                        IsActive = true,
+                        Name = req.OwnerMemberName,
+                        Role = OrgMemberRole.Owner
+                    };
+                    await db.OrgMembers.AddAsync(m, ctx.Ctkn);
+                    return newOrg.ToApi(m);
+                }
             ),
-            new RpcEndpoint<Exact, Org>(
+            new Ep<Exact, Org>(
                 OrgRpcs.GetOne,
                 async (ctx, req) =>
                 {
@@ -89,7 +86,7 @@ public static class OrgEps
                     return org.NotNull().ToApi(m);
                 }
             ),
-            new RpcEndpoint<Get, IReadOnlyList<Org>>(
+            new Ep<Get, IReadOnlyList<Org>>(
                 OrgRpcs.Get,
                 async (ctx, req) =>
                 {
@@ -111,40 +108,28 @@ public static class OrgEps
                     return os.Select(x => x.ToApi(ms.Single(y => y.Org == x.Id))).ToList();
                 }
             ),
-            new RpcEndpoint<Update, Org>(
+            Ep<Update, Org>.DbTx<OakDb>(
                 OrgRpcs.Update,
-                async (ctx, req) =>
-                    await ctx.DbTx<OakDb, Org>(
-                        async (db, ses) =>
-                        {
-                            var m = await db.OrgMembers.SingleOrDefaultAsync(
-                                x => x.Org == req.Id && x.Id == ses.Id && x.IsActive,
-                                ctx.Ctkn
-                            );
-                            ctx.InsufficientPermissionsIf(m?.Role != OrgMemberRole.Owner);
-                            var org = await db.Orgs.SingleAsync(x => x.Id == req.Id, ctx.Ctkn);
-                            org.Name = req.Name;
-                            return org.ToApi(m);
-                        }
-                    )
+                async (ctx, db, ses, req) =>
+                {
+                    var m = await db.OrgMembers.SingleOrDefaultAsync(
+                        x => x.Org == req.Id && x.Id == ses.Id && x.IsActive,
+                        ctx.Ctkn
+                    );
+                    ctx.InsufficientPermissionsIf(m?.Role != OrgMemberRole.Owner);
+                    var org = await db.Orgs.SingleAsync(x => x.Id == req.Id, ctx.Ctkn);
+                    org.Name = req.Name;
+                    return org.ToApi(m);
+                }
             ),
-            new RpcEndpoint<Exact, Nothing>(
+            Ep<Exact, Nothing>.DbTx<OakDb>(
                 OrgRpcs.Delete,
-                async (ctx, req) =>
-                    await ctx.DbTx<OakDb, Nothing>(
-                        async (db, ses) =>
-                        {
-                            await EpsUtil.MustHaveOrgAccess(
-                                ctx,
-                                db,
-                                ses.Id,
-                                req.Id,
-                                OrgMemberRole.Owner
-                            );
-                            await RawBatchDelete(ctx, db, new List<string>() { req.Id });
-                            return Nothing.Inst;
-                        }
-                    )
+                async (ctx, db, ses, req) =>
+                {
+                    await EpsUtil.MustHaveOrgAccess(ctx, db, ses.Id, req.Id, OrgMemberRole.Owner);
+                    await RawBatchDelete(ctx, db, new List<string>() { req.Id });
+                    return Nothing.Inst;
+                }
             )
         };
 

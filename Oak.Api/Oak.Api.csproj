@@ -8,7 +8,7 @@
 
 
     <ItemGroup>
-        <PackageReference Include="0xor1.Common.Shared" Version="3.0.15" />
+        <PackageReference Include="0xor1.Common.Shared" Version="3.0.19" />
         <PackageReference Include="CSharpier.MsBuild" Version="0.26.2">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

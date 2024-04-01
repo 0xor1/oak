@@ -16,65 +16,56 @@ public static class TimerEps
 {
     private const int MaxTimers = 5;
 
-    public static IReadOnlyList<IRpcEndpoint> Eps { get; } =
-        new List<IRpcEndpoint>()
+    public static IReadOnlyList<IEp> Eps { get; } =
+        new List<IEp>()
         {
-            new RpcEndpoint<Create, IReadOnlyList<Timer>>(
+            Ep<Create, IReadOnlyList<Timer>>.DbTx<OakDb>(
                 TimerRpcs.Create,
-                async (ctx, req) =>
-                    await ctx.DbTx<OakDb, IReadOnlyList<Timer>>(
-                        async (db, ses) =>
-                        {
-                            await EpsUtil.MustHaveProjectAccess(
-                                ctx,
-                                db,
-                                ses.Id,
-                                req.Org,
-                                req.Project,
-                                ProjectMemberRole.Writer
-                            );
-                            var ts = await db.Timers
-                                .Where(
-                                    x =>
-                                        x.Org == req.Org
-                                        && x.Project == req.Project
-                                        && x.User == ses.Id
-                                )
-                                .ToListAsync(ctx.Ctkn);
-                            // not allowed to have more than 5 timers at any time
-                            ctx.BadRequestIf(ts.Count > 4, S.TimerMaxTimers, new { MaxTimers });
-                            // only 1 timer per task per user
-                            ctx.BadRequestIf(ts.Any(x => x.Task == req.Task), S.TimerAlreadyExists);
-                            // only one running timer at a time
-                            ts.ForEach(x =>
-                            {
-                                if (!x.IsRunning)
-                                    return;
-                                x.IsRunning = false;
-                                x.Inc = (ulong)
-                                    DateTimeExt
-                                        .UtcNowMilli()
-                                        .Subtract(x.LastStartedOn)
-                                        .TotalSeconds;
-                            });
+                async (ctx, db, ses, req) =>
+                {
+                    await EpsUtil.MustHaveProjectAccess(
+                        ctx,
+                        db,
+                        ses.Id,
+                        req.Org,
+                        req.Project,
+                        ProjectMemberRole.Writer
+                    );
+                    var ts = await db.Timers
+                        .Where(
+                            x => x.Org == req.Org && x.Project == req.Project && x.User == ses.Id
+                        )
+                        .ToListAsync(ctx.Ctkn);
+                    // not allowed to have more than 5 timers at any time
+                    ctx.BadRequestIf(ts.Count > 4, S.TimerMaxTimers, new { MaxTimers });
+                    // only 1 timer per task per user
+                    ctx.BadRequestIf(ts.Any(x => x.Task == req.Task), S.TimerAlreadyExists);
+                    // only one running timer at a time
+                    ts.ForEach(x =>
+                    {
+                        if (!x.IsRunning)
+                            return;
+                        x.IsRunning = false;
+                        x.Inc = (ulong)
+                            DateTimeExt.UtcNowMilli().Subtract(x.LastStartedOn).TotalSeconds;
+                    });
 
-                            var t = new Db.Timer
-                            {
-                                Org = req.Org,
-                                Project = req.Project,
-                                Task = req.Task,
-                                User = ses.Id,
-                                Inc = 0,
-                                LastStartedOn = DateTimeExt.UtcNowMilli(),
-                                IsRunning = true
-                            };
-                            await db.Timers.AddAsync(t, ctx.Ctkn);
-                            ts.Add(t);
-                            return await ReturnResult(ctx, db, ts);
-                        }
-                    )
+                    var t = new Db.Timer
+                    {
+                        Org = req.Org,
+                        Project = req.Project,
+                        Task = req.Task,
+                        User = ses.Id,
+                        Inc = 0,
+                        LastStartedOn = DateTimeExt.UtcNowMilli(),
+                        IsRunning = true
+                    };
+                    await db.Timers.AddAsync(t, ctx.Ctkn);
+                    ts.Add(t);
+                    return await ReturnResult(ctx, db, ts);
+                }
             ),
-            new RpcEndpoint<Get, SetRes<Timer>>(
+            new Ep<Get, SetRes<Timer>>(
                 TimerRpcs.Get,
                 async (ctx, req) =>
                 {
@@ -110,85 +101,67 @@ public static class TimerEps
                     return SetRes<Timer>.FromLimit(tmpRes, 101);
                 }
             ),
-            new RpcEndpoint<Update, IReadOnlyList<Timer>>(
+            Ep<Update, IReadOnlyList<Timer>>.DbTx<OakDb>(
                 TimerRpcs.Update,
-                async (ctx, req) =>
-                    await ctx.DbTx<OakDb, IReadOnlyList<Timer>>(
-                        async (db, ses) =>
+                async (ctx, db, ses, req) =>
+                {
+                    await EpsUtil.MustHaveProjectAccess(
+                        ctx,
+                        db,
+                        ses.Id,
+                        req.Org,
+                        req.Project,
+                        ProjectMemberRole.Writer
+                    );
+                    var ts = await db.Timers
+                        .Where(
+                            x => x.Org == req.Org && x.Project == req.Project && x.User == ses.Id
+                        )
+                        .ToListAsync(ctx.Ctkn);
+                    // only one running timer at a time
+                    var t = ts.SingleOrDefault(x => x.Task == req.Task);
+                    ctx.NotFoundIf(t == null, model: new { Name = "Timer" });
+                    t.NotNull();
+                    if (req.IsRunning && t.IsRunning == false)
+                    {
+                        // starting the timer, must stop any other running timer
+                        ts.ForEach(x =>
                         {
-                            await EpsUtil.MustHaveProjectAccess(
-                                ctx,
-                                db,
-                                ses.Id,
-                                req.Org,
-                                req.Project,
-                                ProjectMemberRole.Writer
-                            );
-                            var ts = await db.Timers
-                                .Where(
-                                    x =>
-                                        x.Org == req.Org
-                                        && x.Project == req.Project
-                                        && x.User == ses.Id
-                                )
-                                .ToListAsync(ctx.Ctkn);
-                            // only one running timer at a time
-                            var t = ts.SingleOrDefault(x => x.Task == req.Task);
-                            ctx.NotFoundIf(t == null, model: new { Name = "Timer" });
-                            t.NotNull();
-                            if (req.IsRunning && t.IsRunning == false)
-                            {
-                                // starting the timer, must stop any other running timer
-                                ts.ForEach(x =>
-                                {
-                                    if (!x.IsRunning)
-                                        return;
-                                    x.IsRunning = false;
-                                    x.Inc += (ulong)
-                                        DateTimeExt
-                                            .UtcNowMilli()
-                                            .Subtract(x.LastStartedOn)
-                                            .TotalSeconds;
-                                });
-                                t.LastStartedOn = DateTimeExt.UtcNowMilli();
-                                t.IsRunning = true;
-                            }
-                            if (req.IsRunning == false && t.IsRunning)
-                            {
-                                // pausing timer
-                                t.IsRunning = false;
-                                t.Inc += (ulong)
-                                    DateTimeExt
-                                        .UtcNowMilli()
-                                        .Subtract(t.LastStartedOn)
-                                        .TotalSeconds;
-                            }
-                            return await ReturnResult(ctx, db, ts);
-                        }
-                    )
+                            if (!x.IsRunning)
+                                return;
+                            x.IsRunning = false;
+                            x.Inc += (ulong)
+                                DateTimeExt.UtcNowMilli().Subtract(x.LastStartedOn).TotalSeconds;
+                        });
+                        t.LastStartedOn = DateTimeExt.UtcNowMilli();
+                        t.IsRunning = true;
+                    }
+                    if (req.IsRunning == false && t.IsRunning)
+                    {
+                        // pausing timer
+                        t.IsRunning = false;
+                        t.Inc += (ulong)
+                            DateTimeExt.UtcNowMilli().Subtract(t.LastStartedOn).TotalSeconds;
+                    }
+                    return await ReturnResult(ctx, db, ts);
+                }
             ),
-            new RpcEndpoint<Delete, IReadOnlyList<Timer>>(
+            Ep<Delete, IReadOnlyList<Timer>>.DbTx<OakDb>(
                 TimerRpcs.Delete,
-                async (ctx, req) =>
-                    await ctx.DbTx<OakDb, IReadOnlyList<Timer>>(
-                        async (db, ses) =>
-                        {
-                            var ts = await db.Timers
-                                .Where(
-                                    x =>
-                                        x.Org == req.Org
-                                        && x.Project == req.Project
-                                        && x.User == ses.Id
-                                )
-                                .ToListAsync(ctx.Ctkn);
-                            var t = ts.SingleOrDefault(x => x.Task == req.Task);
-                            ctx.NotFoundIf(t == null, model: new { Name = "Timer" });
-                            t.NotNull();
-                            db.Timers.Remove(t);
-                            ts.Remove(t);
-                            return await ReturnResult(ctx, db, ts);
-                        }
-                    )
+                async (ctx, db, ses, req) =>
+                {
+                    var ts = await db.Timers
+                        .Where(
+                            x => x.Org == req.Org && x.Project == req.Project && x.User == ses.Id
+                        )
+                        .ToListAsync(ctx.Ctkn);
+                    var t = ts.SingleOrDefault(x => x.Task == req.Task);
+                    ctx.NotFoundIf(t == null, model: new { Name = "Timer" });
+                    t.NotNull();
+                    db.Timers.Remove(t);
+                    ts.Remove(t);
+                    return await ReturnResult(ctx, db, ts);
+                }
             )
         };
 
