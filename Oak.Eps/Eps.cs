@@ -17,6 +17,8 @@ public static class OakEps
                     (List<IEp>)
                         new CommonEps<OakDb>(
                             5,
+                            true,
+                            5,
                             OrgEps.AuthOnActivation,
                             OrgEps.AuthOnDelete,
                             OrgEps.AuthValidateFcmTopic
