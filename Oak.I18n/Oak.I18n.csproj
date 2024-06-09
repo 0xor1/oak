@@ -15,4 +15,9 @@
         <PackageReference Include="Fluid.Core" Version="2.5.0" />
     </ItemGroup>
 
+    <Target Name="GenerateI18n" BeforeTargets="BeforeBuild">
+        <Exec Command="dotnet tool restore"/>
+        <Exec Command="dotnet tool run dotnet-common-cmds i18n &quot;$(MSBuildProjectDirectory)&quot; $(MSBuildProjectName) false"/>
+    </Target>
+
 </Project>
