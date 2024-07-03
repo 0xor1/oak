@@ -1,4 +1,5 @@
 ﻿using Common.Shared;
+using MessagePack;
 
 namespace Oak.Api.OrgMember;
 
@@ -40,23 +41,45 @@ public static class OrgMemberRpcs
     public static readonly Rpc<Update, OrgMember> Update = new("/org_member/update");
 }
 
-public record OrgMember(string Org, string Id, bool IsActive, string Name, OrgMemberRole Role);
-
-public record Invite(string Org, string Email, string Name, OrgMemberRole Role);
-
-public record Get(
-    string Org,
-    bool? IsActive = null,
-    string? NameStartsWith = null,
-    OrgMemberRole? Role = null,
-    string? After = null,
-    OrgMemberOrderBy OrderBy = OrgMemberOrderBy.Role,
-    bool Asc = true
+[MessagePackObject]
+public record OrgMember(
+    [property: Key(0)] string Org,
+    [property: Key(1)] string Id,
+    [property: Key(2)] bool IsActive,
+    [property: Key(3)] string Name,
+    [property: Key(4)] OrgMemberRole Role
 );
 
-public record Update(string Org, string Id, bool? IsActive, string? Name, OrgMemberRole? Role);
+[MessagePackObject]
+public record Invite(
+    [property: Key(0)] string Org,
+    [property: Key(1)] string Email,
+    [property: Key(2)] string Name,
+    [property: Key(3)] OrgMemberRole Role
+);
 
-public record Exact(string Org, string Id);
+[MessagePackObject]
+public record Get(
+    [property: Key(0)] string Org,
+    [property: Key(1)] bool? IsActive = null,
+    [property: Key(2)] string? NameStartsWith = null,
+    [property: Key(3)] OrgMemberRole? Role = null,
+    [property: Key(4)] string? After = null,
+    [property: Key(5)] OrgMemberOrderBy OrderBy = OrgMemberOrderBy.Role,
+    [property: Key(6)] bool Asc = true
+);
+
+[MessagePackObject]
+public record Update(
+    [property: Key(0)] string Org,
+    [property: Key(1)] string Id,
+    [property: Key(2)] bool? IsActive,
+    [property: Key(3)] string? Name,
+    [property: Key(4)] OrgMemberRole? Role
+);
+
+[MessagePackObject]
+public record Exact([property: Key(0)] string Org, [property: Key(1)] string Id);
 
 public enum OrgMemberRole
 {

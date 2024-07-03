@@ -1,4 +1,5 @@
 ﻿using Common.Shared;
+using MessagePack;
 
 namespace Oak.Api.Org;
 
@@ -45,15 +46,28 @@ public static class OrgRpcs
     public static readonly Rpc<Exact, Nothing> Delete = new("/org/delete");
 }
 
-public record Org(string Id, string Name, DateTime CreatedOn, OrgMember.OrgMember? Member);
+[MessagePackObject]
+public record Org(
+    [property: Key(0)] string Id,
+    [property: Key(1)] string Name,
+    [property: Key(2)] DateTime CreatedOn,
+    [property: Key(3)] OrgMember.OrgMember? Member
+);
 
-public record Create(string Name, string OwnerMemberName);
+[MessagePackObject]
+public record Create([property: Key(0)] string Name, [property: Key(1)] string OwnerMemberName);
 
-public record Get(OrgOrderBy OrderBy = OrgOrderBy.Name, bool Asc = true);
+[MessagePackObject]
+public record Get(
+    [property: Key(0)] OrgOrderBy OrderBy = OrgOrderBy.Name,
+    [property: Key(1)] bool Asc = true
+);
 
-public record Update(string Id, string Name);
+[MessagePackObject]
+public record Update([property: Key(0)] string Id, [property: Key(1)] string Name);
 
-public record Exact(string Id);
+[MessagePackObject]
+public record Exact([property: Key(0)] string Id);
 
 public enum OrgOrderBy
 {

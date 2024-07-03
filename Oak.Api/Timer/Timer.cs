@@ -1,4 +1,5 @@
 ﻿using Common.Shared;
+using MessagePack;
 using Newtonsoft.Json;
 
 namespace Oak.Api.Timer;
@@ -41,34 +42,53 @@ public static class TimerRpcs
     public static readonly Rpc<Delete, IReadOnlyList<Timer>> Delete = new("/timer/delete");
 }
 
+[MessagePackObject]
 public record Timer(
-    string Org,
-    string Project,
-    string Task,
-    string User,
-    string TaskName,
-    ulong Inc,
-    DateTime LastStartedOn,
-    bool IsRunning
+    [property: Key(0)] string Org,
+    [property: Key(1)] string Project,
+    [property: Key(2)] string Task,
+    [property: Key(3)] string User,
+    [property: Key(4)] string TaskName,
+    [property: Key(5)] ulong Inc,
+    [property: Key(6)] DateTime LastStartedOn,
+    [property: Key(7)] bool IsRunning
 )
 {
     [JsonIgnore]
+    [IgnoreMember]
     public ulong FullInc =>
         !IsRunning
             ? Inc
             : Inc + (ulong)DateTimeExt.UtcNowMilli().Subtract(LastStartedOn).TotalSeconds;
 }
 
-public record Create(string Org, string Project, string Task);
-
-public record Get(
-    string Org,
-    string Project,
-    string? Task = null,
-    string? User = null,
-    bool Asc = false
+[MessagePackObject]
+public record Create(
+    [property: Key(0)] string Org,
+    [property: Key(1)] string Project,
+    [property: Key(2)] string Task
 );
 
-public record Update(string Org, string Project, string Task, bool IsRunning);
+[MessagePackObject]
+public record Get(
+    [property: Key(0)] string Org,
+    [property: Key(1)] string Project,
+    [property: Key(2)] string? Task = null,
+    [property: Key(3)] string? User = null,
+    [property: Key(4)] bool Asc = false
+);
 
-public record Delete(string Org, string Project, string Task);
+[MessagePackObject]
+public record Update(
+    [property: Key(0)] string Org,
+    [property: Key(1)] string Project,
+    [property: Key(2)] string Task,
+    [property: Key(3)] bool IsRunning
+);
+
+[MessagePackObject]
+public record Delete(
+    [property: Key(0)] string Org,
+    [property: Key(1)] string Project,
+    [property: Key(2)] string Task
+);

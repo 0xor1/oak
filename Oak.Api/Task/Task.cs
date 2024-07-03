@@ -1,4 +1,5 @@
 ﻿using Common.Shared;
+using MessagePack;
 
 namespace Oak.Api.Task;
 
@@ -67,69 +68,94 @@ public static class TaskRpcs
     public static readonly Rpc<Exact, Task> Delete = new("/task/delete");
 }
 
+[MessagePackObject]
 public record Task(
-    string Org,
-    string Project,
-    string Id,
-    string? Parent,
-    string? FirstChild,
-    string? NextSib,
-    string? User,
-    string Name,
-    string Description,
-    string CreatedBy,
-    DateTime CreatedOn,
-    ulong TimeEst,
-    ulong TimeInc,
-    ulong TimeSubMin,
-    ulong TimeSubEst,
-    ulong TimeSubInc,
-    ulong CostEst,
-    ulong CostInc,
-    ulong CostSubEst,
-    ulong CostSubInc,
-    ulong FileN,
-    ulong FileSize,
-    ulong FileSubN,
-    ulong FileSubSize,
-    ulong ChildN,
-    ulong DescN,
-    bool IsParallel
+    [property: Key(0)] string Org,
+    [property: Key(1)] string Project,
+    [property: Key(2)] string Id,
+    [property: Key(3)] string? Parent,
+    [property: Key(4)] string? FirstChild,
+    [property: Key(5)] string? NextSib,
+    [property: Key(6)] string? User,
+    [property: Key(7)] string Name,
+    [property: Key(8)] string Description,
+    [property: Key(9)] string CreatedBy,
+    [property: Key(10)] DateTime CreatedOn,
+    [property: Key(11)] ulong TimeEst,
+    [property: Key(12)] ulong TimeInc,
+    [property: Key(13)] ulong TimeSubMin,
+    [property: Key(14)] ulong TimeSubEst,
+    [property: Key(15)] ulong TimeSubInc,
+    [property: Key(16)] ulong CostEst,
+    [property: Key(17)] ulong CostInc,
+    [property: Key(18)] ulong CostSubEst,
+    [property: Key(19)] ulong CostSubInc,
+    [property: Key(20)] ulong FileN,
+    [property: Key(21)] ulong FileSize,
+    [property: Key(22)] ulong FileSubN,
+    [property: Key(23)] ulong FileSubSize,
+    [property: Key(24)] ulong ChildN,
+    [property: Key(25)] ulong DescN,
+    [property: Key(26)] bool IsParallel
 );
 
-public record CreateRes(Task Parent, Task New);
+[MessagePackObject]
+public record CreateRes([property: Key(0)] Task Parent, [property: Key(1)] Task New);
 
+[MessagePackObject]
 public record Create(
-    string Org,
-    string Project,
-    string Parent,
-    string? PrevSib,
-    string Name,
-    string Description = "",
-    bool IsParallel = false,
-    string? User = null,
-    ulong TimeEst = 0,
-    ulong CostEst = 0
+    [property: Key(0)] string Org,
+    [property: Key(1)] string Project,
+    [property: Key(2)] string Parent,
+    [property: Key(3)] string? PrevSib,
+    [property: Key(4)] string Name,
+    [property: Key(5)] string Description = "",
+    [property: Key(6)] bool IsParallel = false,
+    [property: Key(7)] string? User = null,
+    [property: Key(8)] ulong TimeEst = 0,
+    [property: Key(9)] ulong CostEst = 0
 );
 
+[MessagePackObject]
 public record Update(
-    string Org,
-    string Project,
-    string Id,
-    string? Parent = null,
-    NSet<string>? PrevSib = null,
-    string? Name = null,
-    string? Description = null,
-    bool? IsParallel = null,
-    NSet<string>? User = null,
-    ulong? TimeEst = null,
-    ulong? CostEst = null
+    [property: Key(0)] string Org,
+    [property: Key(1)] string Project,
+    [property: Key(2)] string Id,
+    [property: Key(3)] string? Parent = null,
+    [property: Key(4)] NSet<string>? PrevSib = null,
+    [property: Key(5)] string? Name = null,
+    [property: Key(6)] string? Description = null,
+    [property: Key(7)] bool? IsParallel = null,
+    [property: Key(8)] NSet<string>? User = null,
+    [property: Key(9)] ulong? TimeEst = null,
+    [property: Key(10)] ulong? CostEst = null
 );
 
-public record UpdateRes(Task Task, Task? OldParent, Task? NewParent);
+[MessagePackObject]
+public record UpdateRes(
+    [property: Key(0)] Task Task,
+    [property: Key(1)] Task? OldParent,
+    [property: Key(2)] Task? NewParent
+);
 
-public record GetChildren(string Org, string Project, string Id, string? After);
+[MessagePackObject]
+public record GetChildren(
+    [property: Key(0)] string Org,
+    [property: Key(1)] string Project,
+    [property: Key(2)] string Id,
+    [property: Key(3)] string? After
+);
 
-public record Exact(string Org, string Project, string Id);
+[MessagePackObject]
+public record Exact(
+    [property: Key(0)] string Org,
+    [property: Key(1)] string Project,
+    [property: Key(2)] string Id
+);
 
-public record InitView(Task Task, IReadOnlyList<Task> Children, IReadOnlyList<Task> Ancestors);
+[MessagePackObject]
+public record InitView(
+    [property: Key(0)] Task Task,
+    [property: Key(1)] IReadOnlyList<Task> Children,
+    [property: Key(2)] IReadOnlyList<Task> Ancestors
+);

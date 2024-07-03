@@ -1,4 +1,5 @@
 ﻿using Common.Shared;
+using MessagePack;
 
 namespace Oak.Api.Comment;
 
@@ -40,28 +41,49 @@ public static class CommentRpcs
     public static readonly Rpc<Get, SetRes<Comment>> Get = new("/comment/get");
 }
 
+[MessagePackObject]
 public record Comment(
-    string Org,
-    string Project,
-    string Task,
-    string Id,
-    string CreatedBy,
-    DateTime CreatedOn,
-    string Body
+    [property: Key(0)] string Org,
+    [property: Key(1)] string Project,
+    [property: Key(2)] string Task,
+    [property: Key(3)] string Id,
+    [property: Key(4)] string CreatedBy,
+    [property: Key(5)] DateTime CreatedOn,
+    [property: Key(6)] string Body
 );
 
-public record Create(string Org, string Project, string Task, string Body);
+[MessagePackObject]
+public record Create(
+    [property: Key(0)] string Org,
+    [property: Key(1)] string Project,
+    [property: Key(2)] string Task,
+    [property: Key(3)] string Body
+);
 
-public record Update(string Org, string Project, string Task, string Id, string Body);
+[MessagePackObject]
+public record Update(
+    [property: Key(0)] string Org,
+    [property: Key(1)] string Project,
+    [property: Key(2)] string Task,
+    [property: Key(3)] string Id,
+    [property: Key(4)] string Body
+);
 
-public record Exact(string Org, string Project, string Task, string Id);
+[MessagePackObject]
+public record Exact(
+    [property: Key(0)] string Org,
+    [property: Key(1)] string Project,
+    [property: Key(2)] string Task,
+    [property: Key(3)] string Id
+);
 
+[MessagePackObject]
 public record Get(
-    string Org,
-    string Project,
-    string? Task = null,
-    MinMax<DateTime>? CreatedOn = null,
-    string? CreatedBy = null,
-    string? After = null,
-    bool Asc = false
+    [property: Key(0)] string Org,
+    [property: Key(1)] string Project,
+    [property: Key(2)] string? Task = null,
+    [property: Key(3)] MinMax<DateTime>? CreatedOn = null,
+    [property: Key(4)] string? CreatedBy = null,
+    [property: Key(5)] string? After = null,
+    [property: Key(6)] bool Asc = false
 );

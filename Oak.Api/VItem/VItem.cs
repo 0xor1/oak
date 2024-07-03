@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Runtime.Serialization;
 using Common.Shared;
+using MessagePack;
 
 namespace Oak.Api.VItem;
 
@@ -48,52 +49,64 @@ public static class VItemRpcs
     public static readonly Rpc<Get, SetRes<VItem>> Get = new("/vitem/get");
 }
 
+[MessagePackObject]
 public record VItem(
-    string Org,
-    string Project,
-    string Task,
-    VItemType Type,
-    string Id,
-    string CreatedBy,
-    DateTime CreatedOn,
-    ulong Inc,
-    string Note
+    [property: Key(0)] string Org,
+    [property: Key(1)] string Project,
+    [property: Key(2)] string Task,
+    [property: Key(3)] VItemType Type,
+    [property: Key(4)] string Id,
+    [property: Key(5)] string CreatedBy,
+    [property: Key(6)] DateTime CreatedOn,
+    [property: Key(7)] ulong Inc,
+    [property: Key(8)] string Note
 ) : ICreatable;
 
+[MessagePackObject]
 public record Create(
-    string Org,
-    string Project,
-    string Task,
-    VItemType Type,
-    ulong? Est,
-    ulong Inc,
-    string Note
+    [property: Key(0)] string Org,
+    [property: Key(1)] string Project,
+    [property: Key(2)] string Task,
+    [property: Key(3)] VItemType Type,
+    [property: Key(4)] ulong? Est,
+    [property: Key(5)] ulong Inc,
+    [property: Key(6)] string Note
 );
 
+[MessagePackObject]
 public record Update(
-    string Org,
-    string Project,
-    string Task,
-    VItemType Type,
-    string Id,
-    ulong Inc,
-    string Note
+    [property: Key(0)] string Org,
+    [property: Key(1)] string Project,
+    [property: Key(2)] string Task,
+    [property: Key(3)] VItemType Type,
+    [property: Key(4)] string Id,
+    [property: Key(5)] ulong Inc,
+    [property: Key(6)] string Note
 );
 
-public record Exact(string Org, string Project, string Task, VItemType Type, string Id);
+[MessagePackObject]
+public record Exact(
+    [property: Key(0)] string Org,
+    [property: Key(1)] string Project,
+    [property: Key(2)] string Task,
+    [property: Key(3)] VItemType Type,
+    [property: Key(4)] string Id
+);
 
+[MessagePackObject]
 public record Get(
-    string Org,
-    string Project,
-    VItemType Type,
-    string? Task = null,
-    MinMax<DateTime>? CreatedOn = null,
-    string? CreatedBy = null,
-    string? After = null,
-    bool Asc = false
+    [property: Key(0)] string Org,
+    [property: Key(1)] string Project,
+    [property: Key(2)] VItemType Type,
+    [property: Key(3)] string? Task = null,
+    [property: Key(4)] MinMax<DateTime>? CreatedOn = null,
+    [property: Key(5)] string? CreatedBy = null,
+    [property: Key(6)] string? After = null,
+    [property: Key(7)] bool Asc = false
 );
 
-public record VItemRes(Task.Task Task, VItem Item);
+[MessagePackObject]
+public record VItemRes([property: Key(0)] Task.Task Task, [property: Key(1)] VItem Item);
 
 public enum VItemType
 {

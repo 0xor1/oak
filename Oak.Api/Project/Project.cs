@@ -1,4 +1,5 @@
 ﻿using Common.Shared;
+using MessagePack;
 
 namespace Oak.Api.Project;
 
@@ -56,64 +57,69 @@ public static class ProjectRpcs
         new("/project/get_activities");
 }
 
+[MessagePackObject]
 public record Project(
-    string Org,
-    string Id,
-    bool IsArchived,
-    bool IsPublic,
-    string Name,
-    DateTime CreatedOn,
-    string CurrencySymbol,
-    string CurrencyCode,
-    uint HoursPerDay,
-    uint DaysPerWeek,
-    DateTime? StartOn,
-    DateTime? EndOn,
-    ulong FileLimit,
-    Task.Task Task
+    [property: Key(0)] string Org,
+    [property: Key(1)] string Id,
+    [property: Key(2)] bool IsArchived,
+    [property: Key(3)] bool IsPublic,
+    [property: Key(4)] string Name,
+    [property: Key(5)] DateTime CreatedOn,
+    [property: Key(6)] string CurrencySymbol,
+    [property: Key(7)] string CurrencyCode,
+    [property: Key(8)] uint HoursPerDay,
+    [property: Key(9)] uint DaysPerWeek,
+    [property: Key(10)] DateTime? StartOn,
+    [property: Key(11)] DateTime? EndOn,
+    [property: Key(12)] ulong FileLimit,
+    [property: Key(13)] Task.Task Task
 );
 
+[MessagePackObject]
 public record Create(
-    string Org,
-    bool IsPublic,
-    string Name,
-    string CurrencySymbol,
-    string CurrencyCode,
-    uint HoursPerDay,
-    uint DaysPerWeek,
-    DateTime? StartOn,
-    DateTime? EndOn,
-    ulong FileLimit
+    [property: Key(0)] string Org,
+    [property: Key(1)] bool IsPublic,
+    [property: Key(2)] string Name,
+    [property: Key(3)] string CurrencySymbol,
+    [property: Key(4)] string CurrencyCode,
+    [property: Key(5)] uint HoursPerDay,
+    [property: Key(6)] uint DaysPerWeek,
+    [property: Key(7)] DateTime? StartOn,
+    [property: Key(8)] DateTime? EndOn,
+    [property: Key(9)] ulong FileLimit
 );
 
+[MessagePackObject]
 public record Get(
-    string Org,
-    bool? IsPublic = null,
-    string? NameStartsWith = null,
-    MinMax<DateTime>? CreatedOn = null,
-    MinMax<DateTime>? StartOn = null,
-    MinMax<DateTime>? EndOn = null,
-    bool IsArchived = false,
-    string? After = null,
-    ProjectOrderBy OrderBy = ProjectOrderBy.Name,
-    bool Asc = true
+    [property: Key(0)] string Org,
+    [property: Key(1)] bool? IsPublic = null,
+    [property: Key(2)] string? NameStartsWith = null,
+    [property: Key(3)] MinMax<DateTime>? CreatedOn = null,
+    [property: Key(4)] MinMax<DateTime>? StartOn = null,
+    [property: Key(5)] MinMax<DateTime>? EndOn = null,
+    [property: Key(6)] bool IsArchived = false,
+    [property: Key(7)] string? After = null,
+    [property: Key(8)] ProjectOrderBy OrderBy = ProjectOrderBy.Name,
+    [property: Key(9)] bool Asc = true
 );
 
+[MessagePackObject]
 public record Update(
-    string Org,
-    string Id,
-    bool? IsPublic = null,
-    string? Name = null,
-    string? CurrencySymbol = null,
-    string? CurrencyCode = null,
-    uint? HoursPerDay = null,
-    uint? DaysPerWeek = null,
-    DateTime? StartOn = null,
-    DateTime? EndOn = null,
-    ulong? FileLimit = null
+    [property: Key(0)] string Org,
+    [property: Key(1)] string Id,
+    [property: Key(2)] bool? IsPublic = null,
+    [property: Key(3)] string? Name = null,
+    [property: Key(4)] string? CurrencySymbol = null,
+    [property: Key(5)] string? CurrencyCode = null,
+    [property: Key(6)] uint? HoursPerDay = null,
+    [property: Key(7)] uint? DaysPerWeek = null,
+    [property: Key(8)] DateTime? StartOn = null,
+    [property: Key(9)] DateTime? EndOn = null,
+    [property: Key(10)] ulong? FileLimit = null
 );
 
-public record Exact(string Org, string Id);
+[MessagePackObject]
+public record Exact([property: Key(0)] string Org, [property: Key(1)] string Id);
 
 public enum ProjectOrderBy
 {
@@ -123,29 +129,31 @@ public enum ProjectOrderBy
     EndOn
 }
 
+[MessagePackObject]
 public record Activity(
-    string Org,
-    string Project,
-    string? Task,
-    DateTime OccurredOn,
-    string User,
-    string Item,
-    ActivityItemType ItemType,
-    bool TaskDeleted,
-    bool ItemDeleted,
-    ActivityAction Action,
-    string? TaskName,
-    string? ItemName,
-    string? ExtraInfo
+    [property: Key(0)] string Org,
+    [property: Key(1)] string Project,
+    [property: Key(2)] string? Task,
+    [property: Key(3)] DateTime OccurredOn,
+    [property: Key(4)] string User,
+    [property: Key(5)] string Item,
+    [property: Key(6)] ActivityItemType ItemType,
+    [property: Key(7)] bool TaskDeleted,
+    [property: Key(8)] bool ItemDeleted,
+    [property: Key(9)] ActivityAction Action,
+    [property: Key(10)] string? TaskName,
+    [property: Key(11)] string? ItemName,
+    [property: Key(12)] string? ExtraInfo
 );
 
+[MessagePackObject]
 public record GetActivities(
-    string Org,
-    string Project,
-    bool ExcludeDeletedItem = true,
-    string? Task = null,
-    string? Item = null,
-    string? User = null,
-    MinMax<DateTime>? OccuredOn = null,
-    bool Asc = false
+    [property: Key(0)] string Org,
+    [property: Key(1)] string Project,
+    [property: Key(2)] bool ExcludeDeletedItem = true,
+    [property: Key(3)] string? Task = null,
+    [property: Key(4)] string? Item = null,
+    [property: Key(5)] string? User = null,
+    [property: Key(6)] MinMax<DateTime>? OccuredOn = null,
+    [property: Key(7)] bool Asc = false
 );

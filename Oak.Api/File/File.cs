@@ -1,4 +1,5 @@
 ﻿using Common.Shared;
+using MessagePack;
 using Oak.Api.VItem;
 
 namespace Oak.Api.File;
@@ -44,32 +45,53 @@ public static class FileRpcs
     public static readonly Rpc<Get, SetRes<File>> Get = new("/file/get");
 }
 
+[MessagePackObject]
 public record File(
-    string Org,
-    string Project,
-    string Task,
-    string Id,
-    string Name,
-    string CreatedBy,
-    DateTime CreatedOn,
-    ulong Size,
-    string Type
+    [property: Key(0)] string Org,
+    [property: Key(1)] string Project,
+    [property: Key(2)] string Task,
+    [property: Key(3)] string Id,
+    [property: Key(4)] string Name,
+    [property: Key(5)] string CreatedBy,
+    [property: Key(6)] DateTime CreatedOn,
+    [property: Key(7)] ulong Size,
+    [property: Key(8)] string Type
 ) : ICreatable;
 
-public record Upload(string Org, string Project, string Task) : HasStream;
+[MessagePackObject]
+public record Upload(
+    [property: Key(0)] string Org,
+    [property: Key(1)] string Project,
+    [property: Key(2)] string Task
+) : HasStream;
 
-public record Download(string Org, string Project, string Task, string Id, bool IsDownload);
-
-public record Exact(string Org, string Project, string Task, string Id);
-
-public record Get(
-    string Org,
-    string Project,
-    string? Task = null,
-    MinMax<DateTime>? CreatedOn = null,
-    string? CreatedBy = null,
-    string? After = null,
-    bool Asc = false
+[MessagePackObject]
+public record Download(
+    [property: Key(0)] string Org,
+    [property: Key(1)] string Project,
+    [property: Key(2)] string Task,
+    [property: Key(3)] string Id,
+    [property: Key(4)] bool IsDownload
 );
 
-public record FileRes(Task.Task Task, File File);
+[MessagePackObject]
+public record Exact(
+    [property: Key(0)] string Org,
+    [property: Key(1)] string Project,
+    [property: Key(2)] string Task,
+    [property: Key(3)] string Id
+);
+
+[MessagePackObject]
+public record Get(
+    [property: Key(0)] string Org,
+    [property: Key(1)] string Project,
+    [property: Key(2)] string? Task = null,
+    [property: Key(3)] MinMax<DateTime>? CreatedOn = null,
+    [property: Key(4)] string? CreatedBy = null,
+    [property: Key(5)] string? After = null,
+    [property: Key(6)] bool Asc = false
+);
+
+[MessagePackObject]
+public record FileRes([property: Key(0)] Task.Task Task, [property: Key(1)] File File);

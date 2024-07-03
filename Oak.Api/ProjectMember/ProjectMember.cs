@@ -1,4 +1,5 @@
 ﻿using Common.Shared;
+using MessagePack;
 using Oak.Api.OrgMember;
 
 namespace Oak.Api.ProjectMember;
@@ -46,21 +47,22 @@ public static class ProjectMemberRpcs
     public static readonly Rpc<Exact, Nothing> Remove = new("/project_member/remove");
 }
 
+[MessagePackObject]
 public record ProjectMember(
-    string Org,
-    string Project,
-    string Id,
-    bool IsActive,
-    OrgMemberRole OrgRole,
-    string Name,
-    ProjectMemberRole Role,
-    ulong TimeEst,
-    ulong TimeInc,
-    ulong CostEst,
-    ulong CostInc,
-    ulong FileN,
-    ulong FileSize,
-    ulong TaskN
+    [property: Key(0)] string Org,
+    [property: Key(1)] string Project,
+    [property: Key(2)] string Id,
+    [property: Key(3)] bool IsActive,
+    [property: Key(4)] OrgMemberRole OrgRole,
+    [property: Key(5)] string Name,
+    [property: Key(6)] ProjectMemberRole Role,
+    [property: Key(7)] ulong TimeEst,
+    [property: Key(8)] ulong TimeInc,
+    [property: Key(9)] ulong CostEst,
+    [property: Key(10)] ulong CostInc,
+    [property: Key(11)] ulong FileN,
+    [property: Key(12)] ulong FileSize,
+    [property: Key(13)] ulong TaskN
 );
 
 public enum ProjectMemberRole
@@ -70,22 +72,40 @@ public enum ProjectMemberRole
     Reader
 }
 
-public record Add(string Org, string Project, string Id, ProjectMemberRole Role);
-
-public record Get(
-    string Org,
-    string Project,
-    bool? IsActive = null,
-    ProjectMemberRole? Role = null,
-    string? NameStartsWith = null,
-    string? After = null,
-    ProjectMemberOrderBy OrderBy = ProjectMemberOrderBy.Role,
-    bool Asc = true
+[MessagePackObject]
+public record Add(
+    [property: Key(0)] string Org,
+    [property: Key(1)] string Project,
+    [property: Key(2)] string Id,
+    [property: Key(3)] ProjectMemberRole Role
 );
 
-public record Update(string Org, string Project, string Id, ProjectMemberRole Role);
+[MessagePackObject]
+public record Get(
+    [property: Key(0)] string Org,
+    [property: Key(1)] string Project,
+    [property: Key(2)] bool? IsActive = null,
+    [property: Key(3)] ProjectMemberRole? Role = null,
+    [property: Key(4)] string? NameStartsWith = null,
+    [property: Key(5)] string? After = null,
+    [property: Key(6)] ProjectMemberOrderBy OrderBy = ProjectMemberOrderBy.Role,
+    [property: Key(7)] bool Asc = true
+);
 
-public record Exact(string Org, string Project, string Id);
+[MessagePackObject]
+public record Update(
+    [property: Key(0)] string Org,
+    [property: Key(1)] string Project,
+    [property: Key(2)] string Id,
+    [property: Key(3)] ProjectMemberRole Role
+);
+
+[MessagePackObject]
+public record Exact(
+    [property: Key(0)] string Org,
+    [property: Key(1)] string Project,
+    [property: Key(2)] string Id
+);
 
 public enum ProjectMemberOrderBy
 {
