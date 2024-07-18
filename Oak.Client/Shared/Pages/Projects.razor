@@ -145,6 +145,7 @@
     [Parameter]
     [EditorRequired]
     public string OrgId { get; set; } = "";
+    private string _lastOrgId { get; set; } = "";
 
     private string? NameStartsWith { get; set; }
     private bool? IsPublic { get; set; }
@@ -191,6 +192,12 @@
     
     protected override async Task OnParametersSetAsync()
     {
+        if (_lastOrgId == OrgId)
+        {
+            // don't reload data if ui ctx changes but we're still looking at the same org
+            return;
+        }
+        _lastOrgId = OrgId;
         _isLoading = true;
         try
         {
