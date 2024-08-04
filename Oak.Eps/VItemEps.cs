@@ -3,6 +3,7 @@ using Common.Shared;
 using Humanizer;
 using Microsoft.EntityFrameworkCore;
 using Oak.Api;
+using Oak.Api.Project;
 using Oak.Api.ProjectMember;
 using Oak.Api.VItem;
 using Oak.Db;
@@ -71,7 +72,7 @@ internal static class VItemEps
                         );
                     }
 
-                    req = req with { Note = req.Note.Ellipsis(50).NotNull() };
+                    req.Note = req.Note.Ellipsis(50).NotNull();
                     await EpsUtil.LogActivity(
                         ctx,
                         db,
@@ -172,7 +173,7 @@ internal static class VItemEps
                             ctx.Ctkn
                         );
                     }
-                    req = req with { Note = req.Note.Ellipsis(50).NotNull() };
+                    req.Note = req.Note.Ellipsis(50).NotNull();
                     await EpsUtil.LogActivity(
                         ctx,
                         db,

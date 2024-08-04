@@ -1,4 +1,9 @@
-﻿using Common.Shared;
+// Generated Code File, Do Not Edit.
+// This file is generated with Common.Cli.
+// see https://github.com/0xor1/common/blob/main/Common.Cli/Api.cs
+// executed with arguments: api <abs_file_path_to>/Oak.Api
+
+using Common.Shared;
 using Common.Shared.Auth;
 using Oak.Api.Comment;
 using Oak.Api.File;
@@ -10,10 +15,13 @@ using Oak.Api.Task;
 using Oak.Api.Timer;
 using Oak.Api.VItem;
 
+
 namespace Oak.Api;
 
 public interface IApi : Common.Shared.Auth.IApi
 {
+    public ICommentApi Comment { get; }
+    public IFileApi File { get; }
     public IOrgApi Org { get; }
     public IOrgMemberApi OrgMember { get; }
     public IProjectApi Project { get; }
@@ -21,16 +29,17 @@ public interface IApi : Common.Shared.Auth.IApi
     public ITaskApi Task { get; }
     public ITimerApi Timer { get; }
     public IVItemApi VItem { get; }
-    public IFileApi File { get; }
-    public ICommentApi Comment { get; }
+    
 }
 
 public class Api : IApi
 {
     public Api(IRpcClient client)
     {
-        Auth = new AuthApi(client);
         App = new AppApi(client);
+        Auth = new AuthApi(client);
+        Comment = new CommentApi(client);
+        File = new FileApi(client);
         Org = new OrgApi(client);
         OrgMember = new OrgMemberApi(client);
         Project = new ProjectApi(client);
@@ -38,12 +47,13 @@ public class Api : IApi
         Task = new TaskApi(client);
         Timer = new TimerApi(client);
         VItem = new VItemApi(client);
-        File = new FileApi(client);
-        Comment = new CommentApi(client);
+        
     }
 
-    public IAuthApi Auth { get; }
     public IAppApi App { get; }
+    public IAuthApi Auth { get; }
+    public ICommentApi Comment { get; }
+    public IFileApi File { get; }
     public IOrgApi Org { get; }
     public IOrgMemberApi OrgMember { get; }
     public IProjectApi Project { get; }
@@ -51,26 +61,5 @@ public class Api : IApi
     public ITaskApi Task { get; }
     public ITimerApi Timer { get; }
     public IVItemApi VItem { get; }
-    public IFileApi File { get; }
-    public ICommentApi Comment { get; }
+    
 }
-
-public enum ActivityItemType
-{
-    Org,
-    Project,
-    Member,
-    Task,
-    VItem,
-    File,
-    Comment
-}
-
-public enum ActivityAction
-{
-    Create,
-    Update,
-    Delete
-}
-
-public record FcmData(Activity Activity, IReadOnlyList<string> Ancestors);

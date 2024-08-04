@@ -144,7 +144,7 @@ public class UserService : IUserService
                     // for now just init the local user cache with every orgMember
                     while (true)
                     {
-                        var res = await _api.OrgMember.Get(new(orgId, After: after));
+                        var res = await _api.OrgMember.Get(new(orgId, after: after));
                         foreach (var om in res.Set)
                         {
                             oms.Add(om.Id, om);
@@ -202,7 +202,7 @@ public class UserService : IUserService
                     // for now just init the local user cache with every projectMember
                     while (true)
                     {
-                        var res = await _api.ProjectMember.Get(new(orgId, projectId, After: after));
+                        var res = await _api.ProjectMember.Get(new(orgId, projectId, after: after));
                         foreach (var pm in res.Set)
                         {
                             pms.Add(pm.Id, pm);

@@ -69,7 +69,7 @@ public class OrgMemberTests : TestBase
         Assert.Equal(bobMem, res[1]);
         Assert.Equal(catMem, res[2]);
         // get all by default ordering after ali
-        res = (await ali.OrgMember.Get(new(org.Id, true, After: aliMem.Id))).Set;
+        res = (await ali.OrgMember.Get(new(org.Id, true, after: aliMem.Id))).Set;
         Assert.Equal(2, res.Count);
         Assert.Equal(bobMem, res[0]);
         Assert.Equal(catMem, res[1]);

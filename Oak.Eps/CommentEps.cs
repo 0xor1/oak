@@ -4,6 +4,7 @@ using Ganss.Xss;
 using Microsoft.EntityFrameworkCore;
 using Oak.Api;
 using Oak.Api.Comment;
+using Oak.Api.Project;
 using Oak.Api.ProjectMember;
 using Oak.Db;
 using Comment = Oak.Api.Comment.Comment;
@@ -34,7 +35,7 @@ internal static class CommentEps
                         req.Project,
                         ProjectMemberRole.Writer
                     );
-                    req = req with { Body = ctx.Get<IHtmlSanitizer>().Sanitize(req.Body) };
+                    req.Body = ctx.Get<IHtmlSanitizer>().Sanitize(req.Body);
                     EpsUtil.ValidStr(ctx, req.Body, minBodyLen, maxBodyLen, "body");
                     ctx.NotFoundIf(
                         !await db.Tasks.AnyAsync(
@@ -75,7 +76,7 @@ internal static class CommentEps
                 CommentRpcs.Update,
                 async (ctx, db, ses, req) =>
                 {
-                    req = req with { Body = ctx.Get<IHtmlSanitizer>().Sanitize(req.Body) };
+                    req.Body = ctx.Get<IHtmlSanitizer>().Sanitize(req.Body);
                     EpsUtil.ValidStr(ctx, req.Body, minBodyLen, maxBodyLen, "body");
                     await EpsUtil.MustHaveProjectAccess(
                         ctx,

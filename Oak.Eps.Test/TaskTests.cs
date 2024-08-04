@@ -17,7 +17,7 @@ public class TaskTests : TestBase
         Assert.Equal(p.Id, res.Parent.Id);
         Assert.Equal(1ul, res.Parent.ChildN);
         Assert.Equal(1ul, res.Parent.DescN);
-        Assert.Equal("a", res.New.Name);
+        Assert.Equal("a", res.Created.Name);
     }
 
     [Fact]
@@ -27,11 +27,11 @@ public class TaskTests : TestBase
         var p = await CreateProject(ali, org.Id);
         var bobSes = await bob.Auth.GetSession();
         await SetProjectMembers(ali, org.Id, p.Id, new() { (bobSes.Id, ProjectMemberRole.Writer) });
-        var res = await ali.Task.Create(new(org.Id, p.Id, p.Id, null, "a", User: bobSes.Id));
+        var res = await ali.Task.Create(new(org.Id, p.Id, p.Id, null, "a", user: bobSes.Id));
         Assert.Equal(p.Id, res.Parent.Id);
         Assert.Equal(1ul, res.Parent.ChildN);
         Assert.Equal(1ul, res.Parent.DescN);
-        Assert.Equal("a", res.New.Name);
+        Assert.Equal("a", res.Created.Name);
     }
 
     [Fact]
@@ -42,7 +42,7 @@ public class TaskTests : TestBase
         RpcTestException? ex = null;
         try
         {
-            await ali.Task.Update(new(org.Id, tt.P.Id, tt.P.Id, PrevSib: new(tt.B.Id)));
+            await ali.Task.Update(new(org.Id, tt.P.Id, tt.P.Id, prevSib: new(tt.B.Id)));
         }
         catch (RpcTestException x)
         {
@@ -70,7 +70,7 @@ public class TaskTests : TestBase
         var (ali, bob, cat, dan, anon, org) = await Setup();
         var tt = await CreateTaskTree(ali, org.Id);
         await ali.Task.Update(
-            new(org.Id, tt.P.Id, tt.B.Id, Parent: tt.P.Id, PrevSib: new(tt.A.Id))
+            new(org.Id, tt.P.Id, tt.B.Id, parent: tt.P.Id, prevSib: new(tt.A.Id))
         );
         await tt.Refresh();
         // validate the structure
@@ -92,7 +92,7 @@ public class TaskTests : TestBase
     {
         var (ali, bob, cat, dan, anon, org) = await Setup();
         var tt = await CreateTaskTree(ali, org.Id);
-        await ali.Task.Update(new(org.Id, tt.P.Id, tt.A.Id, IsParallel: false));
+        await ali.Task.Update(new(org.Id, tt.P.Id, tt.A.Id, isParallel: false));
         await tt.Refresh();
         // validate the structure
         Assert.Null(tt.P.NextSib);
@@ -116,7 +116,7 @@ public class TaskTests : TestBase
     {
         var (ali, bob, cat, dan, anon, org) = await Setup();
         var tt = await CreateTaskTree(ali, org.Id);
-        await ali.Task.Update(new(org.Id, tt.P.Id, tt.F.Id, TimeEst: 10, CostEst: 10));
+        await ali.Task.Update(new(org.Id, tt.P.Id, tt.F.Id, timeEst: 10, costEst: 10));
         await tt.Refresh();
         // validate the structure
         Assert.Null(tt.P.NextSib);
@@ -142,7 +142,7 @@ public class TaskTests : TestBase
     {
         var (ali, bob, cat, dan, anon, org) = await Setup();
         var tt = await CreateTaskTree(ali, org.Id);
-        await ali.Task.Update(new(org.Id, tt.P.Id, tt.B.Id, Parent: tt.A.Id, IsParallel: true));
+        await ali.Task.Update(new(org.Id, tt.P.Id, tt.B.Id, parent: tt.A.Id, isParallel: true));
         await tt.Refresh();
         // validate the structure
         Assert.Null(tt.P.NextSib);
@@ -175,9 +175,9 @@ public class TaskTests : TestBase
                 org.Id,
                 tt.P.Id,
                 tt.P.Id,
-                Name: "new name",
-                Description: "a meaningful description",
-                User: new(bobSes.Id)
+                name: "new name",
+                description: "a meaningful description",
+                user: new(bobSes.Id)
             )
         );
 
@@ -204,7 +204,7 @@ public class TaskTests : TestBase
         RpcTestException? ex = null;
         try
         {
-            await ali.Task.Update(new(org.Id, tt.P.Id, tt.A.Id, Parent: tt.E.Id));
+            await ali.Task.Update(new(org.Id, tt.P.Id, tt.A.Id, parent: tt.E.Id));
         }
         catch (RpcTestException x)
         {
@@ -234,7 +234,7 @@ public class TaskTests : TestBase
         RpcTestException? ex = null;
         try
         {
-            await ali.Task.Update(new(org.Id, tt.P.Id, tt.A.Id, PrevSib: new(tt.A.Id)));
+            await ali.Task.Update(new(org.Id, tt.P.Id, tt.A.Id, prevSib: new(tt.A.Id)));
         }
         catch (RpcTestException x)
         {
@@ -262,7 +262,7 @@ public class TaskTests : TestBase
     {
         var (ali, bob, cat, dan, anon, org) = await Setup();
         var tt = await CreateTaskTree(ali, org.Id);
-        await ali.Task.Update(new(org.Id, tt.P.Id, tt.A.Id, PrevSib: new(tt.B.Id)));
+        await ali.Task.Update(new(org.Id, tt.P.Id, tt.A.Id, prevSib: new(tt.B.Id)));
         await tt.Refresh();
         // validate the structure
         Assert.Null(tt.P.NextSib);
@@ -283,7 +283,7 @@ public class TaskTests : TestBase
     {
         var (ali, bob, cat, dan, anon, org) = await Setup();
         var tt = await CreateTaskTree(ali, org.Id);
-        await ali.Task.Update(new(org.Id, tt.P.Id, tt.A.Id, PrevSib: new(tt.C.Id)));
+        await ali.Task.Update(new(org.Id, tt.P.Id, tt.A.Id, prevSib: new(tt.C.Id)));
         await tt.Refresh();
         // validate the structure
         Assert.Null(tt.P.NextSib);
@@ -304,7 +304,7 @@ public class TaskTests : TestBase
     {
         var (ali, bob, cat, dan, anon, org) = await Setup();
         var tt = await CreateTaskTree(ali, org.Id);
-        await ali.Task.Update(new(org.Id, tt.P.Id, tt.A.Id, PrevSib: new(tt.D.Id)));
+        await ali.Task.Update(new(org.Id, tt.P.Id, tt.A.Id, prevSib: new(tt.D.Id)));
         await tt.Refresh();
         // validate the structure
         Assert.Null(tt.P.NextSib);
@@ -325,7 +325,7 @@ public class TaskTests : TestBase
     {
         var (ali, bob, cat, dan, anon, org) = await Setup();
         var tt = await CreateTaskTree(ali, org.Id);
-        await ali.Task.Update(new(org.Id, tt.P.Id, tt.D.Id, PrevSib: new(tt.B.Id)));
+        await ali.Task.Update(new(org.Id, tt.P.Id, tt.D.Id, prevSib: new(tt.B.Id)));
         await tt.Refresh();
         // validate the structure
         Assert.Null(tt.P.NextSib);
@@ -346,7 +346,7 @@ public class TaskTests : TestBase
     {
         var (ali, bob, cat, dan, anon, org) = await Setup();
         var tt = await CreateTaskTree(ali, org.Id);
-        await ali.Task.Update(new(org.Id, tt.P.Id, tt.D.Id, PrevSib: new(tt.A.Id)));
+        await ali.Task.Update(new(org.Id, tt.P.Id, tt.D.Id, prevSib: new(tt.A.Id)));
         await tt.Refresh();
         // validate the structure
         Assert.Null(tt.P.NextSib);
@@ -367,7 +367,7 @@ public class TaskTests : TestBase
     {
         var (ali, bob, cat, dan, anon, org) = await Setup();
         var tt = await CreateTaskTree(ali, org.Id);
-        await ali.Task.Update(new(org.Id, tt.P.Id, tt.D.Id, PrevSib: new(null)));
+        await ali.Task.Update(new(org.Id, tt.P.Id, tt.D.Id, prevSib: new(null)));
         await tt.Refresh();
         // validate the structure
         Assert.Null(tt.P.NextSib);
@@ -388,7 +388,7 @@ public class TaskTests : TestBase
     {
         var (ali, bob, cat, dan, anon, org) = await Setup();
         var tt = await CreateTaskTree(ali, org.Id);
-        await ali.Task.Update(new(org.Id, tt.P.Id, tt.B.Id, PrevSib: new(tt.C.Id)));
+        await ali.Task.Update(new(org.Id, tt.P.Id, tt.B.Id, prevSib: new(tt.C.Id)));
         await tt.Refresh();
         // validate the structure
         Assert.Null(tt.P.NextSib);
@@ -412,7 +412,7 @@ public class TaskTests : TestBase
         // oldPrevSib is newParent
         var (ali, bob, cat, dan, anon, org) = await Setup();
         var tt = await CreateTaskTree(ali, org.Id);
-        await ali.Task.Update(new(org.Id, tt.P.Id, tt.B.Id, Parent: tt.A.Id));
+        await ali.Task.Update(new(org.Id, tt.P.Id, tt.B.Id, parent: tt.A.Id));
         await tt.Refresh();
         // validate the structure
         Assert.Null(tt.P.NextSib);
@@ -435,7 +435,7 @@ public class TaskTests : TestBase
         var (ali, bob, cat, dan, anon, org) = await Setup();
         var tt = await CreateTaskTree(ali, org.Id);
         await ali.Task.Update(
-            new(org.Id, tt.P.Id, tt.B.Id, Parent: tt.A.Id, PrevSib: new(tt.E.Id))
+            new(org.Id, tt.P.Id, tt.B.Id, parent: tt.A.Id, prevSib: new(tt.E.Id))
         );
         await tt.Refresh();
         // validate the structure
@@ -458,7 +458,7 @@ public class TaskTests : TestBase
         var (ali, bob, cat, dan, anon, org) = await Setup();
         var tt = await CreateTaskTree(ali, org.Id);
         await ali.Task.Update(
-            new(org.Id, tt.P.Id, tt.C.Id, Parent: tt.A.Id, PrevSib: new(tt.E.Id))
+            new(org.Id, tt.P.Id, tt.C.Id, parent: tt.A.Id, prevSib: new(tt.E.Id))
         );
         await tt.Refresh();
         // validate the structure
@@ -481,7 +481,7 @@ public class TaskTests : TestBase
         // oldParent is newNextSib
         var (ali, bob, cat, dan, anon, org) = await Setup();
         var tt = await CreateTaskTree(ali, org.Id);
-        await ali.Task.Update(new(org.Id, tt.P.Id, tt.E.Id, Parent: tt.P.Id));
+        await ali.Task.Update(new(org.Id, tt.P.Id, tt.E.Id, parent: tt.P.Id));
         await tt.Refresh();
         // validate the structure
         Assert.Null(tt.P.NextSib);
@@ -504,7 +504,7 @@ public class TaskTests : TestBase
         var (ali, bob, cat, dan, anon, org) = await Setup();
         var tt = await CreateTaskTree(ali, org.Id);
         await ali.Task.Update(
-            new(org.Id, tt.P.Id, tt.E.Id, Parent: tt.P.Id, PrevSib: new(tt.A.Id))
+            new(org.Id, tt.P.Id, tt.E.Id, parent: tt.P.Id, prevSib: new(tt.A.Id))
         );
         await tt.Refresh();
         // validate the structure

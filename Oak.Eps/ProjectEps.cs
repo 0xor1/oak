@@ -135,7 +135,7 @@ internal static class ProjectEps
                     var orgMemRole = await EpsUtil.OrgRole(ctx, db, ses.Id, req.Org);
                     if (orgMemRole == null && req.IsPublic != true)
                     {
-                        req = req with { IsPublic = true };
+                        req.IsPublic = true;
                     }
 
                     var qry = db.Projects.Where(
@@ -445,13 +445,13 @@ internal static class ProjectEps
                     {
                         qry = qry.Where(x => x.User == req.User);
                     }
-                    if (req.OccuredOn?.Min != null)
+                    if (req.OccurredOn?.Min != null)
                     {
-                        qry = qry.Where(x => x.OccurredOn >= req.OccuredOn.Min);
+                        qry = qry.Where(x => x.OccurredOn >= req.OccurredOn.Min);
                     }
-                    if (req.OccuredOn?.Max != null)
+                    if (req.OccurredOn?.Max != null)
                     {
-                        qry = qry.Where(x => x.OccurredOn <= req.OccuredOn.Max);
+                        qry = qry.Where(x => x.OccurredOn <= req.OccurredOn.Max);
                     }
                     qry = req.Asc
                         ? qry.OrderBy(x => x.OccurredOn)

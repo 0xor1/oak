@@ -2,6 +2,7 @@
 using Common.Shared;
 using Microsoft.EntityFrameworkCore;
 using Oak.Api;
+using Oak.Api.Project;
 using Oak.Api.ProjectMember;
 using Oak.Api.Task;
 using Oak.Db;
@@ -212,10 +213,7 @@ internal static class TaskEps
                     {
                         // if move parent is specified but its to the existing parent,
                         // just null it out as it effects nothing
-                        req = req with
-                        {
-                            Parent = null
-                        };
+                        req.Parent = null;
                     }
                     if (req.Parent != null)
                     {
@@ -385,7 +383,7 @@ internal static class TaskEps
                         {
                             // here we know no change is being made so ensure everything that should be null is
                             oldPrevSib = null;
-                            req = req with { PrevSib = null };
+                            req.PrevSib = null;
                         }
                     }
                     // at this point all the moving has been done
@@ -534,12 +532,12 @@ internal static class TaskEps
 
                         if (req.Name != null)
                         {
-                            req = req with { Name = req.Name.Ellipsis(50) };
+                            req.Name = req.Name.Ellipsis(50);
                         }
 
                         if (req.Description != null)
                         {
-                            req = req with { Description = req.Description.Ellipsis(50) };
+                            req.Description = req.Description.Ellipsis(50);
                         }
                         await EpsUtil.LogActivity(
                             ctx,
@@ -690,11 +688,8 @@ internal static class TaskEps
                     );
 
                     var extraInfo = t.ToApi();
-                    extraInfo = extraInfo with
-                    {
-                        Name = extraInfo.Name.Ellipsis(50).NotNull(),
-                        Description = extraInfo.Description.Ellipsis(50).NotNull()
-                    };
+                    extraInfo.Name = extraInfo.Name.Ellipsis(50).NotNull();
+                    extraInfo.Description = extraInfo.Description.Ellipsis(50).NotNull();
                     await EpsUtil.LogActivity(
                         ctx,
                         db,
@@ -753,7 +748,7 @@ internal static class TaskEps
                     return t.NotNull().ToApi();
                 }
             ),
-            new Ep<Exact, IReadOnlyList<Task>>(
+            new Ep<Exact, List<Task>>(
                 TaskRpcs.GetAncestors,
                 async (ctx, req) =>
                 {
@@ -777,7 +772,7 @@ internal static class TaskEps
                         .ToListAsync();
                 }
             ),
-            new Ep<GetChildren, IReadOnlyList<Task>>(
+            new Ep<GetChildren, List<Task>>(
                 TaskRpcs.GetChildren,
                 async (ctx, req) =>
                 {
@@ -839,7 +834,7 @@ internal static class TaskEps
                     );
                 }
             ),
-            new Ep<Exact, IReadOnlyList<Task>>(
+            new Ep<Exact, List<Task>>(
                 TaskRpcs.GetAllDescendants,
                 async (ctx, req) =>
                 {

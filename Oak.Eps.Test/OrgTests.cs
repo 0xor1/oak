@@ -43,7 +43,7 @@ public class OrgTests : TestBase
         Assert.Equal(a, res[0]);
         Assert.Equal(b, res[1]);
         Assert.Equal(c, res[2]);
-        res = await ali.Org.Get(new(Asc: false));
+        res = await ali.Org.Get(new(asc: false));
         Assert.Equal(3, res.Count);
         Assert.Equal(c, res[0]);
         Assert.Equal(b, res[1]);

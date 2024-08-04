@@ -21,10 +21,10 @@ public class TimerTests : TestBase
         Assert.Equal(1, getRes.Set.Count);
         Assert.Equal(ts.Single(x => x.Task == tt.P.Id), getRes.Set[0]);
 
-        getRes = await ali.Timer.Get(new(org.Id, tt.P.Id, tt.D.Id, Asc: true));
+        getRes = await ali.Timer.Get(new(org.Id, tt.P.Id, tt.D.Id, asc: true));
         Assert.Equal(0, getRes.Set.Count);
 
-        getRes = await ali.Timer.Get(new(org.Id, tt.P.Id, Asc: true));
+        getRes = await ali.Timer.Get(new(org.Id, tt.P.Id, asc: true));
         Assert.False(getRes.More);
         Assert.Equal(3, getRes.Set.Count);
         Assert.Equal(tt.B.Id, getRes.Set[0].Task);
@@ -46,6 +46,5 @@ public class TimerTests : TestBase
         Assert.Equal(aliSes.Id, ts[0].User);
         Assert.Equal("a", ts[0].TaskName);
         Assert.Equal(0u, ts[0].Inc);
-        Assert.Equal(0u, ts[0].FullInc);
     }
 }

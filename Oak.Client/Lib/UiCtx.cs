@@ -140,7 +140,7 @@ public class UiCtx
                 ).Item;
                 if (ses.IsAuthed)
                 {
-                    Timers = (await _api.Timer.Get(new(OrgId, ProjectId, User: sesId)))
+                    Timers = (await _api.Timer.Get(new(OrgId, ProjectId, user: sesId)))
                         .Set
                         .ToList();
                 }

@@ -161,32 +161,32 @@ public record TestTree
         // make 4 tasks a-d that are all children of the root node, in order
         var a = (
             await api.Task.Create(
-                new(org, project, project, null, "a", TimeEst: 1, CostEst: 1, IsParallel: true)
+                new(org, project, project, null, "a", timeEst: 1, costEst: 1, isParallel: true)
             )
-        ).New;
+        ).Created;
         var b = (
-            await api.Task.Create(new(org, project, project, a.Id, "b", TimeEst: 2, CostEst: 2))
-        ).New;
+            await api.Task.Create(new(org, project, project, a.Id, "b", timeEst: 2, costEst: 2))
+        ).Created;
         var c = (
-            await api.Task.Create(new(org, project, project, b.Id, "c", TimeEst: 3, CostEst: 3))
-        ).New;
+            await api.Task.Create(new(org, project, project, b.Id, "c", timeEst: 3, costEst: 3))
+        ).Created;
         var d = (
-            await api.Task.Create(new(org, project, project, c.Id, "d", TimeEst: 4, CostEst: 4))
-        ).New;
+            await api.Task.Create(new(org, project, project, c.Id, "d", timeEst: 4, costEst: 4))
+        ).Created;
 
         // make 4 tasks e-h that are all children of a, created in reverse order
         var h = (
-            await api.Task.Create(new(org, project, a.Id, null, "h", TimeEst: 8, CostEst: 8))
-        ).New;
+            await api.Task.Create(new(org, project, a.Id, null, "h", timeEst: 8, costEst: 8))
+        ).Created;
         var g = (
-            await api.Task.Create(new(org, project, a.Id, null, "g", TimeEst: 7, CostEst: 7))
-        ).New;
+            await api.Task.Create(new(org, project, a.Id, null, "g", timeEst: 7, costEst: 7))
+        ).Created;
         var f = (
-            await api.Task.Create(new(org, project, a.Id, null, "f", TimeEst: 6, CostEst: 6))
-        ).New;
+            await api.Task.Create(new(org, project, a.Id, null, "f", timeEst: 6, costEst: 6))
+        ).Created;
         var e = (
-            await api.Task.Create(new(org, project, a.Id, null, "e", TimeEst: 5, CostEst: 5))
-        ).New;
+            await api.Task.Create(new(org, project, a.Id, null, "e", timeEst: 5, costEst: 5))
+        ).Created;
         var p = await api.Task.GetOne(new(org, project, project));
 
         var all = (await api.Task.GetAllDescendants(new(org, project, project)))

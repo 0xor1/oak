@@ -5,8 +5,10 @@ using Common.Shared.Auth;
 using Microsoft.EntityFrameworkCore;
 using Oak.Api;
 using Oak.Api.OrgMember;
+using Oak.Api.Project;
 using Oak.Api.ProjectMember;
 using Oak.Db;
+using Activity = Oak.Db.Activity;
 using S = Oak.I18n.S;
 using Task = System.Threading.Tasks.Task;
 
@@ -177,7 +179,7 @@ public static class EpsUtil
 
         var taskDeleted = type == ActivityItemType.Task && action == ActivityAction.Delete;
         var itemDeleted = action == ActivityAction.Delete;
-        var occuredOn = DateTimeExt.UtcNowMilli();
+        var OccurredOn = DateTimeExt.UtcNowMilli();
         string? taskName = null;
         if (type != ActivityItemType.Task)
         {
@@ -195,7 +197,7 @@ public static class EpsUtil
             Org = org,
             Project = project,
             Task = task,
-            OccurredOn = occuredOn,
+            OccurredOn = OccurredOn,
             User = ses.Id,
             Item = item,
             ItemType = type,

@@ -82,14 +82,14 @@ public class ProjectMemberTests : TestBase
         Assert.Equal(danPm, res[3]);
 
         // order by role asc after ali
-        res = (await ali.ProjectMember.Get(new(org.Id, p.Id, After: aliId))).Set;
+        res = (await ali.ProjectMember.Get(new(org.Id, p.Id, after: aliId))).Set;
         Assert.Equal(3, res.Count);
         Assert.Equal(bobPm, res[0]);
         Assert.Equal(catPm, res[1]);
         Assert.Equal(danPm, res[2]);
 
         // order by role desc
-        res = (await ali.ProjectMember.Get(new(org.Id, p.Id, Asc: false))).Set;
+        res = (await ali.ProjectMember.Get(new(org.Id, p.Id, asc: false))).Set;
         Assert.Equal(4, res.Count);
         Assert.Equal(danPm, res[0]);
         Assert.Equal(catPm, res[1]);
@@ -97,13 +97,13 @@ public class ProjectMemberTests : TestBase
         Assert.Equal(bobPm, res[3]);
 
         // order by role desc after bob
-        res = (await ali.ProjectMember.Get(new(org.Id, p.Id, After: aliId, Asc: false))).Set;
+        res = (await ali.ProjectMember.Get(new(org.Id, p.Id, after: aliId, asc: false))).Set;
         Assert.Equal(1, res.Count);
         Assert.Equal(bobPm, res[0]);
 
         // order by name asc
         res = (
-            await ali.ProjectMember.Get(new(org.Id, p.Id, OrderBy: ProjectMemberOrderBy.Name))
+            await ali.ProjectMember.Get(new(org.Id, p.Id, orderBy: ProjectMemberOrderBy.Name))
         ).Set;
         Assert.Equal(4, res.Count);
         Assert.Equal(aliPm, res[0]);
@@ -114,7 +114,7 @@ public class ProjectMemberTests : TestBase
         // order by name asc after ali
         res = (
             await ali.ProjectMember.Get(
-                new(org.Id, p.Id, After: aliId, OrderBy: ProjectMemberOrderBy.Name)
+                new(org.Id, p.Id, after: aliId, orderBy: ProjectMemberOrderBy.Name)
             )
         ).Set;
         Assert.Equal(3, res.Count);
@@ -125,7 +125,7 @@ public class ProjectMemberTests : TestBase
         // order by name desc
         res = (
             await ali.ProjectMember.Get(
-                new(org.Id, p.Id, OrderBy: ProjectMemberOrderBy.Name, Asc: false)
+                new(org.Id, p.Id, orderBy: ProjectMemberOrderBy.Name, asc: false)
             )
         ).Set;
         Assert.Equal(4, res.Count);
@@ -137,7 +137,7 @@ public class ProjectMemberTests : TestBase
         // order by name desc after bob
         res = (
             await ali.ProjectMember.Get(
-                new(org.Id, p.Id, After: bobId, OrderBy: ProjectMemberOrderBy.Name, Asc: false)
+                new(org.Id, p.Id, after: bobId, orderBy: ProjectMemberOrderBy.Name, asc: false)
             )
         ).Set;
         Assert.Equal(1, res.Count);
@@ -171,7 +171,8 @@ public class ProjectMemberTests : TestBase
             new(org.Id, p.Id, catPm.Id, ProjectMemberRole.Reader)
         );
         Assert.Equal(ProjectMemberRole.Reader, updatedCat.Role);
-        Assert.Equal(catPm, updatedCat with { Role = ProjectMemberRole.Writer });
+        updatedCat.Role = ProjectMemberRole.Writer;
+        Assert.Equal(catPm, updatedCat);
     }
 
     [Fact]

@@ -474,13 +474,13 @@
         await Ctx.Set(TheTask);
         if (prevSib == null)
         {
-            Items.Insert(1, res.New);
+            Items.Insert(1, res.Created);
         }
         else
         {
+            prevSib.NextSib = res.Created.Id;
             var i = Items.IndexOf(prevSib);
-            Items[i] = prevSib with {NextSib = res.New.Id};
-            Items.Insert(i+1, res.New);
+            Items.Insert(i+1, res.Created);
         }
         await _grid.Reload();
     }

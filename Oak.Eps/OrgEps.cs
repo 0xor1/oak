@@ -86,7 +86,7 @@ public static class OrgEps
                     return org.NotNull().ToApi(m);
                 }
             ),
-            new Ep<Get, IReadOnlyList<Org>>(
+            new Ep<Get, List<Org>>(
                 OrgRpcs.Get,
                 async (ctx, req) =>
                 {
@@ -99,10 +99,13 @@ public static class OrgEps
                     var qry = db.Orgs.Where(x => oIds.Contains(x.Id));
                     qry = req switch
                     {
-                        (OrgOrderBy.Name, true) => qry.OrderBy(x => x.Name),
-                        (OrgOrderBy.CreatedOn, true) => qry.OrderBy(x => x.CreatedOn),
-                        (OrgOrderBy.Name, false) => qry.OrderByDescending(x => x.Name),
-                        (OrgOrderBy.CreatedOn, false) => qry.OrderByDescending(x => x.CreatedOn),
+                        { OrderBy: OrgOrderBy.Name, Asc: true } => qry.OrderBy(x => x.Name),
+                        { OrderBy: OrgOrderBy.CreatedOn, Asc: true }
+                            => qry.OrderBy(x => x.CreatedOn),
+                        { OrderBy: OrgOrderBy.Name, Asc: false }
+                            => qry.OrderByDescending(x => x.Name),
+                        { OrderBy: OrgOrderBy.CreatedOn, Asc: false }
+                            => qry.OrderByDescending(x => x.CreatedOn),
                     };
                     var os = await qry.ToListAsync(ctx.Ctkn);
                     return os.Select(x => x.ToApi(ms.Single(y => y.Org == x.Id))).ToList();

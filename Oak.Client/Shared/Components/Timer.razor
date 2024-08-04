@@ -8,7 +8,7 @@
 <div class="flx col g-0h p-l-4 p-y-0h ptr timer" @onclick="@GoToTask">
     <RadzenLabel class="ptr ellip m-r-4">@Value.TaskName</RadzenLabel>
     <div class="flx g-0h ptr">
-        <RadzenLabel class="m-r-1">@Util.TimerDuration(Value.FullInc)</RadzenLabel>
+        <RadzenLabel class="m-r-1">@Util.TimerDuration(FullInc(Value))</RadzenLabel>
         @if (Value.IsRunning)
         {
             <RadzenButton @onclick:stopPropagation="true" Icon="pause_circle" ButtonStyle="ButtonStyle.Warning" Size="ButtonSize.ExtraSmall" Click="_ => ToggleTimer(false)"/>
@@ -70,7 +70,7 @@
     private async Task LogTimer()
     {
         var t = await Api.Task.GetOne(new(Value.Org, Value.Project, Value.Task));
-        await DialogService.OpenAsync<VItemNewOrUpdate>(L.S(S.TaskNewTime), new (){{"Type", VItemType.Time}, {"Task", t}, {"Inc", Value.FullInc / 60}, {"OnCreated", OnTimeLogged}});
+        await DialogService.OpenAsync<VItemNewOrUpdate>(L.S(S.TaskNewTime), new (){{"Type", VItemType.Time}, {"Task", t}, {"Inc", FullInc(Value) / 60}, {"OnCreated", OnTimeLogged}});
     }
 
     private async Task OnTimeLogged(VItemRes res)
@@ -95,4 +95,8 @@
         Nav.NavigateTo($"/org/{Value.Org}/project/{Value.Project}/task/{Value.Task}");
     }
 
+    private ulong FullInc(Oak.Api.Timer.Timer t)
+    => !t.IsRunning
+        ? t.Inc
+        : t.Inc + (ulong)DateTimeExt.UtcNowMilli().Subtract(t.LastStartedOn).TotalSeconds;
 }

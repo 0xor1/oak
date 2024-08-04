@@ -3,6 +3,7 @@ using Common.Shared;
 using Microsoft.EntityFrameworkCore;
 using Oak.Api;
 using Oak.Api.OrgMember;
+using Oak.Api.Project;
 using Oak.Api.ProjectMember;
 using Oak.Db;
 using Add = Oak.Api.ProjectMember.Add;
@@ -39,10 +40,7 @@ internal static class ProjectMemberEps
                     if (orgMem.Role is OrgMemberRole.Owner or OrgMemberRole.Admin)
                     {
                         // org level owners and admins cant be less than project admins
-                        req = req with
-                        {
-                            Role = ProjectMemberRole.Admin
-                        };
+                        req.Role = ProjectMemberRole.Admin;
                     }
                     var mem = new Db.ProjectMember()
                     {
@@ -234,10 +232,7 @@ internal static class ProjectMemberEps
                     if (orgMem.Role is OrgMemberRole.Owner or OrgMemberRole.Admin)
                     {
                         // org level owners and admins cant be less than project admins
-                        req = req with
-                        {
-                            Role = ProjectMemberRole.Admin
-                        };
+                        req.Role = ProjectMemberRole.Admin;
                     }
                     mem.Role = req.Role;
                     await EpsUtil.LogActivity(

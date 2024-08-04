@@ -42,7 +42,7 @@ async Task<int> CreateTree(string parentId, int lastIdx, int currentDepth, int k
         }
 
         var res = await api.Task.Create(new (orgId, projectId, parentId, prevSib, lastIdx.ToString(), "", isParallel, null, timeEst, timeEst));
-        prevSib = res.New.Id;
+        prevSib = res.Created.Id;
         lastIdx = await CreateTree(prevSib, lastIdx, currentDepth + 1, k, h);
     }
 

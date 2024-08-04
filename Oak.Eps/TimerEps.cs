@@ -16,10 +16,10 @@ public static class TimerEps
 {
     private const int MaxTimers = 5;
 
-    public static IReadOnlyList<IEp> Eps { get; } =
+    public static List<IEp> Eps { get; } =
         new List<IEp>()
         {
-            Ep<Create, IReadOnlyList<Timer>>.DbTx<OakDb>(
+            Ep<Create, List<Timer>>.DbTx<OakDb>(
                 TimerRpcs.Create,
                 async (ctx, db, ses, req) =>
                 {
@@ -101,7 +101,7 @@ public static class TimerEps
                     return SetRes<Timer>.FromLimit(tmpRes, 101);
                 }
             ),
-            Ep<Update, IReadOnlyList<Timer>>.DbTx<OakDb>(
+            Ep<Update, List<Timer>>.DbTx<OakDb>(
                 TimerRpcs.Update,
                 async (ctx, db, ses, req) =>
                 {
@@ -146,7 +146,7 @@ public static class TimerEps
                     return await ReturnResult(ctx, db, ts);
                 }
             ),
-            Ep<Delete, IReadOnlyList<Timer>>.DbTx<OakDb>(
+            Ep<Delete, List<Timer>>.DbTx<OakDb>(
                 TimerRpcs.Delete,
                 async (ctx, db, ses, req) =>
                 {

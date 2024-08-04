@@ -49,7 +49,7 @@ public class EpsUtilTests : TestBase
                 new(danId, ProjectMemberRole.Reader),
             }
         );
-        await ali.Project.Update(new(org.Id, p.Id, IsPublic: false));
+        await ali.Project.Update(new(org.Id, p.Id, isPublic: false));
         RpcTestException? ex = null;
         try
         {

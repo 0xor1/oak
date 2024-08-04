@@ -6,18 +6,18 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
+    <Target Name="GenerateI18n" BeforeTargets="BeforeBuild">
+        <Exec Command="dotnet tool restore"/>
+        <Exec Command="dotnet tool run dotnet-common-cli i18n &quot;$(MSBuildProjectDirectory)&quot; $(MSBuildProjectName) false"/>
+    </Target>
+
     <ItemGroup>
-        <PackageReference Include="0xor1.Common.Shared" Version="4.0.4" />
+        <PackageReference Include="0xor1.Common.Shared" Version="5.0.0" />
         <PackageReference Include="CSharpier.MsBuild" Version="0.26.2">
           <PrivateAssets>all</PrivateAssets>
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
         <PackageReference Include="Fluid.Core" Version="2.5.0" />
     </ItemGroup>
-
-    <Target Name="GenerateI18n" BeforeTargets="BeforeBuild">
-        <Exec Command="dotnet tool restore"/>
-        <Exec Command="dotnet tool run dotnet-common-cmds i18n &quot;$(MSBuildProjectDirectory)&quot; $(MSBuildProjectName) false"/>
-    </Target>
 
 </Project>

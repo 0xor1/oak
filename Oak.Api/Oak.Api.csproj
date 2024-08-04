@@ -8,7 +8,7 @@
 
 
     <ItemGroup>
-        <PackageReference Include="0xor1.Common.Shared" Version="4.0.4" />
+        <PackageReference Include="0xor1.Common.Shared" Version="5.0.0" />
         <PackageReference Include="CSharpier.MsBuild" Version="0.26.2">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -18,4 +18,9 @@
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
     </ItemGroup>
+
+    <Target Name="GenerateApi" BeforeTargets="BeforeBuild">
+        <Exec Command="dotnet tool restore"/>
+        <Exec Command="dotnet tool run dotnet-common-cli api &quot;$(MSBuildProjectDirectory)&quot;"/>
+    </Target>
 </Project>

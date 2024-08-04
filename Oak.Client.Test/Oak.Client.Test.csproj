@@ -9,8 +9,8 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="0xor1.Common.Client" Version="4.0.4" />
-        <PackageReference Include="0xor1.Common.Server" Version="4.0.4" />
+        <PackageReference Include="0xor1.Common.Client" Version="5.0.0" />
+        <PackageReference Include="0xor1.Common.Server" Version="5.0.0" />
         <PackageReference Include="bunit" Version="1.25.3" />
         <PackageReference Include="coverlet.msbuild" Version="6.0.0">
             <PrivateAssets>all</PrivateAssets>

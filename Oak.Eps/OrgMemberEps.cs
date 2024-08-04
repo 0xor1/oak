@@ -19,7 +19,7 @@ internal static class OrgMemberEps
                 OrgMemberRpcs.Invite,
                 async (ctx, db, ses, req) =>
                 {
-                    req = req with { Email = req.Email.ToLower() };
+                    req.Email = req.Email.ToLower();
                     // check current member has sufficient permissions
                     var sesOrgMem = await db.OrgMembers
                         .Where(x => x.Org == req.Org && x.IsActive && x.Id == ses.Id)

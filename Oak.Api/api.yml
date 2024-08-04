@@ -1,0 +1,1042 @@
+sections:
+  - key: Comment
+    types:
+      - key: Comment
+        fields:
+          - key: Org
+            type: string
+          - key: Project
+            type: string
+          - key: Task
+            type: string
+          - key: Id
+            type: string
+          - key: CreatedBy
+            type: string
+          - key: CreatedOn
+            type: DateTime
+          - key: Body
+            type: string
+      - key: Create
+        fields:
+          - key: Org
+            type: string
+          - key: Project
+            type: string
+          - key: Task
+            type: string
+          - key: Body
+            type: string
+      - key: Update
+        fields:
+          - key: Org
+            type: string
+          - key: Project
+            type: string
+          - key: Task
+            type: string
+          - key: Id
+            type: string
+          - key: Body
+            type: string
+      - key: Exact
+        fields:
+          - key: Org
+            type: string
+          - key: Project
+            type: string
+          - key: Task
+            type: string
+          - key: Id
+            type: string
+      - key: Get
+        fields:
+          - key: Org
+            type: string
+          - key: Project
+            type: string
+          - key: Task
+            type: string?
+            default: "null"
+          - key: CreatedOn
+            type: MinMax<DateTime>?
+            default: "null"
+          - key: CreatedBy
+            type: string?
+            default: "null"
+          - key: After
+            type: string?
+            default: "null"
+          - key: Asc
+            type: bool
+            default: "false"
+    eps:
+      - key: Create
+        arg: Create
+        res: Comment
+      - key: Update
+        arg: Update
+        res: Comment
+      - key: Delete
+        arg: Exact
+        res: Nothing
+        fully_qualify_task: true
+      - key: Get
+        arg: Get
+        res: SetRes<Comment>
+  - key: File
+    imports:
+      - Oak.Api.VItem
+    types:
+      - key: File
+        extends: ICreatable
+        fields:
+          - key: Org
+            type: string
+          - key: Project
+            type: string
+          - key: Task
+            type: string
+          - key: Id
+            type: string
+          - key: Name
+            type: string
+          - key: CreatedBy
+            type: string
+          - key: CreatedOn
+            type: DateTime
+          - key: Size
+            type: ulong
+          - key: Type
+            type: string
+      - key: Upload
+        extends: HasStream
+        fields:
+          - key: Org
+            type: string
+          - key: Project
+            type: string
+          - key: Task
+            type: string
+      - key: Download
+        fields:
+          - key: Org
+            type: string
+          - key: Project
+            type: string
+          - key: Task
+            type: string
+          - key: Id
+            type: string
+          - key: IsDownload
+            type: bool
+      - key: Exact
+        fields:
+          - key: Org
+            type: string
+          - key: Project
+            type: string
+          - key: Task
+            type: string
+          - key: Id
+            type: string
+      - key: Get
+        fields:
+          - key: Org
+            type: string
+          - key: Project
+            type: string
+          - key: Task
+            type: string?
+          - key: CreatedOn
+            type: MinMax<DateTime>?
+            default: "null"
+          - key: CreatedBy
+            type: string?
+            default: "null"
+          - key: After
+            type: string?
+            default: "null"
+          - key: Asc
+            type: bool
+            default: "false"
+      - key: FileRes
+        fields:
+          - key: Task
+            type: Task.Task
+          - key: File
+            type: File
+    eps:
+      - key: Upload
+        arg: Upload
+        res: FileRes
+      - key: Download
+        arg: Download
+        res: HasStream
+        get_url: true
+      - key: Delete
+        arg: Exact
+        res: Task.Task
+      - key: Get
+        arg: Get
+        res: SetRes<File>
+  - key: Org
+    types:
+      - key: Org
+        fields:
+          - key: Id
+            type: string
+          - key: Name
+            type: string
+          - key: CreatedOn
+            type: DateTime
+          - key: Member
+            type: OrgMember.OrgMember?
+      - key: Create
+        fields:
+          - key: Name
+            type: string
+          - key: OwnerMemberName
+            type: string
+      - key: Get
+        fields:
+          - key: OrderBy
+            type: OrgOrderBy
+            default: OrgOrderBy.Name
+          - key: Asc
+            type: bool
+            default: "true"
+      - key: Update
+        fields:
+          - key: Id
+            type: string
+          - key: Name
+            type: string
+      - key: Exact
+        fields:
+          - key: Id
+            type: string
+    enums:
+      - key: OrgOrderBy
+        vals:
+          - Name
+          - CreatedOn
+    eps:
+      - key: Create
+        arg: Create
+        res: Org
+      - key: GetOne
+        arg: Exact
+        res: Org
+      - key: Get
+        arg: Get
+        res: List<Org>
+      - key: Update
+        arg: Update
+        res: Org
+      - key: Delete
+        arg: Exact
+        res: Nothing
+        fully_qualify_task: true
+  - key: OrgMember
+    types:
+      - key: OrgMember
+        fields:
+          - key: Org
+            type: string
+          - key: Id
+            type: string
+          - key: IsActive
+            type: bool
+          - key: Name
+            type: string
+          - key: Role
+            type: OrgMemberRole
+      - key: Invite
+        fields:
+          - key: Org
+            type: string
+          - key: Email
+            type: string
+          - key: Name
+            type: string
+          - key: Role
+            type: OrgMemberRole
+      - key: Get
+        fields:
+          - key: Org
+            type: string
+          - key: IsActive
+            type: bool?
+            default: "null"
+          - key: NameStartsWith
+            type: string?
+            default: "null"
+          - key: Role
+            type: OrgMemberRole?
+            default: "null"
+          - key: After
+            type: string?
+            default: "null"
+          - key: OrderBy
+            type: OrgMemberOrderBy?
+            default: OrgMemberOrderBy.Role
+          - key: Asc
+            type: bool
+            default: "true"
+      - key: Update
+        fields:
+          - key: Org
+            type: string
+          - key: Id
+            type: string
+          - key: IsActive
+            type: bool?
+          - key: Name
+            type: string?
+          - key: Role
+            type: OrgMemberRole?
+      - key: Exact
+        fields:
+          - key: Org
+            type: string
+          - key: Id
+            type: string
+    enums:
+      - key: OrgMemberRole
+        vals:
+          - Owner
+          - Admin
+          - WriteAllProjects
+          - ReadAllProjects
+          - PerProject
+      - key: OrgMemberOrderBy
+        vals:
+          - Role
+          - Name
+    eps:
+      - key: Invite
+        arg: Invite
+        res: OrgMember
+      - key: GetOne
+        arg: Exact
+        res: Maybe<OrgMember>
+      - key: Get
+        arg: Get
+        res: SetRes<OrgMember>
+      - key: Update
+        arg: Update
+        res: OrgMember
+  - key: Project
+    types:
+      - key: Project
+        fields:
+          - key: Org
+            type: string
+          - key: Id
+            type: string
+          - key: IsArchived
+            type: bool
+          - key: IsPublic
+            type: bool
+          - key: Name
+            type: string
+          - key: CreatedOn
+            type: DateTime
+          - key: CurrencySymbol
+            type: string
+          - key: CurrencyCode
+            type: string
+          - key: HoursPerDay
+            type: uint
+          - key: DaysPerWeek
+            type: uint
+          - key: StartOn
+            type: DateTime?
+          - key: EndOn
+            type: DateTime?
+          - key: FileLimit
+            type: ulong
+          - key: Task
+            type: Task.Task
+      - key: Create
+        fields:
+          - key: Org
+            type: string
+          - key: IsPublic
+            type: bool
+          - key: Name
+            type: string
+          - key: CurrencySymbol
+            type: string
+          - key: CurrencyCode
+            type: string
+          - key: HoursPerDay
+            type: uint
+          - key: DaysPerWeek
+            type: uint
+          - key: StartOn
+            type: DateTime?
+          - key: EndOn
+            type: DateTime?
+          - key: FileLimit
+            type: ulong
+      - key: Get
+        fields:
+          - key: Org
+            type: string
+          - key: IsPublic
+            type: bool?
+            default: "null"
+          - key: NameStartsWith
+            type: string?
+            default: "null"
+          - key: CreatedOn
+            type: MinMax<DateTime>?
+            default: "null"
+          - key: StartOn
+            type: MinMax<DateTime>?
+            default: "null"
+          - key: EndOn
+            type: MinMax<DateTime>?
+            default: "null"
+          - key: IsArchived
+            type: bool
+            default: "false"
+          - key: After
+            type: string?
+            default: "null"
+          - key: OrderBy
+            type: ProjectOrderBy
+            default: ProjectOrderBy.Name
+          - key: Asc
+            type: bool
+            default: "true"
+      - key: Update
+        fields:
+          - key: Org
+            type: string
+          - key: Id
+            type: string
+          - key: IsPublic
+            type: bool?
+            default: "null"
+          - key: Name
+            type: string?
+            default: "null"
+          - key: CurrencySymbol
+            type: string?
+            default: "null"
+          - key: CurrencyCode
+            type: string?
+            default: "null"
+          - key: HoursPerDay
+            type: uint?
+            default: "null"
+          - key: DaysPerWeek
+            type: uint?
+            default: "null"
+          - key: StartOn
+            type: DateTime?
+            default: "null"
+          - key: EndOn
+            type: DateTime?
+            default: "null"
+          - key: FileLimit
+            type: ulong?
+            default: "null"
+      - key: Exact
+        fields:
+          - key: Org
+            type: string
+          - key: Id
+            type: string
+      - key: Activity
+        fields:
+          - key: Org
+            type: string
+          - key: Project
+            type: string
+          - key: Task
+            type: string?
+          - key: OccurredOn
+            type: DateTime
+          - key: User
+            type: string
+          - key: Item
+            type: string
+          - key: ItemType
+            type: ActivityItemType
+          - key: TaskDeleted
+            type: bool
+          - key: ItemDeleted
+            type: bool
+          - key: Action
+            type: ActivityAction
+          - key: TaskName
+            type: string?
+          - key: ItemName
+            type: string?
+          - key: ExtraInfo
+            type: string?
+      - key: GetActivities
+        fields:
+          - key: Org
+            type: string
+          - key: Project
+            type: string
+          - key: ExcludeDeletedItem
+            type: bool
+            default: "true"
+          - key: Task
+            type: string?
+            default: "null"
+          - key: Item
+            type: string?
+            default: "null"
+          - key: User
+            type: string?
+            default: "null"
+          - key: OccurredOn
+            type: MinMax<DateTime>?
+            default: "null"
+          - key: Asc
+            type: bool
+            default: "false"
+      - key: FcmData
+        fields:
+          - key: Activity
+            type: Activity
+          - key: Ancestors
+            type: List<string>
+    enums:
+      - key: ProjectOrderBy
+        vals:
+          - Name
+          - CreatedOn
+          - StartOn
+          - EndOn
+      - key: ActivityItemType
+        vals:
+          - Org
+          - Project
+          - Member
+          - Task
+          - VItem
+          - File
+          - Comment
+      - key: ActivityAction
+        vals:
+          - Create
+          - Update
+          - Delete
+    eps:
+      - key: Create
+        arg: Create
+        res: Project
+      - key: GetOne
+        arg: Exact
+        res: Project
+      - key: Get
+        arg: Get
+        res: SetRes<Project>
+      - key: Update
+        arg: Update
+        res: Project
+      - key: Delete
+        arg: Exact
+        res: Nothing
+        fully_qualify_task: true
+      - key: GetActivities
+        arg: GetActivities
+        res: SetRes<Activity>
+  - key: ProjectMember
+    imports:
+      - Oak.Api.OrgMember
+    types:
+      - key: ProjectMember
+        fields:
+          - key: Org
+            type: string
+          - key: Project
+            type: string
+          - key: Id
+            type: string
+          - key: IsActive
+            type: bool
+          - key: OrgRole
+            type: OrgMemberRole
+          - key: Name
+            type: string
+          - key: Role
+            type: ProjectMemberRole
+          - key: TimeEst
+            type: ulong
+          - key: TimeInc
+            type: ulong
+          - key: CostEst
+            type: ulong
+          - key: CostInc
+            type: ulong
+          - key: FileN
+            type: ulong
+          - key: FileSize
+            type: ulong
+          - key: TaskN
+            type: ulong
+      - key: Add
+        fields:
+          - key: Org
+            type: string
+          - key: Project
+            type: string
+          - key: Id
+            type: string
+          - key: Role
+            type: ProjectMemberRole
+      - key: Get
+        fields:
+          - key: Org
+            type: string
+          - key: Project
+            type: string
+          - key: IsActive
+            type: bool?
+            default: "null"
+          - key: Role
+            type: ProjectMemberRole?
+            default: "null"
+          - key: NameStartsWith
+            type: string?
+            default: "null"
+          - key: After
+            type: string?
+            default: "null"
+          - key: OrderBy
+            type: ProjectMemberOrderBy
+            default: ProjectMemberOrderBy.Role
+          - key: Asc
+            type: bool
+            default: "true"
+      - key: Update
+        fields:
+          - key: Org
+            type: string
+          - key: Project
+            type: string
+          - key: Id
+            type: string
+          - key: Role
+            type: ProjectMemberRole
+      - key: Exact
+        fields:
+          - key: Org
+            type: string
+          - key: Project
+            type: string
+          - key: Id
+            type: string
+    enums:
+      - key: ProjectMemberRole
+        vals:
+          - Admin
+          - Writer
+          - Reader
+      - key: ProjectMemberOrderBy
+        vals:
+          - Role
+          - Name
+    eps:
+      - key: Add
+        arg: Add
+        res: ProjectMember
+      - key: GetOne
+        arg: Exact
+        res: Maybe<ProjectMember>
+      - key: Get
+        arg: Get
+        res: SetRes<ProjectMember>
+      - key: Update
+        arg: Update
+        res: ProjectMember
+      - key: Remove
+        arg: Exact
+        res: Nothing
+        fully_qualify_task: true
+  - key: Task
+    types:
+      - key: Task
+        fields:
+          - key: Org
+            type: string
+          - key: Project
+            type: string
+          - key: Id
+            type: string
+          - key: Parent
+            type: string?
+          - key: FirstChild
+            type: string?
+          - key: NextSib
+            type: string?
+          - key: User
+            type: string?
+          - key: Name
+            type: string
+          - key: Description
+            type: string
+          - key: CreatedBy
+            type: string
+          - key: CreatedOn
+            type: DateTime
+          - key: TimeEst
+            type: ulong
+          - key: TimeInc
+            type: ulong
+          - key: TimeSubMin
+            type: ulong
+          - key: TimeSubEst
+            type: ulong
+          - key: TimeSubInc
+            type: ulong
+          - key: CostEst
+            type: ulong
+          - key: CostInc
+            type: ulong
+          - key: CostSubEst
+            type: ulong
+          - key: CostSubInc
+            type: ulong
+          - key: FileN
+            type: ulong
+          - key: FileSize
+            type: ulong
+          - key: FileSubN
+            type: ulong
+          - key: FileSubSize
+            type: ulong
+          - key: ChildN
+            type: ulong
+          - key: DescN
+            type: ulong
+          - key: IsParallel
+            type: bool
+      - key: CreateRes
+        fields:
+          - key: Parent
+            type: Task
+          - key: Created
+            type: Task
+      - key: Create
+        fields:
+          - key: Org
+            type: string
+          - key: Project
+            type: string
+          - key: Parent
+            type: string
+          - key: PrevSib
+            type: string?
+          - key: Name
+            type: string
+          - key: Description
+            type: string
+            default: '""'
+          - key: IsParallel
+            type: bool
+            default: "false"
+          - key: User
+            type: string?
+            default: "null"
+          - key: TimeEst
+            type: ulong
+            default: "0"
+          - key: CostEst
+            type: ulong
+            default: "0"
+      - key: Update
+        fields:
+          - key: Org
+            type: string
+          - key: Project
+            type: string
+          - key: Id
+            type: string
+          - key: Parent
+            type: string?
+            default: "null"
+          - key: PrevSib
+            type: NSet<string>?
+            default: "null"
+          - key: Name
+            type: string?
+            default: "null"
+          - key: Description
+            type: string?
+            default: "null"
+          - key: IsParallel
+            type: bool?
+            default: "null"
+          - key: User
+            type: NSet<string>?
+            default: "null"
+          - key: TimeEst
+            type: ulong?
+            default: "null"
+          - key: CostEst
+            type: ulong?
+            default: "null"
+      - key: UpdateRes
+        fields:
+          - key: Task
+            type: Task
+          - key: OldParent
+            type: Task?
+          - key: NewParent
+            type: Task?
+      - key: GetChildren
+        fields:
+          - key: Org
+            type: string
+          - key: Project
+            type: string
+          - key: Id
+            type: string
+          - key: After
+            type: string?
+      - key: Exact
+        fields:
+          - key: Org
+            type: string
+          - key: Project
+            type: string
+          - key: Id
+            type: string
+      - key: InitView
+        fields:
+          - key: Task
+            type: Task
+          - key: Children
+            type: List<Task>
+          - key: Ancestors
+            type: List<Task>
+    eps:
+      - key: Create
+        arg: Create
+        res: CreateRes
+      - key: GetOne
+        arg: Exact
+        res: Task
+      - key: GetAncestors
+        arg: Exact
+        res: List<Task>
+      - key: GetChildren
+        arg: GetChildren
+        res: List<Task>
+      - key: GetInitView
+        arg: Exact
+        res: InitView
+      - key: GetAllDescendants
+        arg: Exact
+        res: List<Task>
+      - key: Update
+        arg: Update
+        res: UpdateRes
+      - key: Delete
+        arg: Exact
+        res: Task
+  - key: Timer
+    types:
+      - key: Timer
+        fields:
+          - key: Org
+            type: string
+          - key: Project
+            type: string
+          - key: Task
+            type: string
+          - key: User
+            type: string
+          - key: TaskName
+            type: string
+          - key: Inc
+            type: ulong
+          - key: LastStartedOn
+            type: DateTime
+          - key: IsRunning
+            type: bool
+      - key: Create
+        fields:
+          - key: Org
+            type: string
+          - key: Project
+            type: string
+          - key: Task
+            type: string
+      - key: Get
+        fields:
+          - key: Org
+            type: string
+          - key: Project
+            type: string
+          - key: Task
+            type: string?
+            default: "null"
+          - key: User
+            type: string?
+            default: "null"
+          - key: Asc
+            type: bool
+            default: "false"
+      - key: Update
+        fields:
+          - key: Org
+            type: string
+          - key: Project
+            type: string
+          - key: Task
+            type: string
+          - key: IsRunning
+            type: bool
+      - key: Delete
+        fields:
+          - key: Org
+            type: string
+          - key: Project
+            type: string
+          - key: Task
+            type: string
+    eps:
+      - key: Create
+        arg: Create
+        res: List<Timer>
+      - key: Get
+        arg: Get
+        res: SetRes<Timer>
+      - key: Update
+        arg: Update
+        res: List<Timer>
+      - key: Delete
+        arg: Delete
+        res: List<Timer>
+  - key: VItem
+    types:
+      - key: VItem
+        extends: ICreatable
+        fields:
+          - key: Org
+            type: string
+          - key: Project
+            type: string
+          - key: Task
+            type: string
+          - key: Type
+            type: VItemType
+          - key: Id
+            type: string
+          - key: CreatedBy
+            type: string
+          - key: CreatedOn
+            type: DateTime
+          - key: Inc
+            type: ulong
+          - key: Note
+            type: string
+      - key: Create
+        fields:
+          - key: Org
+            type: string
+          - key: Project
+            type: string
+          - key: Task
+            type: string
+          - key: Type
+            type: VItemType
+          - key: Est
+            type: ulong?
+          - key: Inc
+            type: ulong
+          - key: Note
+            type: string
+      - key: Update
+        fields:
+          - key: Org
+            type: string
+          - key: Project
+            type: string
+          - key: Task
+            type: string
+          - key: Type
+            type: VItemType
+          - key: Id
+            type: string
+          - key: Inc
+            type: ulong
+          - key: Note
+            type: string
+      - key: Exact
+        fields:
+          - key: Org
+            type: string
+          - key: Project
+            type: string
+          - key: Task
+            type: string
+          - key: Type
+            type: VItemType
+          - key: Id
+            type: string
+      - key: Get
+        fields:
+          - key: Org
+            type: string
+          - key: Project
+            type: string
+          - key: Type
+            type: VItemType
+          - key: Task
+            type: string?
+            default: "null"
+          - key: CreatedOn
+            type: MinMax<DateTime>?
+            default: "null"
+          - key: CreatedBy
+            type: string?
+            default: "null"
+          - key: After
+            type: string?
+            default: "null"
+          - key: Asc
+            type: bool
+            default: "false"
+      - key: VItemRes
+        fields:
+          - key: Task
+            type: Task.Task
+          - key: Item
+            type: VItem
+      - key: ICreatable
+        is_interface: true
+        fields:
+          - key: CreatedBy
+            type: string
+          - key: CreatedOn
+            type: DateTime
+    enums:
+      - key: VItemType
+        vals:
+          - Time
+          - Cost
+    eps:
+      - key: Create
+        arg: Create
+        res: VItemRes
+      - key: Update
+        arg: Update
+        res: VItemRes
+      - key: Delete
+        arg: Exact
+        res: Task.Task
+      - key: Get
+        arg: Get
+        res: SetRes<VItem>
