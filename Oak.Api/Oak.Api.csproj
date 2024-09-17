@@ -20,7 +20,6 @@
     </ItemGroup>
 
     <Target Name="GenerateApi" BeforeTargets="BeforeBuild">
-        <Exec Command="dotnet tool restore"/>
         <Exec Command="dotnet tool run dotnet-common-cli api &quot;$(MSBuildProjectDirectory)&quot;"/>
     </Target>
 </Project>
