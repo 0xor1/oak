@@ -8,7 +8,7 @@
 @using Oak.I18n
 @using S = Oak.I18n.S
 @using ATask = Oak.Api.Task.Task;
-<div class="flx col jc-s ai-s g-0t w-100 mw-100">
+<div class="flx col jc-s ai-s g-0t w-100 mw-100p">
     @if (Ctx.HasProjectWritePerm)
     {
         <RadzenHtmlEditor @ref="_htmlEditor" @bind-Value="Value" Name="Comment" class="w-100" style="height: 12em" @onkeydown="KeyDown"/>

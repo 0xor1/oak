@@ -4,7 +4,7 @@
 @using Oak.Api
 @using Oak.I18n
 @using ATask = Oak.Api.Task.Task;
-<div class="flx col jc-s ai-s g-0t w-100 mw-100">
+<div class="flx col jc-s ai-s g-0t w-100 mw-100p">
     <RadzenButton class="m-b-1" ButtonStyle="ButtonStyle.Success" Icon="add_circle_outline" Text="@L.S(S.New)" Click="@OpenNewDialog"/>
     <RadzenDataGrid
         @ref="_grid"
@@ -20,7 +20,7 @@
         <Columns>
             <RadzenDataGridColumn Width="22em" TItem="VItem" Property="@nameof(VItem.Note)" Title="@L.S(S.Note)">
                 <Template Context="i">
-                    <div class="flx child-no-shrink jc-s ai-c g-0h w-100 mw-100 p-rel">
+                    <div class="flx child-no-shrink jc-s ai-c g-0h w-100 mw-100p p-rel">
                         <span title="@($"{i.Note}")" class="shrink-1 ellip">@i.Note</span>
                         @if (Ctx.CanDeleteVItemOrFile(i))
                         {

@@ -17,7 +17,7 @@
     {
         @if (Ancestors.Any())
         {
-            <div class="flx row rev g-0h ai-c ov-a child-no-shrink mw-100">
+            <div class="flx row rev g-0h ai-c ov-a child-no-shrink mw-100p">
                 @foreach (var a in Ancestors.Take(Ancestors.Count - 1))
                 {
                     <RadzenLink Path="@($"/org/{a.Org}/project/{a.Project}/task/{a.Id}")" class="ellip m-y-0h">@a.Name</RadzenLink>
@@ -42,8 +42,8 @@
         {
             <RadzenText class="m-t-0q" TextStyle="TextStyle.Body1" Text="@TheTask.Description"></RadzenText>
         }
-        <div class="flx col jc-s ai-s g-0t w-100 mw-100">
-            <RadzenTabs @bind-SelectedIndex="_selectedTabIndex" class="w-100 no-x-pad" >
+        <div class="flx col jc-s ai-s g-0t w-100 mw-100p">
+            <RadzenTabs @bind-SelectedIndex="_selectedTabIndex" class="w-100 mw-100p no-x-pad" >
                 <Tabs>
                     <RadzenTabsItem Text="@L.S(S.Task)">
                         <RadzenDataGrid
@@ -63,7 +63,7 @@
                             <Columns>
                                 <RadzenDataGridColumn Width="22em" TItem="ATask" Property="@nameof(ATask.Name)" Title="@L.S(S.Name)">
                                     <Template Context="t">
-                                        <div class="flx child-no-shrink jc-s ai-c g-0h w-100 mw-100 p-rel">
+                                        <div class="flx child-no-shrink jc-s ai-c g-0h w-100 mw-100p p-rel">
                                             @if (t != TheTask)
                                             {
                                                 <div class="w-1h"></div>
@@ -115,7 +115,7 @@
                                 </RadzenDataGridColumn>
                                 <RadzenDataGridColumn Visible="Ctx.Display.Time" TextAlign="TextAlign.Center" Width="7em" TItem="ATask" Property="@nameof(ATask.TimeInc)" Title="@L.S(S.TimeInc)">
                                     <Template Context="t">
-                                        <div class="flx child-no-shrink jc-c ai-c g-0h w-100 mw-100 p-rel">
+                                        <div class="flx child-no-shrink jc-c ai-c g-0h w-100 mw-100p p-rel">
                                             <span title="@($"{Util.Duration(Ctx.Project, t.TimeInc)} / {Util.Duration(Ctx.Project, t.TimeSubInc)}")">
                                                 @(Util.Duration(Ctx.Project, t.TimeInc + t.TimeSubInc))
                                             </span>
@@ -136,7 +136,7 @@
                                 </RadzenDataGridColumn>
                                 <RadzenDataGridColumn Visible="Ctx.Display.Cost" TextAlign="TextAlign.Center" Width="7em" TItem="ATask" Property="@nameof(ATask.CostInc)" Title="@L.S(S.CostInc)">
                                     <Template Context="t">
-                                        <div class="flx child-no-shrink jc-c ai-c g-0h w-100 mw-100 p-rel">
+                                        <div class="flx child-no-shrink jc-c ai-c g-0h w-100 mw-100p p-rel">
                                             <span title="@($"{Util.Cost(Ctx.Project, t.CostInc)} / {Util.Cost(Ctx.Project, t.CostSubInc)}")">
                                                 @(Util.Cost(Ctx.Project, t.CostInc + t.CostSubInc))
                                             </span>
@@ -156,7 +156,7 @@
                                 </RadzenDataGridColumn>
                                 <RadzenDataGridColumn Visible="Ctx.Display.File" Sortable="false" TextAlign="TextAlign.Center" Width="7em" TItem="ATask" Property="@nameof(ATask.FileN)" Title="@L.S(S.FileN)">
                                     <Template Context="t">
-                                        <div class="flx child-no-shrink jc-c ai-c g-0h w-100 mw-100 p-rel">
+                                        <div class="flx child-no-shrink jc-c ai-c g-0h w-100 mw-100p p-rel">
                                             <span title="@($"{t.FileN} / {t.FileSubN}")">
                                                 @(t.FileN + t.FileSubN)
                                             </span>

@@ -24,7 +24,7 @@
         <Columns>
             <RadzenDataGridColumn Width="18em" TItem="Org" Property="@nameof(Org.Name)" Title="@L.S(S.Name)">
                 <Template Context="o">
-                    <div class="flx child-no-shrink jc-s ai-c g-0h w-100 mw-100 p-rel">
+                    <div class="flx child-no-shrink jc-s ai-c g-0h w-100 mw-100p p-rel">
                         <span title="@o.Name" class="shrink-1 ellip">@o.Name</span>
                         @if (o.Member?.Role == OrgMemberRole.Owner)
                         {
