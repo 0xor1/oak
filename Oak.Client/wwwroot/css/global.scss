@@ -1,3 +1,16 @@
+// allow making table row cursor a pointer
+.row-clickable{
+  tbody {
+    tr:not(.task-row) {
+      cursor: pointer;
+    }
+  }
+}
+// remove x padding from tab view
+.rz-tabview.no-x-pad .rz-tabview-panels .rz-tabview-panel{
+  padding-left: 0;
+  padding-right: 0;
+}
 tr.moving-task td {
   background-color: var(--rz-secondary-lighter) !important;
 }
