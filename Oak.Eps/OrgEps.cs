@@ -38,103 +38,89 @@ public static class OrgEps
     public static IReadOnlyList<IEp> Eps { get; } =
         new List<IEp>()
         {
-            Ep<Create, Org>.DbTx<OakDb>(
-                OrgRpcs.Create,
-                async (ctx, db, ses, req) =>
-                {
-                    var activeOrgs = await db.OrgMembers.CountAsync(
-                        x => x.IsActive && x.Id == ses.Id,
-                        ctx.Ctkn
-                    );
-                    ctx.ErrorIf(
-                        activeOrgs > MaxActiveOrgs,
-                        S.OrgTooMany,
-                        null,
-                        HttpStatusCode.BadRequest
-                    );
-                    var newOrg = new Db.Org()
-                    {
-                        Id = Id.New(),
-                        Name = req.Name,
-                        CreatedOn = DateTimeExt.UtcNowMilli()
-                    };
-                    await db.Orgs.AddAsync(newOrg, ctx.Ctkn);
-                    var m = new Db.OrgMember()
-                    {
-                        Org = newOrg.Id,
-                        Id = ses.Id,
-                        IsActive = true,
-                        Name = req.OwnerMemberName,
-                        Role = OrgMemberRole.Owner
-                    };
-                    await db.OrgMembers.AddAsync(m, ctx.Ctkn);
-                    return newOrg.ToApi(m);
-                }
-            ),
-            new Ep<Exact, Org>(
-                OrgRpcs.GetOne,
-                async (ctx, req) =>
-                {
-                    var ses = ctx.GetSession();
-                    var db = ctx.Get<OakDb>();
-                    var org = await db.Orgs.SingleOrDefaultAsync(x => x.Id == req.Id, ctx.Ctkn);
-                    ctx.NotFoundIf(org == null, model: new { Name = "Org" });
-                    var m = await db.OrgMembers.SingleOrDefaultAsync(
-                        x => x.Org == req.Id && x.Id == ses.Id,
-                        ctx.Ctkn
-                    );
-                    return org.NotNull().ToApi(m);
-                }
-            ),
-            new Ep<Get, List<Org>>(
-                OrgRpcs.Get,
-                async (ctx, req) =>
-                {
-                    var ses = ctx.GetAuthedSession();
-                    var db = ctx.Get<OakDb>();
-                    var ms = await db.OrgMembers
-                        .Where(x => x.IsActive && x.Id == ses.Id)
-                        .ToListAsync(ctx.Ctkn);
-                    var oIds = ms.Select(x => x.Org);
-                    var qry = db.Orgs.Where(x => oIds.Contains(x.Id));
-                    qry = req switch
-                    {
-                        { OrderBy: OrgOrderBy.Name, Asc: true } => qry.OrderBy(x => x.Name),
-                        { OrderBy: OrgOrderBy.CreatedOn, Asc: true }
-                            => qry.OrderBy(x => x.CreatedOn),
-                        { OrderBy: OrgOrderBy.Name, Asc: false }
-                            => qry.OrderByDescending(x => x.Name),
-                        { OrderBy: OrgOrderBy.CreatedOn, Asc: false }
-                            => qry.OrderByDescending(x => x.CreatedOn),
-                    };
-                    var os = await qry.ToListAsync(ctx.Ctkn);
-                    return os.Select(x => x.ToApi(ms.Single(y => y.Org == x.Id))).ToList();
-                }
-            ),
-            Ep<Update, Org>.DbTx<OakDb>(
-                OrgRpcs.Update,
-                async (ctx, db, ses, req) =>
-                {
-                    var m = await db.OrgMembers.SingleOrDefaultAsync(
-                        x => x.Org == req.Id && x.Id == ses.Id && x.IsActive,
-                        ctx.Ctkn
-                    );
-                    ctx.InsufficientPermissionsIf(m?.Role != OrgMemberRole.Owner);
-                    var org = await db.Orgs.SingleAsync(x => x.Id == req.Id, ctx.Ctkn);
-                    org.Name = req.Name;
-                    return org.ToApi(m);
-                }
-            ),
-            Ep<Exact, Nothing>.DbTx<OakDb>(
-                OrgRpcs.Delete,
-                async (ctx, db, ses, req) =>
-                {
-                    await EpsUtil.MustHaveOrgAccess(ctx, db, ses.Id, req.Id, OrgMemberRole.Owner);
-                    await RawBatchDelete(ctx, db, new List<string>() { req.Id });
-                    return Nothing.Inst;
-                }
-            )
+            Ep<Create, Org>.DbTx<OakDb>(OrgRpcs.Create, Create),
+            new Ep<Exact, Org>(OrgRpcs.GetOne, GetOne),
+            new Ep<Get, List<Org>>(OrgRpcs.Get, Get),
+            Ep<Update, Org>.DbTx<OakDb>(OrgRpcs.Update, Update),
+            Ep<Exact, Nothing>.DbTx<OakDb>(OrgRpcs.Delete, Delete)
         };
+
+    private static async Task<Org> Create(IRpcCtx ctx, OakDb db, ISession ses, Create req)
+    {
+        var activeOrgs = await db.OrgMembers.CountAsync(
+            x => x.IsActive && x.Id == ses.Id,
+            ctx.Ctkn
+        );
+        ctx.ErrorIf(activeOrgs > MaxActiveOrgs, S.OrgTooMany, null, HttpStatusCode.BadRequest);
+        var newOrg = new Db.Org()
+        {
+            Id = Id.New(),
+            Name = req.Name,
+            CreatedOn = DateTimeExt.UtcNowMilli()
+        };
+        await db.Orgs.AddAsync(newOrg, ctx.Ctkn);
+        var m = new Db.OrgMember()
+        {
+            Org = newOrg.Id,
+            Id = ses.Id,
+            IsActive = true,
+            Name = req.OwnerMemberName,
+            Role = OrgMemberRole.Owner
+        };
+        await db.OrgMembers.AddAsync(m, ctx.Ctkn);
+        return newOrg.ToApi(m);
+    }
+
+    private static async Task<Org> GetOne(IRpcCtx ctx, Exact req)
+    {
+        var ses = ctx.GetSession();
+        var db = ctx.Get<OakDb>();
+        var org = await db.Orgs.SingleOrDefaultAsync(x => x.Id == req.Id, ctx.Ctkn);
+        ctx.NotFoundIf(org == null, model: new { Name = "Org" });
+        var m = await db.OrgMembers.SingleOrDefaultAsync(
+            x => x.Org == req.Id && x.Id == ses.Id,
+            ctx.Ctkn
+        );
+        return org.NotNull().ToApi(m);
+    }
+
+    private static async Task<List<Org>> Get(IRpcCtx ctx, Get req)
+    {
+        var ses = ctx.GetAuthedSession();
+        var db = ctx.Get<OakDb>();
+        var ms = await db.OrgMembers.Where(x => x.IsActive && x.Id == ses.Id).ToListAsync(ctx.Ctkn);
+        var oIds = ms.Select(x => x.Org);
+        var qry = db.Orgs.Where(x => oIds.Contains(x.Id));
+        qry = req switch
+        {
+            { OrderBy: OrgOrderBy.Name, Asc: true } => qry.OrderBy(x => x.Name),
+            { OrderBy: OrgOrderBy.CreatedOn, Asc: true } => qry.OrderBy(x => x.CreatedOn),
+            { OrderBy: OrgOrderBy.Name, Asc: false } => qry.OrderByDescending(x => x.Name),
+            { OrderBy: OrgOrderBy.CreatedOn, Asc: false }
+                => qry.OrderByDescending(x => x.CreatedOn),
+        };
+        var os = await qry.ToListAsync(ctx.Ctkn);
+        return os.Select(x => x.ToApi(ms.Single(y => y.Org == x.Id))).ToList();
+    }
+
+    private static async Task<Org> Update(IRpcCtx ctx, OakDb db, ISession ses, Update req)
+    {
+        var m = await db.OrgMembers.SingleOrDefaultAsync(
+            x => x.Org == req.Id && x.Id == ses.Id && x.IsActive,
+            ctx.Ctkn
+        );
+        ctx.InsufficientPermissionsIf(m?.Role != OrgMemberRole.Owner);
+        var org = await db.Orgs.SingleAsync(x => x.Id == req.Id, ctx.Ctkn);
+        org.Name = req.Name;
+        return org.ToApi(m);
+    }
+
+    private static async Task<Nothing> Delete(IRpcCtx ctx, OakDb db, ISession ses, Exact req)
+    {
+        await EpsUtil.MustHaveOrgAccess(ctx, db, ses.Id, req.Id, OrgMemberRole.Owner);
+        await RawBatchDelete(ctx, db, new List<string>() { req.Id });
+        return Nothing.Inst;
+    }
 
     public static async Task AuthOnDelete(IRpcCtx ctx, OakDb db, ISession ses)
     {
