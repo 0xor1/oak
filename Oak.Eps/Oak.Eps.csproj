@@ -12,7 +12,7 @@
     </ItemGroup>
     
     <ItemGroup>
-        <PackageReference Include="0xor1.Common.Server" Version="5.0.2" />
+        <PackageReference Include="0xor1.Common.Server" Version="5.0.4" />
         <PackageReference Include="CSharpier.MsBuild" Version="0.26.2">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
