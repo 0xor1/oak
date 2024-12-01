@@ -9,7 +9,7 @@
   
   <ItemGroup>
     <PackageReference Include="DartSassBuilder" Version="1.0.0" />
-    <PackageReference Include="0xor1.Common.Client" Version="5.0.3" />
+    <PackageReference Include="0xor1.Common.Client" Version="5.0.4" />
     <PackageReference Include="0xor1.Common.Shared" Version="5.0.4" />
     <PackageReference Include="CSharpier.MsBuild" Version="0.26.2">
       <PrivateAssets>all</PrivateAssets>
