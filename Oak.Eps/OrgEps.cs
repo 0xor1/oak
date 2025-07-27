@@ -42,7 +42,7 @@ public static class OrgEps
             new Ep<Exact, Org>(OrgRpcs.GetOne, GetOne),
             new Ep<Get, List<Org>>(OrgRpcs.Get, Get),
             Ep<Update, Org>.DbTx<OakDb>(OrgRpcs.Update, Update),
-            Ep<Exact, Nothing>.DbTx<OakDb>(OrgRpcs.Delete, Delete)
+            Ep<Exact, Nothing>.DbTx<OakDb>(OrgRpcs.Delete, Delete),
         };
 
     private static async Task<Org> Create(IRpcCtx ctx, OakDb db, ISession ses, Create req)
@@ -56,7 +56,7 @@ public static class OrgEps
         {
             Id = Id.New(),
             Name = req.Name,
-            CreatedOn = DateTimeExt.UtcNowMilli()
+            CreatedOn = DateTimeExt.UtcNowMilli(),
         };
         await db.Orgs.AddAsync(newOrg, ctx.Ctkn);
         var m = new Db.OrgMember()
@@ -65,7 +65,7 @@ public static class OrgEps
             Id = ses.Id,
             IsActive = true,
             Name = req.OwnerMemberName,
-            Role = OrgMemberRole.Owner
+            Role = OrgMemberRole.Owner,
         };
         await db.OrgMembers.AddAsync(m, ctx.Ctkn);
         return newOrg.ToApi(m);
@@ -96,8 +96,9 @@ public static class OrgEps
             { OrderBy: OrgOrderBy.Name, Asc: true } => qry.OrderBy(x => x.Name),
             { OrderBy: OrgOrderBy.CreatedOn, Asc: true } => qry.OrderBy(x => x.CreatedOn),
             { OrderBy: OrgOrderBy.Name, Asc: false } => qry.OrderByDescending(x => x.Name),
-            { OrderBy: OrgOrderBy.CreatedOn, Asc: false }
-                => qry.OrderByDescending(x => x.CreatedOn),
+            { OrderBy: OrgOrderBy.CreatedOn, Asc: false } => qry.OrderByDescending(x =>
+                x.CreatedOn
+            ),
         };
         var os = await qry.ToListAsync(ctx.Ctkn);
         return os.Select(x => x.ToApi(ms.Single(y => y.Org == x.Id))).ToList();
@@ -125,13 +126,15 @@ public static class OrgEps
     public static async Task AuthOnDelete(IRpcCtx ctx, OakDb db, ISession ses)
     {
         // when a user wants to delete their account entirely,
-        var allOwnerOrgs = await db.OrgMembers
-            .Where(x => x.Id == ses.Id && x.IsActive && x.Role == OrgMemberRole.Owner)
+        var allOwnerOrgs = await db
+            .OrgMembers.Where(x => x.Id == ses.Id && x.IsActive && x.Role == OrgMemberRole.Owner)
             .Select(x => x.Org)
             .Distinct()
             .ToListAsync(ctx.Ctkn);
-        var activeOwnerCounts = await db.OrgMembers
-            .Where(x => allOwnerOrgs.Contains(x.Org) && x.IsActive && x.Role == OrgMemberRole.Owner)
+        var activeOwnerCounts = await db
+            .OrgMembers.Where(x =>
+                allOwnerOrgs.Contains(x.Org) && x.IsActive && x.Role == OrgMemberRole.Owner
+            )
             .GroupBy(x => x.Org)
             .Select(x => new { Org = x.Key, ActiveOwnerCount = x.Count() })
             .ToListAsync(ctx.Ctkn);
@@ -188,8 +191,8 @@ public static class OrgEps
 
     private static async Task RawBatchDeactivate(IRpcCtx ctx, OakDb db, ISession ses)
     {
-        await db.OrgMembers
-            .Where(x => x.Id == ses.Id)
+        await db
+            .OrgMembers.Where(x => x.Id == ses.Id)
             .ExecuteUpdateAsync(x => x.SetProperty(x => x.IsActive, x => false), ctx.Ctkn);
     }
 

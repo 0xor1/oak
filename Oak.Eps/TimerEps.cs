@@ -23,7 +23,7 @@ public static class TimerEps
             Ep<Create, List<Timer>>.DbTx<OakDb>(TimerRpcs.Create, Create),
             new Ep<Get, SetRes<Timer>>(TimerRpcs.Get, Get),
             Ep<Update, List<Timer>>.DbTx<OakDb>(TimerRpcs.Update, Update),
-            Ep<Delete, List<Timer>>.DbTx<OakDb>(TimerRpcs.Delete, Delete)
+            Ep<Delete, List<Timer>>.DbTx<OakDb>(TimerRpcs.Delete, Delete),
         };
 
     private static async Task<List<Timer>> Create(IRpcCtx ctx, OakDb db, ISession ses, Create req)
@@ -36,8 +36,8 @@ public static class TimerEps
             req.Project,
             ProjectMemberRole.Writer
         );
-        var ts = await db.Timers
-            .Where(x => x.Org == req.Org && x.Project == req.Project && x.User == ses.Id)
+        var ts = await db
+            .Timers.Where(x => x.Org == req.Org && x.Project == req.Project && x.User == ses.Id)
             .ToListAsync(ctx.Ctkn);
         // not allowed to have more than 5 timers at any time
         ctx.BadRequestIf(ts.Count > 4, S.TimerMaxTimers, new { MaxTimers });
@@ -60,7 +60,7 @@ public static class TimerEps
             User = ses.Id,
             Inc = 0,
             LastStartedOn = DateTimeExt.UtcNowMilli(),
-            IsRunning = true
+            IsRunning = true,
         };
         await db.Timers.AddAsync(t, ctx.Ctkn);
         ts.Add(t);
@@ -94,7 +94,7 @@ public static class TimerEps
         oqry = req.Asc switch
         {
             true => oqry.ThenBy(x => x.LastStartedOn),
-            false => oqry.ThenByDescending(x => x.LastStartedOn)
+            false => oqry.ThenByDescending(x => x.LastStartedOn),
         };
         var initRes = await oqry.Take(101).ToListAsync(ctx.Ctkn);
         var tmpRes = await ReturnResult(ctx, db, initRes, req.User != null);
@@ -111,8 +111,8 @@ public static class TimerEps
             req.Project,
             ProjectMemberRole.Writer
         );
-        var ts = await db.Timers
-            .Where(x => x.Org == req.Org && x.Project == req.Project && x.User == ses.Id)
+        var ts = await db
+            .Timers.Where(x => x.Org == req.Org && x.Project == req.Project && x.User == ses.Id)
             .ToListAsync(ctx.Ctkn);
         // only one running timer at a time
         var t = ts.SingleOrDefault(x => x.Task == req.Task);
@@ -144,8 +144,8 @@ public static class TimerEps
 
     private static async Task<List<Timer>> Delete(IRpcCtx ctx, OakDb db, ISession ses, Delete req)
     {
-        var ts = await db.Timers
-            .Where(x => x.Org == req.Org && x.Project == req.Project && x.User == ses.Id)
+        var ts = await db
+            .Timers.Where(x => x.Org == req.Org && x.Project == req.Project && x.User == ses.Id)
             .ToListAsync(ctx.Ctkn);
         var t = ts.SingleOrDefault(x => x.Task == req.Task);
         ctx.NotFoundIf(t == null, model: new { Name = "Timer" });
@@ -165,11 +165,13 @@ public static class TimerEps
         if (!ts.Any())
             return new List<Timer>();
         var taskIds = ts.Select(x => x.Task).ToList();
-        var tasks = await db.Tasks
-            .Where(x => x.Org == ts[0].Org && x.Project == ts[0].Project && taskIds.Contains(x.Id))
+        var tasks = await db
+            .Tasks.Where(x =>
+                x.Org == ts[0].Org && x.Project == ts[0].Project && taskIds.Contains(x.Id)
+            )
             .ToListAsync(ctx.Ctkn);
-        var qry = ts.Select(
-            x => x.ToApi(tasks.SingleOrDefault(y => y.Id == x.Task)?.Name ?? "unknown")
+        var qry = ts.Select(x =>
+            x.ToApi(tasks.SingleOrDefault(y => y.Id == x.Task)?.Name ?? "unknown")
         );
 
         if (defaultSort)

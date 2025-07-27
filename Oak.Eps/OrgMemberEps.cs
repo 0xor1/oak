@@ -18,15 +18,15 @@ internal static class OrgMemberEps
             Ep<Invite, OrgMember>.DbTx<OakDb>(OrgMemberRpcs.Invite, Invite),
             new Ep<Exact, Maybe<OrgMember>>(OrgMemberRpcs.GetOne, GetOne),
             new Ep<Get, SetRes<OrgMember>>(OrgMemberRpcs.Get, Get),
-            Ep<Update, OrgMember>.DbTx<OakDb>(OrgMemberRpcs.Update, Update)
+            Ep<Update, OrgMember>.DbTx<OakDb>(OrgMemberRpcs.Update, Update),
         };
 
     private static async Task<OrgMember> Invite(IRpcCtx ctx, OakDb db, ISession ses, Invite req)
     {
         req.Email = req.Email.ToLower();
         // check current member has sufficient permissions
-        var sesOrgMem = await db.OrgMembers
-            .Where(x => x.Org == req.Org && x.IsActive && x.Id == ses.Id)
+        var sesOrgMem = await db
+            .OrgMembers.Where(x => x.Org == req.Org && x.IsActive && x.Id == ses.Id)
             .SingleOrDefaultAsync(ctx.Ctkn);
         ctx.InsufficientPermissionsIf(sesOrgMem == null);
         var sesRole = sesOrgMem.NotNull().Role;
@@ -53,7 +53,7 @@ internal static class OrgMemberEps
             Id = auth.Id,
             IsActive = true,
             Name = req.Name,
-            Role = req.Role
+            Role = req.Role,
         };
         await db.OrgMembers.AddAsync(mem, ctx.Ctkn);
         if (created)
@@ -68,7 +68,7 @@ internal static class OrgMemberEps
                 Code = auth.VerifyEmailCode,
                 OrgName = org.Name,
                 InviteeName = req.Name,
-                InvitedByName = sesOrgMem.Name
+                InvitedByName = sesOrgMem.Name,
             };
             await emailClient.SendEmailAsync(
                 ctx.String(S.OrgMemberInviteEmailSubject, model),
@@ -115,37 +115,29 @@ internal static class OrgMemberEps
         if (req.After != null)
         {
             // implement cursor based pagination ... in a fashion
-            var after = await db.OrgMembers.SingleOrDefaultAsync(
-                x => x.Org == req.Org && x.Id == req.After
+            var after = await db.OrgMembers.SingleOrDefaultAsync(x =>
+                x.Org == req.Org && x.Id == req.After
             );
             ctx.NotFoundIf(after == null, model: new { Name = "After" });
             after.NotNull();
             qry = (req.OrderBy, req.Asc) switch
             {
-                (OrgMemberOrderBy.Role, true)
-                    => qry.Where(
-                        x =>
-                            x.Role > after.Role
-                            || (x.Role == after.Role && x.Name.CompareTo(after.Name) > 0)
-                    ),
-                (OrgMemberOrderBy.Name, true)
-                    => qry.Where(
-                        x =>
-                            x.Name.CompareTo(after.Name) > 0
-                            || (x.Name.CompareTo(after.Name) == 0 && x.Role > after.Role)
-                    ),
-                (OrgMemberOrderBy.Role, false)
-                    => qry.Where(
-                        x =>
-                            x.Role < after.Role
-                            || (x.Role == after.Role && x.Name.CompareTo(after.Name) > 0)
-                    ),
-                (OrgMemberOrderBy.Name, false)
-                    => qry.Where(
-                        x =>
-                            x.Name.CompareTo(after.Name) < 0
-                            || (x.Name.CompareTo(after.Name) == 0 && x.Role > after.Role)
-                    ),
+                (OrgMemberOrderBy.Role, true) => qry.Where(x =>
+                    x.Role > after.Role
+                    || (x.Role == after.Role && x.Name.CompareTo(after.Name) > 0)
+                ),
+                (OrgMemberOrderBy.Name, true) => qry.Where(x =>
+                    x.Name.CompareTo(after.Name) > 0
+                    || (x.Name.CompareTo(after.Name) == 0 && x.Role > after.Role)
+                ),
+                (OrgMemberOrderBy.Role, false) => qry.Where(x =>
+                    x.Role < after.Role
+                    || (x.Role == after.Role && x.Name.CompareTo(after.Name) > 0)
+                ),
+                (OrgMemberOrderBy.Name, false) => qry.Where(x =>
+                    x.Name.CompareTo(after.Name) < 0
+                    || (x.Name.CompareTo(after.Name) == 0 && x.Role > after.Role)
+                ),
             };
         }
 
@@ -153,10 +145,10 @@ internal static class OrgMemberEps
         {
             (OrgMemberOrderBy.Role, true) => qry.OrderBy(x => x.Role).ThenBy(x => x.Name),
             (OrgMemberOrderBy.Name, true) => qry.OrderBy(x => x.Name).ThenBy(x => x.Role),
-            (OrgMemberOrderBy.Role, false)
-                => qry.OrderByDescending(x => x.Role).ThenBy(x => x.Name),
-            (OrgMemberOrderBy.Name, false)
-                => qry.OrderByDescending(x => x.Name).ThenBy(x => x.Role),
+            (OrgMemberOrderBy.Role, false) => qry.OrderByDescending(x => x.Role)
+                .ThenBy(x => x.Name),
+            (OrgMemberOrderBy.Name, false) => qry.OrderByDescending(x => x.Name)
+                .ThenBy(x => x.Role),
         };
         var set = await qry.Take(101).Select(x => x.ToApi()).ToListAsync();
         return SetRes<OrgMember>.FromLimit(set, 101);
@@ -165,8 +157,8 @@ internal static class OrgMemberEps
     private static async Task<OrgMember> Update(IRpcCtx ctx, OakDb db, ISession ses, Update req)
     {
         // check current member has sufficient permissions
-        var sesOrgMem = await db.OrgMembers
-            .Where(x => x.Org == req.Org && x.IsActive && x.Id == ses.Id)
+        var sesOrgMem = await db
+            .OrgMembers.Where(x => x.Org == req.Org && x.IsActive && x.Id == ses.Id)
             .SingleOrDefaultAsync();
         // msut be a member
         ctx.InsufficientPermissionsIf(sesOrgMem == null);
@@ -176,8 +168,8 @@ internal static class OrgMemberEps
             sesRole is not (OrgMemberRole.Owner or OrgMemberRole.Admin)
                 || (sesRole is OrgMemberRole.Admin && req.Role == OrgMemberRole.Owner)
         );
-        var updateMem = await db.OrgMembers.SingleOrDefaultAsync(
-            x => x.Org == req.Org && x.Id == req.Id
+        var updateMem = await db.OrgMembers.SingleOrDefaultAsync(x =>
+            x.Org == req.Org && x.Id == req.Id
         );
         // update target must exist
         ctx.InsufficientPermissionsIf(updateMem == null);
@@ -191,8 +183,8 @@ internal static class OrgMemberEps
         {
             // a live org owner is being downgraded permissions or being deactivated completely,
             // need to ensure that org is not left without any owners
-            var ownerCount = await db.OrgMembers.CountAsync(
-                x => x.Org == req.Org && x.IsActive && x.Role == OrgMemberRole.Owner
+            var ownerCount = await db.OrgMembers.CountAsync(x =>
+                x.Org == req.Org && x.IsActive && x.Role == OrgMemberRole.Owner
             );
             ctx.InsufficientPermissionsIf(ownerCount == 1);
         }
@@ -206,13 +198,12 @@ internal static class OrgMemberEps
         if (nameUpdated || isActiveUpdated || roleUpdated)
         {
             // copy values over to denormalized duplicates in projectMembers
-            await db.ProjectMembers
-                .Where(x => x.Org == req.Org && x.Id == req.Id)
-                .ExecuteUpdateAsync(
-                    x =>
-                        x.SetProperty(x => x.Name, _ => updateMem.Name)
-                            .SetProperty(x => x.OrgRole, x => updateMem.Role)
-                            .SetProperty(x => x.IsActive, x => updateMem.IsActive)
+            await db
+                .ProjectMembers.Where(x => x.Org == req.Org && x.Id == req.Id)
+                .ExecuteUpdateAsync(x =>
+                    x.SetProperty(x => x.Name, _ => updateMem.Name)
+                        .SetProperty(x => x.OrgRole, x => updateMem.Role)
+                        .SetProperty(x => x.IsActive, x => updateMem.IsActive)
                 );
         }
 

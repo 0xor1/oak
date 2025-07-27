@@ -27,7 +27,7 @@ internal static class CommentEps
             Ep<Create, Comment>.DbTx<OakDb>(CommentRpcs.Create, Create),
             Ep<Update, Comment>.DbTx<OakDb>(CommentRpcs.Update, Update),
             Ep<Exact, Nothing>.DbTx<OakDb>(CommentRpcs.Delete, Delete),
-            new Ep<Get, SetRes<Comment>>(CommentRpcs.Get, Get)
+            new Ep<Get, SetRes<Comment>>(CommentRpcs.Get, Get),
         };
 
     private static async Task<Comment> Create(IRpcCtx ctx, OakDb db, ISession ses, Create req)
@@ -57,7 +57,7 @@ internal static class CommentEps
             Id = Id.New(),
             CreatedBy = ses.Id,
             CreatedOn = DateTimeExt.UtcNowMilli(),
-            Body = req.Body
+            Body = req.Body,
         };
         await db.Comments.AddAsync(c, ctx.Ctkn);
         await EpsUtil.LogActivity(

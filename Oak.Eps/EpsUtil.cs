@@ -30,7 +30,7 @@ public static class EpsUtil
             Name = name,
             Min = min,
             Max = max,
-            Regexes = regexes?.Select(x => x.ToString()).ToList()
+            Regexes = regexes?.Select(x => x.ToString()).ToList(),
         };
         ctx.BadRequestIf(val.Length < min || val.Length > max, S.StringValidation, m);
         if (regexes != null)
@@ -206,7 +206,7 @@ public static class EpsUtil
             Action = action,
             TaskName = taskName,
             ItemName = itemName,
-            ExtraInfo = exInStr
+            ExtraInfo = exInStr,
         };
         await db.Activities.AddAsync(a, ctx.Ctkn);
 
@@ -214,8 +214,8 @@ public static class EpsUtil
         {
             if (type == ActivityItemType.Task)
             {
-                await db.Activities
-                    .Where(x => x.Org == org && x.Project == project && x.Task == task)
+                await db
+                    .Activities.Where(x => x.Org == org && x.Project == project && x.Task == task)
                     .ExecuteUpdateAsync(
                         x =>
                             x.SetProperty(x => x.TaskDeleted, _ => true)
@@ -225,8 +225,8 @@ public static class EpsUtil
             }
             else
             {
-                await db.Activities
-                    .Where(x => x.Org == org && x.Project == project && x.Item == item)
+                await db
+                    .Activities.Where(x => x.Org == org && x.Project == project && x.Item == item)
                     .ExecuteUpdateAsync(
                         x => x.SetProperty(x => x.ItemDeleted, _ => true),
                         ctx.Ctkn

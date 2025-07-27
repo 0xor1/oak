@@ -27,7 +27,7 @@ internal static class ProjectEps
             new Ep<Get, SetRes<Project>>(ProjectRpcs.Get, Get),
             Ep<Update, Project>.DbTx<OakDb>(ProjectRpcs.Update, Update),
             Ep<Exact, Nothing>.DbTx<OakDb>(ProjectRpcs.Delete, Delete),
-            new Ep<GetActivities, SetRes<Activity>>(ProjectRpcs.GetActivities, GetActivities)
+            new Ep<GetActivities, SetRes<Activity>>(ProjectRpcs.GetActivities, GetActivities),
         };
 
     private static async Task<Project> Create(IRpcCtx ctx, OakDb db, ISession ses, Create req)
@@ -49,7 +49,7 @@ internal static class ProjectEps
             DaysPerWeek = req.DaysPerWeek,
             StartOn = req.StartOn,
             EndOn = req.EndOn,
-            FileLimit = req.FileLimit
+            FileLimit = req.FileLimit,
         };
         await db.Projects.AddAsync(p, ctx.Ctkn);
         await db.ProjectLocks.AddAsync(new() { Org = req.Org, Id = p.Id }, ctx.Ctkn);
@@ -61,7 +61,7 @@ internal static class ProjectEps
             User = ses.Id,
             Name = p.Name,
             CreatedBy = ses.Id,
-            CreatedOn = DateTimeExt.UtcNowMilli()
+            CreatedOn = DateTimeExt.UtcNowMilli(),
         };
         await db.Tasks.AddAsync(t, ctx.Ctkn);
         var mem = await db.OrgMembers.SingleAsync(
@@ -77,7 +77,7 @@ internal static class ProjectEps
                 IsActive = mem.IsActive,
                 OrgRole = mem.Role,
                 Name = mem.Name,
-                Role = ProjectMemberRole.Admin
+                Role = ProjectMemberRole.Admin,
             },
             ctx.Ctkn
         );
@@ -188,8 +188,8 @@ internal static class ProjectEps
         if (req.IsPublic != true && orgMemRole > OrgMemberRole.ReadAllProjects)
         {
             // req is for private projects and the user has per project permissions access
-            var projectIds = await db.ProjectMembers
-                .Where(x => x.Org == req.Org && x.Id == ses.Id)
+            var projectIds = await db
+                .ProjectMembers.Where(x => x.Org == req.Org && x.Id == ses.Id)
                 .Select(x => x.Project)
                 .Distinct()
                 .ToListAsync(ctx.Ctkn);
@@ -207,54 +207,38 @@ internal static class ProjectEps
             after.NotNull();
             qry = (req.OrderBy, req.Asc) switch
             {
-                (ProjectOrderBy.Name, true)
-                    => qry.Where(
-                        x =>
-                            x.Name.CompareTo(after.Name) > 0
-                            || (x.Name.CompareTo(after.Name) == 0 && x.CreatedOn > after.CreatedOn)
-                    ),
-                (ProjectOrderBy.CreatedOn, true)
-                    => qry.Where(
-                        x =>
-                            x.CreatedOn > after.CreatedOn
-                            || (x.CreatedOn == after.CreatedOn && x.Name.CompareTo(after.Name) > 0)
-                    ),
-                (ProjectOrderBy.StartOn, true)
-                    => qry.Where(
-                        x =>
-                            x.StartOn > after.StartOn
-                            || (x.StartOn == after.StartOn && x.Name.CompareTo(after.Name) > 0)
-                    ),
-                (ProjectOrderBy.EndOn, true)
-                    => qry.Where(
-                        x =>
-                            x.EndOn > after.EndOn
-                            || (x.EndOn == after.EndOn && x.Name.CompareTo(after.Name) > 0)
-                    ),
-                (ProjectOrderBy.Name, false)
-                    => qry.Where(
-                        x =>
-                            x.Name.CompareTo(after.Name) < 0
-                            || (x.Name.CompareTo(after.Name) == 0 && x.CreatedOn > after.CreatedOn)
-                    ),
-                (ProjectOrderBy.CreatedOn, false)
-                    => qry.Where(
-                        x =>
-                            x.CreatedOn < after.CreatedOn
-                            || (x.CreatedOn == after.CreatedOn && x.Name.CompareTo(after.Name) > 0)
-                    ),
-                (ProjectOrderBy.StartOn, false)
-                    => qry.Where(
-                        x =>
-                            x.StartOn < after.StartOn
-                            || (x.StartOn == after.StartOn && x.Name.CompareTo(after.Name) > 0)
-                    ),
-                (ProjectOrderBy.EndOn, false)
-                    => qry.Where(
-                        x =>
-                            x.EndOn < after.EndOn
-                            || (x.EndOn == after.EndOn && x.Name.CompareTo(after.Name) > 0)
-                    ),
+                (ProjectOrderBy.Name, true) => qry.Where(x =>
+                    x.Name.CompareTo(after.Name) > 0
+                    || (x.Name.CompareTo(after.Name) == 0 && x.CreatedOn > after.CreatedOn)
+                ),
+                (ProjectOrderBy.CreatedOn, true) => qry.Where(x =>
+                    x.CreatedOn > after.CreatedOn
+                    || (x.CreatedOn == after.CreatedOn && x.Name.CompareTo(after.Name) > 0)
+                ),
+                (ProjectOrderBy.StartOn, true) => qry.Where(x =>
+                    x.StartOn > after.StartOn
+                    || (x.StartOn == after.StartOn && x.Name.CompareTo(after.Name) > 0)
+                ),
+                (ProjectOrderBy.EndOn, true) => qry.Where(x =>
+                    x.EndOn > after.EndOn
+                    || (x.EndOn == after.EndOn && x.Name.CompareTo(after.Name) > 0)
+                ),
+                (ProjectOrderBy.Name, false) => qry.Where(x =>
+                    x.Name.CompareTo(after.Name) < 0
+                    || (x.Name.CompareTo(after.Name) == 0 && x.CreatedOn > after.CreatedOn)
+                ),
+                (ProjectOrderBy.CreatedOn, false) => qry.Where(x =>
+                    x.CreatedOn < after.CreatedOn
+                    || (x.CreatedOn == after.CreatedOn && x.Name.CompareTo(after.Name) > 0)
+                ),
+                (ProjectOrderBy.StartOn, false) => qry.Where(x =>
+                    x.StartOn < after.StartOn
+                    || (x.StartOn == after.StartOn && x.Name.CompareTo(after.Name) > 0)
+                ),
+                (ProjectOrderBy.EndOn, false) => qry.Where(x =>
+                    x.EndOn < after.EndOn
+                    || (x.EndOn == after.EndOn && x.Name.CompareTo(after.Name) > 0)
+                ),
             };
         }
 
@@ -264,20 +248,20 @@ internal static class ProjectEps
             (ProjectOrderBy.CreatedOn, true) => qry.OrderBy(x => x.CreatedOn).ThenBy(x => x.Name),
             (ProjectOrderBy.StartOn, true) => qry.OrderBy(x => x.StartOn).ThenBy(x => x.Name),
             (ProjectOrderBy.EndOn, true) => qry.OrderBy(x => x.EndOn).ThenBy(x => x.Name),
-            (ProjectOrderBy.Name, false)
-                => qry.OrderByDescending(x => x.Name).ThenBy(x => x.CreatedOn),
-            (ProjectOrderBy.CreatedOn, false)
-                => qry.OrderByDescending(x => x.CreatedOn).ThenBy(x => x.Name),
-            (ProjectOrderBy.StartOn, false)
-                => qry.OrderByDescending(x => x.StartOn).ThenBy(x => x.Name),
-            (ProjectOrderBy.EndOn, false)
-                => qry.OrderByDescending(x => x.EndOn).ThenBy(x => x.Name),
+            (ProjectOrderBy.Name, false) => qry.OrderByDescending(x => x.Name)
+                .ThenBy(x => x.CreatedOn),
+            (ProjectOrderBy.CreatedOn, false) => qry.OrderByDescending(x => x.CreatedOn)
+                .ThenBy(x => x.Name),
+            (ProjectOrderBy.StartOn, false) => qry.OrderByDescending(x => x.StartOn)
+                .ThenBy(x => x.Name),
+            (ProjectOrderBy.EndOn, false) => qry.OrderByDescending(x => x.EndOn)
+                .ThenBy(x => x.Name),
         };
         qry = qry.Take(101);
         var ps = await qry.ToListAsync(ctx.Ctkn);
         var ids = ps.Select(x => x.Id).ToList();
-        var ts = await db.Tasks
-            .Where(x => x.Org == req.Org && x.Project == x.Id && ids.Contains(x.Id))
+        var ts = await db
+            .Tasks.Where(x => x.Org == req.Org && x.Project == x.Id && ids.Contains(x.Id))
             .ToListAsync(ctx.Ctkn);
         var set = ps.Select(x => x.ToApi(ts.Single(y => y.Id == x.Id))).ToList();
         return SetRes<Project>.FromLimit(set, 101);
@@ -342,32 +326,32 @@ internal static class ProjectEps
             req.Id,
             ProjectMemberRole.Admin
         );
-        await db.Projects
-            .Where(x => x.Org == req.Org && x.Id == req.Id)
+        await db
+            .Projects.Where(x => x.Org == req.Org && x.Id == req.Id)
             .ExecuteDeleteAsync(ctx.Ctkn);
-        await db.ProjectLocks
-            .Where(x => x.Org == req.Org && x.Id == req.Id)
+        await db
+            .ProjectLocks.Where(x => x.Org == req.Org && x.Id == req.Id)
             .ExecuteDeleteAsync(ctx.Ctkn);
-        await db.Activities
-            .Where(x => x.Org == req.Org && x.Project == req.Id)
+        await db
+            .Activities.Where(x => x.Org == req.Org && x.Project == req.Id)
             .ExecuteDeleteAsync(ctx.Ctkn);
-        await db.ProjectMembers
-            .Where(x => x.Org == req.Org && x.Project == req.Id)
+        await db
+            .ProjectMembers.Where(x => x.Org == req.Org && x.Project == req.Id)
             .ExecuteDeleteAsync(ctx.Ctkn);
-        await db.Tasks
-            .Where(x => x.Org == req.Org && x.Project == req.Id)
+        await db
+            .Tasks.Where(x => x.Org == req.Org && x.Project == req.Id)
             .ExecuteDeleteAsync(ctx.Ctkn);
-        await db.Timers
-            .Where(x => x.Org == req.Org && x.Project == req.Id)
+        await db
+            .Timers.Where(x => x.Org == req.Org && x.Project == req.Id)
             .ExecuteDeleteAsync(ctx.Ctkn);
-        await db.VItems
-            .Where(x => x.Org == req.Org && x.Project == req.Id)
+        await db
+            .VItems.Where(x => x.Org == req.Org && x.Project == req.Id)
             .ExecuteDeleteAsync(ctx.Ctkn);
-        await db.Files
-            .Where(x => x.Org == req.Org && x.Project == req.Id)
+        await db
+            .Files.Where(x => x.Org == req.Org && x.Project == req.Id)
             .ExecuteDeleteAsync(ctx.Ctkn);
-        await db.Comments
-            .Where(x => x.Org == req.Org && x.Project == req.Id)
+        await db
+            .Comments.Where(x => x.Org == req.Org && x.Project == req.Id)
             .ExecuteDeleteAsync(ctx.Ctkn);
         using var store = ctx.Get<IStoreClient>();
         await store.DeletePrefix(OrgEps.FilesBucket, string.Join("/", req.Org, req.Id), ctx.Ctkn);

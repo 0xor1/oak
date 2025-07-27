@@ -1,4 +1,3 @@
-version: '3.7'
 services:
 
   oak-testall-sql:
@@ -12,28 +11,28 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: root
     ports:
-    - "3306:3306"
+      - "3306:3306"
 
   oak-testall-redis:
     container_name: oak-testall-redis
-    image: redis:7.2.3-alpine
+    image: redis:8.0.3-alpine
     networks:
       - oak
     ports:
-    - "6379:6379"
+      - "6379:6379"
 
   oak-testall-minio:
     container_name: oak-testall-minio
-    image: minio/minio:RELEASE.2023-11-15T20-43-25Z
+    image: minio/minio:RELEASE.2025-07-18T21-56-31Z
     networks:
       - oak
     environment:
       MINIO_ACCESS_KEY: localtest
       MINIO_SECRET_KEY: localtest
     ports:
-    - "9000:9000"
+      - "9000:9000"
     command: "minio server /data"
-    
+
 networks:
   oak:
     name: oak

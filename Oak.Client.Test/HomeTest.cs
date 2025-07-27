@@ -7,9 +7,9 @@ public class HomeTest : TestBase
     {
         var ali = await NewTestPack("ali");
         var aliSes = await ali.Api.Auth.GetSession();
-        var aliUi = ali.Ctx.RenderComponent<Oak.Client.Shared.Pages.Home>(
-            ps => ps.Add(p => p.Session, aliSes)
+        var aliUi = ali.Ctx.Render<Oak.Client.Shared.Pages.Home>(ps =>
+            ps.Add(p => p.Session, aliSes)
         );
-        ali.Ctx.DisposeComponents();
+        await ali.Ctx.DisposeComponentsAsync();
     }
 }

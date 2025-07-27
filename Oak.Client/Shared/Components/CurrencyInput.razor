@@ -64,20 +64,64 @@ else
 
     public bool IsBound => _decimalRef?.IsBound ?? _ulongRef.IsBound;
     public bool HasValue => _decimalRef?.HasValue ?? _ulongRef.HasValue;
-    public FieldIdentifier FieldIdentifier => _decimalRef?.FieldIdentifier ?? _ulongRef.FieldIdentifier;
+
+    public FieldIdentifier FieldIdentifier
+    {
+        get => _decimalRef?.FieldIdentifier ?? _ulongRef.FieldIdentifier;
+        set
+        {
+            if (_decimalRef != null)
+            {
+                _decimalRef.FieldIdentifier = value;
+            }
+            else if (_ulongRef != null)
+            {
+                _ulongRef.FieldIdentifier = value;
+                return;
+            }
+        }
+    }
+
     RadzenNumeric<ulong>? _ulongRef;
     RadzenNumeric<decimal>? _decimalRef;
     
     public async ValueTask FocusAsync()
     {
-        if (Currency?.Divisions == 1)
+        if (_decimalRef != null)
         {
-            await _ulongRef.NotNull().FocusAsync();
+            await _decimalRef.FocusAsync();
         }
-        else
+        else if (_ulongRef != null)
         {
-            await _decimalRef.NotNull().FocusAsync();
+            await _ulongRef.FocusAsync();
         }
     }
 
+
+    public bool Disabled { get => _decimalRef?.Disabled ?? _ulongRef?.Disabled ?? false;
+        set
+        {
+            if (_decimalRef != null)
+            {
+                _decimalRef.Disabled = value;
+            }
+            else if(_ulongRef != null)
+            {
+                _ulongRef.Disabled = value;
+            }
+        }
+    }
+    public bool Visible { get => _decimalRef?.Visible ?? _ulongRef?.Visible ?? true;
+        set
+        {
+            if (_decimalRef != null)
+            {
+                _decimalRef.Visible = value;
+            }
+            else if(_ulongRef != null)
+            {
+                _ulongRef.Visible = value;
+            }
+        } }
+    public IFormFieldContext FormFieldContext { get => _decimalRef?.FormFieldContext ?? _ulongRef?.FormFieldContext ?? throw new InvalidDataException(""); }
 }

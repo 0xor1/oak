@@ -28,7 +28,7 @@ internal static class FileEps
             Ep<Upload, FileRes>.DbTx<OakDb>(FileRpcs.Upload, Upload),
             new Ep<Download, HasStream>(FileRpcs.Download, Download),
             Ep<Exact, Api.Task.Task>.DbTx<OakDb>(FileRpcs.Delete, Delete),
-            new Ep<Get, SetRes<File>>(FileRpcs.Get, Get)
+            new Ep<Get, SetRes<File>>(FileRpcs.Get, Get),
         };
 
     private static async Task<FileRes> Upload(IRpcCtx ctx, OakDb db, ISession ses, Upload req)
@@ -74,7 +74,7 @@ internal static class FileEps
             CreatedBy = ses.Id,
             CreatedOn = DateTimeExt.UtcNowMilli(),
             Size = req.Stream.Size,
-            Type = req.Stream.Type
+            Type = req.Stream.Type,
         };
         await db.Files.AddAsync(f, ctx.Ctkn);
         await db.SaveChangesAsync(ctx.Ctkn);
@@ -148,7 +148,7 @@ internal static class FileEps
 
         return new HasStream()
         {
-            Stream = new RpcStream(data, f.Name, f.Type, req.IsDownload, f.Size)
+            Stream = new RpcStream(data, f.Name, f.Type, req.IsDownload, f.Size),
         };
     }
 

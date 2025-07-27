@@ -28,7 +28,7 @@ internal static class VItemEps
             Ep<Create, VItemRes>.DbTx<OakDb>(VItemRpcs.Create, Create),
             Ep<Update, VItemRes>.DbTx<OakDb>(VItemRpcs.Update, Update),
             Ep<Exact, Task>.DbTx<OakDb>(VItemRpcs.Delete, Delete),
-            new Ep<Get, SetRes<VItem>>(VItemRpcs.Get, Get)
+            new Ep<Get, SetRes<VItem>>(VItemRpcs.Get, Get),
         };
 
     private static async Task<VItemRes> Create(IRpcCtx ctx, OakDb db, ISession ses, Create req)
@@ -62,7 +62,7 @@ internal static class VItemEps
             CreatedBy = ses.Id,
             CreatedOn = DateTimeExt.UtcNowMilli(),
             Inc = req.Inc,
-            Note = req.Note
+            Note = req.Note,
         };
         await db.VItems.AddAsync(vi, ctx.Ctkn);
         await db.SaveChangesAsync(ctx.Ctkn);
@@ -192,13 +192,12 @@ internal static class VItemEps
     private static async Task<Task> Delete(IRpcCtx ctx, OakDb db, ISession ses, Exact req)
     {
         await db.LockProject(req.Org, req.Project, ctx.Ctkn);
-        var vi = await db.VItems.SingleOrDefaultAsync(
-            x =>
-                x.Org == req.Org
-                && x.Project == req.Project
-                && x.Task == req.Task
-                && x.Type == req.Type
-                && x.Id == req.Id
+        var vi = await db.VItems.SingleOrDefaultAsync(x =>
+            x.Org == req.Org
+            && x.Project == req.Project
+            && x.Task == req.Task
+            && x.Type == req.Type
+            && x.Id == req.Id
         );
         ctx.NotFoundIf(vi == null, model: new { Name = req.Type.Humanize() });
         vi.NotNull();
@@ -210,8 +209,8 @@ internal static class VItemEps
         }
 
         await EpsUtil.MustHaveProjectAccess(ctx, db, ses.Id, req.Org, req.Project, requiredRole);
-        var t = await db.Tasks.SingleOrDefaultAsync(
-            x => x.Org == req.Org && x.Project == req.Project && x.Id == req.Task
+        var t = await db.Tasks.SingleOrDefaultAsync(x =>
+            x.Org == req.Org && x.Project == req.Project && x.Id == req.Task
         );
         ctx.NotFoundIf(t == null, model: new { Name = "Task" });
         t.NotNull();
@@ -267,8 +266,8 @@ internal static class VItemEps
             req.Project,
             ProjectMemberRole.Reader
         );
-        var qry = db.VItems.Where(
-            x => x.Org == req.Org && x.Project == req.Project && x.Type == req.Type
+        var qry = db.VItems.Where(x =>
+            x.Org == req.Org && x.Project == req.Project && x.Type == req.Type
         );
         if (req.Task != null)
         {
@@ -296,12 +295,11 @@ internal static class VItemEps
         if (req.After != null)
         {
             // implement cursor based pagination ... in a fashion
-            var after = await db.VItems.SingleOrDefaultAsync(
-                x =>
-                    x.Org == req.Org
-                    && x.Project == req.Project
-                    && x.Type == req.Type
-                    && x.Id == req.After
+            var after = await db.VItems.SingleOrDefaultAsync(x =>
+                x.Org == req.Org
+                && x.Project == req.Project
+                && x.Type == req.Type
+                && x.Id == req.After
             );
             ctx.NotFoundIf(after == null, model: new { Name = "After" });
             after.NotNull();

@@ -24,7 +24,7 @@ internal static class ProjectMemberEps
             new Ep<Exact, Maybe<ProjectMember>>(ProjectMemberRpcs.GetOne, GetOne),
             new Ep<Get, SetRes<ProjectMember>>(ProjectMemberRpcs.Get, Get),
             Ep<Update, ProjectMember>.DbTx<OakDb>(ProjectMemberRpcs.Update, Update),
-            Ep<Exact, Nothing>.DbTx<OakDb>(ProjectMemberRpcs.Remove, Remove)
+            Ep<Exact, Nothing>.DbTx<OakDb>(ProjectMemberRpcs.Remove, Remove),
         };
 
     private static async Task<ProjectMember> Add(IRpcCtx ctx, OakDb db, ISession ses, Add req)
@@ -57,7 +57,7 @@ internal static class ProjectMemberEps
             IsActive = orgMem.IsActive,
             OrgRole = orgMem.Role,
             Name = orgMem.Name,
-            Role = req.Role
+            Role = req.Role,
         };
         await db.ProjectMembers.AddAsync(mem, ctx.Ctkn);
         await EpsUtil.LogActivity(
@@ -143,30 +143,22 @@ internal static class ProjectMemberEps
             after.NotNull();
             qry = (req.OrderBy, req.Asc) switch
             {
-                (ProjectMemberOrderBy.Role, true)
-                    => qry.Where(
-                        x =>
-                            x.Role > after.Role
-                            || (x.Role == after.Role && x.Name.CompareTo(after.Name) > 0)
-                    ),
-                (ProjectMemberOrderBy.Name, true)
-                    => qry.Where(
-                        x =>
-                            x.Name.CompareTo(after.Name) > 0
-                            || (x.Name.CompareTo(after.Name) == 0 && x.Role > after.Role)
-                    ),
-                (ProjectMemberOrderBy.Role, false)
-                    => qry.Where(
-                        x =>
-                            x.Role < after.Role
-                            || (x.Role == after.Role && x.Name.CompareTo(after.Name) > 0)
-                    ),
-                (ProjectMemberOrderBy.Name, false)
-                    => qry.Where(
-                        x =>
-                            x.Name.CompareTo(after.Name) < 0
-                            || (x.Name.CompareTo(after.Name) == 0 && x.Role > after.Role)
-                    ),
+                (ProjectMemberOrderBy.Role, true) => qry.Where(x =>
+                    x.Role > after.Role
+                    || (x.Role == after.Role && x.Name.CompareTo(after.Name) > 0)
+                ),
+                (ProjectMemberOrderBy.Name, true) => qry.Where(x =>
+                    x.Name.CompareTo(after.Name) > 0
+                    || (x.Name.CompareTo(after.Name) == 0 && x.Role > after.Role)
+                ),
+                (ProjectMemberOrderBy.Role, false) => qry.Where(x =>
+                    x.Role < after.Role
+                    || (x.Role == after.Role && x.Name.CompareTo(after.Name) > 0)
+                ),
+                (ProjectMemberOrderBy.Name, false) => qry.Where(x =>
+                    x.Name.CompareTo(after.Name) < 0
+                    || (x.Name.CompareTo(after.Name) == 0 && x.Role > after.Role)
+                ),
             };
         }
 
@@ -174,17 +166,17 @@ internal static class ProjectMemberEps
         {
             (ProjectMemberOrderBy.Role, true) => qry.OrderBy(x => x.Role).ThenBy(x => x.Name),
             (ProjectMemberOrderBy.Name, true) => qry.OrderBy(x => x.Name).ThenBy(x => x.Role),
-            (ProjectMemberOrderBy.Role, false)
-                => qry.OrderByDescending(x => x.Role).ThenBy(x => x.Name),
-            (ProjectMemberOrderBy.Name, false)
-                => qry.OrderByDescending(x => x.Name).ThenBy(x => x.Role),
+            (ProjectMemberOrderBy.Role, false) => qry.OrderByDescending(x => x.Role)
+                .ThenBy(x => x.Name),
+            (ProjectMemberOrderBy.Name, false) => qry.OrderByDescending(x => x.Name)
+                .ThenBy(x => x.Role),
         };
         qry = qry.Take(101);
         var mems = await qry.ToListAsync(ctx.Ctkn);
         var ids = mems.Select(x => x.Id).ToList();
         var stats = await GetStats(ctx, db, req.Org, req.Project, ids);
-        var set = mems.Select(
-                x => x.ToApi(stats.SingleOrDefault(y => y.Id == x.Id) ?? new ProjectMemberStats())
+        var set = mems.Select(x =>
+                x.ToApi(stats.SingleOrDefault(y => y.Id == x.Id) ?? new ProjectMemberStats())
             )
             .ToList();
         return SetRes<ProjectMember>.FromLimit(set, 101);
@@ -251,8 +243,10 @@ internal static class ProjectMemberEps
             ctx.Ctkn
         );
         ctx.NotFoundIf(mem == null, model: new { Name = "Project Member" });
-        await db.ProjectMembers
-            .Where(x => x.Org == req.Org && x.Project == req.Project && x.Id == req.Id)
+        await db
+            .ProjectMembers.Where(x =>
+                x.Org == req.Org && x.Project == req.Project && x.Id == req.Id
+            )
             .ExecuteDeleteAsync(ctx.Ctkn);
         await EpsUtil.LogActivity(
             ctx,
@@ -280,22 +274,19 @@ internal static class ProjectMemberEps
         string project,
         List<string> ids
     ) =>
-        await db.Tasks
-            .Where(x => x.Org == org && x.Project == project && ids.Contains(x.User))
+        await db
+            .Tasks.Where(x => x.Org == org && x.Project == project && ids.Contains(x.User))
             .GroupBy(x => x.User)
-            .Select(
-                x =>
-                    new ProjectMemberStats()
-                    {
-                        Id = x.Key,
-                        TimeEst = (ulong)x.Sum(x => (decimal)x.TimeEst),
-                        TimeInc = (ulong)x.Sum(x => (decimal)x.TimeInc),
-                        CostEst = (ulong)x.Sum(x => (decimal)x.CostEst),
-                        CostInc = (ulong)x.Sum(x => (decimal)x.CostInc),
-                        FileN = (ulong)x.Sum(x => (decimal)x.FileN),
-                        FileSize = (ulong)x.Sum(x => (decimal)x.FileSize),
-                        TaskN = (ulong)x.Count()
-                    }
-            )
+            .Select(x => new ProjectMemberStats()
+            {
+                Id = x.Key,
+                TimeEst = (ulong)x.Sum(x => (decimal)x.TimeEst),
+                TimeInc = (ulong)x.Sum(x => (decimal)x.TimeInc),
+                CostEst = (ulong)x.Sum(x => (decimal)x.CostEst),
+                CostInc = (ulong)x.Sum(x => (decimal)x.CostInc),
+                FileN = (ulong)x.Sum(x => (decimal)x.FileN),
+                FileSize = (ulong)x.Sum(x => (decimal)x.FileSize),
+                TaskN = (ulong)x.Count(),
+            })
             .ToListAsync(ctx.Ctkn);
 }

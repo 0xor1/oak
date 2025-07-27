@@ -75,7 +75,7 @@ internal static class TaskEps
             CreatedOn = DateTimeExt.UtcNowMilli(),
             TimeEst = req.TimeEst,
             CostEst = req.CostEst,
-            IsParallel = req.IsParallel
+            IsParallel = req.IsParallel,
         };
         await db.LockProject(req.Org, req.Project, ctx.Ctkn);
         // get correct next sib value from either prevSib if
@@ -133,8 +133,8 @@ internal static class TaskEps
             null,
             ancestors
         );
-        var p = await db.Tasks.SingleAsync(
-            x => x.Org == req.Org && x.Project == req.Project && x.Id == req.Parent
+        var p = await db.Tasks.SingleAsync(x =>
+            x.Org == req.Org && x.Project == req.Project && x.Id == req.Parent
         );
         return new CreateRes(p.ToApi(), t.ToApi());
     }
@@ -193,8 +193,8 @@ internal static class TaskEps
             await db.LockProject(req.Org, req.Project, ctx.Ctkn);
         }
 
-        var t = await db.Tasks.SingleOrDefaultAsync(
-            x => x.Org == req.Org && x.Project == req.Project && x.Id == req.Id
+        var t = await db.Tasks.SingleOrDefaultAsync(x =>
+            x.Org == req.Org && x.Project == req.Project && x.Id == req.Id
         );
         ctx.NotFoundIf(t == null, model: new { Name = "Task" });
         t.NotNull();
@@ -213,13 +213,13 @@ internal static class TaskEps
         {
             // changing parent
             string? newNextSib = null;
-            newParent = await db.Tasks.SingleOrDefaultAsync(
-                x => x.Org == req.Org && x.Project == req.Project && x.Id == req.Parent
+            newParent = await db.Tasks.SingleOrDefaultAsync(x =>
+                x.Org == req.Org && x.Project == req.Project && x.Id == req.Parent
             );
             ctx.NotFoundIf(newParent == null, model: new { Name = "Parent Task" });
             newParent.NotNull();
-            var tFromAncestors = await db.Tasks
-                .FromSql(RecursiveLoopDetectionQry(req.Org, req.Project, newParent.Id, t.Id))
+            var tFromAncestors = await db
+                .Tasks.FromSql(RecursiveLoopDetectionQry(req.Org, req.Project, newParent.Id, t.Id))
                 .SingleOrDefaultAsync();
             ctx.BadRequestIf(
                 tFromAncestors != null || t.Id == req.Parent,
@@ -228,8 +228,8 @@ internal static class TaskEps
             if (req.PrevSib != null && req.PrevSib.V != null)
             {
                 ctx.BadRequestIf(req.PrevSib.V == t.Id, S.TaskRecursiveLoopDetected);
-                newPrevSib = await db.Tasks.SingleOrDefaultAsync(
-                    x => x.Org == req.Org && x.Project == req.Project && x.Id == req.PrevSib.V
+                newPrevSib = await db.Tasks.SingleOrDefaultAsync(x =>
+                    x.Org == req.Org && x.Project == req.Project && x.Id == req.PrevSib.V
                 );
                 ctx.NotFoundIf(newPrevSib == null, model: new { Name = "Previous Sibling" });
                 ctx.BadRequestIf(
@@ -253,8 +253,8 @@ internal static class TaskEps
             }
             else
             {
-                oldPrevSib = await db.Tasks.SingleOrDefaultAsync(
-                    x => x.Org == req.Org && x.Project == req.Project && x.NextSib == t.Id
+                oldPrevSib = await db.Tasks.SingleOrDefaultAsync(x =>
+                    x.Org == req.Org && x.Project == req.Project && x.NextSib == t.Id
                 );
             }
 
@@ -266,8 +266,8 @@ internal static class TaskEps
             }
             else
             {
-                oldParent = await db.Tasks.SingleOrDefaultAsync(
-                    x => x.Org == req.Org && x.Project == req.Project && x.Id == t.Parent
+                oldParent = await db.Tasks.SingleOrDefaultAsync(x =>
+                    x.Org == req.Org && x.Project == req.Project && x.Id == t.Parent
                 );
             }
 
@@ -291,8 +291,8 @@ internal static class TaskEps
         {
             // we now know we are doing a purely horizontal move, i.e. not changing parent node
             // get oldPrevSib
-            oldPrevSib = await db.Tasks.SingleOrDefaultAsync(
-                x => x.Org == req.Org && x.Project == req.Project && x.NextSib == t.Id
+            oldPrevSib = await db.Tasks.SingleOrDefaultAsync(x =>
+                x.Org == req.Org && x.Project == req.Project && x.NextSib == t.Id
             );
             if (
                 !(
@@ -307,8 +307,8 @@ internal static class TaskEps
             {
                 string? newNextSib = null;
                 // here we know that an actual change is being attempted
-                oldParent = await db.Tasks.SingleOrDefaultAsync(
-                    x => x.Org == req.Org && x.Project == req.Project && x.Id == t.Parent
+                oldParent = await db.Tasks.SingleOrDefaultAsync(x =>
+                    x.Org == req.Org && x.Project == req.Project && x.Id == t.Parent
                 );
                 ctx.NotFoundIf(oldParent == null, model: new { Name = "Old Parent" });
                 oldParent.NotNull();
@@ -328,8 +328,8 @@ internal static class TaskEps
                     }
 
                     ctx.BadRequestIf(req.PrevSib.V == t.Id, S.TaskRecursiveLoopDetected);
-                    newPrevSib = await db.Tasks.SingleOrDefaultAsync(
-                        x => x.Org == req.Org && x.Project == req.Project && x.Id == req.PrevSib.V
+                    newPrevSib = await db.Tasks.SingleOrDefaultAsync(x =>
+                        x.Org == req.Org && x.Project == req.Project && x.Id == req.PrevSib.V
                     );
                     ctx.NotFoundIf(newPrevSib == null, model: new { Name = "Previous Sibling" });
                     newPrevSib.NotNull();
@@ -408,8 +408,8 @@ internal static class TaskEps
         // rename project record if it was project root node
         if (nameUpdated && t.Id == t.Project)
         {
-            await db.Projects
-                .Where(x => x.Org == req.Org && x.Id == req.Project)
+            await db
+                .Projects.Where(x => x.Org == req.Org && x.Id == req.Project)
                 .ExecuteUpdateAsync(x => x.SetProperty(x => x.Name, _ => t.Name));
         }
 
@@ -538,8 +538,8 @@ internal static class TaskEps
 
         if (treeUpdateRequired && oldParent == null && t.Parent != null)
         {
-            oldParent = await db.Tasks.SingleOrDefaultAsync(
-                x => x.Org == t.Org && x.Project == t.Project && x.Id == t.Parent
+            oldParent = await db.Tasks.SingleOrDefaultAsync(x =>
+                x.Org == t.Org && x.Project == t.Project && x.Id == t.Parent
             );
         }
 
@@ -550,8 +550,8 @@ internal static class TaskEps
     {
         ctx.BadRequestIf(req.Project == req.Id, S.TaskDeleteProjectAttempt);
         await db.LockProject(req.Org, req.Project, ctx.Ctkn);
-        var t = await db.Tasks.SingleOrDefaultAsync(
-            x => x.Org == req.Org && x.Project == req.Project && x.Id == req.Id
+        var t = await db.Tasks.SingleOrDefaultAsync(x =>
+            x.Org == req.Org && x.Project == req.Project && x.Id == req.Id
         );
         ctx.NotFoundIf(t == null, model: new { Name = "Task" });
         t.NotNull();
@@ -569,14 +569,14 @@ internal static class TaskEps
 
         await EpsUtil.MustHaveProjectAccess(ctx, db, ses.Id, req.Org, req.Project, requiredRole);
         ctx.BadRequestIf(t.DescN > 20, S.TaskTooManyDescnToDelete, model: new { Max = 20 });
-        var prevTask = await db.Tasks.SingleOrDefaultAsync(
-            x => x.Org == req.Org && x.Project == req.Project && x.NextSib == req.Id
+        var prevTask = await db.Tasks.SingleOrDefaultAsync(x =>
+            x.Org == req.Org && x.Project == req.Project && x.NextSib == req.Id
         );
         if (prevTask == null)
         {
             // t must be first child so prevTask must be its parent
-            prevTask = await db.Tasks.SingleOrDefaultAsync(
-                x => x.Org == req.Org && x.Project == req.Project && x.Id == t.Parent
+            prevTask = await db.Tasks.SingleOrDefaultAsync(x =>
+                x.Org == req.Org && x.Project == req.Project && x.Id == t.Parent
             );
             Throw.DataIf(
                 prevTask == null || prevTask.FirstChild != t.Id,
@@ -590,34 +590,45 @@ internal static class TaskEps
             prevTask.NextSib = t.NextSib;
         }
 
-        var tasksToDelete = await db.Tasks
-            .FromSql(DescendantsQry(req.Org, req.Project, req.Id))
+        var tasksToDelete = await db
+            .Tasks.FromSql(DescendantsQry(req.Org, req.Project, req.Id))
             .Select(x => new { x.Id, HasFiles = x.FileN > 0 })
             .ToListAsync();
         tasksToDelete.Add(new { t.Id, HasFiles = t.FileN > 0 });
         var allTaskIds = tasksToDelete.Select(x => x.Id);
 
-        await db.Tasks
-            .Where(x => x.Org == req.Org && x.Project == req.Project && allTaskIds.Contains(x.Id))
+        await db
+            .Tasks.Where(x =>
+                x.Org == req.Org && x.Project == req.Project && allTaskIds.Contains(x.Id)
+            )
             .ExecuteDeleteAsync();
-        await db.Timers
-            .Where(x => x.Org == req.Org && x.Project == req.Project && allTaskIds.Contains(x.Task))
+        await db
+            .Timers.Where(x =>
+                x.Org == req.Org && x.Project == req.Project && allTaskIds.Contains(x.Task)
+            )
             .ExecuteDeleteAsync();
-        await db.VItems
-            .Where(x => x.Org == req.Org && x.Project == req.Project && allTaskIds.Contains(x.Task))
+        await db
+            .VItems.Where(x =>
+                x.Org == req.Org && x.Project == req.Project && allTaskIds.Contains(x.Task)
+            )
             .ExecuteDeleteAsync();
-        await db.Files
-            .Where(x => x.Org == req.Org && x.Project == req.Project && allTaskIds.Contains(x.Task))
+        await db
+            .Files.Where(x =>
+                x.Org == req.Org && x.Project == req.Project && allTaskIds.Contains(x.Task)
+            )
             .ExecuteDeleteAsync();
-        await db.Comments
-            .Where(x => x.Org == req.Org && x.Project == req.Project && allTaskIds.Contains(x.Task))
+        await db
+            .Comments.Where(x =>
+                x.Org == req.Org && x.Project == req.Project && allTaskIds.Contains(x.Task)
+            )
             .ExecuteDeleteAsync();
-        await db.Activities
-            .Where(x => x.Org == req.Org && x.Project == req.Project & allTaskIds.Contains(x.Task))
-            .ExecuteUpdateAsync(
-                x =>
-                    x.SetProperty(x => x.TaskDeleted, _ => true)
-                        .SetProperty(x => x.ItemDeleted, _ => true)
+        await db
+            .Activities.Where(x =>
+                x.Org == req.Org && x.Project == req.Project & allTaskIds.Contains(x.Task)
+            )
+            .ExecuteUpdateAsync(x =>
+                x.SetProperty(x => x.TaskDeleted, _ => true)
+                    .SetProperty(x => x.ItemDeleted, _ => true)
             );
         await db.SaveChangesAsync();
 
@@ -662,8 +673,8 @@ internal static class TaskEps
             return prevTask.ToApi();
         }
 
-        var parent = await db.Tasks.SingleAsync(
-            x => x.Org == req.Org && x.Project == req.Project && x.Id == t.Parent
+        var parent = await db.Tasks.SingleAsync(x =>
+            x.Org == req.Org && x.Project == req.Project && x.Id == t.Parent
         );
         return parent.ToApi();
     }
@@ -680,8 +691,8 @@ internal static class TaskEps
             req.Project,
             ProjectMemberRole.Reader
         );
-        var t = await db.Tasks.SingleOrDefaultAsync(
-            x => x.Org == req.Org && x.Project == req.Project && x.Id == req.Id
+        var t = await db.Tasks.SingleOrDefaultAsync(x =>
+            x.Org == req.Org && x.Project == req.Project && x.Id == req.Id
         );
         ctx.NotFoundIf(t == null, model: new { Name = "Task" });
         return t.NotNull().ToApi();
@@ -699,12 +710,12 @@ internal static class TaskEps
             req.Project,
             ProjectMemberRole.Reader
         );
-        var t = await db.Tasks.SingleOrDefaultAsync(
-            x => x.Org == req.Org && x.Project == req.Project && x.Id == req.Id
+        var t = await db.Tasks.SingleOrDefaultAsync(x =>
+            x.Org == req.Org && x.Project == req.Project && x.Id == req.Id
         );
         ctx.NotFoundIf(t == null, model: new { Name = "Task" });
-        return await db.Tasks
-            .FromSql(AncestorsQry(req.Org, req.Project, req.Id, 100))
+        return await db
+            .Tasks.FromSql(AncestorsQry(req.Org, req.Project, req.Id, 100))
             .Select(x => x.ToApi())
             .ToListAsync();
     }
@@ -721,8 +732,8 @@ internal static class TaskEps
             req.Project,
             ProjectMemberRole.Reader
         );
-        var t = await db.Tasks.SingleOrDefaultAsync(
-            x => x.Org == req.Org && x.Project == req.Project && x.Id == req.Id
+        var t = await db.Tasks.SingleOrDefaultAsync(x =>
+            x.Org == req.Org && x.Project == req.Project && x.Id == req.Id
         );
         ctx.NotFoundIf(t == null, model: new { Name = "Task" });
         FormattableString? qry = null;
@@ -750,18 +761,18 @@ internal static class TaskEps
             req.Project,
             ProjectMemberRole.Reader
         );
-        var t = await db.Tasks.SingleOrDefaultAsync(
-            x => x.Org == req.Org && x.Project == req.Project && x.Id == req.Id
+        var t = await db.Tasks.SingleOrDefaultAsync(x =>
+            x.Org == req.Org && x.Project == req.Project && x.Id == req.Id
         );
         ctx.NotFoundIf(t == null, model: new { Name = "Task" });
         return new InitView(
             t.NotNull().ToApi(),
-            await db.Tasks
-                .FromSql(ChildrenQry(req.Org, req.Project, req.Id, 100))
+            await db
+                .Tasks.FromSql(ChildrenQry(req.Org, req.Project, req.Id, 100))
                 .Select(x => x.ToApi())
                 .ToListAsync(),
-            await db.Tasks
-                .FromSql(AncestorsQry(req.Org, req.Project, req.Id, 100))
+            await db
+                .Tasks.FromSql(AncestorsQry(req.Org, req.Project, req.Id, 100))
                 .Select(x => x.ToApi())
                 .ToListAsync()
         );
@@ -779,8 +790,8 @@ internal static class TaskEps
             req.Project,
             ProjectMemberRole.Reader
         );
-        var t = await db.Tasks.SingleOrDefaultAsync(
-            x => x.Org == req.Org && x.Project == req.Project && x.Id == req.Id
+        var t = await db.Tasks.SingleOrDefaultAsync(x =>
+            x.Org == req.Org && x.Project == req.Project && x.Id == req.Id
         );
         ctx.NotFoundIf(t == null, model: new { Name = "Task" });
         ctx.BadRequestIf(t.NotNull().DescN > 1000, S.TaskTooManyDescn);
@@ -789,8 +800,8 @@ internal static class TaskEps
             return new List<Task>();
         }
 
-        return await db.Tasks
-            .FromSql(DescendantsQry(req.Org, req.Project, req.Id))
+        return await db
+            .Tasks.FromSql(DescendantsQry(req.Org, req.Project, req.Id))
             .Select(x => x.ToApi())
             .ToListAsync();
     }

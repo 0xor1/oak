@@ -91,7 +91,9 @@
 
     public bool IsBound { get; }
     public bool HasValue { get; }
-    public FieldIdentifier FieldIdentifier { get; }
+    public FieldIdentifier FieldIdentifier { get => _nRef.FieldIdentifier;
+        set { _nRef.FieldIdentifier = value; }
+    }
     private RadzenNumeric<decimal> _nRef;
     private RadzenDropDown<TimeUnit> _ddRef;
 
@@ -132,4 +134,19 @@
         await SetInternalValueAndSelectedTimeUnitAndUpdateValue();
     }
 
+    public bool Disabled { get => _nRef.Disabled;
+        set
+        {
+            _nRef.Disabled = value;
+            _ddRef.Disabled = value;
+        }
+    }
+    public bool Visible { get => _nRef.Visible;
+        set
+        {
+            _nRef.Visible = value;
+            _ddRef.Visible = value;
+        }
+    }
+    public IFormFieldContext FormFieldContext { get => _nRef.FormFieldContext; }
 }

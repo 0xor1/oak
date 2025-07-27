@@ -72,8 +72,8 @@ public class UserService : IUserService
 
         if (!nameStartsWith.IsNullOrWhiteSpace())
         {
-            qry = qry.Where(
-                x => x.Name.StartsWith(nameStartsWith, StringComparison.InvariantCultureIgnoreCase)
+            qry = qry.Where(x =>
+                x.Name.StartsWith(nameStartsWith, StringComparison.InvariantCultureIgnoreCase)
             );
         }
         return qry.OrderBy(x => x.Name).ToList();
@@ -122,8 +122,8 @@ public class UserService : IUserService
 
         if (!nameStartsWith.IsNullOrWhiteSpace())
         {
-            qry = qry.Where(
-                x => x.Name.StartsWith(nameStartsWith, StringComparison.InvariantCultureIgnoreCase)
+            qry = qry.Where(x =>
+                x.Name.StartsWith(nameStartsWith, StringComparison.InvariantCultureIgnoreCase)
             );
         }
         return qry.OrderBy(x => x.Name).ToList();
@@ -191,10 +191,8 @@ public class UserService : IUserService
 
                     if (!ProjectMembers[orgId].ContainsKey(projectId))
                     {
-                        ProjectMembers[orgId].Add(
-                            projectId,
-                            new Dictionary<string, ProjectMember>()
-                        );
+                        ProjectMembers[orgId]
+                            .Add(projectId, new Dictionary<string, ProjectMember>());
                     }
 
                     var pms = ProjectMembers[orgId][projectId];

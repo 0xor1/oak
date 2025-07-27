@@ -59,7 +59,7 @@ public class ProjectMemberTests : TestBase
             {
                 (bobId, ProjectMemberRole.Admin),
                 (catId, ProjectMemberRole.Writer),
-                (danId, ProjectMemberRole.Reader)
+                (danId, ProjectMemberRole.Reader),
             }
         );
         var bobPm = mems[0];
@@ -156,7 +156,7 @@ public class ProjectMemberTests : TestBase
             ali,
             org.Id,
             p.Id,
-            new() { (bobId, ProjectMemberRole.Writer), (catId, ProjectMemberRole.Writer), }
+            new() { (bobId, ProjectMemberRole.Writer), (catId, ProjectMemberRole.Writer) }
         );
         var bobPm = mems[0];
         var catPm = mems[1];
@@ -186,7 +186,7 @@ public class ProjectMemberTests : TestBase
             ali,
             org.Id,
             p.Id,
-            new() { (bobId, ProjectMemberRole.Admin), }
+            new() { (bobId, ProjectMemberRole.Admin) }
         );
         var aliPm = (await ali.ProjectMember.GetOne(new(org.Id, p.Id, aliId))).Item;
         var bobPm = mems[0];
