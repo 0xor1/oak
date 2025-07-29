@@ -1,6 +1,5 @@
 using Common.Shared;
 using Common.Shared.Auth;
-using ConsoleAppFramework;
 using IApi = Oak.Api.IApi;
 
 namespace Oak.Cli;
@@ -27,9 +26,9 @@ public class Auth
     /// <summary>
     /// Register for a new account.
     /// </summary>
-    /// <param name="email">your email address</param>
+    /// <param name="email">-e, your email address</param>
     /// <param name="ctkn"></param>
-    public async Task Register([Argument] string email, CancellationToken ctkn = default)
+    public async Task Register(string email, CancellationToken ctkn = default)
     {
         var pwd = Io.GetSensitiveValue("Enter Password: ");
         var confirmPwd = Io.GetSensitiveValue("Confirm Password: ");
@@ -46,14 +45,10 @@ public class Auth
     /// <summary>
     /// Verify your email address
     /// </summary>
-    /// <param name="email">The email you used to register</param>
-    /// <param name="code">The code that was sent to your email address</param>
+    /// <param name="email">-e, The email you used to register</param>
+    /// <param name="code">-c, The code that was sent to your email address</param>
     /// <param name="ctkn"></param>
-    public async Task VerifyEmail(
-        [Argument] string email,
-        [Argument] string code,
-        CancellationToken ctkn = default
-    )
+    public async Task VerifyEmail(string email, string code, CancellationToken ctkn = default)
     {
         await _api.Auth.VerifyEmail(new(email, code), ctkn);
     }
@@ -61,9 +56,9 @@ public class Auth
     /// <summary>
     /// Send a reset password email
     /// </summary>
-    /// <param name="email">The email address to send the reset password email to</param>
+    /// <param name="email">-e, The email address to send the reset password email to</param>
     /// <param name="ctkn"></param>
-    public async Task SendResetPwdEmail([Argument] string email, CancellationToken ctkn = default)
+    public async Task SendResetPwdEmail(string email, CancellationToken ctkn = default)
     {
         await _api.Auth.SendResetPwdEmail(new(email), ctkn);
     }
@@ -71,14 +66,14 @@ public class Auth
     /// <summary>
     /// Reset your password
     /// </summary>
-    /// <param name="email">Your email address</param>
-    /// <param name="code">The reset password code</param>
-    /// <param name="newPwd">Your new password</param>
+    /// <param name="email">-e, Your email address</param>
+    /// <param name="code">-c, The reset password code</param>
+    /// <param name="newPwd">-p, Your new password</param>
     /// <param name="ctkn"></param>
     public async Task ResetPwd(
-        [Argument] string email,
-        [Argument] string code,
-        [Argument] string newPwd,
+        string email,
+        string code,
+        string newPwd,
         CancellationToken ctkn = default
     )
     {
@@ -88,12 +83,12 @@ public class Auth
     /// <summary>
     /// Send a magic link email
     /// </summary>
-    /// <param name="email">The email address to send the email to</param>
-    /// <param name="rememberMe">If you want the session to expire after browser tab closes</param>
+    /// <param name="email">-e, The email address to send the email to</param>
+    /// <param name="rememberMe">-r, If you want the session to expire after browser tab closes</param>
     /// <param name="ctkn"></param>
     public async Task SendMagicLinkEmail(
-        [Argument] string email,
-        [Argument] bool rememberMe,
+        string email,
+        bool rememberMe,
         CancellationToken ctkn = default
     )
     {
@@ -103,14 +98,14 @@ public class Auth
     /// <summary>
     /// Sign in using the code from a magic link email
     /// </summary>
-    /// <param name="email">The email the magic link was sent to</param>
-    /// <param name="code">The code from the magic link email</param>
-    /// <param name="rememberMe">If you want the session to expire after browser tab closes</param>
+    /// <param name="email">-e, The email the magic link was sent to</param>
+    /// <param name="code">-c, The code from the magic link email</param>
+    /// <param name="rememberMe">-r, If you want the session to expire after browser tab closes</param>
     /// <param name="ctkn"></param>
     public async Task MagicLinkSignIn(
-        [Argument] string email,
-        [Argument] string code,
-        [Argument] bool rememberMe,
+        string email,
+        string code,
+        bool rememberMe,
         CancellationToken ctkn = default
     )
     {
@@ -120,9 +115,9 @@ public class Auth
     /// <summary>
     /// Sign in to the app
     /// </summary>
-    /// <param name="email">The email of the account</param>
-    /// <param name="rememberMe">If you want the session to expire after browser tab closes</param>
-    public async Task SignIn([Argument] string email, [Argument] bool rememberMe = true)
+    /// <param name="email">-e, The email of the account</param>
+    /// <param name="rememberMe">-r, If you want the session to expire after browser tab closes</param>
+    public async Task SignIn(string email, bool rememberMe = true)
     {
         var pwd = Io.GetSensitiveValue("Enter Password: ");
         Io.WriteYml(await _api.Auth.SignIn(new SignIn(email, pwd, rememberMe)));
@@ -144,12 +139,12 @@ public class Auth
     /// <summary>
     /// Set your l10n settings
     /// </summary>
-    /// <param name="lang">language code</param>
-    /// <param name="dateFmt">date format ymd dmy or mdy</param>
-    /// <param name="timeFmt">time format like HH:mm</param>
-    /// <param name="dateSeparator">date separator like - or /</param>
-    /// <param name="thousandsSeparator">thousands separator like , </param>
-    /// <param name="decimalSeparator">decimal separator like . </param>
+    /// <param name="lang">-l, language code</param>
+    /// <param name="dateFmt">-df, date format ymd dmy or mdy</param>
+    /// <param name="timeFmt">-tf, time format like HH:mm</param>
+    /// <param name="dateSeparator">-ds, date separator like - or /</param>
+    /// <param name="thousandsSeparator">-ts, thousands separator like , </param>
+    /// <param name="decimalSeparator">-decs, decimal separator like . </param>
     /// <param name="ctkn"></param>
     public async Task SetL10n(
         string lang,
