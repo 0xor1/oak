@@ -1,6 +1,6 @@
 using System.Reflection;
-using System.Text.Json;
 using ConsoleAppFramework;
+using Newtonsoft.Json;
 
 namespace Oak.Cli;
 
@@ -25,10 +25,7 @@ class StateFilter([FromServices] State state, ConsoleAppFilter next) : ConsoleAp
             );
             var stateDir = Path.Join(appDataDir, name);
             var filePath = Path.Join(stateDir, "state.json");
-            var stateJson = JsonSerializer.Serialize(
-                state,
-                new JsonSerializerOptions { WriteIndented = true }
-            );
+            var stateJson = JsonConvert.SerializeObject(state, Formatting.Indented);
             await File.WriteAllTextAsync(filePath, stateJson, ctkn);
         }
     }
