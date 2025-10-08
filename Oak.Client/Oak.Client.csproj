@@ -7,28 +7,18 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="DartSassBuilder" Version="1.1.0" />
-    <PackageReference Include="0xor1.Common.Client" Version="6.0.2" />
-    <PackageReference Include="0xor1.Common.Shared" Version="6.0.2" />
-    <PackageReference Include="CSharpier.MsBuild" Version="1.0.3">
+    <PackageReference Include="0xor1.Common.Client" Version="6.0.3" />
+    <PackageReference Include="0xor1.Common.Shared" Version="6.0.3" />
+    <PackageReference Include="CSharpier.MsBuild" Version="1.1.2">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="HtmlSanitizer" Version="9.1.887-beta" />
     <PackageReference Include="Humanizer.Core" Version="3.0.0-beta.96" />
-    <PackageReference
-      Include="Microsoft.AspNetCore.Components.WebAssembly"
-      Version="10.0.0-preview.6.25358.103"
-    />
-    <PackageReference
-      Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer"
-      Version="10.0.0-preview.6.25358.103"
-      PrivateAssets="all"
-    />
-    <PackageReference
-      Include="Microsoft.AspNetCore.WebUtilities"
-      Version="10.0.0-preview.6.25358.103"
-    />
-    <PackageReference Include="Radzen.Blazor" Version="7.1.6" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="10.0.0-rc.1.25451.107" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="10.0.0-rc.1.25451.107" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="10.0.0-rc.1.25451.107" />
+    <PackageReference Include="Radzen.Blazor" Version="8.0.4" />
   </ItemGroup>
   <ItemGroup>
     <SupportedPlatform Include="browser" />

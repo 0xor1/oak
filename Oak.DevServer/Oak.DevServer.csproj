@@ -5,15 +5,12 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="0xor1.Common.Server" Version="6.0.2" />
-    <PackageReference Include="CSharpier.MsBuild" Version="1.0.3">
+    <PackageReference Include="0xor1.Common.Server" Version="6.0.3" />
+    <PackageReference Include="CSharpier.MsBuild" Version="1.1.2">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference
-      Include="Microsoft.AspNetCore.Components.WebAssembly.Server"
-      Version="10.0.0-preview.6.25358.103"
-    />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="10.0.0-rc.1.25451.107" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Oak.Client\Oak.Client.csproj" />
