@@ -22,7 +22,7 @@ public class Org
     public async Task Create(string name, string ownerMemberName, CancellationToken ctkn = default)
     {
         var res = await _api.Org.Create(new Create(name, ownerMemberName), ctkn);
-        SetOrg(res.Id);
+        _state.SetOrg(res.Id);
         Io.WriteYml(res);
     }
 
@@ -32,12 +32,26 @@ public class Org
     /// <param name="org">-o, org id</param>
     public async Task GetOne(string? org = null, CancellationToken ctkn = default)
     {
-        org ??= GetOrg() ?? throw new ArgumentNullException(nameof(org));
+        // set the org using the current state if it's null
+        org ??= _state.GetOrg() ?? throw new ArgumentNullException(nameof(org));
+        // reset state incase the user did pass a org id explicitly
+        _state.SetOrg(org);
         var res = await _api.Org.GetOne(new Exact(org), ctkn);
         Io.WriteYml(res);
     }
 
-    private void SetOrg(string org) => _state.SetString("org", org);
-
-    private string? GetOrg() => _state.GetString("org");
+    /// <summary>
+    /// Get Orgs
+    /// </summary>
+    /// <param name="orderBy">-ob, order by</param>
+    /// <param name="asc">-a, ascending</param>
+    public async Task Get(
+        OrgOrderBy orderBy = OrgOrderBy.Name,
+        bool asc = true,
+        CancellationToken ctkn = default
+    )
+    {
+        var res = await _api.Org.Get(new Get(orderBy, asc), ctkn);
+        Io.WriteYml(res);
+    }
 }
