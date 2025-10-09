@@ -15,7 +15,7 @@ public static class StateExts
         return org;
     }
 
-    public static void SetOrg(this State state, string org) => state.SetString("org", org);
+    public static void SetOrg(this State state, string? org) => state.SetString("org", org);
 
     public static string GetProject(this State state, string? project = null)
     {
@@ -26,6 +26,6 @@ public static class StateExts
         return project;
     }
 
-    public static void SetProject(this State state, string project) =>
+    public static void SetProject(this State state, string? project) =>
         state.SetString("project", project);
 }

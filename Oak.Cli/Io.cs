@@ -39,4 +39,9 @@ public static class Io
     {
         Console.Write(_serializer.Serialize(any));
     }
+
+    public static void WriteSuccess()
+    {
+        Console.Write("success");
+    }
 }

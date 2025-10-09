@@ -75,18 +75,12 @@ public class Project
     {
         org = _state.GetOrg(org);
         id = _state.GetProject(id);
-        var res = await _api.Project.GetOne(
-            new Exact(
-                org,
-                id
-            ),
-            ctkn
-        );
+        var res = await _api.Project.GetOne(new Exact(org, id), ctkn);
         Io.WriteYml(res);
     }
 
     /// <summary>
-    /// 
+    /// Get projects
     /// </summary>
     /// <param name="isPublic">-ip, is public</param>
     /// <param name="nameStartsWith">-nsw, name starts with</param>
@@ -119,22 +113,107 @@ public class Project
     )
     {
         org = _state.GetOrg(org);
-        new MinMax<DateTime>
         var res = await _api.Project.Get(
             new Get(
                 org,
-                isPublic = null,
-                nameStartsWith = null,
-                MinMax<DateTime>? createdOn = null,
-                MinMax<DateTime>? startOn = null,
-                MinMax<DateTime>? endOn = null,
-                bool isArchived = false,
-                string? after = null,
-                ProjectOrderBy orderBy = ProjectOrderBy.Name,
-                bool asc = true
+                isPublic,
+                nameStartsWith,
+                MinMax<DateTime>.Create(minCreatedOn, maxCreatedOn),
+                MinMax<DateTime>.Create(minStartOn, maxStartOn),
+                MinMax<DateTime>.Create(minEndOn, maxEndOn),
+                isArchived,
+                after,
+                orderBy,
+                asc
             ),
             ctkn
         );
+        Io.WriteYml(res);
+    }
+
+    /// <summary>
+    /// Update project
+    /// </summary>
+    /// <param name="name">-n, name</param>
+    /// <param name="isPublic">-ip, is the project public</param>
+    /// <param name="currencySymbol">-cs, currency symbol</param>
+    /// <param name="currencyCode">-cc, currency code</param>
+    /// <param name="hoursPerDay">-hpd, hours per day</param>
+    /// <param name="daysPerWeek">-dpw, days per week</param>
+    /// <param name="startOn">-so, start on</param>
+    /// <param name="endOn">-eo, end on</param>
+    /// <param name="fileLimit">-fl, total upload limit in bytes</param>
+    /// <param name="org">-o, org id</param>
+    /// <param name="id">-i, project id</param>
+    public async Task Update(
+        string? name = null,
+        bool? isPublic = null,
+        string? currencySymbol = null,
+        string? currencyCode = null,
+        uint? hoursPerDay = null,
+        uint? daysPerWeek = null,
+        DateTime? startOn = null,
+        DateTime? endOn = null,
+        ulong? fileLimit = null,
+        string? org = null,
+        string? id = null,
+        CancellationToken ctkn = default
+    )
+    {
+        org = _state.GetOrg(org);
+        id = _state.GetProject(id);
+        var res = await _api.Project.Update(
+            new Update(
+                org,
+                id,
+                isPublic,
+                name,
+                currencySymbol,
+                currencyCode,
+                hoursPerDay,
+                daysPerWeek,
+                startOn,
+                endOn,
+                fileLimit
+            ),
+            ctkn
+        );
+        _state.SetProject(res.Id);
+        Io.WriteYml(res);
+    }
+
+    /// <summary>
+    /// Delete project
+    /// </summary>
+    /// <param name="id">-i, project id</param>
+    /// <param name="org">-o, org id</param>
+    public async Task Delete(string id, string? org = null, CancellationToken ctkn = default)
+    {
+        org = _state.GetOrg(org);
+        await _api.Project.Delete(new Exact(org, id), ctkn);
+        var stateProject = _state.GetProject();
+        if (stateProject == id)
+        {
+            // if we just deleted the current ctx project, clear the ctx value
+            _state.SetProject(null);
+        }
+        Io.WriteSuccess();
+    }
+
+    /// <summary>
+    /// Get project activities
+    /// </summary>
+    /// <param name="org">-o, org id</param>
+    /// <param name="id">-i, project id</param>
+    public async Task GetActivities(
+        string? org = null,
+        string? id = null,
+        CancellationToken ctkn = default
+    )
+    {
+        org = _state.GetOrg(org);
+        id = _state.GetProject(id);
+        var res = await _api.Project.GetActivities(new GetActivities(org, id), ctkn);
         Io.WriteYml(res);
     }
 }

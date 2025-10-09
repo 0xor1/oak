@@ -72,6 +72,13 @@ public class Org
     public async Task Delete(string id, CancellationToken ctkn = default)
     {
         await _api.Org.Delete(new Exact(id), ctkn);
-        Console.Write("success");
+        var stateOrg = _state.GetOrg();
+        if (stateOrg == id)
+        {
+            // if we just deleted the current ctx org clear the ctx value
+            _state.SetOrg(null);
+        }
+
+        Io.WriteSuccess();
     }
 }

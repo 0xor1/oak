@@ -5,7 +5,7 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <Target Name="GenerateI18n" BeforeTargets="BeforeBuild">
-    <Exec Command="dotnet tool run dotnet-common-cli i18n &quot;$(MSBuildProjectDirectory)&quot; $(MSBuildProjectName) false" />
+    <Exec Command="dotnet tool run dotnet-common-cli i18n &quot;$(MSBuildProjectDirectory)&quot; $(MSBuildProjectName)" />
   </Target>
   <ItemGroup>
     <PackageReference Include="0xor1.Common.Shared" Version="6.0.4" />
