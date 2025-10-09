@@ -29,14 +29,11 @@ public class Org
     /// <summary>
     /// GetOne Org
     /// </summary>
-    /// <param name="org">-o, org id</param>
-    public async Task GetOne(string? org = null, CancellationToken ctkn = default)
+    /// <param name="id">-i, org id</param>
+    public async Task GetOne(string? id = null, CancellationToken ctkn = default)
     {
-        // set the org using the current state if it's null
-        org ??= _state.GetOrg() ?? throw new ArgumentNullException(nameof(org));
-        // reset state incase the user did pass a org id explicitly
-        _state.SetOrg(org);
-        var res = await _api.Org.GetOne(new Exact(org), ctkn);
+        id = _state.GetOrg(id);
+        var res = await _api.Org.GetOne(new Exact(id), ctkn);
         Io.WriteYml(res);
     }
 
@@ -53,5 +50,28 @@ public class Org
     {
         var res = await _api.Org.Get(new Get(orderBy, asc), ctkn);
         Io.WriteYml(res);
+    }
+
+    /// <summary>
+    /// Update Org
+    /// </summary>
+    /// <param name="name">-n, new name</param>
+    /// <param name="id">-i, org id</param>
+    public async Task Update(string name, string? id = null, CancellationToken ctkn = default)
+    {
+        id = _state.GetOrg(id);
+        var res = await _api.Org.Update(new Update(id, name), ctkn);
+        Io.WriteYml(res);
+    }
+
+    /// <summary>
+    /// Delete Org
+    /// </summary>
+    /// <param name="id">-i, org id</param>
+    /// <param name="ctkn"></param>
+    public async Task Delete(string id, CancellationToken ctkn = default)
+    {
+        await _api.Org.Delete(new Exact(id), ctkn);
+        Console.Write("success");
     }
 }
