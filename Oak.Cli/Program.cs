@@ -73,6 +73,8 @@ app.ConfigureServices(services =>
 app.UseFilter<StateFilter>();
 app.Add<App>("app");
 app.Add<Auth>("auth");
+app.Add<Ctx>("ctx");
 app.Add<Org>("org");
 app.Add<Project>("project");
+app.Add<TaskCli>("task");
 await app.RunAsync(args);

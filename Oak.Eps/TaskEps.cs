@@ -2,7 +2,6 @@
 using Common.Shared;
 using Common.Shared.Auth;
 using Microsoft.EntityFrameworkCore;
-using Oak.Api;
 using Oak.Api.Project;
 using Oak.Api.ProjectMember;
 using Oak.Api.Task;
