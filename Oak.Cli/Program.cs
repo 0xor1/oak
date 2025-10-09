@@ -74,4 +74,5 @@ app.UseFilter<StateFilter>();
 app.Add<App>("app");
 app.Add<Auth>("auth");
 app.Add<Org>("org");
+app.Add<Project>("project");
 await app.RunAsync(args);

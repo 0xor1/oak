@@ -15,7 +15,7 @@ public class Org
     }
 
     /// <summary>
-    /// Create a new Org
+    /// Create a new org
     /// </summary>
     /// <param name="name">-n, org name</param>
     /// <param name="ownerMemberName">-o, your display name within this new org</param>
@@ -27,7 +27,7 @@ public class Org
     }
 
     /// <summary>
-    /// GetOne Org
+    /// Get one org
     /// </summary>
     /// <param name="id">-i, org id</param>
     public async Task GetOne(string? id = null, CancellationToken ctkn = default)
@@ -38,7 +38,7 @@ public class Org
     }
 
     /// <summary>
-    /// Get Orgs
+    /// Get orgs
     /// </summary>
     /// <param name="orderBy">-ob, order by</param>
     /// <param name="asc">-a, ascending</param>
@@ -53,7 +53,7 @@ public class Org
     }
 
     /// <summary>
-    /// Update Org
+    /// Update org
     /// </summary>
     /// <param name="name">-n, new name</param>
     /// <param name="id">-i, org id</param>
@@ -65,7 +65,7 @@ public class Org
     }
 
     /// <summary>
-    /// Delete Org
+    /// Delete org
     /// </summary>
     /// <param name="id">-i, org id</param>
     /// <param name="ctkn"></param>

@@ -9,7 +9,7 @@
     <ProjectReference Include="..\Oak.Eps\Oak.Eps.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="0xor1.Common.Server" Version="6.0.3" />
+    <PackageReference Include="0xor1.Common.Server" Version="6.0.4" />
     <PackageReference Include="CSharpier.MsBuild" Version="1.1.2">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
