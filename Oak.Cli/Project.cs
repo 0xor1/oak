@@ -93,7 +93,7 @@ public class Project
     /// <param name="isArchived">-ia, is archived</param>
     /// <param name="after">-a, after project id</param>
     /// <param name="orderBy">-ob, order by</param>
-    /// <param name="asc">-asc</param>
+    /// <param name="asc">-asc, order ascending</param>
     /// <param name="org">-o, org id</param>
     public async Task Get(
         bool? isPublic = null,
