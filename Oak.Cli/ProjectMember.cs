@@ -22,7 +22,13 @@ public class ProjectMember
     /// <param name="org">-o, the org id</param>
     /// <param name="project">-p, the project id</param>
     /// <param name="ctkn"></param>
-    public async Task Add(string id, ProjectMemberRole role, string? org = null, string? project = null, CancellationToken ctkn = default)
+    public async Task Add(
+        string id,
+        ProjectMemberRole role,
+        string? org = null,
+        string? project = null,
+        CancellationToken ctkn = default
+    )
     {
         org = _state.GetOrg(org);
         project = _state.GetProject(project);
@@ -37,7 +43,12 @@ public class ProjectMember
     /// <param name="org">-o, the org id</param>
     /// <param name="project">-p, the project id</param>
     /// <param name="ctkn"></param>
-    public async Task GetOne(string id, string? org = null, string? project = null, CancellationToken ctkn = default)
+    public async Task GetOne(
+        string id,
+        string? org = null,
+        string? project = null,
+        CancellationToken ctkn = default
+    )
     {
         org = _state.GetOrg(org);
         project = _state.GetProject(project);
@@ -57,11 +68,24 @@ public class ProjectMember
     /// <param name="org">-o, org id</param>
     /// <param name="project">-p, project id</param>
     /// <param name="ctkn"></param>
-    public async Task Get(bool? isActive, ProjectMemberRole? role = null, string? nameStartsWith = null, string? after = null, ProjectMemberOrderBy orderBy = ProjectMemberOrderBy.Role, bool asc = true, string? org = null, string? project = null, CancellationToken ctkn = default)
+    public async Task Get(
+        bool? isActive,
+        ProjectMemberRole? role = null,
+        string? nameStartsWith = null,
+        string? after = null,
+        ProjectMemberOrderBy orderBy = ProjectMemberOrderBy.Role,
+        bool asc = true,
+        string? org = null,
+        string? project = null,
+        CancellationToken ctkn = default
+    )
     {
         org = _state.GetOrg(org);
         project = _state.GetProject(project);
-        var res = await _api.ProjectMember.Get(new Get(org, project, isActive, role, nameStartsWith, after, orderBy, asc), ctkn);
+        var res = await _api.ProjectMember.Get(
+            new Get(org, project, isActive, role, nameStartsWith, after, orderBy, asc),
+            ctkn
+        );
         Io.WriteYml(res);
     }
 
@@ -73,7 +97,13 @@ public class ProjectMember
     /// <param name="org">-o, org id</param>
     /// <param name="project">-p, project id</param>
     /// <param name="ctkn"></param>
-    public async Task Update(string id, ProjectMemberRole role, string? org = null, string? project = null, CancellationToken ctkn = default)
+    public async Task Update(
+        string id,
+        ProjectMemberRole role,
+        string? org = null,
+        string? project = null,
+        CancellationToken ctkn = default
+    )
     {
         org = _state.GetOrg(org);
         project = _state.GetProject(project);
@@ -88,7 +118,12 @@ public class ProjectMember
     /// <param name="org">-o, org id</param>
     /// <param name="project">-p, project id</param>
     /// <param name="ctkn"></param>
-    public async Task Remove(string id, string? org = null, string? project = null, CancellationToken ctkn = default)
+    public async Task Remove(
+        string id,
+        string? org = null,
+        string? project = null,
+        CancellationToken ctkn = default
+    )
     {
         org = _state.GetOrg(org);
         project = _state.GetProject(project);

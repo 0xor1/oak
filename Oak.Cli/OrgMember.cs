@@ -22,7 +22,13 @@ public class OrgMember
     /// <param name="role">-r, members role for permissions</param>
     /// <param name="org">-o, the org id</param>
     /// <param name="ctkn"></param>
-    public async Task Invite(string email, string name, OrgMemberRole role, string? org = null, CancellationToken ctkn = default)
+    public async Task Invite(
+        string email,
+        string name,
+        OrgMemberRole role,
+        string? org = null,
+        CancellationToken ctkn = default
+    )
     {
         org = _state.GetOrg(org);
         var res = await _api.OrgMember.Invite(new Invite(org, email, name, role), ctkn);
@@ -53,10 +59,22 @@ public class OrgMember
     /// <param name="asc">-asc, order ascending</param>
     /// <param name="org">-o, org id</param>
     /// <param name="ctkn"></param>
-    public async Task Get(bool? isActive = null, string? nameStartsWith = null, OrgMemberRole? role = null, string? after = null, OrgMemberOrderBy? orderBy = OrgMemberOrderBy.Role, bool asc = true, string? org = null, CancellationToken ctkn = default)
+    public async Task Get(
+        bool? isActive = null,
+        string? nameStartsWith = null,
+        OrgMemberRole? role = null,
+        string? after = null,
+        OrgMemberOrderBy? orderBy = OrgMemberOrderBy.Role,
+        bool asc = true,
+        string? org = null,
+        CancellationToken ctkn = default
+    )
     {
         org = _state.GetOrg(org);
-        var res = await _api.OrgMember.Get(new Get(org, isActive, nameStartsWith, role, after, orderBy, asc), ctkn);
+        var res = await _api.OrgMember.Get(
+            new Get(org, isActive, nameStartsWith, role, after, orderBy, asc),
+            ctkn
+        );
         Io.WriteYml(res);
     }
 
@@ -68,7 +86,14 @@ public class OrgMember
     /// <param name="role">-r, role</param>
     /// <param name="org">-o, org id</param>
     /// <param name="ctkn"></param>
-    public async Task Update(string id, bool? isActive = null, string? name = null, OrgMemberRole? role = null, string? org = null, CancellationToken ctkn = default)
+    public async Task Update(
+        string id,
+        bool? isActive = null,
+        string? name = null,
+        OrgMemberRole? role = null,
+        string? org = null,
+        CancellationToken ctkn = default
+    )
     {
         org = _state.GetOrg(org);
         var res = await _api.OrgMember.Update(new Update(org, id, isActive, name, role), ctkn);
