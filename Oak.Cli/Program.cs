@@ -75,6 +75,8 @@ app.Add<App>("app");
 app.Add<Auth>("auth");
 app.Add<Ctx>("ctx");
 app.Add<Org>("org");
+app.Add<OrgMember>("org-member");
 app.Add<Project>("project");
+app.Add<ProjectMember>("project-member");
 app.Add<TaskCli>("task");
 await app.RunAsync(args);

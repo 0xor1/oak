@@ -41,7 +41,7 @@ public class Org
     /// Get orgs
     /// </summary>
     /// <param name="orderBy">-ob, order by</param>
-    /// <param name="asc">-a, ascending</param>
+    /// <param name="asc">-asc, ascending</param>
     public async Task Get(
         OrgOrderBy orderBy = OrgOrderBy.Name,
         bool asc = true,
