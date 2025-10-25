@@ -1,3 +1,5 @@
+using Common.Shared;
+
 namespace Oak.Cli;
 
 public static class StateExts
@@ -11,7 +13,8 @@ public static class StateExts
         return org;
     }
 
-    public static void SetOrg(this State state, string? org) => state.SetString("org", org);
+    public static void SetOrg(this State state, string? org) =>
+        state.SetString("org", org.IsNullOrWhiteSpace() ? null : org);
 
     public static string GetProject(this State state, string? project = null)
     {
@@ -24,7 +27,7 @@ public static class StateExts
 
     public static void SetProject(this State state, string? project)
     {
-        state.SetString("project", project);
+        state.SetString("project", project.IsNullOrWhiteSpace() ? null : project);
         // if we've changed project, set task ctx to root task
         state.SetTask(project);
     }
@@ -38,5 +41,6 @@ public static class StateExts
         return task;
     }
 
-    public static void SetTask(this State state, string? task) => state.SetString("task", task);
+    public static void SetTask(this State state, string? task) =>
+        state.SetString("task", task.IsNullOrWhiteSpace() ? null : task);
 }
