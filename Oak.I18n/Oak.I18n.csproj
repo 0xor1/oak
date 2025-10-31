@@ -8,11 +8,11 @@
     <Exec Command="dotnet tool run dotnet-common-cli i18n &quot;$(MSBuildProjectDirectory)&quot; $(MSBuildProjectName)" />
   </Target>
   <ItemGroup>
-    <PackageReference Include="0xor1.Common.Shared" Version="6.0.5" />
+    <PackageReference Include="0xor1.Common.Shared" Version="6.0.6" />
     <PackageReference Include="CSharpier.MsBuild" Version="1.1.2">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Fluid.Core" Version="2.25.0" />
+    <PackageReference Include="Fluid.Core" Version="2.30.0" />
   </ItemGroup>
 </Project>
