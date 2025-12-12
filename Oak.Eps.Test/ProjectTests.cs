@@ -7,7 +7,7 @@ namespace Oak.Eps.Test;
 public class ProjectTests : TestBase
 {
     [Fact]
-    public async void Create_Success()
+    public async Task Create_Success()
     {
         var (ali, bob, cat, dan, anon, org) = await Setup();
         var p = await ali.Project.Create(
@@ -35,7 +35,7 @@ public class ProjectTests : TestBase
     }
 
     [Fact]
-    public async void Get_Success()
+    public async Task Get_Success()
     {
         var (ali, bob, cat, dan, anon, org) = await Setup();
         var a = await ali.Project.Create(
@@ -286,7 +286,7 @@ public class ProjectTests : TestBase
     }
 
     [Fact]
-    public async void Update_Success()
+    public async Task Update_Success()
     {
         var (ali, bob, cat, dan, anon, org) = await Setup();
         var a = await ali.Project.Create(
@@ -312,7 +312,7 @@ public class ProjectTests : TestBase
     }
 
     [Fact]
-    public async void Delete_Success()
+    public async Task Delete_Success()
     {
         var (ali, bob, cat, dan, anon, org) = await Setup();
         var a = await ali.Project.Create(
@@ -341,7 +341,7 @@ public class ProjectTests : TestBase
     }
 
     [Fact]
-    public async void GetActivities_Success()
+    public async Task GetActivities_Success()
     {
         var (ali, bob, cat, dan, anon, org) = await Setup();
         var a = await ali.Project.Create(

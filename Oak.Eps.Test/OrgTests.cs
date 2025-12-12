@@ -7,7 +7,7 @@ namespace Oak.Eps.Test;
 public class OrgTests : TestBase
 {
     [Fact]
-    public async void Create_Success()
+    public async Task Create_Success()
     {
         var userName = "ali";
         var (ali, _, _) = await Rig.NewApi(userName);
@@ -18,7 +18,7 @@ public class OrgTests : TestBase
     }
 
     [Fact]
-    public async void Update_Success()
+    public async Task Update_Success()
     {
         var userName = "ali";
         var (ali, _, _) = await Rig.NewApi(userName);
@@ -29,7 +29,7 @@ public class OrgTests : TestBase
     }
 
     [Fact]
-    public async void Get_Success()
+    public async Task Get_Success()
     {
         var userName = "ali";
         var (ali, _, _) = await Rig.NewApi(userName);
@@ -61,7 +61,7 @@ public class OrgTests : TestBase
     }
 
     [Fact]
-    public async void Delete_Success()
+    public async Task Delete_Success()
     {
         var userName = "ali";
         var (ali, _, _) = await Rig.NewApi(userName);
@@ -72,7 +72,7 @@ public class OrgTests : TestBase
     }
 
     [Fact]
-    public async void ValidateFcmTopic_Success()
+    public async Task ValidateFcmTopic_Success()
     {
         var (ali, _, _, _, _, org) = await Setup();
         var p = await CreateProject(ali, org.Id);

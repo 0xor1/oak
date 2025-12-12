@@ -6,7 +6,7 @@ namespace Oak.Eps.Test;
 public class OrgMemberTests : TestBase
 {
     [Fact]
-    public async void Invite_Success()
+    public async Task Invite_Success()
     {
         var (ali, _, _) = await Rig.NewApi("ali");
         var org = await ali.Org.Create(new("a", "ali"));
@@ -22,7 +22,7 @@ public class OrgMemberTests : TestBase
     }
 
     [Fact]
-    public async void Update_Success()
+    public async Task Update_Success()
     {
         var bobName = "bob";
         var (ali, _, _) = await Rig.NewApi("ali");
@@ -42,7 +42,7 @@ public class OrgMemberTests : TestBase
     }
 
     [Fact]
-    public async void Get_Success()
+    public async Task Get_Success()
     {
         var bobName = "bob";
         var catName = "cat";

@@ -3,7 +3,7 @@ namespace Oak.Eps.Test;
 public class AppTests : TestBase
 {
     [Fact]
-    public async void GetConfig_Success()
+    public async Task GetConfig_Success()
     {
         var (ali, _, _) = await Rig.NewApi("ali");
         var c = await ali.App.GetConfig();

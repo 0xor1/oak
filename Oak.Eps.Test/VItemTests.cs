@@ -6,7 +6,7 @@ namespace Oak.Eps.Test;
 public class VItemTests : TestBase
 {
     [Fact]
-    public async void Create_Success()
+    public async Task Create_Success()
     {
         var (ali, bob, cat, dan, anon, org) = await Setup();
         var aliSes = await ali.Auth.GetSession();
@@ -33,7 +33,7 @@ public class VItemTests : TestBase
     }
 
     [Fact]
-    public async void Update_Success()
+    public async Task Update_Success()
     {
         var (ali, bob, cat, dan, anon, org) = await Setup();
         var tt = await CreateTaskTree(ali, org.Id);
@@ -90,7 +90,7 @@ public class VItemTests : TestBase
     }
 
     [Fact]
-    public async void Delete_Success()
+    public async Task Delete_Success()
     {
         var (ali, bob, cat, dan, anon, org) = await Setup();
         var tt = await CreateTaskTree(ali, org.Id);
@@ -109,7 +109,7 @@ public class VItemTests : TestBase
     }
 
     [Fact]
-    public async void Get_Success()
+    public async Task Get_Success()
     {
         var (ali, bob, cat, dan, anon, org) = await Setup();
         var aliSes = await ali.Auth.GetSession();

@@ -116,7 +116,6 @@ public,Public,Público,Public,Öffentlich,Pubblico
 required,Required,Requerido,Requis,Erforderlich,Necessario
 sequential,Sequential,Secuencial,Séquentiel,Sequentiell,Sequenziale
 start_on,Start On,Comienza en,Démarrer,Beginnen am,Inizia
-string_validation,"Invalid string {{Name}}, Min {{Min}}, Max {{Max}}, Regexes {{Regexes}}","Cadena no válida {{Nombre}}, Min {{Min}}, Max {{Max}}, Regexes {{Regexes}}","Chaîne non valide {{Name}}, Min {{Min}}, Max {{Max}}, Regexes {{Regexes}}","Ungültiger String {{Name}}, Min. {{Min}}, Max. {{Max}}, Regexes {{Regexes}}","Stringa non valida {{Name}}, Min {{Min}}, Max {{Max}}, Regexes {{Regexes}}"
 sub_counts,Sub Counts,Conteos secundarios,Sous-comptes,Sub-Zählungen,Conteggi secondari
 task,Task,Tarea,Tâche,Aufgabe,Compito
 task_cant_move_root_project_node,Can't move root project node,No se puede mover el nodo del proyecto raíz,Impossible de déplacer le nœud du projet racine,Stammprojektknoten kann nicht verschoben werden,Impossibile spostare il nodo principale del progetto

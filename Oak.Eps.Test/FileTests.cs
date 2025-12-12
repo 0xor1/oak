@@ -7,7 +7,7 @@ namespace Oak.Eps.Test;
 public class FileTests : TestBase
 {
     [Fact]
-    public async void Upload_Download_Delete_Success()
+    public async Task Upload_Download_Delete_Success()
     {
         var (ali, bob, cat, dan, anon, org) = await Setup();
         var aliSes = await ali.Auth.GetSession();
@@ -48,7 +48,7 @@ public class FileTests : TestBase
     }
 
     [Fact]
-    public async void Get_Success()
+    public async Task Get_Success()
     {
         var (ali, bob, cat, dan, anon, org) = await Setup();
         var aliSes = await ali.Auth.GetSession();

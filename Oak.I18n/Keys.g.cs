@@ -94,7 +94,6 @@ public static partial class S
     public const string Required = "required";
     public const string Sequential = "sequential";
     public const string StartOn = "start_on";
-    public const string StringValidation = "string_validation";
     public const string SubCounts = "sub_counts";
     public const string Task = "task";
     public const string TaskCantMoveRootProjectNode = "task_cant_move_root_project_node";

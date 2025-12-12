@@ -30,7 +30,7 @@ public class EpsUtilTests : TestBase
     }
 
     [Fact]
-    public async void Indirect_EpsUtil_Permissions_Probing_Giggidy()
+    public async Task Indirect_EpsUtil_Permissions_Probing_Giggidy()
     {
         var (ali, bob, cat, dan, anon, org) = await Setup();
         var p = await CreateProject(ali, org.Id);

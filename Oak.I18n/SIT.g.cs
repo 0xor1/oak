@@ -98,7 +98,6 @@ public static partial class S
         { Required, new("Necessario") },
         { Sequential, new("Sequenziale") },
         { StartOn, new("Inizia") },
-        { StringValidation, new("Stringa non valida {{Name}}, Min {{Min}}, Max {{Max}}, Regexes {{Regexes}}") },
         { SubCounts, new("Conteggi secondari") },
         { Task, new("Compito") },
         { TaskCantMoveRootProjectNode, new("Impossibile spostare il nodo principale del progetto") },

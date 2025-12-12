@@ -24,21 +24,7 @@ public static class EpsUtil
         List<Regex>? regexes = null
     )
     {
-        var m = new
-        {
-            Name = name,
-            Min = min,
-            Max = max,
-            Regexes = regexes?.Select(x => x.ToString()).ToList(),
-        };
-        ctx.BadRequestIf(val.Length < min || val.Length > max, S.StringValidation, m);
-        if (regexes != null)
-        {
-            foreach (var r in regexes)
-            {
-                ctx.BadRequestIf(!r.IsMatch(val), S.StringValidation, m);
-            }
-        }
+        ctx.ErrorFromValidationResult(val.Validate(name, min, max, regexes));
     }
 
     public static async Task<OrgMemberRole?> OrgRole(IRpcCtx ctx, OakDb db, string user, string org)

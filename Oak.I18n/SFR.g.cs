@@ -98,7 +98,6 @@ public static partial class S
         { Required, new("Requis") },
         { Sequential, new("Séquentiel") },
         { StartOn, new("Démarrer") },
-        { StringValidation, new("Chaîne non valide {{Name}}, Min {{Min}}, Max {{Max}}, Regexes {{Regexes}}") },
         { SubCounts, new("Sous-comptes") },
         { Task, new("Tâche") },
         { TaskCantMoveRootProjectNode, new("Impossible de déplacer le nœud du projet racine") },

@@ -3,7 +3,7 @@ namespace Oak.Eps.Test;
 public class TimerTests : TestBase
 {
     [Fact]
-    public async void All_Success()
+    public async Task All_Success()
     {
         var (ali, bob, cat, dan, anon, org) = await Setup();
         var aliSes = await ali.Auth.GetSession();

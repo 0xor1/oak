@@ -98,7 +98,6 @@ public static partial class S
         { Required, new("Erforderlich") },
         { Sequential, new("Sequentiell") },
         { StartOn, new("Beginnen am") },
-        { StringValidation, new("Ungültiger String {{Name}}, Min. {{Min}}, Max. {{Max}}, Regexes {{Regexes}}") },
         { SubCounts, new("Sub-Zählungen") },
         { Task, new("Aufgabe") },
         { TaskCantMoveRootProjectNode, new("Stammprojektknoten kann nicht verschoben werden") },

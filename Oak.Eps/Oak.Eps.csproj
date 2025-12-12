@@ -9,8 +9,8 @@
     <ProjectReference Include="..\Oak.Api\Oak.Api.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="0xor1.Common.Server" Version="6.0.6" />
-    <PackageReference Include="CSharpier.MsBuild" Version="1.1.2">
+    <PackageReference Include="0xor1.Common.Server" Version="6.0.8" />
+    <PackageReference Include="CSharpier.MsBuild" Version="1.2.1">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>

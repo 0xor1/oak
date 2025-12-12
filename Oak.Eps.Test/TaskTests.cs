@@ -9,7 +9,7 @@ namespace Oak.Eps.Test;
 public class TaskTests : TestBase
 {
     [Fact]
-    public async void Create_Success()
+    public async Task Create_Success()
     {
         var (ali, bob, cat, dan, anon, org) = await Setup();
         var p = await CreateProject(ali, org.Id);
@@ -21,7 +21,7 @@ public class TaskTests : TestBase
     }
 
     [Fact]
-    public async void Create_ForOtherUser_Success()
+    public async Task Create_ForOtherUser_Success()
     {
         var (ali, bob, cat, dan, anon, org) = await Setup();
         var p = await CreateProject(ali, org.Id);
@@ -35,7 +35,7 @@ public class TaskTests : TestBase
     }
 
     [Fact]
-    public async void Update_CantMoveProject()
+    public async Task Update_CantMoveProject()
     {
         var (ali, bob, cat, dan, anon, org) = await Setup();
         var tt = await CreateTaskTree(ali, org.Id);
@@ -65,7 +65,7 @@ public class TaskTests : TestBase
     }
 
     [Fact]
-    public async void Update_NoMove_Success()
+    public async Task Update_NoMove_Success()
     {
         var (ali, bob, cat, dan, anon, org) = await Setup();
         var tt = await CreateTaskTree(ali, org.Id);
@@ -88,7 +88,7 @@ public class TaskTests : TestBase
     }
 
     [Fact]
-    public async void Update_IsParallel_Success()
+    public async Task Update_IsParallel_Success()
     {
         var (ali, bob, cat, dan, anon, org) = await Setup();
         var tt = await CreateTaskTree(ali, org.Id);
@@ -112,7 +112,7 @@ public class TaskTests : TestBase
     }
 
     [Fact]
-    public async void Update_TimeEst_CostEst_Success()
+    public async Task Update_TimeEst_CostEst_Success()
     {
         var (ali, bob, cat, dan, anon, org) = await Setup();
         var tt = await CreateTaskTree(ali, org.Id);
@@ -138,7 +138,7 @@ public class TaskTests : TestBase
     }
 
     [Fact]
-    public async void Update_IsParallel_AndMove_Success()
+    public async Task Update_IsParallel_AndMove_Success()
     {
         var (ali, bob, cat, dan, anon, org) = await Setup();
         var tt = await CreateTaskTree(ali, org.Id);
@@ -159,7 +159,7 @@ public class TaskTests : TestBase
     }
 
     [Fact]
-    public async void Update_Project_NoMove_Success()
+    public async Task Update_Project_NoMove_Success()
     {
         var (ali, bob, cat, dan, anon, org) = await Setup();
         var tt = await CreateTaskTree(ali, org.Id);
@@ -197,7 +197,7 @@ public class TaskTests : TestBase
     }
 
     [Fact]
-    public async void Update_CantMakeVerticalRecursiveLoops()
+    public async Task Update_CantMakeVerticalRecursiveLoops()
     {
         var (ali, bob, cat, dan, anon, org) = await Setup();
         var tt = await CreateTaskTree(ali, org.Id);
@@ -227,7 +227,7 @@ public class TaskTests : TestBase
     }
 
     [Fact]
-    public async void Update_CantMakeHorizontalRecursiveLoops()
+    public async Task Update_CantMakeHorizontalRecursiveLoops()
     {
         var (ali, bob, cat, dan, anon, org) = await Setup();
         var tt = await CreateTaskTree(ali, org.Id);
@@ -258,7 +258,7 @@ public class TaskTests : TestBase
 
     // horizontal moves
     [Fact]
-    public async void Update_A_After_B_Success()
+    public async Task Update_A_After_B_Success()
     {
         var (ali, bob, cat, dan, anon, org) = await Setup();
         var tt = await CreateTaskTree(ali, org.Id);
@@ -279,7 +279,7 @@ public class TaskTests : TestBase
     }
 
     [Fact]
-    public async void Update_A_After_C_Success()
+    public async Task Update_A_After_C_Success()
     {
         var (ali, bob, cat, dan, anon, org) = await Setup();
         var tt = await CreateTaskTree(ali, org.Id);
@@ -300,7 +300,7 @@ public class TaskTests : TestBase
     }
 
     [Fact]
-    public async void Update_A_After_D_Success()
+    public async Task Update_A_After_D_Success()
     {
         var (ali, bob, cat, dan, anon, org) = await Setup();
         var tt = await CreateTaskTree(ali, org.Id);
@@ -321,7 +321,7 @@ public class TaskTests : TestBase
     }
 
     [Fact]
-    public async void Update_D_Before_C_Success()
+    public async Task Update_D_Before_C_Success()
     {
         var (ali, bob, cat, dan, anon, org) = await Setup();
         var tt = await CreateTaskTree(ali, org.Id);
@@ -342,7 +342,7 @@ public class TaskTests : TestBase
     }
 
     [Fact]
-    public async void Update_D_Before_B_Success()
+    public async Task Update_D_Before_B_Success()
     {
         var (ali, bob, cat, dan, anon, org) = await Setup();
         var tt = await CreateTaskTree(ali, org.Id);
@@ -363,7 +363,7 @@ public class TaskTests : TestBase
     }
 
     [Fact]
-    public async void Update_D_Before_A_Success()
+    public async Task Update_D_Before_A_Success()
     {
         var (ali, bob, cat, dan, anon, org) = await Setup();
         var tt = await CreateTaskTree(ali, org.Id);
@@ -384,7 +384,7 @@ public class TaskTests : TestBase
     }
 
     [Fact]
-    public async void Update_B_After_C_Success()
+    public async Task Update_B_After_C_Success()
     {
         var (ali, bob, cat, dan, anon, org) = await Setup();
         var tt = await CreateTaskTree(ali, org.Id);
@@ -407,7 +407,7 @@ public class TaskTests : TestBase
     // vertical moves
 
     [Fact]
-    public async void Update_B_Under_A_Success()
+    public async Task Update_B_Under_A_Success()
     {
         // oldPrevSib is newParent
         var (ali, bob, cat, dan, anon, org) = await Setup();
@@ -429,7 +429,7 @@ public class TaskTests : TestBase
     }
 
     [Fact]
-    public async void Update_B_Under_A_After_E_Success()
+    public async Task Update_B_Under_A_After_E_Success()
     {
         // oldPrevSib is newParent
         var (ali, bob, cat, dan, anon, org) = await Setup();
@@ -453,7 +453,7 @@ public class TaskTests : TestBase
     }
 
     [Fact]
-    public async void Update_C_Under_A_Success()
+    public async Task Update_C_Under_A_Success()
     {
         var (ali, bob, cat, dan, anon, org) = await Setup();
         var tt = await CreateTaskTree(ali, org.Id);
@@ -476,7 +476,7 @@ public class TaskTests : TestBase
     }
 
     [Fact]
-    public async void Update_E_Under_P_Success()
+    public async Task Update_E_Under_P_Success()
     {
         // oldParent is newNextSib
         var (ali, bob, cat, dan, anon, org) = await Setup();
@@ -498,7 +498,7 @@ public class TaskTests : TestBase
     }
 
     [Fact]
-    public async void Update_E_Under_P_After_A_Success()
+    public async Task Update_E_Under_P_After_A_Success()
     {
         // oldParent is newPrevSib
         var (ali, bob, cat, dan, anon, org) = await Setup();
@@ -522,7 +522,7 @@ public class TaskTests : TestBase
     }
 
     [Fact]
-    public async void GetAncestors_Success()
+    public async Task GetAncestors_Success()
     {
         var (ali, bob, cat, dan, anon, org) = await Setup();
         var tt = await CreateTaskTree(ali, org.Id);
@@ -533,7 +533,7 @@ public class TaskTests : TestBase
     }
 
     [Fact]
-    public async void GetChildren_Success()
+    public async Task GetChildren_Success()
     {
         var (ali, bob, cat, dan, anon, org) = await Setup();
         var tt = await CreateTaskTree(ali, org.Id);
@@ -550,7 +550,7 @@ public class TaskTests : TestBase
     }
 
     [Fact]
-    public async void GetDescendants_Empty()
+    public async Task GetDescendants_Empty()
     {
         var (ali, bob, cat, dan, anon, org) = await Setup();
         var tt = await CreateTaskTree(ali, org.Id);
@@ -559,7 +559,7 @@ public class TaskTests : TestBase
     }
 
     [Fact]
-    public async void GetInitView_Success()
+    public async Task GetInitView_Success()
     {
         var (ali, bob, cat, dan, anon, org) = await Setup();
         var tt = await CreateTaskTree(ali, org.Id);
@@ -575,7 +575,7 @@ public class TaskTests : TestBase
     }
 
     [Fact]
-    public async void Delete_B()
+    public async Task Delete_B()
     {
         var (ali, bob, cat, dan, anon, org) = await Setup();
         var tt = await CreateTaskTree(ali, org.Id);
@@ -601,7 +601,7 @@ public class TaskTests : TestBase
     }
 
     [Fact]
-    public async void Delete_A()
+    public async Task Delete_A()
     {
         var (ali, bob, cat, dan, anon, org) = await Setup();
         var tt = await CreateTaskTree(ali, org.Id);

@@ -7,20 +7,20 @@
     <InvariantGlobalization>true</InvariantGlobalization>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="0xor1.Common.Client" Version="6.0.6" />
-    <PackageReference Include="0xor1.Common.Server" Version="6.0.6" />
-    <PackageReference Include="bunit" Version="2.0.62-preview" />
+    <PackageReference Include="0xor1.Common.Client" Version="6.0.8" />
+    <PackageReference Include="0xor1.Common.Server" Version="6.0.8" />
+    <PackageReference Include="bunit" Version="2.2.2" />
     <PackageReference Include="coverlet.msbuild" Version="6.0.4">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.1" />
     <PackageReference Include="xunit" Version="2.9.3" />
     <PackageReference Include="xunit.runner.visualstudio" Version="3.1.5">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="CSharpier.MsBuild" Version="1.1.2">
+    <PackageReference Include="CSharpier.MsBuild" Version="1.2.1">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
